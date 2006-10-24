@@ -217,51 +217,69 @@ void destroyGameField(void) {
  * Sielfelddaten aktualisieren
  */
 void updateGameField(void) {
-	int mx;
-	int my;
-	int dx;
-	int dy;
-	int q;
-	int max;
-
-	mx = floor(sgCamera.x);
-	my = floor(sgCamera.y);
-	
-	gCntIndices = 0;
-
 	/* Bei eingeschränkter Sicht, nur einen Ausschnitt rendern */	
 	if (useFog()) {
-		for (dx = -52; dx <= 52; dx++ ) {
-			for (dy = -52; dy <= 52; dy++) {
-				int start;
-				int end;
+		static int mxFog = 0;
+		static int myFog = 0;
 
-				getVertIndex(mx + dx, my + dy, &start, &end);
-				
-				for (q = start; q < end; q++) {
-					gIndices[gCntIndices++] = q;
+		int mx = floor(sgCamera.x);
+		int my = floor(sgCamera.y);
+		
+		if (mx != mxFog || my != myFog) {
+			int dx;
+			int dy;
+
+			gCntIndices = 0;
+			for (dx = -52; dx <= 52; dx++ ) {
+				for (dy = -52; dy <= 52; dy++) {
+					int start;
+					int end;
+					int q;
+
+					getVertIndex(mx + dx, my + dy, &start, &end);
+					
+					for (q = start; q < end; q++) {
+						gIndices[gCntIndices++] = q;
+					}
 				}
 			}
+
+			mxFog = mx;
+			myFog = my;
 		}
 	}
 
-	mx = floor(sgLight[sgGameSpotLight].pos[0]);
-	my = floor(sgLight[sgGameSpotLight].pos[1]);
-	max = ceil(sgLight[sgGameSpotLight].pos[2] * tan(sgLight[1].cutoff * PI / 180.0f));
-
 	if (useSpotlight())	{
-		gCntSpotlightIndices = 0;
-		for (dx = -max; dx <= max; dx++ ) {
-			for (dy = -max; dy <= max; dy++) {
-				int start;
-				int end;
+		static int mxSpot = 0;
+		static int mySpot = 0;
+		static int maxSpot = 0;
 
-				getVertIndex(mx + dx, my + dy, &start, &end);
-				
-				for (q = start; q < end; q++) {
-					gSpotlightIndices[gCntSpotlightIndices++] = q;
+		int mx = floor(sgLight[sgGameSpotLight].pos[0]);
+		int my = floor(sgLight[sgGameSpotLight].pos[1]);
+		int max = ceil(sgLight[sgGameSpotLight].pos[2] * tan(sgLight[1].cutoff * PI / 180.0f));
+
+		if (mx != mxSpot || my != mySpot || max != maxSpot) {
+			int dx;
+			int dy;
+
+			gCntSpotlightIndices = 0;
+			for (dx = -max; dx <= max; dx++ ) {
+				for (dy = -max; dy <= max; dy++) {
+					int start;
+					int end;
+					int q;
+
+					getVertIndex(mx + dx, my + dy, &start, &end);
+					
+					for (q = start; q < end; q++) {
+						gSpotlightIndices[gCntSpotlightIndices++] = q;
+					}
 				}
 			}
+
+			mxSpot = mx;
+			mySpot = my;
+			maxSpot = max;
 		}
 	}
 }

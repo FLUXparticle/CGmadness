@@ -7,7 +7,7 @@ CFLAGS += -DGLEW_STATIC -O3
 
 LDFLAGS=
 LIBS=-lm -lGLU -lGL
-PROG=cgmadness
+PROJECT=cgmadness
 SHADER=golfball spotlight
 
 # Prüfen ob unter Cygwin oder Linux compiliert wird
@@ -15,44 +15,57 @@ ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32
-	EXEC = $(PROG).exe
+	EXECSUFFIX = .exe
 else
 	LIBS += -lglut
-	EXEC = $(PROG)
+	EXECSUFFIX = 
 endif
 
-ifdef DEBUG
-	CFLAGS += -g
-	LDFLAGS += -g
-endif
+EXEC    :=  $(PROJECT)$(EXECSUFFIX)
+DEBUG   :=  $(PROJECT).debug$(EXECSUFFIX)
+PROFILE :=  $(PROJECT).profile$(EXECSUFFIX)
 
-ifdef PROFILE
-	CFLAGS += -pg
-	LDFLAGS += -pg
-endif
+SRC     :=  $(patsubst ./%,%,$(shell find -name '*.c'))
+OBJS    :=  $(SRC:%.c=build/%.o)
+DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert %.frag)
 
-SRC=$(shell find -name '*.c')
-DATA=$(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
-DEPS=$(SRC:%=%.d)
-CLEAN=$(SRC:%.c=%.o) $(DEPS) $(EXEC)
+DEPS    :=  $(SRC:%=.deps/%.d)
+CLEAN   :=  $(OBJS) $(EXEC)
 
 .PHONY: all
-all: $(PROG)
+all: $(EXEC)
+
+.PHONY: debug
+debug: $(DEBUG)
+
+.PHONY: profile
+profile: $(PROFILE)
 
 # Alle Source-Files compilieren und zusammenlinken
 # Expliziete Regel ist notwendig, weil die LIBS sonst
 # vor den .o-Files stehen und dadurch die Cygwin-Version
 # nicht kompiliert werden kann.
-$(PROG): $(SRC:%.c=%.o)
+$(EXEC): $(OBJS)
 	@echo "  LINK $@"
 	@$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
 
-%.o: %.c
+build/%.o: %.c
 	@echo "  CC $@"
 	@mkdir -p "$(@D)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
-# Archiv bauen um ausfÃ¼hrbares Programm zu verschicken
+# Profile-Version
+
+$(PROFILE): $(OBJS:%.o=%.profile.o)
+	@echo "  LINK (PROFILE) $@"
+	@$(CC) $(LDFLAGS) -pg $^ $(LIBS) -o $@
+
+build/%.profile.o: %.c
+	@echo "  CC (PROFILE) $@"
+	@mkdir -p "$(@D)"
+	@$(CC) -c $(CFLAGS) -pg $< -o $@
+
+# Archiv bauen um ausführbares Programm zu verschicken
 TAR = $(PROG).tar.bz2
 ZIP = $(PROG).zip
 CMD = $(PROG).cmd
@@ -79,16 +92,16 @@ doc:
 	doxygen Doxyfile
 
 
-# AufrÃ¤umen
+# Aufrüumen
 .PHONY: clean
 clean:
 	@echo "  CLEAN"
 	@rm -f $(CLEAN)
 
-# AbhÃ¤ngigkeiten automatisch erkennen
+# Abhängigkeiten automatisch erkennen
 include $(DEPS)
 
-%.c.d: %.c
+.deps/%.c.d: %.c
 	@echo "  DEP $@"
 	@mkdir -p "$(@D)"
-	@( echo -n "$@ " && $(CC) -MM $(CFLAGS) $< ) > $@ || rm $@
+	@( echo -n "$@ " && $(CC) -MM -MP -MT build/$(<:%.cpp=%.o) $(CFLAGS) $< ) > $@ || rm $@
