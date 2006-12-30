@@ -1,24 +1,22 @@
-INCLUDE=-IimageLoader/include -Iglew/include
+CC := gcc
+CFLAGS := -ansi -pedantic -Wall
 
-CC=gcc
-CFLAGS=-ansi -pedantic -Wall $(INCLUDE)
+CFLAGS += -O3
 
-CFLAGS += -DGLEW_STATIC -O3
-
-LDFLAGS=
-LIBS=-lm -lGLU -lGL
-PROJECT=cgmadness
-SHADER=golfball spotlight
+LDFLAGS :=
+LIBS := -lm -lGLU -lGL -lGLEW
+PROJECT := cgmadness
+SHADER := golfball spotlight
 
 # Prüfen ob unter Cygwin oder Linux compiliert wird
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32
-	EXECSUFFIX = .exe
+	EXECSUFFIX := .exe
 else
 	LIBS += -lglut
-	EXECSUFFIX = 
+	EXECSUFFIX := 
 endif
 
 EXEC    :=  $(PROJECT)$(EXECSUFFIX)
@@ -90,7 +88,6 @@ $(PROG).zip: $(PROG) $(CMD) $(DATA)
 .PHONY: doc
 doc:
 	doxygen Doxyfile
-
 
 # Aufrüumen
 .PHONY: clean
