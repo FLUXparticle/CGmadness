@@ -175,7 +175,7 @@ void startDisplay(void) {
 			}
 		}
 
-		initProjectMat(v->projection, 60.0f);
+		initProjectMat(v->projection, FOV);
 	}
 
 	/* RenderTarget für Fenster erstellen */

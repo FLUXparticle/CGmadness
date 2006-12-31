@@ -28,10 +28,12 @@ Vector3 add(Vector3 a, Vector3 b);
 
 Vector3 sub(Vector3 a, Vector3 b);
 
+Vector3 neg(Vector3 a);
+
 float dot(Vector3 a, Vector3 b);
 
 Vector3 cross(Vector3 a, Vector3 b);
 
-void initProjectMat(Matrix m, float fovy); 
+void initProjectMat(Matrix m, float fov); 
 
 #endif

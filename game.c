@@ -13,6 +13,7 @@
 #include "features.h"
 #include "keyboard.h"
 
+#include "types.h"
 #include "debug.h"
 
 #include <GL/glew.h>
@@ -256,9 +257,9 @@ void initFog(void) {
 
 	ivalue = GL_LINEAR;
 	glFogiv(GL_FOG_MODE, &ivalue);
-	value = 20.0f;
+	value = FOG_START;
 	glFogfv(GL_FOG_START, &value);
-	value = 30.0f;
+	value = FOG_END;
 	glFogfv(GL_FOG_END, &value);
 }
 

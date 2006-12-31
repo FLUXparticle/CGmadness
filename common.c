@@ -14,6 +14,7 @@
 #define ZOOMSTEP 0.5f
 
 Vector3 sgCamera;
+Vector3 sgLookat = { 0.0f, 0.0f, 0.0f };
 
 int sgCntVertices;
 
@@ -35,8 +36,6 @@ Vector3 sgRight;
 
 static int gEdgeX[4] = { 0, 1, 1, 0 };
 static int gEdgeY[4] = { 0, 0, 1, 1 };
-
-Vector3 sgLookat = { 0.0f, 0.0f, 0.0f };
 
 /*
  * Bewegt die Kamera und ihren Blickwinkel auf neue Positionen

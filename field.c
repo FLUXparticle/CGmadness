@@ -24,6 +24,15 @@ typedef struct {
 	float a;
 } Color4;
 
+typedef struct {
+	Vector3 p;
+	Vector3 n;
+} Line;
+
+typedef struct {
+	Line lines[3];
+} Frustum2;
+
 static Vector2 gDefaultTexCoord;
 static Vector3 gDefaultNormal;
 static Color4 gDefaultColor;
@@ -213,18 +222,139 @@ void destroyGameField(void) {
 	FREE(gColors);
 }
 
+int pointInFrustum(Frustum2* frustum, Vector3 v) {
+	int i;
+	for (i = 0; i < 3; i++) {
+		if (dot(sub(v, frustum->lines[i].p), frustum->lines[i].n) < 0) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+int quadInFrustum(Frustum2* frustum, Vector3 v[4]) {
+	int i;
+	int j;
+
+	for (i = 0; i < 3; i++) {
+		int out = 0;
+		int in  = 0;
+		for (j = 0; j < 4 && (!out || !in); j++) {
+			if (dot(sub(v[j], frustum->lines[i].p), frustum->lines[i].n) < 0) {
+				out = 1;
+			} else {
+				in = 1;
+			}
+		}
+
+		if (!in) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+void quadTree(Frustum2* frustum, int startX, int startY, int sizeX, int sizeY) {
+	if (sizeX == 0 || sizeY == 0) {
+		return;
+	} else {
+		Vector3 v[4];
+
+		v[0].x = startX;
+		v[0].y = startY;
+		v[0].z = 0.0f;
+
+		v[1].x = startX + sizeX;
+		v[1].y = startY;
+		v[1].z = 0.0f;
+
+		v[2].x = startX + sizeX;
+		v[2].y = startY + sizeY;
+		v[2].z = 0.0f;
+
+		v[3].x = startX;
+		v[3].y = startY + sizeY;
+		v[3].z = 0.0f;
+
+		if (!quadInFrustum(frustum, v)) {
+			return;
+		}
+
+		if (sizeX == 1 && sizeY == 1) {
+			int start;
+			int end;
+			int q;
+
+			getVertIndex(startX, startY, &start, &end);
+			
+			for (q = start; q < end; q++) {
+				gIndices[gCntIndices++] = q;
+			}
+		} else {
+			int halfSizeX = sizeX / 2;
+			int halfSizeY = sizeY / 2;
+
+			quadTree(frustum, startX, startY, halfSizeX, halfSizeY);
+			quadTree(frustum, startX + halfSizeX, startY, sizeX - halfSizeX, halfSizeY);
+			quadTree(frustum, startX, startY + halfSizeY, halfSizeX, sizeY - halfSizeY);
+			quadTree(frustum, startX + halfSizeX, startY + halfSizeY, sizeX - halfSizeX, sizeY - halfSizeY);
+		}
+	}
+}
+
 /*
  * Sielfelddaten aktualisieren
  */
 void updateGameField(void) {
 	/* Bei eingeschränkter Sicht, nur einen Ausschnitt rendern */	
 	if (useFog()) {
+#if 1
+		Vector3 dir;
+		Vector3 up = { 0.0f, 0.0f, 1.0f };
+		Vector3 right;
+
+		Vector3 p0;
+		Vector3 p1;
+		Vector3 p2;
+
+		Vector3 n0;
+		Vector3 n1;
+		Vector3 n2;
+
+		Frustum2 frustum;
+
+		dir = sub(sgLookat, sgCamera);
+		dir.z = 0.0f;
+		dir = norm(dir);
+
+		right = scale(tan(FOV / 2.0f * PI / 180.0f) * FOG_END, norm(cross(dir, up)));
+
+		p0 = sgCamera;
+		p1 = add(p0, sub(scale(FOG_END, dir), right));
+		p2 = add(p0, add(scale(FOG_END, dir), right));
+
+		n0 = cross(sub(p1, p0), up);
+		n1 = cross(sub(p2, p1), up);
+		n2 = cross(sub(p0, p2), up);
+
+		frustum.lines[0].p = p0;
+		frustum.lines[0].n = n0;
+		frustum.lines[1].p = p1;
+		frustum.lines[1].n = n1;
+		frustum.lines[2].p = p2;
+		frustum.lines[2].n = n2;
+
+		gCntIndices = 0;
+		quadTree(&frustum, 0, 0, sgLevel.size.x, sgLevel.size.y);
+#else
 		static int mxFog = 0;
 		static int myFog = 0;
 
 		int mx = floor(sgCamera.x);
 		int my = floor(sgCamera.y);
-		
+
 		if (mx != mxFog || my != myFog) {
 			int dx;
 			int dy;
@@ -247,6 +377,7 @@ void updateGameField(void) {
 			mxFog = mx;
 			myFog = my;
 		}
+#endif
 	}
 
 	if (useSpotlight())	{

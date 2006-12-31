@@ -58,6 +58,16 @@ Vector3 sub(Vector3 a, Vector3 b) {
 	return c;
 }
 
+Vector3 neg(Vector3 a) {
+	Vector3 b;
+
+	b.x = -a.x;
+	b.y = -a.y;
+	b.z = -a.z;
+
+	return b;
+}
+
 float dot(Vector3 a, Vector3 b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
@@ -75,10 +85,10 @@ Vector3 cross(Vector3 a, Vector3 b) {
 /*
  * Projektions-Matrix mit Farplane im Unendlichen
  */
-void initProjectMat(Matrix m, float fovy) {
+void initProjectMat(Matrix m, float fov) {
 	int x;
 	int y;
-	float f = 1.0f / tan(fovy / 2.0f * PI / 180.0f);
+	float f = 1.0f / tan(fov / 2.0f * PI / 180.0f);
 
 	for (x = 0; x < 4; x++) {
 		for (y = 0; y < 4; y++) {
