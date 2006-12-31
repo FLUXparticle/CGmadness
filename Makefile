@@ -23,7 +23,7 @@ EXEC    :=  $(PROJECT)$(EXECSUFFIX)
 DEBUG   :=  $(PROJECT).debug$(EXECSUFFIX)
 PROFILE :=  $(PROJECT).profile$(EXECSUFFIX)
 
-SRC     :=  $(patsubst ./%,%,$(shell find -name '*.c'))
+SRC     :=  $(wildcard *.c)
 OBJS    :=  $(SRC:%.c=build/%.o)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert %.frag)
 
