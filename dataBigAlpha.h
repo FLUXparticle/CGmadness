@@ -1,10 +1,11 @@
 #ifndef _dataBigAlpha_h_
 #define _dataBigAlpha_h_
 
-#include "font.h"
 #include "graph.h"
 
-extern VertexList vlBigAlpha[];
+#include <GL/gl.h>
+
+extern float widthBigAlpha[];
 
 extern funcDraw drawBigAlpha[];
 

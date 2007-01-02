@@ -391,7 +391,7 @@ void initMenu(Object* obj) {
 
 	gIsPauseMenu = 0;
 	
-	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.0f, &oBall, changeBallEdit);
+	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
 	addSubObject(&goMainText, &spinEditBall.oSpinEdit);
 	
 	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");

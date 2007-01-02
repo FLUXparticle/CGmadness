@@ -5,11 +5,12 @@
 #include "dataDigits.h"
 
 #include "graph.h"
-#include "font.h"
 
 #include "debug.h"
 
 #include <GL/glut.h>
+
+#define SCALE 0.1f
 
 /* Gibt einen String mit Hilfe von Glut aus */
 void drawBitmapText(char *str) {
@@ -22,34 +23,18 @@ void drawBitmapText(char *str) {
  * Fügt einen Buchstaben zu einer ObjectGroup hinzu.
  * Es müssen die Renderfunktion und die Vertexliste übergeben werden, damit berechnet werden kann, wie breit der Buchstabe ist.
  */
-void addChar(Object* obj, float* x, funcDraw draw, VertexList* vertexlist) {
+void addChar(Object* obj, float* x, funcDraw draw, float width) {
 	Object* oChar;
-	int i;
-	float minx;
-	float maxx;
 
 	MALLOC(oChar, sizeof(Object));
 
 	initObject(oChar, draw);
 
-	oChar->scaleZ = 0.1f;
+	setObjectScalef(oChar, SCALE);
 
-	minx = vertexlist->vertices[0];
-	maxx = vertexlist->vertices[0];
+	oChar->pos.x = *x;
+	*x += width * SCALE;
 
-	for (i = 1; i < 3 * vertexlist->cntTriangles; i++) {
-		float x = vertexlist->vertices[i * 3];
-		if (x < minx) {
-			minx = x;
-		}
-		if (x > maxx) {
-			maxx = x;
-		}
-	}
-
-	oChar->pos.x = *x - minx;
-	*x += 1.3f * (maxx - minx);
-	
 	addSubObject(obj, oChar);
 }
 
@@ -65,15 +50,15 @@ float makeTextObject(Object* obj, char* text) {
 	for (s = text; *s; s++) {
 		if (*s >= 'A' && *s <= 'Z') {
 			int i = *s - 'A';
-			addChar(obj, &x, drawBigAlpha[i], &vlBigAlpha[i]);
+			addChar(obj, &x, drawBigAlpha[i], widthBigAlpha[i]);
 		}
 		if (*s >= 'a' && *s <= 'z') {
 			int i = *s - 'a';
-			addChar(obj, &x, drawSmallAlpha[i], &vlSmallAlpha[i]);
+			addChar(obj, &x, drawSmallAlpha[i], widthSmallAlpha[i]);
 		}
 		if (*s >= '0' && *s <= '9') {
 			int i = *s - '0';
-			addChar(obj, &x, drawDigits[i], &vlDigits[i]);
+			addChar(obj, &x, drawDigits[i], widthDigits[i]);
 		}
 		if (*s == ' ') {
 			x += 0.5f;
