@@ -25,7 +25,7 @@ PROFILE :=  $(PROJECT).profile$(EXECSUFFIX)
 
 SRC     :=  $(wildcard *.c)
 OBJS    :=  $(SRC:%.c=build/%.o)
-DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert %.frag)
+DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
@@ -64,24 +64,32 @@ build/%.profile.o: %.c
 	@$(CC) -c $(CFLAGS) -pg $< -o $@
 
 # Archiv bauen um ausführbares Programm zu verschicken
-TAR = $(PROG).tar.bz2
-ZIP = $(PROG).zip
-CMD = $(PROG).cmd
+TAR := $(PROJECT).tar.bz2
+SRC_TAR := $(PROJECT)-src.tar.bz2
+ZIP := $(PROJECT).zip
+CMD := $(PROJECT).cmd
 CLEAN += $(TAR) $(ZIP)
+
+.PHONY: src
+src: $(SRC_TAR)
+
+$(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) 
+	@echo "  TAR $@"
+	@tar -C .. --no-recursion -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: tar
 tar: $(TAR)
 
-$(PROG).tar.bz2: $(PROG) $(CMD) $(DATA)
+$(PROJECT).tar.bz2: $(EXEC) $(DATA)
 	@echo "  TAR $@"
-	@tar cjf $@ $(EXEC) $(CMD) $(DATA)
+	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: zip
 zip: $(ZIP)
 
-$(PROG).zip: $(PROG) $(CMD) $(DATA)
+$(PROJECT).zip: $(EXEC) $(CMD) $(DATA)
 	@echo "  ZIP $@"
-	@zip $@ $(EXEC) $(CMD) $(DATA) > /dev/null
+	@zip $@ $^ > /dev/null
 
 # Dokumentation
 
