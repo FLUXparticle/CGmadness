@@ -192,6 +192,7 @@ void startDisplay(void) {
 	/* Display-Callback (wird an mehreren Stellen imlizit
 	 * oder explizit durch glutPostRedisplay angestossen) */
 	glutDisplayFunc(display);
+	glutIdleFunc(display);
 }
 
 /*** Update ***/

@@ -17,6 +17,12 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define FOG_REGION 52
+
+#define WITHOUT_DEPTH_TEST 0
+#define WITH_STENCIL_TEST 0
+#define TWO_PASS 0
+
 typedef struct {
 	float r;
 	float g;
@@ -67,15 +73,12 @@ void setNormal(float x, float y, float z) {
 	gDefaultNormal.z = z;
 }
 
-/*
- * Ermittelt den größeren zweier Werte
- */
+float min(float a, float b) {
+	return (a < b) ? a : b;
+}
+
 float max(float a, float b) {
-	if (a > b) {
-		return a;
-	} else {
-		return b;
-	}
+	return (a > b) ? a : b;
 }
 
 /*
@@ -213,40 +216,81 @@ void destroyGameField(void) {
 	FREE(gColors);
 }
 
+void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
+	if (sizeX == 0 || sizeY == 0) {
+		return;
+	} else if (sizeX == 1 && sizeY == 1) {
+		int start;
+		int end;
+		int q;
+
+		getVertIndex(startX, startY, &start, &end);
+		
+		for (q = start; q < end; q++) {
+			gIndices[gCntIndices++] = q;
+		}
+	} else {
+		int startX1 = startX;
+		int startY1 = startY;
+		int sizeX1 = sizeX;
+		int sizeY1 = sizeY;
+
+		int startX2 = startX;
+		int startY2 = startY;
+		int sizeX2 = sizeX;
+		int sizeY2 = sizeY;
+
+		int side;
+
+		if (sizeX > sizeY) {
+			sizeX1 = sizeX / 2;
+			sizeX2 = sizeX - sizeX1;
+			startX2 = startX1 + sizeX1;
+			side = viewX < startX2;
+		} else {
+			sizeY1 = sizeY / 2;
+			sizeY2 = sizeY - sizeY1;
+			startY2 = startY1 + sizeY1;
+			side = viewY < startY2;
+		}
+
+		if (side) {
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY);
+		} else {
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY);
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY);
+		}
+	}
+}
+
 /*
  * Sielfelddaten aktualisieren
  */
 void updateGameField(void) {
-	/* Bei eingeschränkter Sicht, nur einen Ausschnitt rendern */	
-	if (useFog()) {
-		static int mxFog = 0;
-		static int myFog = 0;
+	static int mxFog = 0;
+	static int myFog = 0;
 
-		int mx = floor(sgCamera.x);
-		int my = floor(sgCamera.y);
-		
-		if (mx != mxFog || my != myFog) {
-			int dx;
-			int dy;
+	int mx = floor(sgCamera.x);
+	int my = floor(sgCamera.y);
+	
+	if (mx != mxFog || my != myFog) {
+		/* Bei eingeschränkter Sicht, nur einen Ausschnitt rendern */	
+		if (useFog()) {
+			int x1 = max(mx - FOG_REGION, 0);
+			int y1 = max(my - FOG_REGION, 0);
+			int x2 = min(mx + FOG_REGION + 1, sgLevel.size.x);
+			int y2 = min(my + FOG_REGION + 1, sgLevel.size.y);
 
 			gCntIndices = 0;
-			for (dx = -52; dx <= 52; dx++ ) {
-				for (dy = -52; dy <= 52; dy++) {
-					int start;
-					int end;
-					int q;
-
-					getVertIndex(mx + dx, my + dy, &start, &end);
-					
-					for (q = start; q < end; q++) {
-						gIndices[gCntIndices++] = q;
-					}
-				}
-			}
-
-			mxFog = mx;
-			myFog = my;
+			bsp(x1, y1, x2 - x1, y2 - y1, mx, my);
+		} else {
+			gCntIndices = 0;
+			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my);
 		}
+
+		mxFog = mx;
+		myFog = my;
 	}
 
 	if (useSpotlight())	{
@@ -321,14 +365,10 @@ void drawGameField(void) {
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
-	
-    /* Bei Nebel nur sichtbare Vertices zeichnen, sonst alle */
-		if (useFog()) {
-			glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
-		} else {
-			glDrawArrays(GL_QUADS, 0, sgCntVertices);
-		}
 
+  /* Bei Nebel nur sichtbare Vertices zeichnen, sonst alle */
+	glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
+	
 	glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_LIGHTING);
@@ -354,6 +394,8 @@ void drawGameFieldSpotlightParts(void) {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
  
 	glDisable(GL_LIGHTING);
+	glDepthFunc(GL_EQUAL);
+	glDepthMask(0);
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
@@ -376,7 +418,9 @@ void drawGameFieldSpotlightParts(void) {
 	}
 
 	glEnable(GL_LIGHTING);
-	
+	glDepthFunc(GL_LESS);
+	glDepthMask(1);
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 }

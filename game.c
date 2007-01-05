@@ -284,11 +284,11 @@ void initGame(char* filename) {
 
 	/* Menu (nach Ball) */
 	initMenu(&goMenu);
-		
+
 	/* Aktivieren */
 	goMenu.visible = 0;
 	gIsGameRunning = 1;
-	
+
 	/* Level (nach Menu) */
  	initLevel(getNextLevelName());
 

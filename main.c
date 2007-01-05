@@ -95,9 +95,10 @@ int main(int argc, char* argv[]) {
 	
 	/* ??? */
 	glShadeModel(GL_SMOOTH);
-/*
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-*/
+
+	/* Per-Vertex-Fog */
+/*	glHint(GL_FOG_HINT, GL_FASTEST); */
+
 	/* Normalen normalisieren */
 	glEnable(GL_NORMALIZE);
 

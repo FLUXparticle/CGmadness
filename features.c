@@ -78,7 +78,7 @@ void setFog(int use) {
 }
 
 int useFog(void) {
-	return 1; /* gUseFog; */
+	return gUseFog;
 }
 
 int useShadows(void) {
