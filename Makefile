@@ -4,7 +4,7 @@ CFLAGS := -ansi -pedantic -Wall
 CFLAGS += -O3
 
 LDFLAGS :=
-LIBS := -lm -lGLU -lGL -lGLEW
+LIBS := -lm
 PROJECT := cgmadness
 SHADER := golfball spotlight
 
@@ -12,10 +12,10 @@ SHADER := golfball spotlight
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
-	LIBS += -lglut32 -lglu32 -lopengl32
+	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
 	EXECSUFFIX := .exe
 else
-	LIBS += -lglut
+	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX := 
 endif
 

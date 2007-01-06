@@ -12,6 +12,10 @@
 
 #define PI 3.14159265358979323846
 
+#ifndef NULL
+#define NULL ((void*) 0)
+#endif
+
 #define length(x) (sizeof(x) / sizeof(*x))
 
 #define FOV 60.0f
