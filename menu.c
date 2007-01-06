@@ -342,7 +342,7 @@ void initMenu(Object* obj) {
 	gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_DEFAULT;
 
 	if (hasBallTexture()) {
-		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_BASKETBALL;
+		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_TEXTURE;
 	}
 	
 	if (hasBallReflection()) {

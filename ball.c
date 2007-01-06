@@ -34,12 +34,6 @@
 #define CUBE_MAP_SIZE 128
 
 
-#define BALL_LAYOUT_DEFAULT 0
-#define BALL_LAYOUT_BASKETBALL 1
-#define BALL_LAYOUT_METAL 2
-#define BALL_LAYOUT_GOLFBALL 3
-#define BALL_LAYOUT_GOLFBALL_METAL 4
-
 RenderTarget gTargetCube[6];
 static Viewport gViewportCube[6];
 
@@ -231,7 +225,7 @@ void initBall(void) {
 		initCubeMap();
 	}
 
-	gTextureBall = loadTexture("data/basketball.tga", 0);
+	gTextureBall = loadTexture("data/ball.tga", 0);
 
 	setObjectScalef(&sgoBall, BALL_RADIUS);
 }
@@ -429,7 +423,7 @@ void activateBallShader(void) {
 		case BALL_LAYOUT_DEFAULT:
 			setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
 			break;
-		case BALL_LAYOUT_BASKETBALL:
+		case BALL_LAYOUT_TEXTURE:
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, gTextureBall);
 			break;
@@ -499,7 +493,7 @@ void deactivateBallShader(void) {
 	switch (gBallLayout) {
 		case BALL_LAYOUT_DEFAULT:
 			break;
-		case BALL_LAYOUT_BASKETBALL:
+		case BALL_LAYOUT_TEXTURE:
 			glDisable(GL_TEXTURE_2D);
 			break;
 		case BALL_LAYOUT_METAL:

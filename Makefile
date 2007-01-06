@@ -1,9 +1,9 @@
-CC := gcc
-CFLAGS := -ansi -pedantic -Wall
+CC ?= gcc
+CFLAGS ?= -O3
+LDFLAGS ?=
 
-CFLAGS += -O3
+CFLAGS += -ansi -pedantic -Wall
 
-LDFLAGS :=
 LIBS := -lm
 PROJECT := cgmadness
 SHADER := golfball spotlight
@@ -20,12 +20,12 @@ else
 endif
 
 EXEC    :=  $(PROJECT)$(EXECSUFFIX)
-DEBUG   :=  $(PROJECT).debug$(EXECSUFFIX)
-PROFILE :=  $(PROJECT).profile$(EXECSUFFIX)
 
 SRC     :=  $(wildcard *.c)
 OBJS    :=  $(SRC:%.c=build/%.o)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
+DLL     :=  glut32.dll glew32.dll
+LICENSE :=  license.txt
 
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
@@ -52,17 +52,6 @@ build/%.o: %.c
 	@mkdir -p "$(@D)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
-# Profile-Version
-
-$(PROFILE): $(OBJS:%.o=%.profile.o)
-	@echo "  LINK (PROFILE) $@"
-	@$(CC) $(LDFLAGS) -pg $^ $(LIBS) -o $@
-
-build/%.profile.o: %.c
-	@echo "  CC (PROFILE) $@"
-	@mkdir -p "$(@D)"
-	@$(CC) -c $(CFLAGS) -pg $< -o $@
-
 # Archiv bauen um ausführbares Programm zu verschicken
 TAR := $(PROJECT).tar.bz2
 SRC_TAR := $(PROJECT)-src.tar.bz2
@@ -73,21 +62,21 @@ CLEAN += $(TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) 
+$(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) $(LICENSE)
 	@echo "  TAR $@"
 	@tar -C .. --no-recursion -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: tar
 tar: $(TAR)
 
-$(PROJECT).tar.bz2: $(EXEC) $(DATA)
+$(PROJECT).tar.bz2: $(EXEC) $(DATA) $(LICENSE)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: zip
 zip: $(ZIP)
 
-$(PROJECT).zip: $(EXEC) $(CMD) $(DATA)
+$(PROJECT).zip: $(EXEC) $(CMD) $(DATA) $(DLL) $(LICENSE)
 	@echo "  ZIP $@"
 	@zip $@ $^ > /dev/null
 
