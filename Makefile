@@ -76,14 +76,14 @@ $(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) $(LICENSE)
 .PHONY: tar
 tar: $(TAR)
 
-$(PROJECT).tar.bz2: $(EXEC) $(DATA) $(LICENSE)
+$(TAR): $(EXEC) $(DATA) $(LICENSE)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: zip
 zip: $(ZIP)
 
-$(PROJECT).zip: $(EXEC) $(CMD) $(DATA) $(DLL) $(LICENSE)
+$(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(LICENSE)
 	@echo "  ZIP $@"
 	@zip $@ $^ > /dev/null
 
