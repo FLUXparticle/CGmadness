@@ -48,6 +48,9 @@ int main(int argc, char* argv[]) {
 	char* file = "";
 	int i;
 
+	printf("CG Madness, Copyright (C) 2007 Sven Reinck\n");
+	printf("CG Madness comes with ABSOLUTELY NO WARRANTY;\n");
+
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 		
