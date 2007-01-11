@@ -68,9 +68,6 @@ static int* gIndices;
 static int gCntSpotlightIndices;
 static int* gSpotlightIndices;
 
-/*
- * Setzt die aktuell zu verwendende Farbe
- */
 void setColor(float r, float g, float b, float a) {
 	gDefaultColor.r = r;
 	gDefaultColor.g = g;
@@ -78,17 +75,11 @@ void setColor(float r, float g, float b, float a) {
 	gDefaultColor.a = a;
 }
 
-/*
- * Setzt die aktuelle Standard Texturkoordinate 
- */
 void setTexCoord(float u, float v) {
 	gDefaultTexCoord.x = u;
 	gDefaultTexCoord.y = v;
 }
 
-/*
- * Setzt die aktuelle Standard Normale
- */
 void setNormal(float x, float y, float z) {
 	gDefaultNormal.x = x;
 	gDefaultNormal.y = y;
@@ -103,10 +94,6 @@ float max(float a, float b) {
 	return (a > b) ? a : b;
 }
 
-/*
- * Fügt einen neuen Vertex in das Vertexarray ein
- * mit den Standardwerten für Farbe, Normale und Textur 
- */
 void addVertex(float x, float y, float z) {
 	float LdotN;
 
@@ -125,9 +112,6 @@ void addVertex(float x, float y, float z) {
 	sgCntVertices++;
 }
 
-/*
- * Fügt dem Feld ein neues Quadrat hinzu
- */
 void addSquare(Square* square) {
 	int i;
 	setNormal(square->normal.x, square->normal.y, square->normal.z);
@@ -140,9 +124,6 @@ void addSquare(Square* square) {
 
 #define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * sgCntVertices, (x), GL_STATIC_DRAW_ARB);
 
-/*
- * Initialiserungern für das Spielfeld
- */
 void initGameField(void) {
 	int x, y;
 	int i;
@@ -151,7 +132,6 @@ void initGameField(void) {
 
 	Square square;
 
-	/* Arrays anlegen */
   MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
 	MALLOC(gColors, sgMaxVertices * sizeof(Color4));
 
@@ -163,7 +143,6 @@ void initGameField(void) {
 		for (x = 0; x < sgLevel.size.x; x++) {
 			sgIndexVertices[index++] = sgCntVertices;
 
-			/* Default Farbe ändern bei Start- / Zielfeld */	
 			if (sgLevel.start.x == x && sgLevel.start.y == y) {
 				setColor(0.0f, 1.0f, 0.0f, 1.0f);
 			} else if (sgLevel.finish.x == x && sgLevel.finish.y == y) {
@@ -172,7 +151,6 @@ void initGameField(void) {
 				setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 
-			/* Deckel der Blöcke zeichnen */
 			getRoofSquare(x, y, &square);
 
 			addSquare(&square);
@@ -181,7 +159,6 @@ void initGameField(void) {
 
 			setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			
-			/* Seitenwände der Blöcke zeichnen */
 			for (i = 0; i < 4; i++) {
 				if (getSideSquare(x, y, i, &square)) {
 					addSquare(&square);
@@ -193,7 +170,6 @@ void initGameField(void) {
 		}
 	}
 
-	/* Verwendung des Vertexbuffers, wenn vorhanden */
 	if (hasVertexbuffer()) {
 		glGenBuffersARB(4, gVBuffers);
 
@@ -213,21 +189,15 @@ void initGameField(void) {
 	printf("sgMaxVertices: %d\n", sgMaxVertices);
 	printf("sgCntVertices: %d\n", sgCntVertices);
 
-	/* Indices anlegen */
 	gCntIndices = 0;
 	MALLOC(gIndices, sgCntVertices * sizeof(int));
 
-	/* Spotlight anlegen */
 	if (hasSpotlight()) {
 		gCntSpotlightIndices = 0;
 		MALLOC(gSpotlightIndices, sgCntVertices * sizeof(int));
 	}
 }
 
-/*
- * Initialisierungen rückgängig machen,
- * Speicher freigeben
- */
 void destroyGameField(void) {
 	if (hasSpotlight()) {
   	FREE(gSpotlightIndices);
@@ -286,9 +256,6 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
 	}
 }
 
-/*
- * Sielfelddaten aktualisieren
- */
 void updateGameField(void) {
 	static int mxFog = 0;
 	static int myFog = 0;
@@ -297,7 +264,6 @@ void updateGameField(void) {
 	int my = floor(sgCamera.y);
 	
 	if (mx != mxFog || my != myFog) {
-		/* Bei eingeschränkter Sicht, nur einen Ausschnitt rendern */	
 		if (useFog()) {
 			int x1 = max(mx - FOG_REGION, 0);
 			int y1 = max(my - FOG_REGION, 0);
@@ -350,10 +316,6 @@ void updateGameField(void) {
 	}
 }
 
-/*
- * Komplettes Spielfeldzeichnen, 
- * wenn möglich mit VertexBuffer
- */
 void drawGameField(void) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -388,8 +350,7 @@ void drawGameField(void) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
 
-  /* Bei Nebel nur sichtbare Vertices zeichnen, sonst alle */
-	glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
+		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
 	
 	glDisable(GL_TEXTURE_2D);
 
@@ -406,9 +367,6 @@ void drawGameField(void) {
 	glDisable(GL_COLOR_MATERIAL);
 }
 
-/*
- * Elemente die zum Spotlight gehören zeichnen 
- */
 void drawGameFieldSpotlightParts(void) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -431,7 +389,6 @@ void drawGameFieldSpotlightParts(void) {
 		glNormalPointer(GL_FLOAT, 0, sgNormals);
 	}
 
-		/* Spotlight Vertices zeichnen */
 		glDrawElements(GL_QUADS, gCntSpotlightIndices, GL_UNSIGNED_INT, gSpotlightIndices);
 
 

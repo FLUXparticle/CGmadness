@@ -39,16 +39,11 @@ typedef struct {
 	GLuint stackBottom;
 } SelectBuffer;
 
-/*
- * Mouse-Click Callback:
- * Ermittelt, ob ein Objekt geklickt wurde und
- * löst entpsrechende Aktionen aus
- */
 void mouseButton(int button, int state, int x, int y) {
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		int cntHits = pick(x, y);
 
-		/* Select-Buffer auswerten */
+		/* process selectBuffer */
 		if (cntHits > 0) {
 			GLuint minDepth = 0xffffffff;
 			GLuint name = -1;
@@ -56,7 +51,7 @@ void mouseButton(int button, int state, int x, int y) {
 			int i;
 			SelectBuffer* buf;
 
-			/* Den Namen des Objektes herausfinden, dass am nächsten an der Kamera gepickt wurde. */
+			/* find object which was nearest to camera */
 			for (i = 0; i < cntHits; i++) {
 				buf = (SelectBuffer*) ptr;
 
@@ -77,13 +72,7 @@ void mouseButton(int button, int state, int x, int y) {
 	}
 }
 
-/*
- * Registriert Mouse-Button-Callback (wird ausgefuehrt, wenn eine Maustaste
- * gedrueckt oder losgelassen wird) 
- */
 void startMouse(void) {
-	/* SelectBuffer initialisieren */
 	glSelectBuffer(SELECT_BUFFER_SIZE, gSelectBuffer);
-	
   glutMouseFunc(mouseButton);
 }

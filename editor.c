@@ -52,9 +52,6 @@ static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
 
-/* 
- * Update Routine der EditorKamera
- */
 void updateEditorCamera(double interval, Vector3 ball) {
 	static float distance = 5.0f;
 	static float height = 2.0f;
@@ -62,31 +59,31 @@ void updateEditorCamera(double interval, Vector3 ball) {
 	float angle;
 	Vector3 marker;
 
-  /* Kamera per Keyboard anpassen */
+  /* camera controls for editor */
 
-	/* Zoom */
+	/* zoom */
 	if (isKeyPressed('c')) distance += 0.1f;
 	if (isKeyPressed('v') && distance > 0.5) distance -= 0.1f;
 
-	/* Kamera um das Spielobjekt rotieren */
+	/* rotation */
 	if (wasKeyPressed('b')) gCamAngle--; 
 	if (wasKeyPressed('n')) gCamAngle++;
 
 	if (gCamAngle <  0) gCamAngle += 4;
 	if (gCamAngle >= 4) gCamAngle -= 4;
 
-	/* Hoehenaenderung */
+	/* height */
 	if (isKeyPressed('.')) height += 0.1f;
 	if (isKeyPressed(',')) height -= 0.1f;
 	
-	/* Kamerablickpunkt bestimmen */
+	/* look at */
 	marker.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 	marker.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
 	marker.z = ball.z;
 
 	angle = gCamAngle * 90.0f;
 
-	/* Neue Kameraposition berechnen */
+	/* new camera position */
 	dest.x =  sin(angle * PI / 180.0f) * distance + marker.x;
 	dest.y = -cos(angle * PI / 180.0f) * distance + marker.y;
 	dest.z = ball.z + height;
@@ -94,9 +91,6 @@ void updateEditorCamera(double interval, Vector3 ball) {
 	moveCamera(interval, dest, marker);
 }
 
-/*
- * Veraendert jedes einzelne Feld getrennt im aktuell markierten Bereich
- */
 void changeMarkerAreaSingle(int incz, int incdzx, int incdzy) {
 	int i;
 	int j;
@@ -120,9 +114,6 @@ void changeMarkerAreaSingle(int incz, int incdzx, int incdzy) {
 		}
 }
 
-/*
- * Verändert den aktuell markierten Bereich
- */
 void changeMarkerArea(int incdzx, int incdzy) {
 	int x;
 	int y;
@@ -135,19 +126,15 @@ void changeMarkerArea(int incdzx, int incdzy) {
 		incy = -(gCurEnd.y - gCurStart.y) * incdzy;
 		
 		for (y = gCurStart.y; y <= gCurEnd.y; y++) {
-			
-			/* Aktuelle Feldwerte aus dem Array zwischenspeichern */
 			Plate* p = &sgLevel.field[x][y];
   		int z = p->z;
 			int dzx = p->dzx;
 			int dzy = p->dzy;
 			
-			/* Neue gewünschte Position und Ausrichtung bestimmen */	
 			z += incx + incy;
 			dzx += incdzx;
 			dzy += incdzy;
 			
-			/* Neue Werte zulässig? */
 			if ((z - (abs(dzx) + abs(dzy)) >= 0) && (z - abs(dzx + dzy) >= 0))  {
 				p->z = z;
 				p->dzx = dzx;
@@ -161,10 +148,6 @@ void changeMarkerArea(int incdzx, int incdzy) {
 	}
 }
 
-/*
- * Modifiziert einen übergebene Wert, liegt das Ergebnis außerhalb des
- * angegebenen Bereichs, wird dieser auf den jeweiligen Grenzwerte gesetzt
- */
 void modBetween(int* value, int mod, int min, int max) {
 	*value += mod;
 
@@ -175,9 +158,6 @@ void modBetween(int* value, int mod, int min, int max) {
 	}
 }
 
-/*
- * Bewegt den Marker entsprechend der aktuellen Kamerasicht
- */
 void moveMarker(int markermode, int dx, int dy) {
 	if (markermode) {
 		modBetween(&gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
@@ -194,9 +174,6 @@ void moveMarker(int markermode, int dx, int dy) {
 	}
 }
 
-/*
- * Hilfsfunktionen: Rufen moveMarker mit den richtigen Sinus und Cosinus Werten auf
- */
 void moveMarkerLeft(int markermode) {
 	moveMarker(markermode, -gCos[gCamAngle], -gSin[gCamAngle]);
 }
@@ -213,14 +190,11 @@ void moveMarkerDown(int markermode) {
 	moveMarker(markermode,  gSin[gCamAngle], -gCos[gCamAngle]);
 }
 
-/* 
- * Berechnungen fuer die Spielanimation
- */
 void animateEditor(double interval) {
 	static int markermode = 0;
 	static int singlemode = 0;
-	
-	/* Steigung und HÃ¶he in AbhÃ¤ngigkeit der Benutzereingaben veraendern */
+
+	/* editor controls for changing environment */	
 	if (wasKeyPressed('a')) {
 		if (singlemode) {
 			changeMarkerAreaSingle(0, gCos[gCamAngle], gSin[gCamAngle]);
@@ -262,8 +236,7 @@ void animateEditor(double interval) {
 		changeMarkerAreaSingle(1, 0, 0)	;
 	}
 	
-	 
-	/* EditFunktionen schalten z.B. Start und Enpunkt setzen */
+	/* editor controls for current field */
 	if (wasKeyPressed('1')) {
 		if (gCurStart.x != sgLevel.finish.x || gCurStart.y != sgLevel.finish.y) {
 			sgLevel.start.x = gCurStart.x;
@@ -286,8 +259,7 @@ void animateEditor(double interval) {
 		singlemode = !singlemode;
 	}
 
-	/* Marker bewegen */
-
+	/*  editor controls for moving selection */
 	if (wasCursorPressed(CURSOR_LEFT)) {
 		moveMarkerLeft(markermode);
 	}
@@ -305,35 +277,25 @@ void animateEditor(double interval) {
 	}
 }
 
-
-/*
- * Aktualisieren der Szene / Reaktion auf Benutzereingaben
- */
 void updateEditor(double interval) {
 	Vector3 markerPos;
   
-	/* Spiel durch Benutzer beenden? */ 
 	if (isKeyPressed(KEY_ESC)) {
 		saveFieldToFile(gFilename);
 		exit(0);
 	}
 	
-  /* Neuen Kamerablickpunkt bestimmen */
 	markerPos.x = gCurStart.x + 0.5f;
 	markerPos.y = gCurStart.y + 0.5f;
 	markerPos.z = SCALE_Z * sgLevel.field[gCurStart.x][gCurStart.y].z;
 
 	updateEditorCamera(interval, markerPos);
 	
-  /* Editor animieren lassen */
 	if (gIsEditorRunning) {
 		animateEditor(interval);
 	}
 }
 
-/*
- * Zeichnet das komplette Spielfeld
- */
 void drawEditorField(void) {
 	Square square;
 	int i, j;
@@ -341,11 +303,9 @@ void drawEditorField(void) {
 
 	glBegin(GL_QUADS);
 	
-	/* Alle Felder durchlaufen */
 	for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
 		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
 			
-			/* Markierungen der Sonderfelder setzen */
 			if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y) {
 				setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
 			} else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y) {
@@ -356,7 +316,6 @@ void drawEditorField(void) {
 				setAttributes(1.0f, 1.0f, 1.0f, 0.2f, 0.8f, 0.0f);
 			}
 			
-			/* Deckel zeichnen */
 			getRoofSquare(cur.x, cur.y, &square);
 
 			glNormal3fv(&square.normal.x);
@@ -365,7 +324,6 @@ void drawEditorField(void) {
 				glVertex3fv(&square.vertices[i].x);
 			}
 
-			/* Restliche vier Flaechen zeichnen */
 			for (j = 0; j < 4; j++) {
 				if (getSideSquare(cur.x, cur.y, j, &square)) {
 					glNormal3fv(&square.normal.x);
@@ -380,37 +338,28 @@ void drawEditorField(void) {
   glEnd();		
 }
 
-/*
- * Szenegraph aufbauen
- */
 void initEditor(char* filename) {
 	static Object oEditor;
 	static Object oField;
 
-	/* Lichtquelle setzen */
 	glColor3f(1.0f, 1.0f, 1.0f);
 	gEditorMainLight = addPointLight(30.0f, 30.0f, 20.0f);
 
-	/* Leveldatei laden */
 	gFilename = filename;
 	loadFieldFromFile(gFilename);
 
-	/* Scene konfigurieren */
 	initObjectGroup(&oEditor);
 	sgWindowViewport.world = &oEditor;
 	setUpdateFunc(updateEditor);
 
-	/* Spielfeld-Objekt erzeugen */
 	initObject(&oField, drawEditorField);
 	oField.texture = sgLevel.texture;
 	addSubObject(&oEditor, &oField);
 
-	/* Markierung initialisieren */
 	gCurStart.x = 0;
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	/* Aktivieren */
 	gIsEditorRunning = 1;
 }

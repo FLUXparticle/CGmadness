@@ -34,17 +34,12 @@
 
 #define SCALE 0.1f
 
-/* Gibt einen String mit Hilfe von Glut aus */
 void drawBitmapText(char *str) {
 	for (; *str; str++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
 	}
 }
 
-/*
- * Fügt einen Buchstaben zu einer ObjectGroup hinzu.
- * Es müssen die Renderfunktion und die Vertexliste übergeben werden, damit berechnet werden kann, wie breit der Buchstabe ist.
- */
 void addChar(Object* obj, float* x, funcDraw draw, float width) {
 	Object* oChar;
 
@@ -60,9 +55,6 @@ void addChar(Object* obj, float* x, funcDraw draw, float width) {
 	addSubObject(obj, oChar);
 }
 
-/*
- * Erzeugt ein 3D-Text Objekt
- */
 float makeTextObject(Object* obj, char* text) {
 	char* s;
 	float x = 0;
@@ -89,4 +81,3 @@ float makeTextObject(Object* obj, char* text) {
 
 	return x;
 }
-

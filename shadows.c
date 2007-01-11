@@ -76,17 +76,13 @@ typedef struct {
 } Cubic;
 
 /*
- * WARNING Die Lichtquelle muss bei der Projektion immer über dem Punkt liegen,
- * sonst geht die Projektion in die flasche Richtung
+ * WARNING: light source must be heigher than projected point
  */
 Vector3 projection(Vector3 light, Vector3 p) {
 	Vector3 diff = norm(sub(p, light));
 	return add(light, scale(-(light.z + 1.0f) / diff.z, diff));
 }
 
-/*
- * Berechnet die Shadow-Volumes für das aktuelle Level
- */
 void initShadowVolumes(void) {
 	Vector3 light;
 
@@ -96,7 +92,7 @@ void initShadowVolumes(void) {
 
 	glGetIntegerv(GL_STENCIL_BITS, &gStencilBits);
 
-  /* Initialisierungen */ 
+  /* init */ 
 	gMaxFieldShadowVolumeQuads = 6 * sgMaxQuads;
 	gMaxFieldShadowVolumeVertices = 4 * gMaxFieldShadowVolumeQuads;
 
@@ -112,8 +108,7 @@ void initShadowVolumes(void) {
 	light.y = sgLight[0].pos[1];
 	light.z = sgLight[0].pos[2];
 
-	/* Spielfeldschatten */
-	
+	/* field shadows */
 	q = 0;
 	for (p = 0; p < sgMaxPlates; p++) {
 		int k;
@@ -124,13 +119,13 @@ void initShadowVolumes(void) {
 				for (i = 0; i < 4 ; i++) {
 					float d = dot(sub(light, sgVertices[q + i]), sgNormals[q + i]);
 					/*
-					 * Wenn d < 0, dann liegt diese Fläche im Schatten und es reicht, wenn solche Flächen ein Shadow-Volume bekommen.
+					 * if d < 0, plate is in shadow and only those need a shadow volume
 					 */
 					if (d < 0) {
 						shadow = 1;
 					}
 					/*
-					 * Flächen, die flach auf dem Boden liegen, brauchen auch kein Shadow-Volume.
+					 * plates, that lie on the ground does not need a shadow volume
 					 */
 					if (sgVertices[q + i].z > 0) {
 						needed = 1;
@@ -140,17 +135,14 @@ void initShadowVolumes(void) {
 				if (needed && shadow) {
 					Vector3 vFar[4];
 
-					/* Rückwand berechnen */
 					for (i = 0; i < 4; i++) {
 						vFar[i] = projection(light, sgVertices[q + i]);
 					}
 
-					/* Deckel */
 					for (i = 3; i >= 0; i--) {
 						gFieldShadowVolume[gCntFieldShadowVolume++] = sgVertices[q + i];
 					}
 				
-					/* Seitenflächen */	
 					for (i = 0; i < 4; i++) {
 						int j = (i + 1) % 4;
 						gFieldShadowVolume[gCntFieldShadowVolume++] = vFar[i];
@@ -159,7 +151,6 @@ void initShadowVolumes(void) {
 						gFieldShadowVolume[gCntFieldShadowVolume++] = vFar[j];
 					}
 
-					/* Rückwand */
 					for (i = 0; i < 4; i++) {
 						gFieldShadowVolume[gCntFieldShadowVolume++] = vFar[i];
 					}
@@ -170,9 +161,6 @@ void initShadowVolumes(void) {
 		}
 	}
 
-	/*
-	 * Shadow-Volumes in den Speicher der Grafikkarte laden
-	 */
 	if (hasVertexbuffer()) {
 		glGenBuffersARB(1, &gVBufferFieldSchadowVolume);
 
@@ -183,9 +171,6 @@ void initShadowVolumes(void) {
 	printf("MAX_FIELD_SHADOW_VOLUME_VERTICES: %d\n", gMaxFieldShadowVolumeVertices);
 	printf("gCntFieldShadowVolume: %d\n", gCntFieldShadowVolume);
 
-	/*
-	 * Spotlight-Shader laden, falls noch nicht geschehen
-	 */
 	if (hasShader() && !gSpotlightShader) {
 		gSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
 		if (gSpotlightShader) {
@@ -194,9 +179,6 @@ void initShadowVolumes(void) {
 	}
 }
 
-/*
- * Gibt den Speicherplatz wieder frei, der für Shadow-Volumes reserviert wurde.
- */
 void destroyShadowVolumes(void) {
 	if (hasVertexbuffer()) {
 		glDeleteBuffersARB(1, &gVBufferFieldSchadowVolume);
@@ -204,9 +186,6 @@ void destroyShadowVolumes(void) {
 	FREE(gFieldShadowVolume);
 }
 
-/*
- * Rendert die Shadow-Volunmes des Spielfeldes
- */
 void drawFieldShadowVolume(void) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -226,14 +205,10 @@ void drawFieldShadowVolume(void) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-/*
- * Rendert alle Shadow-Volumes
- */
 void renderShadowVolumes(void) {
 	int i;
 
-	/* Schatten des Balls */
-
+	/* ball shadow */
 	glBegin(GL_POLYGON);
 	for (i = BALL_SHADOW_VERTICES - 1; i >= 0; i--) {
 		glVertex3fv(&gBallShadowVolume[2 * i + 1].x);
@@ -254,14 +229,11 @@ void renderShadowVolumes(void) {
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	/* Schatten des Spielfeldes */
+	/* field shadow */
 
 	drawFieldShadowVolume();
 }
 
-/*
- * Passt das Shadow-Volume des Balls an
- */
 void updateShadows(void) {
 	int i;
 	int cntVertices = 0;
@@ -292,10 +264,6 @@ void updateShadows(void) {
 	}
 }
 
-/*
- * Füllt den gesammten Framebuffer. Dadurch kann z.B. die BlendingFunction auf den gesammten Framebuffer oder 
- * auch nur auf den durch den StencilBuffer freigegebenen Bereich angewendet werden.
- */
 void fillWholeFramebuffer(void) {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -318,9 +286,6 @@ void fillWholeFramebuffer(void) {
 		glEnable(GL_DEPTH_TEST);
 }
 
-/*
- * Kümmert sichn um das Rendern des Spielfeldes incl. Schatten, Spotlight und Ball
- */
 void drawShadows(int shouldDrawBall) {
   int stencilSpotlightMask = 1 << (gStencilBits - 1);
   int stencilShadowMask = stencilSpotlightMask - 1;
@@ -336,16 +301,13 @@ void drawShadows(int shouldDrawBall) {
 			glColorMask(0,0,0,0);
 
 			/*
-			 * Z-Buffer und Stencil-Buffer für den Ball updaten.
-			 * Der Ball muss leider später durch den Stencil-Buffer neu
-			 * gezeichnet werden, da es sonst zu Z-Fighting kommt.
+			 * draw ball for z-buffer und stencil-buffer
 			 */
 			if (shouldDrawBall) {
 				drawGameBall();
 			}
 
-			/* Shadow-Volume in den Stencil-Buffer rendern */
-
+			/* render shadow volumes to stencil buffer */
 			glEnable(GL_STENCIL_TEST);
 
 			glDepthMask(0);
@@ -372,25 +334,23 @@ void drawShadows(int shouldDrawBall) {
 			} else {
 				glStencilMask(stencilShadowMask);
 
-				/* Rückseiten zeichen ... */
+				/* increment back-faces */
 				glCullFace(GL_FRONT);
-				/* ... und dabei runterzählen */
 				glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
 
 					renderShadowVolumes();
 				
-				/* Vorderseiten zeichen ... */
+				/* decrement front-faces */
 				glCullFace(GL_BACK);
-				/* ... und dabei hochzählen */
 				glStencilOp(GL_KEEP, GL_DECR, GL_KEEP);
 
 					renderShadowVolumes();
 			}
 
-			/* Scene an den Stellen, wo Schatten ist, ohne Licht rendern */
+			/* render shadow parts without light */
 			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-			/* Schattenbereiche in den Alpha-Kanal eintragen */
+			/* write shadow parts to alpha-channel */
 			glColorMask(0,0,0,1);
 			glStencilFunc(GL_NOTEQUAL, 0, stencilShadowMask);
 
@@ -398,7 +358,7 @@ void drawShadows(int shouldDrawBall) {
 				fillWholeFramebuffer();
 		}
 		
-		/* Alles mit dem Alpha-Kanel blenden */
+		/* blend everything with alpha channel */
 		glEnable(GL_BLEND);
 		glColorMask(1,1,1,1);
 		glBlendFunc(GL_DST_COLOR, GL_DST_ALPHA);
@@ -409,8 +369,7 @@ void drawShadows(int shouldDrawBall) {
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 		/*
-		 * Zeichnet den Bereich des Spielfeldes, ob den das Spotlight fällt mit aktiviertem Spotlight-Shader und 
-		 * markiert die bereits gezeichneten Pixel im StencilBuffer.
+		 * render parts of field with spotlight and mark in stencil-buffer
 		 */
 		if (useSpotlight()) {
 			glUseProgram(gSpotlightShader);
@@ -423,7 +382,7 @@ void drawShadows(int shouldDrawBall) {
 		}
 
 		/*
-		 * Der restliche Bereich des Framebuffers wird mittels Alpha-Blending auf die richtige Hilligkeit gebracht.
+		 * alpha blending to bring everything to correct brightness
 		 */
 		if (sgRenderPass > 1) {
 			glStencilFunc(GL_EQUAL, 0, stencilSpotlightMask);
@@ -437,7 +396,7 @@ void drawShadows(int shouldDrawBall) {
 	}
 
 	if (sgRenderPass > 2) {
-		/* Ball */
+		/* draw ball */
 
 		glEnable(GL_LIGHTING);
 		glColorMask(1,1,1,1);
@@ -452,13 +411,13 @@ void drawShadows(int shouldDrawBall) {
 		if (shouldDrawBall) {
 			activateBallShader();
 
-			/* Ball im Licht */
+			/* ball in light */
 
 			glStencilFunc(GL_EQUAL, 0, stencilShadowMask);
 
 				drawGameBall();
 
-			/* Ball im Schatten */
+			/* ball in shadow */
 
 			toggleLight(sgGameMainLight);
 
@@ -475,7 +434,7 @@ void drawShadows(int shouldDrawBall) {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
-	/* Normalen Renderzustand wieder herstellen */
+	/* back to normal */
 
 	glDisable(GL_BLEND);
 

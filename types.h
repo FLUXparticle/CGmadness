@@ -24,12 +24,12 @@
 #define _types_h_
 
 /*
- * Namens-Konventionen für Variablen:
- * Objekte                o
+ * namen conventions for variables:
+ * type Object            o
  * global                 g
- * globale Objekte        go
+ * globale Object         go
  * super global           sg
- * super globale Objekte  sgo
+ * super globale Objecte  sgo
  */
 
 #define PI 3.14159265358979323846

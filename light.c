@@ -44,7 +44,6 @@ void setLightColor(int id, float* color) {
 	glLightfv(id, GL_SPECULAR, color);
 }
 	
-/* Lichtquelle ein oder ausschalten */
 void toggleLight(int index) {
 	Light* light = &sgLight[index];
 
@@ -57,7 +56,6 @@ void toggleLight(int index) {
 	}
 }
 
-/* Lichtquelle hinzufuegen */
 int addLight(float x, float y, float z) {
 	int light = gCntLights++;
 	Light* newLight = &sgLight[light];
@@ -78,12 +76,10 @@ int addLight(float x, float y, float z) {
 	return light;
 }
 
-/* Punktlichtquelle erzeugen */
 int addPointLight(float x, float y, float z) {
 	return addLight(x, y, z);
 }
 
-/* Spotlight erzeugen */
 int addSpotLight(float x, float y, float z, float dx, float dy, float dz, float exponent, float cutoff) {
 	int light = addLight(x, y, z);
 	Light* newLight = &sgLight[light];
@@ -99,9 +95,6 @@ int addSpotLight(float x, float y, float z, float dx, float dy, float dz, float 
 	return light;
 }
 
-/*
- * Setzt alle Lichtquellen, damit diese am selben Ort bleiben, auch wenn sich die Kamera bewegt.
- */
 void setLights(void) {
 	float ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	int i;

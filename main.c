@@ -42,19 +42,18 @@ void usage(void) {
 	printf("usage: cgmadness (--editor <level> (--size x y))\n");
 }
 
-/* Hauptprogramm */
 int main(int argc, char* argv[]) {
 	int mode = 0;
 	char* file = "";
 	int i;
 
-	printf("CG Madness, Copyright (C) 2007 Sven Reinck\n");
-	printf("CG Madness comes with ABSOLUTELY NO WARRANTY;\n");
+	printf("CG Madness, Copyright (C) 2007  Sven Reinck\n");
+	printf("CG Madness comes with ABSOLUTELY NO WARRANTY\n");
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 		
-	/* Parameter parsen */
+	/* read parameters */
 	for (i = 1; i < argc; ) {
 		if (strcmp(argv[i], "--editor") == 0) {
 			i++;
@@ -93,10 +92,8 @@ int main(int argc, char* argv[]) {
   glutInitWindowSize(700, 500);
   glutInitWindowPosition(0, 0);
 
-  /* Glut initialisieren */
   glutInit(&argc, argv);
 
-  /* Erzeugen des Fensters */
   if (!glutCreateWindow("CG Madness")) {
 		printf("Could not create window :(\n");
     return 1;
@@ -112,31 +109,23 @@ int main(int argc, char* argv[]) {
 	
 	/* ---- */
 
-  /* Hintergrundfarbe setzen*/
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	/* Z-Buffer aktivieren */
 	glEnable(GL_DEPTH_TEST);
 	
-	/* ??? */
-	glShadeModel(GL_SMOOTH);
+	/* per-vertex-fog */
+	glHint(GL_FOG_HINT, GL_FASTEST);
 
-	/* Per-Vertex-Fog */
-/*	glHint(GL_FOG_HINT, GL_FASTEST); */
-
-	/* Normalen normalisieren */
 	glEnable(GL_NORMALIZE);
 
-	/* Polygonrueckseiten nicht anzeigen */
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
 	/* ---- */
 
-  /* Keyboardhandler */ 
   startKeyboard();
 
-  /* Scene erstellen */
+  /* start Editor or Game */
 	switch (mode) {
 	case 1:
 	  initEditor(file);
@@ -148,15 +137,12 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 	
-  /* Die benötigten Zeichenfunktionen in GLUT registrieren */
   startDisplay();
 	
   startMouse();
 
-  /* Timerfunktion mit Wiedeholrate registrieren */ 
   startTimer(FRAMES_PER_SECOND);
 
-  /* Hauptroutine */
   glutMainLoop();
 
   return 0;

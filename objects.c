@@ -52,7 +52,7 @@ void drawSquare(void) {
 }
 
 /*
- * Daten für das Isokaeder
+ * data for icosahedron
  */
 
 #define X 0.525731112119133606
@@ -75,7 +75,7 @@ static int gIsokaederIndices[20][3] = {
 #define SUB_DIVS_DEPTH 3
 
 /*
- * WARNING: CNT_BALL_TRIANGLES muss immer (20 * (4 ^ SUB_DIVS_DEPTH)) sein.
+ * WARNING: CNT_BALL_TRIANGLES must be (20 * (4 ^ SUB_DIVS_DEPTH))
  */
 
 #define CNT_BALL_TRIANGLES (20 * 64)
@@ -86,9 +86,6 @@ static Vector3 gBallVertices[CNT_BALL_VERTICES];
 static Vector3 gBallTexCoordsDefault[CNT_BALL_VERTICES];
 static Vector3 gBallTexCoordsShader[CNT_BALL_VERTICES];
 
-/*
- * Unterteilt ein Dreieck des Isokaeders in vier kleinere und kümmert sich dabei um den hole-Vektor, der die Position eines Loches im Golfball angibt.
- */
 void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s) {
 	int i;
 	if (depth == 0) {
@@ -136,10 +133,6 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s) {
 	}
 }
 
-/*
- * Initialisiert die Vertices des Balls.
- * Muss einmal zu beginn des Programms aufgerufen werden.
- */
 void initObjects(void) {
 	int i, j;
 	
@@ -160,9 +153,6 @@ void initObjects(void) {
 	}
 }
 
-/*
- * Rendert den Ball. Entweder mit Texturekoordinaten für das Prozedurale-BumpMapping oder für eine einfache Kugel-Texture.
- */
 void drawBallObject(int shader) {
 	glVertexPointer(3, GL_FLOAT, 0, gBallVertices);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -184,7 +174,7 @@ void drawBallObject(int shader) {
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
-/* Ball-Explosion */
+/* ball explosion */
 
 /*
  * T1 < T2
@@ -221,7 +211,7 @@ float randFloat(void) {
 }
 
 /*
- * Muss vor jeder neuen Explosion aufgerufen werden
+ * WARNING: must be caled befor each new explosion
  */
 void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos, Vector3 endSpeed) {
 	int i;
@@ -279,7 +269,7 @@ float smallestError(float x) {
 }
 
 /*
- * Bewegt die einzelnen Explosionsteile und das Zentrum der Explosion auf einer Spline zum Bestimmungsort
+ * interpolate explosion's position to destination
  */
 int updateExplosion(double interval, Vector3* speed, Vector3* pos) {
 	int i;
@@ -303,8 +293,7 @@ int updateExplosion(double interval, Vector3* speed, Vector3* pos) {
 	for (i = 0; i < length(gFragments); i++) {
 		Vector3 rotError;
 
-		/* Position der Fragmente */
-
+		/* position */
 		gFragments[i].pos.x = 0.0f;
 		gFragments[i].pos.y = 0.0f;
 		gFragments[i].pos.z = 0.0f;
@@ -312,8 +301,7 @@ int updateExplosion(double interval, Vector3* speed, Vector3* pos) {
 		gFragments[i].pos = add(gFragments[i].pos, scale(b0 + b1, gFragments[i].offset)); 
 		gFragments[i].pos = add(gFragments[i].pos, scale(b2, gFragments[i].speed));
 
-		/* Rotation der Fragmente */
-
+		/* rotation */
 		gFragments[i].rotSpeed = sub(gFragments[i].rotSpeed, scale(T1 * interval, gFragments[i].rotSpeed));
 
 		rotError = sub(gFragments[i].rotSpeed, gFragments[i].rotation);
@@ -330,9 +318,6 @@ int updateExplosion(double interval, Vector3* speed, Vector3* pos) {
 	return gExplosionTime >= gMaxExplosionTime;
 }
 
-/*
- * Rendert die Explosionsteile an ihrer aktuellen Position
- */
 void drawExplosion(int shader) {
 	int i;
 	int j;

@@ -28,9 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
- * Liest eine komplette Textdatei als String ein 
- */
 char* textFileRead(char* fn) {
 	FILE* fp;
 	char* content = NULL;
@@ -56,9 +53,6 @@ char* textFileRead(char* fn) {
 	return content;
 }
 
-/*
- * Schreibt einen String in eine Textdatei
- */
 int textFileWrite(char *fn, char *s) {
 	FILE *fp;
 	int status = 0;

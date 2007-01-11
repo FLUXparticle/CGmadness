@@ -25,7 +25,7 @@
 #include "debug.h"
 
 /*
- * Ein einfaches Modul für eine dynamische Listen-Struktur
+ * a simple module for a linked list
  */
 
 List newNode(void* element, List next) {

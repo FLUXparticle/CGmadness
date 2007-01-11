@@ -58,6 +58,8 @@ int printInfoLog(GLhandleARB obj, char* text) {
 GLhandleARB makeShader(char* vertexShaderFilename, char* fragmentShaderFilename) {
 	char* vs;
 	char* fs;
+	int compiled;
+	int linked;
 
 	GLhandleARB v = glCreateShader(GL_VERTEX_SHADER);
 	GLhandleARB f = glCreateShader(GL_FRAGMENT_SHADER);
@@ -83,12 +85,16 @@ GLhandleARB makeShader(char* vertexShaderFilename, char* fragmentShaderFilename)
 	FREE(fs);
 
 	glCompileShader(v);
-	if (!printInfoLog(v, vertexShaderFilename)) {
+	printInfoLog(v, vertexShaderFilename);
+	glGetObjectParameterivARB(v, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+	if (!compiled) {
 		return 0;
 	}
 	
 	glCompileShader(f);
-	if (!printInfoLog(f, fragmentShaderFilename)) {
+	printInfoLog(f, fragmentShaderFilename);
+	glGetObjectParameterivARB(f, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+	if (!compiled) {
 		return 0;
 	}
 
@@ -98,7 +104,9 @@ GLhandleARB makeShader(char* vertexShaderFilename, char* fragmentShaderFilename)
 	glAttachShader(p, f);
 
 	glLinkProgram(p);
-	if (!printInfoLog(p, "Link")) {
+	printInfoLog(p, "Link");
+	glGetObjectParameterivARB(p, GL_OBJECT_LINK_STATUS_ARB, &linked);
+	if (!linked) {
 		return 0;
 	}
 

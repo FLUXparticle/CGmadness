@@ -59,17 +59,10 @@ int gCursorKeys[MAX_CURSORS];
 
 int gFunctionKeys[MAX_FUNCTION];
 
-/*
- * Funktionen zum Abfragen der Tasten-Zustände
- */
 int isPressed(int* key) {
 	return *key == GLUT_DOWN;
 }
 
-/*
- * Gibt zurück, ob eine Taste gedrückt wurde und löscht den Tastendruck aus dem Speicher,
- * damit nur einmal darauf reagiert wird.
- */
 int wasPressed(int* key) {
 	if (isPressed(key)) {
 		*key = GLUT_UP;
@@ -103,9 +96,6 @@ int wasFunctionPressed(int index) {
 	return index >= 1 && index < MAX_FUNCTION && wasPressed(&gFunctionKeys[index - 1]);
 }
 
-/*
- * Callback-Funktionen fÃ¼r den Keyboard-Handler
- */
 void keyboardDown(unsigned char key, int x, int y) {
 	gKeys[key] = GLUT_DOWN;
 }
@@ -147,9 +137,6 @@ void specialKeyUp(int key, int x, int y) {
 	}
 }
 
-/*
- * Richte Keyboard-Handler ein
- */
 void startKeyboard(void) {
 	int i;
 	for (i = 0; i < MAX_KEYS; i++) {
@@ -162,19 +149,8 @@ void startKeyboard(void) {
 		gFunctionKeys[i] = GLUT_UP;
 	}
 	
-	/* Tasten-Druck-Callback (wird ausfuehrt, wenn eine Taste gedrueckt wird) */
 	glutKeyboardFunc(keyboardDown);
-
-	/* Tasten-Loslass-Callback (wird ausfuehrt, wenn eine Taste
-	 * los gelassen wird) */
 	glutKeyboardUpFunc(keyboardUp);
-
-	/* Spezialtasten-Druck-Callback (wird ausfuehrt, wenn Spezialtaste
-	 * (F1 - F12, Links, Rechts, Oben, Unten, Bild-Auf, Bild-Ab, Pos1,
-	 * Ende oder Einfuegen ) gedrueckt wird) */
 	glutSpecialFunc(specialKeyDown);
-
-	/* Spezialtasten-Loslass-Callback (wird ausfuehrt, wenn eine
-	 * Spezialtaste los gelassen wird) */
 	glutSpecialUpFunc(specialKeyUp);
 }

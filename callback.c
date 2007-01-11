@@ -64,33 +64,22 @@ void addRenderTarget(RenderTarget* target) {
 }
 
 void framerate(void) {
-  /* Zeitpunkt der letzten Neuberechnung */
   static int timebase = 0;
-  /* Anzahl der Aufrufe seit letzter Neuberechnung */
   static int frameCount = 0;
-  /* aktuelle "Zeit" */
   static int time = 0;
 
-  /* Diesen Aufruf hinzuzaehlen */
   frameCount++;
 
-  /* seit dem Start von GLUT vergangene Zeit ermitteln */
   time = glutGet(GLUT_ELAPSED_TIME);
 
-  /* Eine Sekunde ist vergangen */
   if (time - timebase > 1000) {
-		/* FPS-Wert neu berechnen */
 		gFPS = frameCount * 1000.0 / (time - timebase);
 
-		/* Zureuecksetzen */
 		timebase = time;
 		frameCount = 0;
 	}
 }
 
-/*
- * Schaltet den Framebuffer um und löscht dessen Inhalt
- */
 void switchRenderTarget(RenderTarget* target) {
 	if (hasFramebuffer()) {
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, target->framebuffer);
@@ -107,9 +96,6 @@ void switchRenderTarget(RenderTarget* target) {
 	glViewport(0, 0, target->width, target->height);
 }
 
-/*
- * Callback-Funktion: Zeichnet alle registrierten Framebuffer neu
- */
 void display(void) {
 	List run;
 
@@ -123,7 +109,6 @@ void display(void) {
 
 			switchRenderTarget(target);
 			
-			/* Perspektiven-Modus */
 			glMatrixMode(GL_PROJECTION);
 			glLoadMatrixf(&v->projection[0][0]);
 			glScalef(aspect, 1.0f, 1.0f);
@@ -143,7 +128,7 @@ void display(void) {
 	}
 	glViewport(0, 0, gTargetWindow.width, gTargetWindow.height);
 
-	/* Orthogonal-Modus für die Framecounter ausgabe */
+	/* draw framerate */
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(&gProjectionText[0][0]);
 
@@ -159,7 +144,6 @@ void display(void) {
 		drawBitmapText(text);
 	}
 
-	/* Bild anzeigen */
 	glutSwapBuffers();
 	framerate();
 
@@ -171,22 +155,13 @@ void reshape(int w, int h) {
 	gTargetWindow.height = h;
 }
 
-/*
- * Registriert die Display-Methode und inizialisiert den Haupt-Viewport
- */
 void startDisplay(void) {
-	/** Allgemein **/
-
-	/* Pojektions-Matrix für Text setzen */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 	glGetFloatv(GL_PROJECTION_MATRIX, &gProjectionText[0][0]);
 
 	{
-		/*
-		 * Viewmatrix auf Einheits-Matrix setzen
-		 */
 		int x;
 		int y;
 		Viewport* v = &sgWindowViewport;
@@ -200,44 +175,34 @@ void startDisplay(void) {
 		initProjectMat(v->projection, FOV);
 	}
 
-	/* RenderTarget für Fenster erstellen */
+	/* RenderTarget for main window */
 	gTargetWindow.enabled = 1;
 	gTargetWindow.framebuffer = 0;
 	gTargetWindow.viewport = &sgWindowViewport;
 
 	gRenderTargets = prependElement(gRenderTargets, &gTargetWindow);
 
-	/* Reshape-Callback (wird ausgefuehrt, wenn neu gezeichnet wird
-	 * z.B. nach Erzeugen oder Groessenaenderungen des Fensters) */
 	glutReshapeFunc(reshape);
-
-	/* Display-Callback (wird an mehreren Stellen imlizit
-	 * oder explizit durch glutPostRedisplay angestossen) */
 	glutDisplayFunc(display);
-/*	glutIdleFunc(display); */
+
+	/* for tasting optimizations on fast linux machines */
+#if 0
+	glutIdleFunc(display);
+#endif
 }
 
 /*** Update ***/
 
 int gMillis;
 
-/*
- * Ruft regelmäßig die registrierte Update-Funktion auf, um das Spielgeschehen fortlaufen zu lassen.
- * Dabei wird darauf geachtet, dass die Update-Funktion mit einem möglichst Konstantem intervalwert aufgerufen wird,
- * da die Physik-Funktionen im Spiel darauf angewiesen sind, auch wenn der timer-call mal etwas länger auf sich warten läßt.
- */
 void timer(int lastCallTime) {
-	/* Zeit zwischen Animationen berechnen */
   int thisCallTime = glutGet(GLUT_ELAPSED_TIME);
 	int lastUpdateTime = lastCallTime;
 	int nextUpdateTime = lastUpdateTime + gMillis;
 	int diff;
 
-	/* Neuen Timer anstossen */
-	
 	while (nextUpdateTime < thisCallTime) {
 		double interval = (double) (nextUpdateTime - lastUpdateTime) / 1000.0f;
-		/* Szene aktualisieren */
 		gUpdate(interval);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
@@ -251,26 +216,15 @@ void timer(int lastCallTime) {
 
 	if (!gSceneDirty) {
 		gSceneDirty = 1;
-	
-	  /* Neuzeichnen anstossen */
 		glutPostRedisplay();
 	}
 }
 
-/*
- * Registriert die Timer-Funktion
- */
 void startTimer(int callsPerSecond) {
-	/* Aufrufhaeufigkeit in Millisekunden */
   gMillis = 1000 / callsPerSecond;
-
-  /* Callback Funktion nach berechneter Zeit aufrufen */
 	glutTimerFunc(gMillis, timer, glutGet(GLUT_ELAPSED_TIME));
 }
 
-/*
- * Führt ein Picking an den übergebenen Koordinaten durch.
- */
 int pick(int x, int y) {
   int viewport[4];
 	float aspect;
@@ -286,26 +240,18 @@ int pick(int x, int y) {
 	viewport[3] = height;
 	aspect = (float) height / width;
 
-	/* Es soll für Picking gerendert werden */
 	glRenderMode(GL_SELECT);
 
-	/* Name-Stack initialisieren */
 	glInitNames();
 
-	/* Projektions-Matrix für Picking vorbereiten */ 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluPickMatrix(x,        /* X-Position der Maus */
-                height - y,  /* Y-Position der Maus */
-                5,         /* Breite der Picking-Region */
-                5,         /* Hoehe der Picking-Region */
-                viewport);
+	gluPickMatrix(x, height - y, 5, 5, viewport);
 
 	glMultMatrixf(&v->projection[0][0]);
 	glScalef(aspect, 1.0f, 1.0f);
 
-	/* Objekte für Picking zeichnen */
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(&v->view[0][0]);
 	pickObject(gTargetWindow.viewport->world);

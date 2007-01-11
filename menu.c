@@ -38,25 +38,18 @@
 
 #define SCALE_FONT 0.5f
 
-/*** allgemeiner Teil des Menüs ***/
+/*** common ***/
 
 typedef void (*funcClick)(void);
 
 typedef void (*funcChange)(void* self);
 
-/*
- * Ein Objekt, dass angeklickt werden kann und dadurch ein Funktion auslößt.
- */
 typedef struct {
 	Object oButton;
 	Pick pButton;
 	funcClick click;
 } Button;
 
-/*
- * Ein Objekt, dass bei anklicken zwischen zwei Zuständen hin- und herschaltet und
- * eine Funktion aufruft um den aktuellen Zustand mitzuteilen.
- */
 typedef struct {
 	int value;
 	Object oCheck;
@@ -64,9 +57,6 @@ typedef struct {
 	funcChange change;
 } Check;
 
-/*
- * Ein Element mit einem Pfeil nach Links und einem nach Rechts, um eine Auswahl zu tereffen.
- */
 typedef struct {
 	int value;
 	int minValue;
@@ -82,9 +72,6 @@ typedef struct {
 static Object goLeft;
 static Object goRight;
 
-/*
- * Erzeugt ein Quadrat mit einer Texture, das als Element im Menü angezeigt werden kann.
- */
 void initMenuObject(Object* obj, int texture) {
 	initObject(obj, drawSquare);
 	obj->texture = texture;
@@ -92,9 +79,6 @@ void initMenuObject(Object* obj, int texture) {
 	obj->diffuse = 0.0f;
 }
 
-/*
- * Erzeugt ein Objekt mit 3D-Text, das zentriert wird und auf eine bestimmte Höhe gesetzt wird.
- */
 void initTextObject(Object* obj, char* text, float z) {
 	float length = makeTextObject(obj, text) * SCALE_FONT;
 	setObjectPosition3f(obj, -length / 2, 0.0f, z);
@@ -104,17 +88,11 @@ void initTextObject(Object* obj, char* text, float z) {
 
 /*** Button ***/
 
-/*
- * Callback-Funktion: Ruft die Klick-Funktion eines Buttons auf, wenn das zugehörige Scene-Objekt gepickt wird.
- */
 void pickButton(void* data) {
 	Button* button = data;
 	button->click();
 }
 
-/*
- * Erzeugt einen Botton aus 3D-Text.
- */
 void init3dButton(Button* button, float z, funcClick click, char* text) {
 	initTextObject(&button->oButton, text, z);
  	
@@ -128,10 +106,6 @@ void init3dButton(Button* button, float z, funcClick click, char* text) {
 
 /*** Check ***/
 
-/*
- * Passt die Farbe des Callback-Objektes dem aktuellen Wert an und
- * ruft die change-Funktion auf um den aktuellen Wert mitzuteilen.
- */
 void setCheck(Check* check, int value) {
 	check->value = value;
 
@@ -144,17 +118,11 @@ void setCheck(Check* check, int value) {
 	check->change(check);
 }
 
-/*
- * Callback-Funktion: Toggelt den Wert des Check-Objektes.
- */
 void pickCheck(void* data) {
 	Check* check = data;
 	setCheck(check, !check->value);
 }
 
-/*
- * Erzeugt ein Check-Objekt. Der Default-Wert eines solchen Objektes ist eins. 
- */
 void init3dCheck(Check* check, float z, funcChange change, char* text) {
 	initTextObject(&check->oCheck, text, z);
 
@@ -168,9 +136,6 @@ void init3dCheck(Check* check, float z, funcChange change, char* text) {
 
 /*** SpinEdit ***/
 
-/*
- * Callback-Funktion: Erniedrigt den Wert dieses SpinEdits.
- */
 void pickSpinEditLeft(void* data) {
 	SpinEdit* spinedit = data;
 	int* value = &spinedit->value;
@@ -180,9 +145,6 @@ void pickSpinEditLeft(void* data) {
 	}
 }
 
-/*
- * Callback-Funktion: Erhöht den Wert dieses SpinEdits.
- */
 void pickSpinEditRight(void* data) {
 	SpinEdit* spinedit = data;
 	int* value = &spinedit->value;
@@ -192,9 +154,6 @@ void pickSpinEditRight(void* data) {
 	}
 }
 
-/*
- * Erzeugt ein SpinEdit. Es kann ein Objekt mitgegeben werden, dass den Wert des SpinEdits repräsentiert.
- */
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change) {
 	spinedit->value = value;
 	spinedit->minValue = min;
@@ -206,26 +165,26 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 	rotateObjectX(&spinedit->oSpinEdit, 90.0f);
 	setObjectScalef(&spinedit->oSpinEdit, SCALE_FONT);
 
-	/* Pfeil nach Links */
+	/* arrow left */
 	initObjectGroup(&spinedit->oLeft);
 	setObjectPosition2f(&spinedit->oLeft, -4.3f, 0.0f);
 	addSubObject(&spinedit->oLeft, &goLeft);
 	addSubObject(&spinedit->oSpinEdit, &spinedit->oLeft);
 	
-	/* Pfeil nach Rechts */	
+	/* arror right */	
 	initObjectGroup(&spinedit->oRight);
 	setObjectPosition2f(&spinedit->oRight, 3.3f, 0.0f);
 	addSubObject(&spinedit->oRight, &goRight);
 	addSubObject(&spinedit->oSpinEdit, &spinedit->oRight);
 	
-	/* Objekt in der Mitte */
+	/* object between arrows */
 	addSubObject(&spinedit->oSpinEdit, obj);
 
 	spinedit->change = change;
 
 	change(spinedit);
 
-	/* Events für die Pfeile registrieren */
+	/* register callbacks for arrows */
 	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
 	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
 
@@ -234,7 +193,7 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 
 }
 
-/*** spezieller Teil fürs Spiel ***/
+/*** special game part ***/
 
 static Button gbStart;
 static Button gbResume;
@@ -243,7 +202,7 @@ static Check gcShadows;
 static Check gcFog;
 
 /*
- * Die Hilfetexte
+ * help text
  */
 static char* gTextHelp[] = {
 	"Cursor", "Move",
@@ -259,7 +218,7 @@ static Object goMainText;
 
 static int gIsPauseMenu;
 
-/* Events */
+/* events */
 
 int gCntBallLayouts;
 int gBallLayouts[MAX_BALL_LAYOUTS];
@@ -296,9 +255,6 @@ void clickButtonBack(void) {
 	goMainText.visible = 1;
 }
 
-/*
- * Reagiert auf Tastatur eingaben im Menü.
- */
 void updateMenu(double interval) {
 	if (goMainText.visible) {
 		if (!gIsPauseMenu && wasKeyPressed(KEY_ENTER)) {
@@ -323,11 +279,6 @@ void updateMenu(double interval) {
 	}
 }
 
-/*
- * Teielt dem Manü mit, dass es demnächst angezeigt wird und
- * sagt, ob das Menü über ESC angezeigt wurde, oder durch einen Level start.
- */
-
 void showMenu(int pause) {
 	gbStart.oButton.visible = !pause;
 	gbResume.oButton.visible = pause;
@@ -340,9 +291,6 @@ void showMenu(int pause) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
-/*
- * Erzeugt das Menü des Spiels.
- */
 void initMenu(Object* obj) {
 	static Button bQuit;
 	static Button bHelp;
@@ -357,7 +305,7 @@ void initMenu(Object* obj) {
 	int i;
 
 	/*
-	 * Erstellt eine Liste der verfügbaren Bälle.
+	 * which ball layouts are available?
 	 */
 	gCntBallLayouts = 0;
 
@@ -380,12 +328,12 @@ void initMenu(Object* obj) {
 	}
 
 	/*
-	 * Das Menü zusammensetzen
+	 * put all together
 	 */
 
 	initObjectGroup(obj);
 	
-	/* Menulogo setzen */
+	/* menu logo */
 	initObject(&oLogo, drawSquare);
 	oLogo.texture = loadTexture("data/logo.tga", 0);
 	setObjectPosition3f(&oLogo, 0.0f, 0.0f, 8.0f);
@@ -394,14 +342,12 @@ void initMenu(Object* obj) {
 	rotateObjectX(&oLogo, 90.0f);
 	addSubObject(obj, &oLogo);
 
-	/* Pfeile initialisieren */
+	/* loading arrow textures */
 	initMenuObject(&goLeft, loadTexture("data/left.tga", 0));
 	initMenuObject(&goRight, loadTexture("data/right.tga", 0));
 
-	/* Menu */
 	initObjectGroup(&goMainText);
 
-	/* Buttons */
 	initObject(&oBall, drawMenuBall);
 
 	init3dButton(&gbStart, 6.0f, clickButtonStart, "Start");
@@ -430,7 +376,7 @@ void initMenu(Object* obj) {
 
 	addSubObject(obj, &goMainText);
 
-	/* Hilfe */
+	/* help text */
 	initObjectGroup(&goHelpText);
 	
 	goHelpText.visible = 0;

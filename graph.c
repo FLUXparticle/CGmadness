@@ -29,7 +29,6 @@
 void initObject(Object* obj, funcDraw draw) {
 	int i;
 
-	/* Position auf Null setzen */
 	obj->pos.x = 0.0f;
 	obj->pos.y = 0.0f;
 	obj->pos.z = 0.0f;
@@ -38,12 +37,10 @@ void initObject(Object* obj, funcDraw draw) {
 	obj->scaleY = 1.0f;
 	obj->scaleZ = 1.0f;
 
-  /* Matrix auf Einheitsmatrix initialisieren */
 	for (i = 0; i < 16; i++) {
 		obj->rotMatrix[i] = ((i % 4) == (i / 4)) ? 1.0f : 0.0f;
 	}
 
-	/* Farbe auf weiß setzen */
 	obj->colRed = 1.0f;
 	obj->colGreen = 1.0f;
 	obj->colBlue = 1.0f;
@@ -68,7 +65,7 @@ void initObjectGroup(Object* obj) {
 }
 
 /*
- * Abkürzungen
+ * some helper functions
  */
 
 void setObjectPosition2f(Object* obj, float x, float y) {
@@ -101,24 +98,19 @@ void setObjectGroupColor(Object* obj, float r, float g, float b) {
 
 void rotateObject(Object* obj, float angle, float* axis) {
 	int matrixMode;
-	/* aktuellen Matrixmodus sichern */
+
 	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
 	glMatrixMode(GL_MODELVIEW);
 
-  /* Rotation ausfuehren */
 	glPushMatrix();
 	glLoadIdentity();
 
 	glRotatef(angle, axis[0], axis[1], axis[2]);
 
-  /* Aktuelle Matrix mit der Objektmatrix multiplizieren */
 	glMultMatrixf(obj->rotMatrix);
-	/* Aktuelle Matrix in Objekt speichern */
 	glGetFloatv(GL_MODELVIEW_MATRIX, obj->rotMatrix);
-	/* Matrix von vor der Operation wiederherstellen */
 	glPopMatrix();
 
-	/* vorherigen Matrixmodus wiederherstellen */
 	glMatrixMode(matrixMode);
 }
 
@@ -188,17 +180,15 @@ void setAttributes(float red, float green, float blue, float ambient, float diff
 	matSpecular[2] = specular;
 	matSpecular[3] = 1.0f;
 
-	/* Objektmaterial setzen */
 	glMaterialfv(GL_FRONT, GL_AMBIENT, matAmbient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, matDiffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
 	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
-/* Durchlaeuft alle Objekte der Liste und zeichnet sie */
 void pickList(List list) {
 	List run;
-	/* Alle Objekte der Liste durchlaufen */
+
 	for (run = list; run; run = run->next) {
 		Object* obj = run->info;
 		pickObject(obj);
@@ -223,17 +213,15 @@ void pickObject(Object* obj) {
 		isNameOnStack = (stackDepth > 0);
 	}
 
-	/* Objekt transformieren */
 	glTranslatef(obj->pos.x, obj->pos.y, obj->pos.z);
 	glMultMatrixf(obj->rotMatrix);
 	glScalef(obj->scaleX, obj->scaleY, obj->scaleZ);
 
 	if (obj->draw && isNameOnStack) {
-		/* Zeichenroutine des Objektes aufrufen */
 		obj->draw();
 	}
 
-	/* Zeichenroutine für Unter-Objekte aufrufen */
+	/* call draw functions of sub objects */
 	pickList(obj->subObjects);
 	
 	if (obj->pickName >= 0) {
@@ -243,10 +231,9 @@ void pickObject(Object* obj) {
 	glPopMatrix();
 }
 
-/* Durchlaeuft alle Objekte der Liste und zeichnet sie */
 void drawList(List list) {
 	List run;
-	/* Alle Objekte der Liste durchlaufen */
+
 	for (run = list; run; run = run->next) {
 		Object* obj = run->info;
 		drawObject(obj);
@@ -260,11 +247,8 @@ void drawObject(Object* obj) {
 
 	glPushMatrix();
 	
-	/* Objekt auf Position verschieben */
 	glTranslatef(obj->pos.x, obj->pos.y, obj->pos.z);
-	/* Objekt rotieren */
 	glMultMatrixf(obj->rotMatrix);
-	/* Objekt skalieren */
 	glScalef(obj->scaleX, obj->scaleY, obj->scaleZ);
 
 	if (obj->draw) {
@@ -283,8 +267,8 @@ void drawObject(Object* obj) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-
-		/* Zeichenroutine des jeweiligen Objektes aufrufen */
+		
+		/* call draw function */
 		obj->draw();
 
 		if (alpha > 0) {
@@ -296,7 +280,6 @@ void drawObject(Object* obj) {
 		}
 	}
 
-	/* Zeichenroutine für Unter-Objekte aufrufen */
 	drawList(obj->subObjects);
 
 	glPopMatrix();

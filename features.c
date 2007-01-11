@@ -27,8 +27,7 @@
 #include <stdio.h>
 
 /*
- * Dieses Modul prüft ob bestimmte Features auf dem Rechner unterstützt werden und
- * bietet Funktionen an, damit das Programm leicht auf fehlende Features reagieren kann.
+ * this module checks which opengl features are available
  */
 
 static int sgFramebufferAvailable;
@@ -39,9 +38,6 @@ static int sgShaderAvailable;
 static int gUseShadows = 0;
 static int gUseFog = 0;
 
-/* Fragt vorhandene Extensions ab und schaltet je nach Verfügbarkeit
- * grafische Features hinzu oder nicht
- */
 void initFeatures(int argc, char* argv[]) {
 	sgShaderAvailable = 1;
 	if (!GLEW_ARB_vertex_shader || !GLEW_ARB_fragment_shader) {
@@ -68,7 +64,6 @@ void initFeatures(int argc, char* argv[]) {
 	}
 }
 
-/* Umgebungsvariablen abfragen */
 int hasShader(void) {
 	return sgShaderAvailable;
 }

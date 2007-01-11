@@ -59,15 +59,12 @@ Vector3 sgRight;
 static int gEdgeX[4] = { 0, 1, 1, 0 };
 static int gEdgeY[4] = { 0, 0, 1, 1 };
 
-/*
- * Bewegt die Kamera und ihren Blickwinkel auf neue Positionen
- */
 void moveCamera(double interval, Vector3 camera, Vector3 lookat) {
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	float error;
 
-	/* Neue Werte bestimmen */
+	/* new values */
 	diff = sub(camera, sgCamera);
 	error = len(diff);
 	sgCamera = add(sgCamera, scale(5.0f * interval * error, norm(diff)));
@@ -76,7 +73,7 @@ void moveCamera(double interval, Vector3 camera, Vector3 lookat) {
 	error = len(diff);
 	sgLookat = add(sgLookat, scale(5.0f * interval * error, norm(diff)));
 
-	/* Kamera neu setzen */
+	/* set camera */
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -89,9 +86,6 @@ void moveCamera(double interval, Vector3 camera, Vector3 lookat) {
 	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
 }
 
-/*
- * Ermittelt die Hˆhe einer bestimmten Ecke eines Feldes 
- */
 int getFieldEdgeHeight(int x, int y, int edge) {
 	if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y) {
 		Plate* p = &sgLevel.field[x][y];
@@ -99,13 +93,10 @@ int getFieldEdgeHeight(int x, int y, int edge) {
 		return p->z + (gEdgeX[edge] * 2 - 1) * p->dzx + (gEdgeY[edge] * 2 - 1) * p->dzy;
 	}
 
-	/* Werte auﬂerhalb des Bereichs */
+	/* value out of range */
 	return -5;
 }
 
-/*
- * Ermittelt die Vertexdaten eines Deckels eines Feldes
- */
 void getRoofSquare(int x, int y, Square* square) {
 	int i;
 	Plate* p = &sgLevel.field[x][y];
@@ -131,16 +122,12 @@ void getRoofSquare(int x, int y, Square* square) {
 		square->vertices[i].z = SCALE_Z * getFieldEdgeHeight(x, y, i);
 	}
 
-	/* Deckel der Bl√∂cke zeichnen */
 	for (i = 0; i < 4; i++) {
 		square->texcoords[i].x = gEdgeX[i];
 		square->texcoords[i].y = gEdgeY[i];
 	}
 }
 
-/*
- * Ermittelt die Vertexdaten einer ¸bergebenen Seitenfl‰che eines Spielfeldes
- */
 int getSideSquare(int x, int y, int side, Square* square) {
 	Square roofsquare;
 	int j = (side + 1) % 4;
@@ -193,10 +180,6 @@ int getSideSquare(int x, int y, int side, Square* square) {
 	return 1;
 }
 
-/*
- * Bestimmt die Indices an denen die Vertices
- * des gew‰hlten Feldes im Vertexarray anzutreffen sind
- */
 void getVertIndex(int x, int y, int* start, int* end) {
 	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y) {
 		int index = y * sgLevel.size.x + x;
@@ -213,10 +196,6 @@ void getVertIndex(int x, int y, int* start, int* end) {
 	}
 }
 
-/*
- * Initialisierungen R¸ckg‰ngig machen,
- * Speicher freigeben
- */
 void destroyCommon(void) {
 	FREE(sgLevel.field[0]);
 	FREE(sgLevel.field);
@@ -229,9 +208,6 @@ void destroyCommon(void) {
 	sgLevel.size.y = -1;
 }
 
-/*
- * Liest eine Leveldatei ein und f¸llt die Arrays entsprechend
- */
 int loadFieldFromFile(char* filename) {
 	FILE* file = fopen(filename, "rt");
 	int x,y;
@@ -241,25 +217,25 @@ int loadFieldFromFile(char* filename) {
 
 	sgLevel.texture = loadTexture("data/plate.tga", 1);
 
-	/* Levelattribute einlesen */
+	/* read attributes */
 	fscanf(file, "%d %d", &sgLevel.start.x, &sgLevel.start.y);
 	fscanf(file, "%d %d", &sgLevel.finish.x, &sgLevel.finish.y);
   fscanf(file, "%d %d", &fileX, &fileY);
 
-	/* Wenn keine Grˆsse angegeben, Grˆﬂe aus Datei verwenden */
+	/* read size from file, if not given through program parameters */
 	if (sgLevel.size.x < 0 || sgLevel.size.y < 0) {
 		sgLevel.size.x = fileX;
 		sgLevel.size.y = fileY;
 	}
 
-	/* Daten asu der Datei in die erzeugten Arrays f¸llen */
+	/* alloc memory for data */
 	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
 	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
 	for (x = 1; x < sgLevel.size.x; x++) {
 		sgLevel.field[x] = sgLevel.field[0] + x * sgLevel.size.y;
 	}
 
-
+	/* reading data */
 	for (x = 0; x < sgLevel.size.x; x++) {
 		for (y = 0; y < sgLevel.size.y; y++) {
 			Plate* p = &sgLevel.field[x][y];
@@ -272,7 +248,7 @@ int loadFieldFromFile(char* filename) {
 			}
 		}
 
-		/* Verkleinerung eines Levels */
+		/* shrinking */
 		if (fileY > sgLevel.size.y) {
 			int dummyZ;
 			int dummyDZX;
@@ -286,7 +262,7 @@ int loadFieldFromFile(char* filename) {
 
 	fclose(file);
 	
-  /* Variablen und Datenstrukturn initialisieren */
+  /* init level stuff */
 	sgMaxPlates = sgLevel.size.x * sgLevel.size.y;
 	sgMaxQuads = 5 * sgMaxPlates;
 	sgMaxVertices = 4 * sgMaxQuads;
@@ -300,21 +276,18 @@ int loadFieldFromFile(char* filename) {
 	return 1;
 }
 
-/*
- * Aktuell geladenes Level in eine Leveldatei schreiben
- */
 int saveFieldToFile(char* filename) {
 	FILE* file = fopen(filename, "wt");
 	int x, y;
 
 	if (!file) return 0;
 
-	/* Atribute schreiben */
+	/* write atributes */
 	fprintf(file, "%d %d\n", sgLevel.start.x, sgLevel.start.y);
 	fprintf(file, "%d %d\n", sgLevel.finish.x, sgLevel.finish.y);
 	fprintf(file, "%d %d\n", sgLevel.size.x, sgLevel.size.y);
 
-	/* Daten schreiben */
+	/* write data */
 	for (x = 0; x < sgLevel.size.x; x++) {
 		for (y = 0; y < sgLevel.size.y; y++) {
 			Plate* p = &sgLevel.field[x][y];

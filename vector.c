@@ -25,7 +25,7 @@
 #include <math.h>
 
 /*
- * Dieses Modul führt Vektor rechenoberationen aus. Die einzelnen Funktionen sind selbst erklärend.
+ * some vector calculations
  */
 
 float sqr(float x) {
@@ -105,7 +105,7 @@ Vector3 cross(Vector3 a, Vector3 b) {
 }
 
 /*
- * Projektions-Matrix mit Farplane im Unendlichen
+ * projection matrix without farplane
  */
 void initProjectMat(Matrix m, float fov) {
 	int x;

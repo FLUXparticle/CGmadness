@@ -41,7 +41,6 @@
 #include <string.h>
 #include <math.h>
 
-/* Konstanten */
 #define ACCELERATION 5.0f
 
 #define GRAVITY 9.81f
@@ -72,7 +71,6 @@ static int gCubeMapBall;
 
 static int gTextureBall;
 
-/* Vorhandene Ballfeatures abfragen */
 int hasBallTexture(void) {
 	return gTextureBall >= 0;
 }
@@ -85,9 +83,6 @@ int hasBallShader(void) {
 	return gShaderBall != 0;
 }
 
-/*
- * Initialisierungen für die CubeMaps
- */
 void initCubeMap(void) {
 	static Object oReflection;
 
@@ -96,7 +91,7 @@ void initCubeMap(void) {
 
 	initProjectMat(m, 90.0f);
 	
-	/* Initialisiert den Framebuffer für die Berechnung der CubeMap Textur */
+	/* init framebuffer for cubemap */
 	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
 
 	initObject(&oReflection, drawGameReflection);
@@ -110,9 +105,6 @@ void initCubeMap(void) {
 	}
 }
 
-/*
- * Bestimmt die höchste Z-Position eines Quadrates
- */
 float getMaxZValue(Square* square) {
 	int i;
 	float res = 0.0f;
@@ -131,9 +123,6 @@ int useBallReflection(void) {
 	return hasFramebuffer() && (gBallLayout == BALL_LAYOUT_METAL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
-/*
- * Kugellayout ändern
- */
 void changeBall(int layout) {
 	int i;
 	int reflection;
@@ -147,12 +136,7 @@ void changeBall(int layout) {
 	}
 }
 
-/*
- * Neuberechnung der 6 Spiegelflächen der Kugel
- */
 void updateReflection(void) {
-	
-	/* Up Vektoren und Blickrichtungen für die 6 spiegelflächen */
 	static Vector3 lookat[] = {
 		{  1.0f,  0.0f,  0.0f },
 		{ -1.0f,  0.0f,  0.0f },
@@ -191,9 +175,6 @@ void updateReflection(void) {
 	}
 }
 
-/*
- * Spielkugel auf die Startposition setzen
- */
 void resetBall(void) {
 	Square roofSquare;
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
@@ -208,9 +189,6 @@ void resetBall(void) {
 	updateReflection();
 }
 
-/*
- * Spielkugel mit Explosiopn resetten
- */
 void explodeBall(void) {
 	Vector3 pos = sgoBall.pos;
 	Vector3 speed = gSpeed;
@@ -227,9 +205,6 @@ void explodeBall(void) {
 	gIsBallInPieces = 1;
 }
 
-/*
- * Ballobjekt initialisieren
- */
 void initBall(void) {
 	initObject(&sgoBall, drawGameBall);
 	
@@ -252,9 +227,6 @@ void initBall(void) {
 	setObjectScalef(&sgoBall, BALL_RADIUS);
 }
 
-/* 
- * Kugel bewegen und Berechnungen fuer die BallPhysik 
- */
 void animateBall(double interval) {
 	int collision = 0;
 	int q;
@@ -271,7 +243,7 @@ void animateBall(double interval) {
 
 	Vector3 step;
 
-	/* Auf Benutzereingaben reagieren */
+	/* ball controls */
 	if (isCursorPressed(CURSOR_LEFT)) {
 		move = sub(move, sgRight);
 	}
@@ -295,7 +267,7 @@ void animateBall(double interval) {
 
 	gSpeed.z -= GRAVITY * interval;
 
-	/* Kollisionspruefung */
+	/* collision detection */
 
 	step = scale(interval, gSpeed);
 
@@ -304,18 +276,15 @@ void animateBall(double interval) {
 	x = floor(ball.x);
 	y = floor(ball.y);
 
-  /* Durchlaufen aller 9 Felder um den Ball herum */
+  /* check only fields near by the ball */
   for (dx = -1; dx <= 1; dx++) {
 		for (dy = -1; dy <= 1; dy++) {
 			int start;
 			int end;
 
-			/* Start und End Index fuer alle Flaechen des aktuellen Feldes bestimmen */
 			getVertIndex(x + dx, y + dy, &start, &end);
 			
-			/* Alle Quadrate des Feldes durchlaufen */
 			for (q = start; q < end; q += 4) {
-				/* Aktuell zu pruefendes Quadrat holen */
 				Vector3* quad = &sgVertices[q];
 
 				Vector3 dist;
@@ -326,43 +295,40 @@ void animateBall(double interval) {
 
 				Vector3 dir = sgNormals[q];
 
-				/* a = Ballmittelpunkt auf die Ebene projeziert */
+				/* a = project ball center on plane */
 				Vector3 a = sub(ball, quad[0]);
 				a = sub(a, scale(dot(a, dir), dir));
 				a = add(a, quad[0]);
 				
-				/* Durchlaufne der 4 Kanten eines Squares */
 				for (i = 0; i < 4; i++) {
-					int j = (i + 1) % 4; /* Nächste Ecke */
+					int j = (i + 1) % 4;
 					Vector3 b;
 					Vector3 n;
 					float na;
 				
-					/* b = Kante */	
+					/* b = edge */	
 					b = sub(quad[j], quad[i]);
 
-					/* n = Normale über der Kante in der Ebene des Quadarts */
+					/* na = distance from a to edge */
 					n = norm(cross(dir, b));
-
-					/* na = Entfernung von a von der Kante */
 					na = dot(sub(a, quad[i]), n);
 
-					/* Wenn Punkt a außerhalb des Quadrats liegt, wird es auf die Kante verschoben */
+					/* if a is out of quad, it is moved to edge */
 					if (na < 0) {
 						a = add(a, scale(-na, n));
 					}
 				}
 
-				/* dist = Vektor um den Ballmittelpunkt verschoben werden muss, um im Quadrat zu liegen */	
+				/* dist = vector from ball center to quad */	
 				dist = sub(a, ball);
 				l = len(dist);
 
-				/* move = Vektor um den der Ball bewegrt werden müsste, damit er nicht mehr kollidiert */
+				/* move = vector to move the ball out of quad */
 				move = scale(-((BALL_RADIUS - l) / l), dist);
 				
-        /* Kollision? */
+        /* collision? */
 				if (l < BALL_RADIUS) {
-					/* Bei Kollision wird der Ball noch etwas rotiert, damit das Rollen auf der Ebene einigemaßen aussieht... */
+					/* some rotation for a better look */
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
 					float angle = dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * BALL_RADIUS) * 360.0f;
@@ -381,21 +347,21 @@ void animateBall(double interval) {
 
 	normalize(&normal);
 
-	/* Kontakt zur Oberfläche */
+	/* contact to surface? */
 	if (collision) {
 		float vn = dot(gSpeed, normal);
 		Vector3 rebound = scale(-(1 + ELASTICITY) * vn, normal);
 
     if (len(rebound) > 3.0f * JUMP * ACCELERATION * interval) {
-			/* Kollision zu stark */
+			/* collision was to havy */
 			explodeBall();
 		} else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y) {
-			/* Ball auf Zielfeld angekommen */
+			/* reached finish quad */
 			loadNewLevel();
 		} else {
 			gSpeed = add(gSpeed, rebound);
 
-			/* Spingen */
+			/* jump */
 			if (isKeyPressed(' ')) {
 				gSpeed = add(gSpeed, scale(JUMP * ACCELERATION * interval, normal));
 			}
@@ -404,23 +370,20 @@ void animateBall(double interval) {
 
 	/***/
 
-	/* Reibung */
+	/* friction */
 	gSpeed = scale(FRICTION, gSpeed);
 	
-	/* In den Abgrund gefallen */
+	/* falling to infinity */
 	if (sgoBall.pos.z < -10.0f) {
 		explodeBall();
 	}
 
-  /* Reset durch Benutzer */
+  /* reset through user */
 	if (isKeyPressed(KEY_ENTER)) {
 		explodeBall();
 	}
 }
 
-/*
- * Ball entprechend Zustand animieren lassen
- */
 void updateBall(double interval) {
 	if (!gIsBallInPieces) {
 		animateBall(interval);
@@ -432,10 +395,6 @@ void updateBall(double interval) {
 	updateReflection();
 }
 
-/*
- * Veranlasst alle notwendigen Abläufe zur Darstellung des
- * jeweils aktuellen Skins
- */
 void activateBallShader(void) {
 	int x;
 	int y;
@@ -508,9 +467,6 @@ void activateBallShader(void) {
 	}
 }
 
-/*
- * Zuruecksetzen der Aktivierungen aus activateBallShader
- */
 void deactivateBallShader(void) {
 	switch (gBallLayout) {
 		case BALL_LAYOUT_DEFAULT:
@@ -549,9 +505,6 @@ void deactivateBallShader(void) {
 	}
 }
 
-/*
- * Zeichnet die Vorschau der Kugel im Menu
- */
 void drawMenuBall(void) {
 	activateBallShader();
 
@@ -560,22 +513,16 @@ void drawMenuBall(void) {
 	deactivateBallShader();
 }
 
-/*
- * Zeichnet den Ball im Spiel
- */
 void drawGameBall(void) {
 	int shader = useBallShader();
 
 	glPushMatrix();
 
-	/* Objekt auf Position verschieben */
 	glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
-	/* Objekt rotieren */
 	glMultMatrixf(sgoBall.rotMatrix);
-	/* Objekt skalieren */
 	glScalef(sgoBall.scaleX, sgoBall.scaleY, sgoBall.scaleZ);
 
-	/* Explosion? */
+	/* explosion? */
 	if (gIsBallInPieces) {
 		drawExplosion(shader);
 	} else {

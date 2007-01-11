@@ -8,7 +8,7 @@ LIBS := -lm
 PROJECT := cgmadness
 SHADER := golfball spotlight
 
-# Prüfen ob unter Cygwin oder Linux compiliert wird
+# Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
@@ -37,19 +37,10 @@ endif
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
 
+# main part
 .PHONY: all
 all: $(EXEC)
 
-.PHONY: debug
-debug: $(DEBUG)
-
-.PHONY: profile
-profile: $(PROFILE)
-
-# Alle Source-Files compilieren und zusammenlinken
-# Expliziete Regel ist notwendig, weil die LIBS sonst
-# vor den .o-Files stehen und dadurch die Cygwin-Version
-# nicht kompiliert werden kann.
 $(EXEC): $(OBJS)
 	@echo "  LINK $@"
 	@$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
@@ -59,12 +50,12 @@ build/%.o: %.c
 	@mkdir -p "$(@D)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
-# Archiv bauen um ausführbares Programm zu verschicken
+# building archives
 TAR := $(PROJECT)$(VERSIONSUFFIX).tar.bz2
 SRC_TAR := $(PROJECT)$(VERSIONSUFFIX)-src.tar.bz2
 ZIP := $(PROJECT)$(VERSIONSUFFIX).zip
 CMD := $(PROJECT).cmd
-CLEAN += $(TAR) $(ZIP)
+CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
 .PHONY: src
 src: $(SRC_TAR)
@@ -87,19 +78,18 @@ $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(LICENSE)
 	@echo "  ZIP $@"
 	@zip $@ $^ > /dev/null
 
-# Dokumentation
-
+# documentation
 .PHONY: doc
 doc:
 	doxygen Doxyfile
 
-# Aufrüumen
+# clean up
 .PHONY: clean
 clean:
 	@echo "  CLEAN"
 	@rm -f $(CLEAN)
 
-# Abhängigkeiten automatisch erkennen
+# dependancies
 include $(DEPS)
 
 .deps/%.c.d: %.c

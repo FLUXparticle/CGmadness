@@ -27,9 +27,6 @@
 
 #include <stdio.h>
 
-/*
- * Erzeugt einen Framebuffer und weiﬂt ihn einer bestimmten Texture zu
- */
 int createFBuffer(int width, int height, unsigned int target, unsigned int color_tex, RenderTarget* context) {
 	unsigned int fb;
 	unsigned int depth_stencil_rb;
@@ -97,23 +94,17 @@ int createFBuffer(int width, int height, unsigned int target, unsigned int color
 	return 1;
 }
 
-/*
- * Erzeugt einen RenderToTexture-Framebuffer
- */
 int initFBuffer(int width, int height, RenderTarget* context) {
 	unsigned int color_tex;
 
-	/* initialize color texture */
   glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_2D, color_tex);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-	/* Randbehandlung: Wiederholung */
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	/* Linerare Interpolation bei Skalierung der Textur */
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -124,14 +115,10 @@ int initFBuffer(int width, int height, RenderTarget* context) {
 	}
 }
 
-/*
- * Erzeugt einen RenderToCubeMap-Framebuffer
- */
 int initFBufferCube(int width, int height, RenderTarget context[6]) {
 	unsigned int color_tex;
 	int i;
 
-	/* initialize color texture */
   glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, color_tex);
 

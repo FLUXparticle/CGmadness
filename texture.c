@@ -32,14 +32,7 @@
 
 static int gUseTextures = 0;
 
-/*
- * Richtet das TextureEnvironment ein
- */
 void initTextures(void) {
-  /*
-	 * Farbinformation der Textur mit der Farbinformation aus der
-   * Lichtberechnung mischen
-	 */
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	gUseTextures = 1;
 }
@@ -76,7 +69,7 @@ void copyPixel(GLubyte* data, int pos, GLubyte* pixel, int components) {
 	}
 }
 
-#define BOTTOMUP(header) 1 /*((header).attrImage & 8)*/
+#define BOTTOMUP(header) ((header).attrImage & 8)
 
 void nextPixel(TGAHeader* header, int* pos) {
 	int components = header->bitsPerPixel / 8;
@@ -108,12 +101,11 @@ int loadTGA(FILE* file, Image* image, char** error) {
 	}
 
 	switch (header.typeImage) {
-	case 2:
-		compressed = 0;
-		break;
 	case 10:
 		compressed = 1;
 		break;
+	case 2:
+		compressed = 0;
 	default:
 		*error = "Imagetype";
 		return 0;
@@ -187,19 +179,13 @@ int loadTGA(FILE* file, Image* image, char** error) {
 			}
 		}
 	} else {
-		if (fread(image->data, 1, size, file) != size) {
-			*error = "data";
-			FREE(image->data);
-			return 0;
-		}
+		*error = "data";
+		return 0;
 	}
 
 	return 1;
 }
 
-/*
- * Lädt eine Texture aus einer Datei und berechnet ggf. auch die Mipmaps dafür.
- */
 int loadTexture(char* filename, int mipmapping) {
 	GLuint id;
 	Image image;
@@ -232,14 +218,11 @@ int loadTexture(char* filename, int mipmapping) {
 		glTexImage2D(GL_TEXTURE_2D, 0, image.components, image.width, image.height, 0, image.format, GL_UNSIGNED_BYTE, image.data);
 	}
 
-	/* Speicher freigeben */
 	FREE(image.data);
 	
-	/* Randbehandlung: Wiederholung */
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	/* Linerare Interpolation bei Skalierung der Textur */
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (mipmapping) {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
