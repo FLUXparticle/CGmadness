@@ -31,7 +31,6 @@
 #include "game.h"
 #include "features.h"
 #include "keyboard.h"
-#include "mouse.h"
 
 #include <GL/glut.h>
 
@@ -338,7 +337,7 @@ void showMenu(int pause) {
 
 	gIsPauseMenu = pause;
 
-	releaseMouse();
+	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
 /*

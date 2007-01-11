@@ -27,7 +27,10 @@
 
 #include <GL/glut.h>
 
+
 #define SELECT_BUFFER_SIZE 512
+
+static GLuint gSelectBuffer[SELECT_BUFFER_SIZE];
 
 typedef struct {
 	GLuint stackSize;
@@ -35,12 +38,6 @@ typedef struct {
 	GLuint maxDepth;
 	GLuint stackBottom;
 } SelectBuffer;
-
-static GLuint gSelectBuffer[SELECT_BUFFER_SIZE];
-
-static MotionFunc gMotionFunc = 0;
-static int gLastMouseX = 0;
-static int gLastMouseY = 0;
 
 /*
  * Mouse-Click Callback:
@@ -80,13 +77,6 @@ void mouseButton(int button, int state, int x, int y) {
 	}
 }
 
-void mouseMotion(int x, int y) {
-	if (gMotionFunc) {
-		centerMouse(&gLastMouseX, &gLastMouseY);
-		gMotionFunc(x - gLastMouseX, y - gLastMouseY);
-	}
-}	
-
 /*
  * Registriert Mouse-Button-Callback (wird ausgefuehrt, wenn eine Maustaste
  * gedrueckt oder losgelassen wird) 
@@ -95,20 +85,5 @@ void startMouse(void) {
 	/* SelectBuffer initialisieren */
 	glSelectBuffer(SELECT_BUFFER_SIZE, gSelectBuffer);
 	
-	glutPassiveMotionFunc(mouseMotion);
-}
-
-void grabMouse(MotionFunc motionFunc) {
-	glutSetCursor(GLUT_CURSOR_NONE);
-	centerMouse(&gLastMouseX, &gLastMouseY);
   glutMouseFunc(mouseButton);
-	glutMotionFunc(mouseMotion);
-	gMotionFunc = motionFunc;
-}
-
-void releaseMouse(void) {
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-  glutMouseFunc(NULL);
-	glutMotionFunc(NULL);
-	gMotionFunc = NULL;
 }

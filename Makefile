@@ -27,8 +27,6 @@ DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) 
 DLL     :=  glut32.dll glew32.dll
 LICENSE :=  license.txt
 
-NAME    := $$Name$$
-
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
 

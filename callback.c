@@ -313,10 +313,3 @@ int pick(int x, int y) {
 
 	return glRenderMode(GL_RENDER);
 }
-
-void centerMouse(int* centerX, int* centerY)
-{
-	*centerX = gTargetWindow.width / 2;
-	*centerY = gTargetWindow.height / 2;
-	glutWarpPointer(*centerX, *centerY);
-}

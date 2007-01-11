@@ -23,11 +23,6 @@
 #ifndef _mouse_h_
 #define _mouse_h_
 
-typedef void (*MotionFunc)(int x, int y);
-
 void startMouse(void);
-
-void grabMouse(MotionFunc motionFunc);
-void releaseMouse(void);
 
 #endif

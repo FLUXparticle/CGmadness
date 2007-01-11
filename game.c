@@ -34,12 +34,12 @@
 #include "files.h"
 #include "features.h"
 #include "keyboard.h"
-#include "mouse.h"
 
 #include "types.h"
 #include "debug.h"
 
 #include <GL/glew.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,14 +55,6 @@ static int gIsGameRunning;
 
 static Object goMenu;
 
-static int gMouseDeltaX = 0;
-static int gMouseDeltaY = 0;
-
-void mouseMotionCallback(int dx, int dy) {
-	gMouseDeltaX += dx;
-	gMouseDeltaY += dy;
-}
-
 /*
  * Hin- und herschalten zwischen Spiel und Menu
  */
@@ -73,7 +65,7 @@ void pauseGame(void) {
 }
 
 void resumeGame(void) {
-	grabMouse(mouseMotionCallback);
+	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsGameRunning = 1;
 	goMenu.visible = 0;
 }
@@ -95,15 +87,12 @@ void updateGameCamera(double interval, Vector3 ball) {
 	if (isKeyPressed('r') && distance > 0.5) distance -= 0.1f;
 
 	/* Kamera um den Ball rotieren */
-	if (isKeyPressed('a') || gMouseDeltaX > 0) dest = sub(dest, scale(0.1f, sgRight));
-	if (isKeyPressed('d') || gMouseDeltaX < 0) dest = add(dest, scale(0.1f, sgRight));
+	if (isKeyPressed('a')) dest = sub(dest, scale(0.1f, sgRight));
+	if (isKeyPressed('d')) dest = add(dest, scale(0.1f, sgRight));
 
 	/* Hoehenaenderung */
-	if (isKeyPressed('w') || gMouseDeltaY > 0) height += 0.1f;
-	if (isKeyPressed('s') || gMouseDeltaY < 0) height -= 0.1f;
-
-	gMouseDeltaX = 0;
-	gMouseDeltaY = 0;
+	if (isKeyPressed('w')) height += 0.1f;
+	if (isKeyPressed('s')) height -= 0.1f;
 
 	dest.z = ball.z + height;
 

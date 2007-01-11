@@ -59,6 +59,4 @@ void startTimer(int callsPerSecond);
 
 int pick(int x, int y); 
 
-void centerMouse(int* centerX, int* centerY);
-
 #endif
