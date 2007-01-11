@@ -1,3 +1,25 @@
+/*
+ * CG Madness - a Marble Madness clone
+ * Copyright (C) 2007  Sven Reinck
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * $Id$
+ *
+ */
+
 #include "game.h"
 
 #include "common.h"
@@ -12,12 +34,12 @@
 #include "files.h"
 #include "features.h"
 #include "keyboard.h"
+#include "mouse.h"
 
 #include "types.h"
 #include "debug.h"
 
 #include <GL/glew.h>
-#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +55,14 @@ static int gIsGameRunning;
 
 static Object goMenu;
 
+static int gMouseDeltaX = 0;
+static int gMouseDeltaY = 0;
+
+void mouseMotionCallback(int dx, int dy) {
+	gMouseDeltaX += dx;
+	gMouseDeltaY += dy;
+}
+
 /*
  * Hin- und herschalten zwischen Spiel und Menu
  */
@@ -43,7 +73,7 @@ void pauseGame(void) {
 }
 
 void resumeGame(void) {
-	glutSetCursor(GLUT_CURSOR_NONE);
+	grabMouse(mouseMotionCallback);
 	gIsGameRunning = 1;
 	goMenu.visible = 0;
 }
@@ -65,12 +95,15 @@ void updateGameCamera(double interval, Vector3 ball) {
 	if (isKeyPressed('r') && distance > 0.5) distance -= 0.1f;
 
 	/* Kamera um den Ball rotieren */
-	if (isKeyPressed('a')) dest = sub(dest, scale(0.1f, sgRight));
-	if (isKeyPressed('d')) dest = add(dest, scale(0.1f, sgRight));
+	if (isKeyPressed('a') || gMouseDeltaX > 0) dest = sub(dest, scale(0.1f, sgRight));
+	if (isKeyPressed('d') || gMouseDeltaX < 0) dest = add(dest, scale(0.1f, sgRight));
 
 	/* Hoehenaenderung */
-	if (isKeyPressed('w')) height += 0.1f;
-	if (isKeyPressed('s')) height -= 0.1f;
+	if (isKeyPressed('w') || gMouseDeltaY > 0) height += 0.1f;
+	if (isKeyPressed('s') || gMouseDeltaY < 0) height -= 0.1f;
+
+	gMouseDeltaX = 0;
+	gMouseDeltaY = 0;
 
 	dest.z = ball.z + height;
 
