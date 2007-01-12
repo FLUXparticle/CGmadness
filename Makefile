@@ -26,6 +26,7 @@ OBJS    :=  $(SRC:%.c=build/%.o)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 LICENSE :=  license.txt
+README  :=  README
 
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
@@ -53,7 +54,7 @@ CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) $(LICENSE)
+$(SRC_TAR): Makefile $(wildcard *.c *.h) .deps build $(DATA) $(LICENSE) $(README)
 	@echo "  TAR $@"
 	@tar -C .. --no-recursion -cjf $@ $(^:%=cgmadness/%)
 

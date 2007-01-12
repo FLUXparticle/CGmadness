@@ -1,0 +1,38 @@
+MinGW:
+
+	download MinGW, MSYS and msysDTK from http://www.mingw.org/
+	and install in this order
+
+	download "GLUT for MinGW" from http://mywebpage.netscape.com/PtrPck/glut.htm
+	extract include/ and lib/ into MinGW directory
+	extract glut32.dll into "CG Madness" source directory or /windows/system32
+
+	download "GLEW"-source from http://glew.sourceforge.net/
+	start msys
+	install from glew source directory with "make install GLEW_DEST=/mingw"
+	you may need to copy glew32.dll from /mingw/bin 
+	  into "CG Madness" source directory or /windows/system32 to play without MSYS
+
+	now you can go to "CG Madness" source directory and compile with "make"
+
+Cygwin:
+
+	install cygwin with gcc, make, etc. from http://www.cygwin.com/
+
+	download "GLUT for MinGW" from http://mywebpage.netscape.com/PtrPck/glut.htm
+	extract include/ and lib/ into /cygwin/usr/local/ directory
+	extract glut32.dll into "CG Madness" source directory or /windows/system32
+
+	download "GLEW"-source from http://glew.sourceforge.net/
+	start cygwin
+	install from glew source directory with "make install"
+	you may need to copy glew32.dll from /cygwin/usr/local/bin
+	  into "CG Madness" source directory or /windows/system32 to play without Cygwin
+
+	now you can go to "CG Madness" source directory and compile with "make"
+
+Linux:
+
+	required packages: freeglut3-dev libglew-dev (or equivalent)
+
+	to compile just type "make"
