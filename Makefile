@@ -27,13 +27,6 @@ DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) 
 DLL     :=  glut32.dll glew32.dll
 LICENSE :=  license.txt
 
-NAME    := $$Name$$
-ifneq ($(filter-out release-%,$(NAME)),$(strip $(NAME)))
-	VERSIONSUFFIX := -$(subst -,.,$(patsubst release-%,%,$(word 2,$(NAME))))
-else
-	VERSIONSUFFIX :=
-endif
-
 DEPS    :=  $(SRC:%=.deps/%.d)
 CLEAN   :=  $(OBJS) $(EXEC)
 
@@ -51,9 +44,9 @@ build/%.o: %.c
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 # building archives
-TAR := $(PROJECT)$(VERSIONSUFFIX).tar.bz2
-SRC_TAR := $(PROJECT)$(VERSIONSUFFIX)-src.tar.bz2
-ZIP := $(PROJECT)$(VERSIONSUFFIX).zip
+TAR := $(PROJECT).tar.bz2
+SRC_TAR := $(PROJECT)-src.tar.bz2
+ZIP := $(PROJECT).zip
 CMD := $(PROJECT).cmd
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
