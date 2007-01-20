@@ -297,6 +297,11 @@ void animateBall(double interval) {
 
 				/* a = project ball center on plane */
 				Vector3 a = sub(ball, quad[0]);
+
+				if (dot(a, dir) >= BALL_RADIUS) {
+					continue;
+				}
+
 				a = sub(a, scale(dot(a, dir), dir));
 				a = add(a, quad[0]);
 				
