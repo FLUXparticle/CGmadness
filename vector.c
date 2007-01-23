@@ -104,6 +104,16 @@ Vector3 cross(Vector3 a, Vector3 b) {
 	return c;
 }
 
+Vector3 mkVector3(float x, float y, float z) {
+	Vector3 v;
+	
+	v.x = x;
+	v.y = y;
+	v.z = z;
+	
+	return v;
+}
+
 /*
  * projection matrix without farplane
  */

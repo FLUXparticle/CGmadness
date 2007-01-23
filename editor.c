@@ -52,7 +52,7 @@ static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
 
-void updateEditorCamera(double interval, Vector3 ball) {
+void updateEditorCamera(float interval, Vector3 ball) {
 	static float distance = 5.0f;
 	static float height = 2.0f;
 	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
@@ -190,7 +190,7 @@ void moveMarkerDown(int markermode) {
 	moveMarker(markermode,  gSin[gCamAngle], -gCos[gCamAngle]);
 }
 
-void animateEditor(double interval) {
+void animateEditor(float interval) {
 	static int markermode = 0;
 	static int singlemode = 0;
 
@@ -277,7 +277,7 @@ void animateEditor(double interval) {
 	}
 }
 
-void updateEditor(double interval) {
+void updateEditor(float interval) {
 	Vector3 markerPos;
   
 	if (isKeyPressed(KEY_ESC)) {
@@ -300,61 +300,58 @@ void drawEditorField(void) {
 	Square square;
 	int i, j;
 	FieldCoord cur;
-
-	glBegin(GL_QUADS);
 	
-	for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
-		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
-			
-			if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y) {
-				setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
-			} else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y) {
-				setAttributes(0.0f, 1.0f, 0.0f, 0.2f, 0.8f, 0.0f);
-			} else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y) {
-				setAttributes(0.0f, 0.0f, 1.0f, 0.2f, 0.8f, 0.0f);
-			} else {
-				setAttributes(1.0f, 1.0f, 1.0f, 0.2f, 0.8f, 0.0f);
-			}
-			
-			getRoofSquare(cur.x, cur.y, &square);
+	glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
 
-			glNormal3fv(&square.normal.x);
-			for (i = 0; i < 4; i++) {
-				glTexCoord2fv(&square.texcoords[i].x);
-				glVertex3fv(&square.vertices[i].x);
-			}
-
-			for (j = 0; j < 4; j++) {
-				if (getSideSquare(cur.x, cur.y, j, &square)) {
-					glNormal3fv(&square.normal.x);
-					for (i = 0; i < 4; i++) {
-						glTexCoord2fv(&square.texcoords[i].x);
-						glVertex3fv(&square.vertices[i].x);
+		glBegin(GL_QUADS);
+		
+		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
+			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
+				
+				if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y) {
+					setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
+				} else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y) {
+					setAttributes(0.0f, 1.0f, 0.0f, 0.2f, 0.8f, 0.0f);
+				} else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y) {
+					setAttributes(0.0f, 0.0f, 1.0f, 0.2f, 0.8f, 0.0f);
+				} else {
+					setAttributes(1.0f, 1.0f, 1.0f, 0.2f, 0.8f, 0.0f);
+				}
+				
+				getRoofSquare(cur.x, cur.y, &square);
+	
+				glNormal3fv(&square.normal.x);
+				for (i = 0; i < 4; i++) {
+					glTexCoord2fv(&square.texcoords[i].x);
+					glVertex3fv(&square.vertices[i].x);
+				}
+	
+				for (j = 0; j < 4; j++) {
+					if (getSideSquare(cur.x, cur.y, j, &square)) {
+						glNormal3fv(&square.normal.x);
+						for (i = 0; i < 4; i++) {
+							glTexCoord2fv(&square.texcoords[i].x);
+							glVertex3fv(&square.vertices[i].x);
+						}
 					}
 				}
 			}
-		}
-	}	
-  glEnd();		
+		}	
+	  glEnd();
+  
+  glDisable(GL_TEXTURE_2D);
 }
 
 void initEditor(char* filename) {
-	static Object oEditor;
-	static Object oField;
-
 	glColor3f(1.0f, 1.0f, 1.0f);
 	gEditorMainLight = addPointLight(30.0f, 30.0f, 20.0f);
 
 	gFilename = filename;
 	loadFieldFromFile(gFilename);
 
-	initObjectGroup(&oEditor);
-	sgWindowViewport.world = &oEditor;
+	sgWindowViewport.draw = drawEditorField;
 	setUpdateFunc(updateEditor);
-
-	initObject(&oField, drawEditorField);
-	oField.texture = sgLevel.texture;
-	addSubObject(&oEditor, &oField);
 
 	gCurStart.x = 0;
 	gCurStart.y = 0;

@@ -203,8 +203,8 @@ Vector3 gStartSpeed;
 Vector3 gEndPos;
 Vector3 gEndSpeed;
 
-double gExplosionTime;
-double gMaxExplosionTime;
+float gExplosionTime;
+float gMaxExplosionTime;
 
 float randFloat(void) {
 	return ((float) rand() / RAND_MAX) * 2.0f - 1.0f;
@@ -271,7 +271,7 @@ float smallestError(float x) {
 /*
  * interpolate explosion's position to destination
  */
-int updateExplosion(double interval, Vector3* speed, Vector3* pos) {
+int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 	int i;
 
 	float t = gExplosionTime / gMaxExplosionTime;

@@ -67,7 +67,7 @@ void resumeGame(void) {
 	goMenu.visible = 0;
 }
 
-void updateGameCamera(double interval, Vector3 ball) {
+void updateGameCamera(float interval, Vector3 ball) {
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	static float distance = 5.0f;
@@ -103,7 +103,7 @@ void updateGameCamera(double interval, Vector3 ball) {
 	sgRight = norm(cross(sgForward, up));
 }
 
-void updateGame(double interval) {
+void updateGame(float interval) {
 	if (gIsGameRunning) {
 		int i = 0;
 		
@@ -161,6 +161,10 @@ void drawGameContent(int reflection) {
 	 */
 	drawGameField();
 	drawShadows(!reflection);
+	
+	if (goMenu.visible)	{
+		drawObject(&goMenu);
+	}
 }
 
 void drawGame(void) {
@@ -169,6 +173,12 @@ void drawGame(void) {
 
 void drawGameReflection(void) {
 	drawGameContent(1);
+}
+
+void pickGame(void) {
+	if (goMenu.visible)	{
+		pickObject(&goMenu);
+	}
 }
 
 void initLevel(char* filename) {
@@ -250,9 +260,6 @@ void initFog(void) {
 }
 
 void initGame(char* filename) {
-	static Object oGame;
-	static Object oLevel;
-	
 	initObjects();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -274,14 +281,8 @@ void initGame(char* filename) {
 	/* level (must be after menu) */
  	initLevel(getNextLevelName());
 
-	initObjectGroup(&oGame);
-	sgWindowViewport.world = &oGame;
+	sgWindowViewport.draw = drawGame;
+	sgWindowViewport.pick = pickGame;
 	setUpdateFunc(updateGame);
-
-	initObject(&oLevel, drawGame);
-	addSubObject(&oGame, &oLevel);
-
-	/* menu must be added as last object to the world */
-	addSubObject(&oGame, &goMenu);
 }
 

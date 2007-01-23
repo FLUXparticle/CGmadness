@@ -1,6 +1,6 @@
-CC ?= gcc
-CFLAGS ?= -O3
-LDFLAGS ?=
+CC := gcc
+CFLAGS := -O3
+LDFLAGS :=
 
 CFLAGS += -ansi -pedantic -Wall
 

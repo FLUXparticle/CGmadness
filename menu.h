@@ -29,6 +29,6 @@ void initMenu(Object* obj);
 
 void showMenu(int pause);
 
-void updateMenu(double interval);
+void updateMenu(float interval);
 
 #endif

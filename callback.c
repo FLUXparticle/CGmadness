@@ -119,7 +119,7 @@ void display(void) {
 			glEnable(GL_LIGHTING);
 			setLights();
 
-			drawObject(v->world);
+			v->draw();
 		}
 	}
 
@@ -202,7 +202,7 @@ void timer(int lastCallTime) {
 	int diff;
 
 	while (nextUpdateTime < thisCallTime) {
-		double interval = (double) (nextUpdateTime - lastUpdateTime) / 1000.0f;
+		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
 		gUpdate(interval);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
@@ -254,7 +254,7 @@ int pick(int x, int y) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(&v->view[0][0]);
-	pickObject(gTargetWindow.viewport->world);
+	gTargetWindow.viewport->pick();
 	glFlush();
 
 	return glRenderMode(GL_RENDER);

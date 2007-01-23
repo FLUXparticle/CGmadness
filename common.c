@@ -59,7 +59,7 @@ Vector3 sgRight;
 static int gEdgeX[4] = { 0, 1, 1, 0 };
 static int gEdgeY[4] = { 0, 0, 1, 1 };
 
-void moveCamera(double interval, Vector3 camera, Vector3 lookat) {
+void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	float error;

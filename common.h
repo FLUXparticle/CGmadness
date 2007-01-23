@@ -78,7 +78,7 @@ int saveFieldToFile(char* filename);
 void getRoofSquare(int x, int y, Square* square); 
 int getSideSquare(int x, int y, int side, Square* square);
 
-void moveCamera(double interval, Vector3 camera, Vector3 lookat);
+void moveCamera(float interval, Vector3 camera, Vector3 lookat);
  
 void getVertIndex(int x, int y, int* start, int* end);
 

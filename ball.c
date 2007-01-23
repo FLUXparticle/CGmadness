@@ -64,7 +64,7 @@ static int gIsBallInPieces;
 
 static int gBallLayout = 0;
 
-Object sgoBall;
+Ball sgoBall;
 
 static GLhandleARB gShaderBall;
 static int gCubeMapBall;
@@ -84,8 +84,6 @@ int hasBallShader(void) {
 }
 
 void initCubeMap(void) {
-	static Object oReflection;
-
 	Matrix m;
 	int i;
 
@@ -94,11 +92,9 @@ void initCubeMap(void) {
 	/* init framebuffer for cubemap */
 	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
 
-	initObject(&oReflection, drawGameReflection);
-	
 	for (i = 0; i < 6; i++) {
 		memcpy(&gViewportCube[i].projection[0][0], &m, sizeof(Matrix));
-		gViewportCube[i].world = &oReflection;
+		gViewportCube[i].draw = drawGameReflection;
 
 		gTargetCube[i].viewport = &gViewportCube[i];
 		addRenderTarget(&gTargetCube[i]);
@@ -178,7 +174,9 @@ void updateReflection(void) {
 void resetBall(void) {
 	Square roofSquare;
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
-	setObjectPosition3f(&sgoBall, sgLevel.start.x + 0.5f, sgLevel.start.y + 0.5f, getMaxZValue(&roofSquare) + 2.5f);
+	sgoBall.pos.x = sgLevel.start.x + 0.5f;
+	sgoBall.pos.y = sgLevel.start.y + 0.5f;
+	sgoBall.pos.z = getMaxZValue(&roofSquare) + 2.5f;
 
 	gSpeed.x = 0.0f;
 	gSpeed.y = 0.0f;
@@ -206,8 +204,6 @@ void explodeBall(void) {
 }
 
 void initBall(void) {
-	initObject(&sgoBall, drawGameBall);
-	
 	if (hasShader()) {
 		gShaderBall = makeShader("golfball.vert", "golfball.frag");
 
@@ -224,10 +220,12 @@ void initBall(void) {
 
 	gTextureBall = loadTexture("data/ball.tga", 0);
 
-	setObjectScalef(&sgoBall, BALL_RADIUS);
+	sgoBall.scale = BALL_RADIUS;
+	
+	sgoBall.orientation = mkQuaternion(0.0f, mkVector3(0.0f, 0.0f, 1.0f));
 }
 
-void animateBall(double interval) {
+void animateBall(float interval) {
 	int collision = 0;
 	int q;
 	int x;
@@ -337,8 +335,9 @@ void animateBall(double interval) {
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
 					float angle = dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * BALL_RADIUS) * 360.0f;
-					rotateObject(&sgoBall, angle, &right.x);
-
+					
+					sgoBall.orientation = mulQuaternion(mkQuaternion(angle, right), sgoBall.orientation); 
+					
 					ball = add(ball, move);
 
 					normal = add(normal, move);
@@ -389,7 +388,7 @@ void animateBall(double interval) {
 	}
 }
 
-void updateBall(double interval) {
+void updateBall(float interval) {
 	if (!gIsBallInPieces) {
 		animateBall(interval);
 	} else {
@@ -524,8 +523,8 @@ void drawGameBall(void) {
 	glPushMatrix();
 
 	glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
-	glMultMatrixf(sgoBall.rotMatrix);
-	glScalef(sgoBall.scaleX, sgoBall.scaleY, sgoBall.scaleZ);
+	quaternionTransform(sgoBall.orientation);
+	glScalef(sgoBall.scale, sgoBall.scale, sgoBall.scale);
 
 	/* explosion? */
 	if (gIsBallInPieces) {

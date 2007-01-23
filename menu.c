@@ -255,7 +255,7 @@ void clickButtonBack(void) {
 	goMainText.visible = 1;
 }
 
-void updateMenu(double interval) {
+void updateMenu(float interval) {
 	if (goMainText.visible) {
 		if (!gIsPauseMenu && wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();

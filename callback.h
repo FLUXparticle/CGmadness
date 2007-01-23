@@ -27,12 +27,18 @@
 
 #include "types.h"
 
-typedef void (*funcUpdate)(double interval);
+typedef void (*funcUpdate)(float interval);
+/*
+ * typedef void (*funcDraw)(void);
+ */
+
+typedef void (*funcDoPick)(void);
 
 typedef struct {
 	Matrix projection;
 	Matrix view;
-	Object* world;
+	funcDraw draw;
+	funcDoPick pick;
 } Viewport;
 
 typedef struct {

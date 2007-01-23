@@ -56,6 +56,8 @@ float dot(Vector3 a, Vector3 b);
 
 Vector3 cross(Vector3 a, Vector3 b);
 
+Vector3 mkVector3(float x, float y, float z);
+
 void initProjectMat(Matrix m, float fov); 
 
 #endif

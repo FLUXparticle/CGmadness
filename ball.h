@@ -23,7 +23,7 @@
 #ifndef _ball_h_
 #define _ball_h_
 
-#include "graph.h"
+#include "quaternion.h"
 
 #define BALL_RADIUS 0.2f
 
@@ -35,13 +35,21 @@
 #define BALL_LAYOUT_GOLFBALL 3
 #define BALL_LAYOUT_GOLFBALL_METAL 4
 
-extern Object sgoBall;
+typedef struct {
+	Vector3 pos;
+	
+	float scale;
+
+	Quaternion orientation;
+} Ball;
+
+extern Ball sgoBall;
 
 void initBall(void);
 
 void resetBall(void);
 
-void updateBall(double interval);
+void updateBall(float interval);
 void changeBall(int layout);
 
 void activateBallShader(void);
