@@ -100,8 +100,8 @@ void initShadowVolumes(void) {
 	MALLOC(gFieldShadowVolume, gMaxFieldShadowVolumeVertices * sizeof(Vector3));
 
 	for (i = 0; i <= BALL_SHADOW_VERTICES; i++) {
-		gBallOutline[i].x = BALL_RADIUS * cos(2.0f * i * PI / BALL_SHADOW_VERTICES);
-		gBallOutline[i].y = BALL_RADIUS * sin(2.0f * i * PI / BALL_SHADOW_VERTICES);
+		gBallOutline[i].x = sgoBall.radius * cos(2.0f * i * PI / BALL_SHADOW_VERTICES);
+		gBallOutline[i].y = sgoBall.radius * sin(2.0f * i * PI / BALL_SHADOW_VERTICES);
 	}
 	
 	light.x = sgLight[0].pos[0];

@@ -38,7 +38,7 @@
 #define NULL ((void*) 0)
 #endif
 
-#define length(x) (sizeof(x) / sizeof(*x))
+#define LENGTH(x) (sizeof(x) / sizeof(*x))
 
 #define FOV 60.0f
 

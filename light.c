@@ -30,7 +30,7 @@
 
 #include <string.h>
 
-#define MAX_LIGHTS length(gLightIDs)
+#define MAX_LIGHTS LENGTH(gLightIDs)
 
 float gNone[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 float gSome[] = { 0.2f, 0.2f, 0.2f, 1.0f };

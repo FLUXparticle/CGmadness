@@ -41,13 +41,13 @@
 #include <string.h>
 #include <math.h>
 
-#define ACCELERATION 5.0f
+#define MOVE_FORCE 5.0f
 
 #define GRAVITY 9.81f
 
-#define JUMP 50.0f
+#define JUMP_FORCE (50.0f * MOVE_FORCE)
 
-#define FRICTION 0.99f
+#define DAMPING 0.99f
 
 #define ELASTICITY 0.5f
 
@@ -57,8 +57,6 @@
 
 RenderTarget gTargetCube[6];
 static Viewport gViewportCube[6];
-
-static Vector3 gSpeed;
 
 static int gIsBallInPieces;
 
@@ -178,9 +176,13 @@ void resetBall(void) {
 	sgoBall.pos.y = sgLevel.start.y + 0.5f;
 	sgoBall.pos.z = getMaxZValue(&roofSquare) + 2.5f;
 
-	gSpeed.x = 0.0f;
-	gSpeed.y = 0.0f;
-	gSpeed.z = 0.0f;
+	sgoBall.velocity.x = 0.0f;
+	sgoBall.velocity.y = 0.0f;
+	sgoBall.velocity.z = 0.0f;
+	
+	sgoBall.angularRate.x = 0.0f;
+	sgoBall.angularRate.y = 0.0f;
+	sgoBall.angularRate.z = 0.0f;
 	
 	gIsBallInPieces = 0;
 
@@ -189,16 +191,16 @@ void resetBall(void) {
 
 void explodeBall(void) {
 	Vector3 pos = sgoBall.pos;
-	Vector3 speed = gSpeed;
+	Vector3 speed = sgoBall.velocity;
 
 	resetBall();
 
-	gSpeed.z = -10.0f;
+	sgoBall.velocity.z = -10.0f;
 	
-	initExplosion(pos, speed, sgoBall.pos, gSpeed);
+	initExplosion(pos, speed, sgoBall.pos, sgoBall.velocity);
 
 	sgoBall.pos = pos;
-	gSpeed = speed;
+	sgoBall.velocity = speed;
 	
 	gIsBallInPieces = 1;
 }
@@ -220,8 +222,13 @@ void initBall(void) {
 
 	gTextureBall = loadTexture("data/ball.tga", 0);
 
-	sgoBall.scale = BALL_RADIUS;
+	sgoBall.mass = 1.0f;
+	sgoBall.radius = 0.2f;
+	sgoBall.inertia = 4.0f / 10.0f * sgoBall.mass * sqr(sgoBall.radius); 
 	
+	sgoBall.staticFriction = 0.15f;
+	sgoBall.dynamicFriction = 1.0f; /* 0.10f; */
+
 	sgoBall.orientation = mkQuaternion(0.0f, mkVector3(0.0f, 0.0f, 1.0f));
 }
 
@@ -233,7 +240,7 @@ void animateBall(float interval) {
 	int dx;
 	int dy;
 	
-	Vector3 move = { 0.0f, 0.0f, 0.0f };
+	Vector3 force = { 0.0f, 0.0f, 0.0f };
 
 	Vector3 normal = { 0.0f, 0.0f, 0.0f };
 
@@ -243,31 +250,31 @@ void animateBall(float interval) {
 
 	/* ball controls */
 	if (isCursorPressed(CURSOR_LEFT)) {
-		move = sub(move, sgRight);
+		force = sub(force, sgRight);
 	}
 	
 	if (isCursorPressed(CURSOR_RIGHT)) {
-		move = add(move, sgRight);
+		force = add(force, sgRight);
 	}
 	
 	if (isCursorPressed(CURSOR_DOWN)) {
-		move = sub(move, sgForward);
+		force = sub(force, sgForward);
 	}
 	
 	if (isCursorPressed(CURSOR_UP)) {
-		move = add(move, sgForward);
+		force = add(force, sgForward);
 	}
 
-	normalize(&move);
+	normalize(&force);
 
-	gSpeed = add(gSpeed, scale(ACCELERATION * interval, move));
+	sgoBall.velocity = add(sgoBall.velocity, scale(MOVE_FORCE / sgoBall.mass * interval, force));
 
 
-	gSpeed.z -= GRAVITY * interval;
+	sgoBall.velocity.z -= GRAVITY * interval;
 
 	/* collision detection */
 
-	step = scale(interval, gSpeed);
+	step = scale(interval, sgoBall.velocity);
 
 	ball = add(sgoBall.pos, step);
 
@@ -296,7 +303,7 @@ void animateBall(float interval) {
 				/* a = project ball center on plane */
 				Vector3 a = sub(ball, quad[0]);
 
-				if (dot(a, dir) >= BALL_RADIUS) {
+				if (dot(a, dir) >= sgoBall.radius) {
 					continue;
 				}
 
@@ -327,16 +334,23 @@ void animateBall(float interval) {
 				l = len(dist);
 
 				/* move = vector to move the ball out of quad */
-				move = scale(-((BALL_RADIUS - l) / l), dist);
+				move = scale(-((sgoBall.radius - l) / l), dist);
 				
         /* collision? */
-				if (l < BALL_RADIUS) {
+				if (l < sgoBall.radius) {
 					/* some rotation for a better look */
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
-					float angle = dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * BALL_RADIUS) * 360.0f;
+/*					
+					Vector3 angularMomentum = scale(sgoBall.inertia, sgoBall.angularRate);
 					
-					sgoBall.orientation = mulQuaternion(mkQuaternion(angle, right), sgoBall.orientation); 
+					Vector3 frictionForce = scale(-1.0f * GRAVITY * sgoBall.mass * sgoBall.dynamicFriction, forward);
+					Vector3 torque = cross(dist, frictionForce);
+					
+					angularMomentum = add(angularMomentum, scale(interval, torque));
+*/
+					
+					sgoBall.angularRate = scale(dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
 					
 					ball = add(ball, move);
 
@@ -353,30 +367,32 @@ void animateBall(float interval) {
 
 	/* contact to surface? */
 	if (collision) {
-		float vn = dot(gSpeed, normal);
+		float vn = dot(sgoBall.velocity, normal);
 		Vector3 rebound = scale(-(1 + ELASTICITY) * vn, normal);
 
-    if (len(rebound) > 3.0f * JUMP * ACCELERATION * interval) {
+    if (len(rebound) > 3.0f * JUMP_FORCE * interval) {
 			/* collision was to havy */
 			explodeBall();
 		} else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y) {
 			/* reached finish quad */
 			loadNewLevel();
 		} else {
-			gSpeed = add(gSpeed, rebound);
+			sgoBall.velocity = add(sgoBall.velocity, rebound);
 
 			/* jump */
 			if (isKeyPressed(' ')) {
-				gSpeed = add(gSpeed, scale(JUMP * ACCELERATION * interval, normal));
+				sgoBall.velocity = add(sgoBall.velocity, scale(JUMP_FORCE / sgoBall.mass * interval, normal));
 			}
 		}
 	}
 
 	/***/
 
-	/* friction */
-	gSpeed = scale(FRICTION, gSpeed);
+	/* damping */
+	sgoBall.velocity = scale(DAMPING, sgoBall.velocity);
 	
+	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation); 
+					
 	/* falling to infinity */
 	if (sgoBall.pos.z < -10.0f) {
 		explodeBall();
@@ -392,7 +408,7 @@ void updateBall(float interval) {
 	if (!gIsBallInPieces) {
 		animateBall(interval);
 	} else {
-		if (updateExplosion(interval, &gSpeed, &sgoBall.pos)) {
+		if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
 			resetBall();
 		}
 	}
@@ -523,8 +539,8 @@ void drawGameBall(void) {
 	glPushMatrix();
 
 	glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
+	glScalef(sgoBall.radius, sgoBall.radius, sgoBall.radius);
 	quaternionTransform(sgoBall.orientation);
-	glScalef(sgoBall.scale, sgoBall.scale, sgoBall.scale);
 
 	/* explosion? */
 	if (gIsBallInPieces) {

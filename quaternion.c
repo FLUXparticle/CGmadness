@@ -68,7 +68,7 @@ Quaternion mkQuaternion(float alpha, Vector3 v)
 	Quaternion q;
 
 	q.s = c;
-	q.v = scale(s, v);
+	q.v = scale(s, norm(v));
 
 	return q;
 }

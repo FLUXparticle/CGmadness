@@ -299,7 +299,7 @@ void initMenu(Object* obj) {
 	static SpinEdit spinEditBall;
 
 	static Object oLogo;	
-	static Object oTextHelp[length(gTextHelp)];
+	static Object oTextHelp[LENGTH(gTextHelp)];
 	static Object oBall;
 
 	int i;
@@ -381,9 +381,9 @@ void initMenu(Object* obj) {
 	
 	goHelpText.visible = 0;
 
-	for (i = 0; i < length(gTextHelp); i += 2) {
+	for (i = 0; i < LENGTH(gTextHelp); i += 2) {
 		char* left = gTextHelp[i];
-		char* right = ((i + 1) < length(gTextHelp)) ? gTextHelp[i + 1] : NULL;
+		char* right = ((i + 1) < LENGTH(gTextHelp)) ? gTextHelp[i + 1] : NULL;
 		float z = 6.0f - i / 2;
 		float length;
 
@@ -410,7 +410,7 @@ void initMenu(Object* obj) {
 		}
 	}
 
-	init3dButton(&bBack, 6.0f - length(gTextHelp) / 2, clickButtonBack, "back");
+	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp) / 2, clickButtonBack, "back");
  	addSubObject(&goHelpText, &bBack.oButton);
 
 	addSubObject(obj, &goHelpText);

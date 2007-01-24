@@ -89,4 +89,4 @@ include $(DEPS)
 .deps/%.c.d: %.c
 	@echo "  DEP $@"
 	@mkdir -p "$(@D)"
-	@( echo -n "$@ " && $(CC) -MM -MP -MT build/$(<:%.cpp=%.o) $(CFLAGS) $< ) > $@ || rm $@
+	@( echo -n "$@ " && $(CC) -MM -MP -MT build/$*.o $(CFLAGS) $< ) > $@ || rm $@

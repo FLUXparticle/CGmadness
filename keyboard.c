@@ -27,9 +27,9 @@
 
 #define MAX_KEYS 256
 
-#define MAX_CURSORS length(gCursors)
+#define MAX_CURSORS LENGTH(gCursors)
 
-#define MAX_FUNCTION length(gFunctions)
+#define MAX_FUNCTION LENGTH(gFunctions)
 
 int gCursors[] = {
 	GLUT_KEY_UP,

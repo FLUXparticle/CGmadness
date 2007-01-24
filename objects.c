@@ -138,11 +138,11 @@ void initObjects(void) {
 	
   gCntBallVertices = 0;
 	
-	for (i = 0; i < length(gIsokaederIndices); i++) {
+	for (i = 0; i < LENGTH(gIsokaederIndices); i++) {
 		Vector3 tri[3];
 		Vector3 mid = { 0.0f, 0.0f, 0.0f };
 
-		for (j = 0; j < length(gIsokaederIndices[i]); j++) {
+		for (j = 0; j < LENGTH(gIsokaederIndices[i]); j++) {
 			tri[j] = gIsokaederVertices[gIsokaederIndices[i][j]];
 			mid = add(mid, tri[j]);
 		}
@@ -226,16 +226,16 @@ void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos, Vector3
 	gEndPos = endPos;
 	gEndSpeed = endSpeed;
 
-	for (i = 0, v = 0; i < length(gFragments); i++, v += length(gFragments[i].vertices)) {
+	for (i = 0, v = 0; i < LENGTH(gFragments); i++, v += LENGTH(gFragments[i].vertices)) {
 		Vector3 mid = { 0.0f, 0.0f, 0.0f };
 
-		for (j = 0; j < length(gFragments[i].vertices); j++) {
+		for (j = 0; j < LENGTH(gFragments[i].vertices); j++) {
 			mid = add(mid, gBallVertices[v + j]);
 		}
 
-		mid = scale(1.0f / length(gFragments[i].vertices), mid);
+		mid = scale(1.0f / LENGTH(gFragments[i].vertices), mid);
 
-		for (j = 0; j < length(gFragments[i].vertices); j++) {
+		for (j = 0; j < LENGTH(gFragments[i].vertices); j++) {
 			gFragments[i].vertices[j] = sub(gBallVertices[v + j], mid);
 		}
 
@@ -290,7 +290,7 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 	*pos = add(*pos, scale(b2, gStartSpeed));
 	*pos = add(*pos, scale(b3, gEndSpeed));
 	
-	for (i = 0; i < length(gFragments); i++) {
+	for (i = 0; i < LENGTH(gFragments); i++) {
 		Vector3 rotError;
 
 		/* position */
@@ -326,7 +326,7 @@ void drawExplosion(int shader) {
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 	glDisable(GL_CULL_FACE);
 
-	for (i = 0, v = 0; i < length(gFragments); i++, v += length(gFragments[i].vertices)) {
+	for (i = 0, v = 0; i < LENGTH(gFragments); i++, v += LENGTH(gFragments[i].vertices)) {
 		glPushMatrix();
 
 		glTranslatef(gFragments[i].pos.x, gFragments[i].pos.y, gFragments[i].pos.z);
@@ -336,7 +336,7 @@ void drawExplosion(int shader) {
 		glRotatef(gFragments[i].rotation.z, 0.0f, 0.0f, 1.0f);
 
 		glBegin(GL_TRIANGLES);
-			for (j = 0; j < length(gFragments[i].vertices); j++) {
+			for (j = 0; j < LENGTH(gFragments[i].vertices); j++) {
 				glNormal3fv(&gBallVertices[v + j].x);
 				
 				if (shader) {

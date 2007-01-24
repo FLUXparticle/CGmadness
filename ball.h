@@ -25,8 +25,6 @@
 
 #include "quaternion.h"
 
-#define BALL_RADIUS 0.2f
-
 #define MAX_BALL_LAYOUTS 5
 
 #define BALL_LAYOUT_DEFAULT 0
@@ -36,11 +34,18 @@
 #define BALL_LAYOUT_GOLFBALL_METAL 4
 
 typedef struct {
-	Vector3 pos;
+	float mass;
+	float radius;
+	float inertia;
 	
-	float scale;
-
+	float staticFriction;
+	float dynamicFriction;
+	
+	Vector3 pos;
+	Vector3 velocity;
+	
 	Quaternion orientation;
+	Vector3 angularRate;
 } Ball;
 
 extern Ball sgoBall;
