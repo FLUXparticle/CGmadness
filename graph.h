@@ -79,4 +79,6 @@ void drawObject(Object* obj);
 
 void pickObject(Object* obj);
 
+void drawTrianglesVerticesNormals(int count, float* vertices, float* normals);
+
 #endif

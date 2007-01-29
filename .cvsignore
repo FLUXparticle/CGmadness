@@ -3,3 +3,5 @@
 *.zip
 cgmadness
 gmon.out
+.deps
+build

@@ -39,9 +39,8 @@ $(EXEC): $(OBJS)
 	@echo "  LINK $@"
 	@$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
 
-build/%.o: %.c
+build/%.o: %.c | build/.
 	@echo "  CC $@"
-	@mkdir -p "$(@D)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 # building archives
@@ -86,7 +85,12 @@ clean:
 # dependancies
 include $(DEPS)
 
-.deps/%.c.d: %.c
+.deps/%.c.d: %.c | .deps/.
 	@echo "  DEP $@"
-	@mkdir -p "$(@D)"
 	@( echo -n "$@ " && $(CC) -MM -MP -MT build/$*.o $(CFLAGS) $< ) > $@ || rm $@
+
+# create necessary directories
+.PRECIOUS: %/.
+%/.:
+	@echo "  MKDIR $*"
+	@mkdir -p $*
