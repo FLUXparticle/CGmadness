@@ -30,10 +30,14 @@
 #include "ball.h"
 #include "shadows.h"
 #include "field.h"
-#include "menu.h"
+#include "gamemenu.h"
 #include "files.h"
 #include "features.h"
 #include "keyboard.h"
+#include "mouse.h"
+#include "callback.h"
+
+#include "functions.h"
 
 #include "types.h"
 #include "debug.h"
@@ -55,13 +59,35 @@ static int gIsGameRunning;
 
 static Object goMenu;
 
+#if (MOUSE_CONTROL)
+static int gDragX = 0;
+static int gDragY = 0;
+#endif
+
+static float gDistance;
+static float gLatitude;
+static float gLongitude;
+
+#if (MOUSE_CONTROL)
+void gameDrag(int dx, int dy) {
+	gDragX += dx;
+	gDragY += dy;
+}
+#endif
+
 void pauseGame(void) {
-	showMenu(1);
+#if (MOUSE_CONTROL)
+	setDragFunc(NULL);
+#endif
+	showGameMenu(1);
 	gIsGameRunning = 0;
 	goMenu.visible = 1;
 }
 
 void resumeGame(void) {
+#if (MOUSE_CONTROL)
+	setDragFunc(gameDrag);
+#endif
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsGameRunning = 1;
 	goMenu.visible = 0;
@@ -70,32 +96,41 @@ void resumeGame(void) {
 void updateGameCamera(float interval, Vector3 ball) {
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
-	static float distance = 5.0f;
-	static float height = 2.0f;
 	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
 
   /* game controls for camera */
 
+#if (MOUSE_CONTROL)
+	gLongitude -= 12.0f * interval * gDragX;
+	gLatitude += 12.0f * interval * gDragY;
+	
+	gDragX = 0;
+	gDragY = 0;
+#else
 	/* zoom */
-	if (isKeyPressed('f')) distance += 0.1f;
-	if (isKeyPressed('r') && distance > 0.5) distance -= 0.1f;
+	if (isKeyPressed('f')) gDistance += 0.1f;
+	if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
 
 	/* rotation */
-	if (isKeyPressed('a')) dest = sub(dest, scale(0.1f, sgRight));
-	if (isKeyPressed('d')) dest = add(dest, scale(0.1f, sgRight));
+	if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
+	if (isKeyPressed('d')) gLongitude += 120.0f * interval;
 
 	/* height */
-	if (isKeyPressed('w')) height += 0.1f;
-	if (isKeyPressed('s')) height -= 0.1f;
+	if (isKeyPressed('w')) gLatitude += 120.0f * interval;
+	if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
+	
+	gLatitude = clamp(gLatitude, -89.0f, 89.0f);
+#endif
 
-	dest.z = ball.z + height;
-
-	diff = sub(dest, ball);
-	diff = scale(distance, norm(diff));
-
-	dest = add(ball, diff);
+	dest.x = ball.x + gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.y = ball.y - gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
 
 	moveCamera(interval, dest, ball);
+	
+#if (0 && MOUSE_CONTROL)
+	sgCamera = dest;
+#endif
 
 	diff = sub(sgLookat, sgCamera);
 	diff.z = 0.0f;
@@ -120,17 +155,18 @@ void updateGame(float interval) {
 
 		/* manually switch features */
 		if (wasFunctionPressed(1)) {
-			toggleLight(sgGameSpotLight);
+			setSpotlight(!useSpotlight());
 		}
 		if (wasFunctionPressed(2)) {
 			setShadows(!useShadows());
 		}
+		if (wasFunctionPressed(3)) {
+			setFog(!useFog());
+		}
 
 		updateBall(interval);
 
-		sgLight[sgGameSpotLight].pos[0] = sgoBall.pos.x;
-		sgLight[sgGameSpotLight].pos[1] = sgoBall.pos.y;
-		sgLight[sgGameSpotLight].pos[2] = sgoBall.pos.z;
+		sgLight[sgGameSpotLight].pos = sgoBall.pos;
 
 		updateShadows();
 
@@ -147,7 +183,7 @@ void updateGame(float interval) {
 		camera.y -= 10.0f;
 		camera.z += 2.0f;
 
-		updateMenu(interval);
+		updateGameMenu(interval);
 
 		moveCamera(interval, camera, lookat);
 	}
@@ -155,24 +191,44 @@ void updateGame(float interval) {
 	updateGameField();
 }
 
-void drawGameContent(int reflection) {
+void drawGame(void) {
 	/*
 	 * WARNING: alpha blending does not seem to work in texture-buffer
 	 */
 	drawGameField();
-	drawShadows(!reflection);
+	drawShadows(1);
 	
 	if (goMenu.visible)	{
 		drawObject(&goMenu);
 	}
-}
 
-void drawGame(void) {
-	drawGameContent(0);
+#if 0	
+	{
+		float scale = 1.0f / 100.0f;
+		char text[] = "Hallo???";
+		char *p;
+		
+		glPushMatrix();
+	    glTranslatef(0.0f, 0.0f, 0.0f);
+	    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	    glScalef(scale, scale, scale);
+	    
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+/*			glEnable(GL_LINE_SMOOTH);*/
+			glLineWidth(2.0);
+			for (p = text; *p; p++) {
+				glutStrokeCharacter(GLUT_STROKE_ROMAN, *p);
+			}
+			glDisable(GL_BLEND);
+/*			glDisable(GL_LINE_SMOOTH);*/
+     glPopMatrix();
+	}
+#endif
 }
 
 void drawGameReflection(void) {
-	drawGameContent(1);
+	drawGameField();
 }
 
 void pickGame(void) {
@@ -181,29 +237,31 @@ void pickGame(void) {
 	}
 }
 
-void initLevel(char* filename) {
-	loadFieldFromFile(filename);
+int initLevel(char* filename) {
+	if (!loadFieldFromFile(filename)) {
+		return 0;
+	}
 	
 	initGameField();
 
 	initShadowVolumes();
 
-	sgCamera.x = -2.0f;
-	sgCamera.y = -3.0f;
-	sgCamera.z =  4.0f;
+	gDistance  =  5.0f;
+	gLatitude  = 20.0f;
+	gLongitude =  0.0f;
 
 	setObjectPosition3f(&goMenu, (sgLevel.size.x + 1.0f) / 2, -10.0f, 0.0f);
 
-	sgLight[sgGameSpotLight].pos[0] = sgLevel.start.x + 0.5f;
-	sgLight[sgGameSpotLight].pos[1] = sgLevel.start.y + 0.5f;
+	sgLight[sgGameSpotLight].pos.x = sgLevel.start.x + 0.5f;
+	sgLight[sgGameSpotLight].pos.y = sgLevel.start.y + 0.5f;
 	
 	updateGameCamera(0.0, goMenu.pos);
 
-	showMenu(0);
-	gIsGameRunning = 0;
-	goMenu.visible = 1;
-
+	pauseGame();
+	showGameMenu(0);
 	resetBall();
+
+	return 1;
 }
 
 void destroyLevel(void) {
@@ -240,10 +298,13 @@ void loadNewLevel(void) {
 
 	destroyLevel();
 
-	if (nextLevelname) {
-		initLevel(nextLevelname);
-	} else {
+	if (!nextLevelname) {
+		/*
+		 * TODO nice game end
+		 */
 		exit(0);
+	} else if (!initLevel(nextLevelname)) {
+		exit(1);
 	}
 }
 
@@ -259,7 +320,7 @@ void initFog(void) {
 	glFogfv(GL_FOG_END, &value);
 }
 
-void initGame(char* filename) {
+int initGame(void) {
 	initObjects();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -273,16 +334,21 @@ void initGame(char* filename) {
 	initBall();
 
 	/* menu (must be after ball) */
-	initMenu(&goMenu);
+	initGameMenu(&goMenu);
 
 	goMenu.visible = 0;
 	gIsGameRunning = 1;
 
 	/* level (must be after menu) */
- 	initLevel(getNextLevelName());
+ 	if (!initLevel(getNextLevelName())) {
+		return 0;
+	}
+
+	updateGameField();
 
 	sgWindowViewport.draw = drawGame;
 	sgWindowViewport.pick = pickGame;
 	setUpdateFunc(updateGame);
-}
 
+	return 1;
+}

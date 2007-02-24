@@ -56,6 +56,18 @@ void toggleLight(int index) {
 	}
 }
 
+void enableLight(int index) {
+	if (!sgLight[index].enable) {
+		toggleLight(index);
+	}
+}
+
+void disableLight(int index) {
+	if (sgLight[index].enable) {
+		toggleLight(index);
+	}
+}
+
 int addLight(float x, float y, float z) {
 	int light = gCntLights++;
 	Light* newLight = &sgLight[light];
@@ -64,10 +76,9 @@ int addLight(float x, float y, float z) {
 	
 	glGetFloatv(GL_CURRENT_COLOR, newLight->color);
 
-	newLight->pos[0] = x;
-	newLight->pos[1] = y;
-	newLight->pos[2] = z;
-	newLight->pos[3] = 1.0f;
+	newLight->pos.x = x;
+	newLight->pos.y = y;
+	newLight->pos.z = z;
 
 	newLight->spot = 0;
 
@@ -108,8 +119,15 @@ void setLights(void) {
 	for (i = 0; i < gCntLights; i++) {
 		Light* light = &sgLight[i];
 		if (light->enable) {
+			float pos[4];
+		 
+			pos[0] = light->pos.x;
+			pos[1] = light->pos.y;
+			pos[2] = light->pos.z;
+			pos[3] = 1.0f;
+
 			glEnable(light->id);
-			glLightfv(light->id, GL_POSITION, light->pos);
+			glLightfv(light->id, GL_POSITION, pos);
 			glLightfv(light->id, GL_AMBIENT, gNone);
 
 			setLightColor(light->id, light->color);

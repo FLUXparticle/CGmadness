@@ -20,15 +20,21 @@
  *
  */
 
-#ifndef _menu_h_
-#define _menu_h_
+#include "functions.h"
 
-#include "callback.h"
+float sqr(float x) {
+	return x * x;
+}
 
-void initMenu(Object* obj);
+float min(float a, float b) {
+	return (a < b) ? a : b;
+}
 
-void showMenu(int pause);
+float max(float a, float b) {
+	return (a > b) ? a : b;
+}
 
-void updateMenu(float interval);
+float clamp(float x, float lo, float up) {
+	return min(up, max(lo, x));
+}
 
-#endif

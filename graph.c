@@ -289,7 +289,6 @@ void drawTrianglesVerticesNormals(int count, float* vertices, float* normals)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glDisable(GL_CULL_FACE);
 
 	glVertexPointer(3, GL_FLOAT, 0, vertices);
 	glNormalPointer(GL_FLOAT, 0, normals);
@@ -298,5 +297,4 @@ void drawTrianglesVerticesNormals(int count, float* vertices, float* normals)
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	glEnable(GL_CULL_FACE);
 }

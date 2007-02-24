@@ -23,20 +23,24 @@
 #ifndef _features_h_
 #define _features_h_
 
+#include <GL/glew.h>
+
+extern GLhandleARB sgSpotlightShader;
+
 void initFeatures(int argc, char* argv[]);
 
 int hasShader(void);
 int hasFramebuffer(void);
 int hasVertexbuffer(void);
 int hasTwoSideStencil(void);
+int hasSpotlight(void);
 
 void setFog(int use);
 void setShadows(int use);
+void setSpotlight(int use);
 
 int useShadows(void);
 int useFog(void);
-
-int hasSpotlight(void);
 int useSpotlight(void);
 
 #endif

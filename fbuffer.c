@@ -22,6 +22,8 @@
 
 #include "fbuffer.h"
 
+#include "debug.h"
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -137,6 +139,7 @@ int initFBufferCube(int width, int height, RenderTarget context[6]) {
 		return 0;
 	}
 
+/*	GL_DEBUG(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, context[0].framebuffer)); */
 	for (i = 1; i < 6; i++) {
 		context[i].width = width;
 		context[i].height = height;
@@ -144,6 +147,7 @@ int initFBufferCube(int width, int height, RenderTarget context[6]) {
 		context[i].texTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
 		context[i].texID = color_tex;
 		context[i].viewport = NULL;
+/*		GL_DEBUG(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, context[i].texTarget, context[i].texID, 0)); */
 	}
 
 	return color_tex;

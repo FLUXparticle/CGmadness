@@ -32,10 +32,12 @@
 #include "features.h"
 #include "keyboard.h"
 #include "texture.h"
+#include "light.h"
 
 #include "debug.h"
 
-#include "GL/glew.h"
+#include <GL/glew.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -62,6 +64,8 @@ static int gIsBallInPieces;
 
 static int gBallLayout = 0;
 
+static int gDirtyReflection = 1;
+
 Ball sgoBall;
 
 static GLhandleARB gShaderBall;
@@ -79,24 +83,6 @@ int hasBallReflection(void) {
 
 int hasBallShader(void) {
 	return gShaderBall != 0;
-}
-
-void initCubeMap(void) {
-	Matrix m;
-	int i;
-
-	initProjectMat(m, 90.0f);
-	
-	/* init framebuffer for cubemap */
-	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
-
-	for (i = 0; i < 6; i++) {
-		memcpy(&gViewportCube[i].projection[0][0], &m, sizeof(Matrix));
-		gViewportCube[i].draw = drawGameReflection;
-
-		gTargetCube[i].viewport = &gViewportCube[i];
-		addRenderTarget(&gTargetCube[i]);
-	}
 }
 
 float getMaxZValue(Square* square) {
@@ -130,6 +116,21 @@ void changeBall(int layout) {
 	}
 }
 
+void switchRenderTarget(RenderTarget* target) {
+	if (hasFramebuffer()) {
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, target->framebuffer);
+		if (target->framebuffer != 0) {
+			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target->texTarget, target->texID, 0);	
+/*			glReadBuffer(GL_COLOR_ATTACHMENT0_EXT); 
+		} else {
+			glReadBuffer(GL_BACK); */
+		}
+	}
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glViewport(0, 0, target->width, target->height);
+}
+
 void updateReflection(void) {
 	static Vector3 lookat[] = {
 		{  1.0f,  0.0f,  0.0f },
@@ -153,19 +154,58 @@ void updateReflection(void) {
     { 0.0f, -1.0f,  0.0f }
 	};
 
-	int i;
-	
-	if (useBallReflection()) {
-		glMatrixMode(GL_MODELVIEW);
+	if (useBallReflection() && gDirtyReflection) {
+		int i;
+/*
+		int max;
+		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &max);
+		PRINT_INT(max);
+*/
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(&gViewportCube[0].projection[0][0]);
+
+		glViewport(0, 0, CUBE_MAP_SIZE, CUBE_MAP_SIZE);
+		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, gTargetCube[0].framebuffer));
+
 		for (i = 0; i < 6; i++) {
+			RenderTarget* target = &gTargetCube[i];
+			Viewport* v = target->viewport;
+
+/*			int attachment = GL_COLOR_ATTACHMENT0_EXT; */
+
+/*			TIME(switchRenderTarget(target)); */
+#if DEBUG_TIME
+			PRINT_INT(i);
+#endif
+			TIME(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, gCubeMapBall, 0));
+/*
+			GL_DEBUG(glReadBuffer(attachment));
+			GL_DEBUG(glDrawBuffer(attachment));
+*/
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadMatrixf(&v->projection[0][0]);
+
+			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			gluLookAt(
 					sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z,
 					sgoBall.pos.x + lookat[i].x, sgoBall.pos.y + lookat[i].y, sgoBall.pos.z + lookat[i].z,
 					up[i].x, up[i].y, up[i].z
 					);
-			glGetFloatv(GL_MODELVIEW_MATRIX, &gViewportCube[i].view[0][0]);
+
+			glEnable(GL_LIGHTING);
+			setLights();
+
+ 			TIME(drawGameReflection());
 		}
+
+		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+/*		glReadBuffer(GL_BACK); */
+		
+		gDirtyReflection = 0;
 	}
 }
 
@@ -185,8 +225,6 @@ void resetBall(void) {
 	sgoBall.angularRate.z = 0.0f;
 	
 	gIsBallInPieces = 0;
-
-	updateReflection();
 }
 
 void explodeBall(void) {
@@ -203,6 +241,23 @@ void explodeBall(void) {
 	sgoBall.velocity = speed;
 	
 	gIsBallInPieces = 1;
+}
+
+void initCubeMap(void) {
+	Matrix m;
+	int i;
+
+	initProjectMat(m, 90.0f);
+	
+	/* init framebuffer for cubemap */
+	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
+
+	for (i = 0; i < 6; i++) {
+		memcpy(&gViewportCube[i].projection[0][0], &m, sizeof(Matrix));
+		gViewportCube[i].draw = drawGameReflection;
+
+		gTargetCube[i].viewport = &gViewportCube[i];
+	}
 }
 
 void initBall(void) {
@@ -224,12 +279,10 @@ void initBall(void) {
 
 	sgoBall.mass = 1.0f;
 	sgoBall.radius = 0.2f;
-	sgoBall.inertia = 4.0f / 10.0f * sgoBall.mass * sqr(sgoBall.radius); 
-	
-	sgoBall.staticFriction = 0.15f;
-	sgoBall.dynamicFriction = 1.0f; /* 0.10f; */
 
 	sgoBall.orientation = mkQuaternion(0.0f, mkVector3(0.0f, 0.0f, 1.0f));
+
+	setPreDisplayFunc(updateReflection);
 }
 
 void animateBall(float interval) {
@@ -241,14 +294,29 @@ void animateBall(float interval) {
 	int dy;
 	
 	Vector3 force = { 0.0f, 0.0f, 0.0f };
-
 	Vector3 normal = { 0.0f, 0.0f, 0.0f };
 
 	Vector3 ball;
-
 	Vector3 step;
 
 	/* ball controls */
+#if (MOUSE_CONTROL)
+	if (isKeyPressed('a')) {
+		force = sub(force, sgRight);
+	}
+	
+	if (isKeyPressed('d')) {
+		force = add(force, sgRight);
+	}
+	
+	if (isKeyPressed('s')) {
+		force = sub(force, sgForward);
+	}
+	
+	if (isKeyPressed('w')) {
+		force = add(force, sgForward);
+	}
+#else
 	if (isCursorPressed(CURSOR_LEFT)) {
 		force = sub(force, sgRight);
 	}
@@ -264,11 +332,11 @@ void animateBall(float interval) {
 	if (isCursorPressed(CURSOR_UP)) {
 		force = add(force, sgForward);
 	}
+#endif
 
 	normalize(&force);
 
 	sgoBall.velocity = add(sgoBall.velocity, scale(MOVE_FORCE / sgoBall.mass * interval, force));
-
 
 	sgoBall.velocity.z -= GRAVITY * interval;
 
@@ -341,14 +409,6 @@ void animateBall(float interval) {
 					/* some rotation for a better look */
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
-/*					
-					Vector3 angularMomentum = scale(sgoBall.inertia, sgoBall.angularRate);
-					
-					Vector3 frictionForce = scale(-1.0f * GRAVITY * sgoBall.mass * sgoBall.dynamicFriction, forward);
-					Vector3 torque = cross(dist, frictionForce);
-					
-					angularMomentum = add(angularMomentum, scale(interval, torque));
-*/
 					
 					sgoBall.angularRate = scale(dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
 					
@@ -407,12 +467,11 @@ void animateBall(float interval) {
 void updateBall(float interval) {
 	if (!gIsBallInPieces) {
 		animateBall(interval);
-	} else {
-		if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
-			resetBall();
-		}
+	} else if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
+		resetBall();
 	}
-	updateReflection();
+	
+	gDirtyReflection = 1;
 }
 
 void activateBallShader(void) {
@@ -437,8 +496,10 @@ void activateBallShader(void) {
 			glEnable(GL_TEXTURE_GEN_T);
 			glEnable(GL_TEXTURE_GEN_R);
 
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
+			glEnable(GL_COLOR_MATERIAL);
+			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+			glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
 			break;
 		case BALL_LAYOUT_GOLFBALL:
 			break;
@@ -500,6 +561,7 @@ void deactivateBallShader(void) {
 			glDisable(GL_TEXTURE_GEN_R);
 
 			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			glDisable(GL_COLOR_MATERIAL);
 			break;
 		case BALL_LAYOUT_GOLFBALL:
 			break;

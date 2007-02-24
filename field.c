@@ -29,6 +29,8 @@
 #include "vector.h"
 #include "features.h"
 
+#include "functions.h"
+
 #include "types.h"
 #include "debug.h"
 
@@ -68,6 +70,8 @@ static int* gIndices;
 static int gCntSpotlightIndices;
 static int* gSpotlightIndices;
 
+static int gDirtyField;
+
 void setColor(float r, float g, float b, float a) {
 	gDefaultColor.r = r;
 	gDefaultColor.g = g;
@@ -84,14 +88,6 @@ void setNormal(float x, float y, float z) {
 	gDefaultNormal.x = x;
 	gDefaultNormal.y = y;
 	gDefaultNormal.z = z;
-}
-
-float min(float a, float b) {
-	return (a < b) ? a : b;
-}
-
-float max(float a, float b) {
-	return (a > b) ? a : b;
 }
 
 void addVertex(float x, float y, float z) {
@@ -135,9 +131,7 @@ void initGameField(void) {
   MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
 	MALLOC(gColors, sgMaxVertices * sizeof(Color4));
 
-	gLight.x = sgLight[sgGameMainLight].pos[0];
-	gLight.y = sgLight[sgGameMainLight].pos[1];
-	gLight.z = sgLight[sgGameMainLight].pos[2];
+	gLight = sgLight[sgGameMainLight].pos;
 
 	for (y = 0; y < sgLevel.size.y; y++) {
 		for (x = 0; x < sgLevel.size.x; x++) {
@@ -196,6 +190,8 @@ void initGameField(void) {
 		gCntSpotlightIndices = 0;
 		MALLOC(gSpotlightIndices, sgCntVertices * sizeof(int));
 	}
+
+	gDirtyField = 1;
 }
 
 void destroyGameField(void) {
@@ -263,7 +259,7 @@ void updateGameField(void) {
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
 	
-	if (mx != mxFog || my != myFog) {
+	if (gDirtyField || (mx != mxFog || my != myFog)) {
 		if (useFog()) {
 			int x1 = max(mx - FOG_REGION, 0);
 			int y1 = max(my - FOG_REGION, 0);
@@ -286,11 +282,11 @@ void updateGameField(void) {
 		static int mySpot = 0;
 		static int maxSpot = 0;
 
-		int mx = floor(sgLight[sgGameSpotLight].pos[0]);
-		int my = floor(sgLight[sgGameSpotLight].pos[1]);
-		int max = ceil(sgLight[sgGameSpotLight].pos[2] * tan(sgLight[1].cutoff * PI / 180.0f));
+		int mx = floor(sgLight[sgGameSpotLight].pos.x);
+		int my = floor(sgLight[sgGameSpotLight].pos.y);
+		int max = ceil(sgLight[sgGameSpotLight].pos.z * tan(sgLight[sgGameSpotLight].cutoff * PI / 180.0f));
 
-		if (mx != mxSpot || my != mySpot || max != maxSpot) {
+		if (gDirtyField || (mx != mxSpot || my != mySpot || max != maxSpot)) {
 			int dx;
 			int dy;
 
@@ -314,6 +310,8 @@ void updateGameField(void) {
 			maxSpot = max;
 		}
 	}
+
+	gDirtyField = 0;
 }
 
 void drawGameField(void) {

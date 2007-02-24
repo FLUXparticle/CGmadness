@@ -59,8 +59,6 @@ static int gMaxFieldShadowVolumeVertices;
 
 static int gStencilBits;
 
-static GLhandleARB gSpotlightShader = 0;
-
 typedef struct {
 	Vector3 corners[8];
 	
@@ -104,9 +102,7 @@ void initShadowVolumes(void) {
 		gBallOutline[i].y = sgoBall.radius * sin(2.0f * i * PI / BALL_SHADOW_VERTICES);
 	}
 	
-	light.x = sgLight[0].pos[0];
-	light.y = sgLight[0].pos[1];
-	light.z = sgLight[0].pos[2];
+	light = sgLight[0].pos;
 
 	/* field shadows */
 	q = 0;
@@ -170,13 +166,6 @@ void initShadowVolumes(void) {
 
 	printf("MAX_FIELD_SHADOW_VOLUME_VERTICES: %d\n", gMaxFieldShadowVolumeVertices);
 	printf("gCntFieldShadowVolume: %d\n", gCntFieldShadowVolume);
-
-	if (hasShader() && !gSpotlightShader) {
-		gSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
-		if (gSpotlightShader) {
-			printf("Spotlight-Shader ready :-)\n");
-		}
-	}
 }
 
 void destroyShadowVolumes(void) {
@@ -244,9 +233,7 @@ void updateShadows(void) {
 	Vector3 right;
 	Vector3 diff;
 
-	light.x = sgLight[0].pos[0];
-	light.y = sgLight[0].pos[1];
-	light.z = sgLight[0].pos[2];
+	light = sgLight[0].pos;
 
 	ball = sgoBall.pos;
 
@@ -293,8 +280,6 @@ void drawShadows(int shouldDrawBall) {
 
 	if (sgRenderPass > 0) {
 		glStencilMask(stencilFullMask);
-		glClearStencil(0);
-		glClear(GL_STENCIL_BUFFER_BIT);
 
 		if (useShadows()) {
 			glDisable(GL_LIGHTING);
@@ -372,9 +357,9 @@ void drawShadows(int shouldDrawBall) {
 		 * render parts of field with spotlight and mark in stencil-buffer
 		 */
 		if (useSpotlight()) {
-			glUseProgram(gSpotlightShader);
+			glUseProgram(sgSpotlightShader);
 
-			glDepthFunc(GL_EQUAL);
+				glDepthFunc(GL_EQUAL);
 
 				drawGameFieldSpotlightParts();
 
@@ -419,17 +404,15 @@ void drawShadows(int shouldDrawBall) {
 
 			/* ball in shadow */
 
-			toggleLight(sgGameMainLight);
+			disableLight(sgGameMainLight);
 
 			glStencilFunc(GL_NOTEQUAL, 0, stencilShadowMask);
 
 				drawGameBall();
 
-			toggleLight(sgGameMainLight);
+			enableLight(sgGameMainLight);
 
 			deactivateBallShader();
-			
-			glDisable(GL_STENCIL_TEST);
 		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
@@ -447,4 +430,5 @@ void drawShadows(int shouldDrawBall) {
 	glColorMask(1,1,1,1);
 
 	glDisable(GL_STENCIL_TEST);
+	glStencilMask(stencilFullMask);
 }

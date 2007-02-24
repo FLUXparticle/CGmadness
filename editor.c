@@ -19,10 +19,11 @@
  * $Id$
  *
  */
-
+ 
 #include "editor.h"
 
 #include "common.h"
+#include "editormenu.h"
 
 #include "graph.h"
 #include "light.h"
@@ -32,7 +33,7 @@
 #include "types.h"
 #include "debug.h"
 
-#include <GL/glu.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +52,27 @@ static int gSin[] = { 0, 1, 0, -1 };
 static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
+
+static Object goMenu;
+
+void pauseEditor(void) {
+	showEditorMenu();
+	gIsEditorRunning = 0;
+	goMenu.visible = 1;
+}
+
+void resumeEditor(void) {
+	glutSetCursor(GLUT_CURSOR_NONE);
+	gIsEditorRunning = 1;
+	goMenu.visible = 0;
+}
+
+void saveLevel(void) {
+	saveFieldToFile(gFilename);
+	/*
+	 * TODO say if save was successfull
+	 */
+}
 
 void updateEditorCamera(float interval, Vector3 ball) {
 	static float distance = 5.0f;
@@ -73,8 +95,8 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	if (gCamAngle >= 4) gCamAngle -= 4;
 
 	/* height */
-	if (isKeyPressed('.')) height += 0.1f;
-	if (isKeyPressed(',')) height -= 0.1f;
+	if (isKeyPressed('x')) height += 0.1f;
+	if (isKeyPressed('y')) height -= 0.1f;
 	
 	/* look at */
 	marker.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
@@ -89,6 +111,8 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	dest.z = ball.z + height;
 
 	moveCamera(interval, dest, marker);
+
+	sgLight[0].pos = sgCamera;
 }
 
 void changeMarkerAreaSingle(int incz, int incdzx, int incdzy) {
@@ -228,11 +252,11 @@ void animateEditor(float interval) {
 		}
   }
 	
-	if (wasKeyPressed('S'))  {
+	if (wasKeyPressed('f'))  {
 		changeMarkerAreaSingle(-1, 0, 0);
 	}
 	
-	if (wasKeyPressed('W')) {
+	if (wasKeyPressed('r')) {
 		changeMarkerAreaSingle(1, 0, 0)	;
 	}
 	
@@ -278,21 +302,35 @@ void animateEditor(float interval) {
 }
 
 void updateEditor(float interval) {
-	Vector3 markerPos;
-  
-	if (isKeyPressed(KEY_ESC)) {
-		saveFieldToFile(gFilename);
-		exit(0);
-	}
-	
-	markerPos.x = gCurStart.x + 0.5f;
-	markerPos.y = gCurStart.y + 0.5f;
-	markerPos.z = SCALE_Z * sgLevel.field[gCurStart.x][gCurStart.y].z;
-
-	updateEditorCamera(interval, markerPos);
-	
 	if (gIsEditorRunning) {
+		Vector3 markerPos;
+  
+		if (wasKeyPressed(KEY_ESC)) {
+			pauseEditor();
+		}
+
+		markerPos.x = gCurStart.x + 0.5f;
+		markerPos.y = gCurStart.y + 0.5f;
+		markerPos.z = SCALE_Z * sgLevel.field[gCurStart.x][gCurStart.y].z;
+
+		updateEditorCamera(interval, markerPos);
 		animateEditor(interval);
+	} else {
+		/* show menu */
+		Vector3 camera;
+		Vector3 lookat = goMenu.pos;
+		
+		lookat.x = (sgLevel.size.x + 1.0f) / 2;
+		lookat.z += 5.0f;
+
+		camera = lookat;
+		camera.y -= 10.0f;
+		camera.z += 2.0f;
+
+		updateEditorMenu(interval);
+
+		moveCamera(interval, camera, lookat);
+		sgLight[0].pos = sgCamera;
 	}
 }
 
@@ -343,14 +381,34 @@ void drawEditorField(void) {
   glDisable(GL_TEXTURE_2D);
 }
 
-void initEditor(char* filename) {
+void drawEditor(void) {
+	drawEditorField();
+
+	if (goMenu.visible)	{
+		drawObject(&goMenu);
+	}
+}
+
+void pickEditor(void) {
+	if (goMenu.visible)	{
+		pickObject(&goMenu);
+	}
+}
+
+int initEditor(char* filename) {
 	glColor3f(1.0f, 1.0f, 1.0f);
-	gEditorMainLight = addPointLight(30.0f, 30.0f, 20.0f);
+	gEditorMainLight = addPointLight(0.0f, 0.0f, 0.0f);
 
 	gFilename = filename;
-	loadFieldFromFile(gFilename);
+	if (!loadFieldFromFile(gFilename)) {
+		/*
+		 * TODO if no file is not there create one, but only if size is given
+		 */
+		return 0;
+	}
 
-	sgWindowViewport.draw = drawEditorField;
+	sgWindowViewport.draw = drawEditor;
+	sgWindowViewport.pick = pickEditor;
 	setUpdateFunc(updateEditor);
 
 	gCurStart.x = 0;
@@ -358,5 +416,12 @@ void initEditor(char* filename) {
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	gIsEditorRunning = 1;
+	initEditorMenu(&goMenu);
+
+	goMenu.visible = 1;
+	gIsEditorRunning = 0;
+
+	setObjectPosition3f(&goMenu, (sgLevel.size.x + 1.0f) / 2, -10.0f, 0.0f);
+
+	return 1;
 }

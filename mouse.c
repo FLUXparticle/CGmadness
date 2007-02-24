@@ -32,6 +32,12 @@
 
 static GLuint gSelectBuffer[SELECT_BUFFER_SIZE];
 
+static int gLastX;
+static int gLastY;
+static int gButton;
+
+static funcDrag gDrag;
+
 typedef struct {
 	GLuint stackSize;
 	GLuint minDepth;
@@ -40,6 +46,10 @@ typedef struct {
 } SelectBuffer;
 
 void mouseButton(int button, int state, int x, int y) {
+	gButton = button;
+	gLastX = x;
+	gLastY = y;
+	
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		int cntHits = pick(x, y);
 
@@ -69,6 +79,23 @@ void mouseButton(int button, int state, int x, int y) {
 
 			doPick(name);
 		}
+	}
+}
+
+void mouseMotion(int x, int y) {
+	if (x != gLastX || y != gLastY) {
+		gDrag(x - gLastX, y - gLastY);
+		glutWarpPointer(gLastX, gLastY);
+	}
+}
+
+void setDragFunc(funcDrag drag) {
+	gDrag = drag;
+	if (drag) {
+		centerMouse(&gLastX, &gLastY);
+		glutPassiveMotionFunc(mouseMotion);
+	} else {
+		glutPassiveMotionFunc(NULL);
 	}
 }
 

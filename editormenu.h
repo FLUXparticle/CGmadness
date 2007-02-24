@@ -20,32 +20,15 @@
  *
  */
 
-#ifndef _light_h_
-#define _light_h_
+#ifndef _editormenu_h_
+#define _editormenu_h_
 
-#include "vector.h"
+#include "graph.h"
 
-typedef struct {
-	int id;
-	int enable;
-	Vector3 pos;
-	float color[4];
+void initEditorMenu(Object* obj);
 
-	int spot;
-	float dir[3];
-	float exponent;
-	float cutoff;
-} Light;
+void showEditorMenu(void);
 
-extern Light sgLight[];
-
-int addPointLight(float x, float y, float z);
-int addSpotLight(float x, float y, float z, float dx, float dy, float dz, float exponent, float cutoff);
-
-void toggleLight(int index);
-void enableLight(int index);
-void disableLight(int index);
-
-void setLights(void);
+void updateEditorMenu(float interval);
 
 #endif

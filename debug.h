@@ -23,12 +23,22 @@
 #ifndef _debug_h_
 #define _debug_h_
 
-#define DEBUG 0
+#define DEBUG_MEMORY 0
+#define DEBUG_TIME 0
 
+#define PRINT_INT(i) printf(#i ": %d\n", (i))
 #define PRINT_FLOAT(f) printf(#f ": %f\n", (f))
 #define PRINT_VECTOR(vector) printf(#vector ".x: %f, " #vector ".y: %f, " #vector ".z: %f\n", (vector).x, (vector).y, (vector).z)
 
-#if DEBUG
+#define GL_DEBUG(x) { int error, before = glGetError(); x; error = glGetError(); if (before || error) printf("0x%x -> %s: 0x%x\n", before, #x, error); }
+
+#if DEBUG_TIME
+#  define TIME(x) { int after, before = glutGet(GLUT_ELAPSED_TIME); x; after = glutGet(GLUT_ELAPSED_TIME); if (after >= before + 10) printf("%s: %d ms\n", #x, after - before); }
+#else
+#  define TIME(x) x
+#endif
+
+#if DEBUG_MEMORY
 
 #  define MALLOC(p, size) p = dbgMalloc(size, #p, __FILE__, __LINE__)
 #  define FREE(p) dbgFree(p, #p, __FILE__, __LINE__)

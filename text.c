@@ -35,9 +35,11 @@
 #define SCALE 0.1f
 
 void drawBitmapText(char *str) {
+	glDisable(GL_DEPTH_TEST);
 	for (; *str; str++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
 	}
+	glEnable(GL_DEPTH_TEST);
 }
 
 void addChar(Object* obj, float* x, funcDraw draw, float width) {

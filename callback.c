@@ -24,7 +24,6 @@
 
 #include "light.h"
 #include "text.h"
-#include "features.h"
 
 #include "debug.h"
 
@@ -34,13 +33,17 @@
 #include <stdio.h>
 #include <math.h>
 
+#define DEBUG_PREDISPLAY 0
+#define NO_FRAME_LIMIT 0
+
 Viewport sgWindowViewport;
 
 static RenderTarget gTargetWindow;
 
 /*** Scene ***/
 
-static funcUpdate gUpdate = NULL;
+static funcUpdate gUpdate     = NULL;
+static funcDraw   gPreDisplay = NULL;
 
 static int gSceneDirty = 1;
 
@@ -48,20 +51,15 @@ void setUpdateFunc(funcUpdate update) {
 	gUpdate = update;
 }
 
+void setPreDisplayFunc(funcDraw preDisplay) {
+	gPreDisplay = preDisplay;
+}
+
 /*** Display ***/
 
 static float gFPS = 0.0f;
 
 static Matrix gProjectionText;
-
-static List gRenderTargets = NULL;
-
-void addRenderTarget(RenderTarget* target) {
-	if (hasFramebuffer()) {
-		target->enabled = 1;
-		gRenderTargets = prependElement(gRenderTargets, target);
-	}
-}
 
 void framerate(void) {
   static int timebase = 0;
@@ -80,53 +78,45 @@ void framerate(void) {
 	}
 }
 
-void switchRenderTarget(RenderTarget* target) {
-	if (hasFramebuffer()) {
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, target->framebuffer);
-		if (target->framebuffer != 0) {
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target->texTarget, target->texID, 0);	
-			glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
-		} else {
-			glReadBuffer(GL_BACK);
-		}
-	}
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glViewport(0, 0, target->width, target->height);
-}
-
 void display(void) {
-	List run;
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	for (run = gRenderTargets; run; run = run->next) {
-		RenderTarget* target = run->info;
-		Viewport* v = target->viewport;
-		if (target->enabled && v) {
-			float aspect = (float) target->height / target->width;
-
-			switchRenderTarget(target);
-			
-			glMatrixMode(GL_PROJECTION);
-			glLoadMatrixf(&v->projection[0][0]);
-			glScalef(aspect, 1.0f, 1.0f);
-			
-			glMatrixMode(GL_MODELVIEW);
-			glLoadMatrixf(&v->view[0][0]);
-
-			glEnable(GL_LIGHTING);
-			setLights();
-
-			v->draw();
-		}
+#if(DEBUG_PREDISPLAY)
+	static int sumPredisplayTime = 0;
+	static int cntPredisplayTime = 0;
+	float predisplayTime = 0.0f;
+#endif
+	if (gPreDisplay) {
+#if(DEBUG_PREDISPLAY)
+		int after;
+		int before = glutGet(GLUT_ELAPSED_TIME);
+#endif
+		gPreDisplay();
+#if(DEBUG_PREDISPLAY)
+		after = glutGet(GLUT_ELAPSED_TIME);
+		sumPredisplayTime += after - before;
+		cntPredisplayTime++;
+		predisplayTime = (float) sumPredisplayTime / glutGet(GLUT_ELAPSED_TIME);
+#endif
 	}
-
-	if (hasFramebuffer()) {
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-	}
+	
 	glViewport(0, 0, gTargetWindow.width, gTargetWindow.height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	
+	{
+		Viewport* v = gTargetWindow.viewport;
+		float aspect = (float) gTargetWindow.height / gTargetWindow.width;
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(&v->projection[0][0]);
+		glScalef(aspect, 1.0f, 1.0f);
+		
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(&v->view[0][0]);
+
+		glEnable(GL_LIGHTING);
+		setLights();
+
+		v->draw();
+	}
 
 	/* draw framerate */
 	glMatrixMode(GL_PROJECTION);
@@ -136,8 +126,13 @@ void display(void) {
 	glLoadIdentity();
 
 	{
+#if(DEBUG_PREDISPLAY)
+		char text[48];
+		sprintf(text, "FPS: %4.1f PredisplayTime: %4.1f%%", gFPS, predisplayTime * 100.0f);
+#else
 		char text[20];
 		sprintf(text, "FPS: %4.1f", gFPS);
+#endif
 		glDisable(GL_LIGHTING);
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glRasterPos2f(0.0f, 0.0f);
@@ -180,13 +175,11 @@ void startDisplay(void) {
 	gTargetWindow.framebuffer = 0;
 	gTargetWindow.viewport = &sgWindowViewport;
 
-	gRenderTargets = prependElement(gRenderTargets, &gTargetWindow);
-
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
 
-	/* for tasting optimizations on fast linux machines */
-#if 0
+	/* for testing optimizations on fast linux machines */
+#if (NO_FRAME_LIMIT)
 	glutIdleFunc(display);
 #endif
 }
@@ -222,7 +215,7 @@ void timer(int lastCallTime) {
 
 void startTimer(int callsPerSecond) {
   gMillis = 1000 / callsPerSecond;
-	glutTimerFunc(gMillis, timer, glutGet(GLUT_ELAPSED_TIME));
+	timer(glutGet(GLUT_ELAPSED_TIME));
 }
 
 int pick(int x, int y) {
@@ -258,4 +251,11 @@ int pick(int x, int y) {
 	glFlush();
 
 	return glRenderMode(GL_RENDER);
+}
+
+void centerMouse(int* x, int* y)
+{
+	*x = gTargetWindow.width / 2;
+	*y = gTargetWindow.height / 2;
+	glutWarpPointer(*x, *y);
 }

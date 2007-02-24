@@ -23,6 +23,10 @@
 #ifndef _mouse_h_
 #define _mouse_h_
 
+typedef void (*funcDrag)(int dx, int dy);
+
+void setDragFunc(funcDrag drag);
+
 void startMouse(void);
 
 #endif

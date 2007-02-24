@@ -20,7 +20,7 @@
  *
  */
 
-#include "menu.h"
+#include "gamemenu.h"
 
 #include "text.h"
 #include "graph.h"
@@ -31,6 +31,7 @@
 #include "game.h"
 #include "features.h"
 #include "keyboard.h"
+#include "gui.h"
 
 #include <GL/glut.h>
 
@@ -38,162 +39,10 @@
 
 #define SCALE_FONT 0.5f
 
-/*** common ***/
-
-typedef void (*funcClick)(void);
-
-typedef void (*funcChange)(void* self);
-
 typedef struct {
-	Object oButton;
-	Pick pButton;
-	funcClick click;
-} Button;
-
-typedef struct {
-	int value;
-	Object oCheck;
-	Pick pCheck;
-	funcChange change;
-} Check;
-
-typedef struct {
-	int value;
-	int minValue;
-	int maxValue;
-	Object oSpinEdit;
-	Object oLeft;
-	Object oRight;
-	Pick pLeft;
-	Pick pRight;
-	funcChange change;
-} SpinEdit;
-
-static Object goLeft;
-static Object goRight;
-
-void initMenuObject(Object* obj, int texture) {
-	initObject(obj, drawSquare);
-	obj->texture = texture;
-	obj->ambient = 1.0f;
-	obj->diffuse = 0.0f;
-}
-
-void initTextObject(Object* obj, char* text, float z) {
-	float length = makeTextObject(obj, text) * SCALE_FONT;
-	setObjectPosition3f(obj, -length / 2, 0.0f, z);
-	setObjectScalef(obj, SCALE_FONT);
-	rotateObjectX(obj, 90.0f);
-}
-
-/*** Button ***/
-
-void pickButton(void* data) {
-	Button* button = data;
-	button->click();
-}
-
-void init3dButton(Button* button, float z, funcClick click, char* text) {
-	initTextObject(&button->oButton, text, z);
- 	
-	button->click = click;
-
-	if (click) {
-		initPick(&button->pButton, pickButton, button);
-		setObjectPick(&button->oButton, &button->pButton);
-	}	
-}
-
-/*** Check ***/
-
-void setCheck(Check* check, int value) {
-	check->value = value;
-
-	if (check->value) {
-		setObjectGroupColor(&check->oCheck, 1.0f, 1.0f, 1.0f);
-	} else {
-		setObjectGroupColor(&check->oCheck, 0.5f, 0.5f, 0.5f);
-	}
-
-	check->change(check);
-}
-
-void pickCheck(void* data) {
-	Check* check = data;
-	setCheck(check, !check->value);
-}
-
-void init3dCheck(Check* check, float z, funcChange change, char* text) {
-	initTextObject(&check->oCheck, text, z);
-
-	check->change = change;
-
-	setCheck(check, 1);
-
-	initPick(&check->pCheck, pickCheck, check);
-	setObjectPick(&check->oCheck, &check->pCheck);
-}
-
-/*** SpinEdit ***/
-
-void pickSpinEditLeft(void* data) {
-	SpinEdit* spinedit = data;
-	int* value = &spinedit->value;
-	if (*value > spinedit->minValue) {
-		(*value)--;
-		spinedit->change(spinedit);
-	}
-}
-
-void pickSpinEditRight(void* data) {
-	SpinEdit* spinedit = data;
-	int* value = &spinedit->value;
-	if (*value < spinedit->maxValue) {
-		(*value)++;
-		spinedit->change(spinedit);
-	}
-}
-
-void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change) {
-	spinedit->value = value;
-	spinedit->minValue = min;
-	spinedit->maxValue = max;
-
-	initObjectGroup(&spinedit->oSpinEdit);
-
-	setObjectPosition3f(&spinedit->oSpinEdit, 0.0f, 0.0f, z);
-	rotateObjectX(&spinedit->oSpinEdit, 90.0f);
-	setObjectScalef(&spinedit->oSpinEdit, SCALE_FONT);
-
-	/* arrow left */
-	initObjectGroup(&spinedit->oLeft);
-	setObjectPosition2f(&spinedit->oLeft, -4.3f, 0.0f);
-	addSubObject(&spinedit->oLeft, &goLeft);
-	addSubObject(&spinedit->oSpinEdit, &spinedit->oLeft);
-	
-	/* arror right */	
-	initObjectGroup(&spinedit->oRight);
-	setObjectPosition2f(&spinedit->oRight, 3.3f, 0.0f);
-	addSubObject(&spinedit->oRight, &goRight);
-	addSubObject(&spinedit->oSpinEdit, &spinedit->oRight);
-	
-	/* object between arrows */
-	addSubObject(&spinedit->oSpinEdit, obj);
-
-	spinedit->change = change;
-
-	change(spinedit);
-
-	/* register callbacks for arrows */
-	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
-	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
-
-	initPick(&spinedit->pRight, pickSpinEditRight, spinedit);
-	setObjectPick(&spinedit->oRight, &spinedit->pRight);
-
-}
-
-/*** special game part ***/
+	char* left;
+	char* right;
+} LeftRight;
 
 static Button gbStart;
 static Button gbResume;
@@ -204,13 +53,13 @@ static Check gcFog;
 /*
  * help text
  */
-static char* gTextHelp[] = {
-	"Cursor", "Move",
-	"Space", "Jump",
-	"W A S D", "Camera",
-	"R F", "Zoom",
-	"Enter", "Reset",
-	"Esc","Menu",
+static LeftRight gTextHelp[] = {
+	{ "Cursor", "Move" },
+	{ "Space", "Jump" },
+	{ "W A S D", "Camera" },
+	{ "R F", "Zoom" },
+	{ "Enter", "Reset" },
+	{ "Esc", "Menu" },
 };
 
 static Object goHelpText;
@@ -223,39 +72,39 @@ static int gIsPauseMenu;
 int gCntBallLayouts;
 int gBallLayouts[MAX_BALL_LAYOUTS];
 
-void clickButtonStart(void) {
+static void clickButtonStart(void) {
 	resumeGame();
 }
 
-void changeBallEdit(void* self) {
+static void changeBallEdit(void* self) {
 	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
 }
 
-void changeShadows(void* self) {
+static void changeShadows(void* self) {
 	Check* check = self;
 	setShadows(check->value);
 }
 
-void changeFog(void* self) {
+static void changeFog(void* self) {
 	Check* check = self;
 	setFog(check->value);
 }
 
-void clickButtonHelp(void) {
+static void clickButtonHelp(void) {
 	goHelpText.visible = 1;
 	goMainText.visible = 0;
 }
 
-void clickButtonQuit(void) {
+static void clickButtonQuit(void) {
 	exit(0);
 }
 
-void clickButtonBack(void) {
+static void clickButtonBack(void) {
 	goHelpText.visible = 0;
 	goMainText.visible = 1;
 }
 
-void updateMenu(float interval) {
+void updateGameMenu(float interval) {
 	if (goMainText.visible) {
 		if (!gIsPauseMenu && wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
@@ -279,7 +128,7 @@ void updateMenu(float interval) {
 	}
 }
 
-void showMenu(int pause) {
+void showGameMenu(int pause) {
 	gbStart.oButton.visible = !pause;
 	gbResume.oButton.visible = pause;
 
@@ -291,7 +140,7 @@ void showMenu(int pause) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
-void initMenu(Object* obj) {
+void initGameMenu(Object* obj) {
 	static Button bQuit;
 	static Button bHelp;
 	static Button bBack;
@@ -299,10 +148,12 @@ void initMenu(Object* obj) {
 	static SpinEdit spinEditBall;
 
 	static Object oLogo;	
-	static Object oTextHelp[LENGTH(gTextHelp)];
+	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
 	int i;
+	
+	initGUI();
 
 	/*
 	 * which ball layouts are available?
@@ -338,14 +189,11 @@ void initMenu(Object* obj) {
 	oLogo.texture = loadTexture("data/logo.tga", 0);
 	setObjectPosition3f(&oLogo, 0.0f, 0.0f, 8.0f);
 	setObjectScale3f(&oLogo, 4.0f, 1.0f, 1.0f);
-		
+
 	rotateObjectX(&oLogo, 90.0f);
 	addSubObject(obj, &oLogo);
 
-	/* loading arrow textures */
-	initMenuObject(&goLeft, loadTexture("data/left.tga", 0));
-	initMenuObject(&goRight, loadTexture("data/right.tga", 0));
-
+	/* main menu */
 	initObjectGroup(&goMainText);
 
 	initObject(&oBall, drawMenuBall);
@@ -381,16 +229,14 @@ void initMenu(Object* obj) {
 	
 	goHelpText.visible = 0;
 
-	for (i = 0; i < LENGTH(gTextHelp); i += 2) {
-		char* left = gTextHelp[i];
-		char* right = ((i + 1) < LENGTH(gTextHelp)) ? gTextHelp[i + 1] : NULL;
-		float z = 6.0f - i / 2;
+	for (i = 0; i < LENGTH(gTextHelp); i++) {
+		float z = 6.0f - i;
 		float length;
 
-		if (left) {
-			Object* o = &oTextHelp[i];
+		{
+			Object* o = &oTextHelp[2 * i];
 
-			length = makeTextObject(o, left) * SCALE_FONT;
+			length = makeTextObject(o, gTextHelp[i].left) * SCALE_FONT;
 			setObjectPosition3f(o, -5.0f, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
@@ -398,10 +244,10 @@ void initMenu(Object* obj) {
 	  	addSubObject(&goHelpText, o);
 		}
 
-		if (right) {
-			Object* o = &oTextHelp[i + 1];
+		{
+			Object* o = &oTextHelp[2 * i + 1];
 			
-			length = makeTextObject(o, right) * SCALE_FONT;
+			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
 			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
@@ -410,7 +256,7 @@ void initMenu(Object* obj) {
 		}
 	}
 
-	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp) / 2, clickButtonBack, "back");
+	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
  	addSubObject(&goHelpText, &bBack.oButton);
 
 	addSubObject(obj, &goHelpText);

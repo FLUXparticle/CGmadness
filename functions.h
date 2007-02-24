@@ -20,32 +20,13 @@
  *
  */
 
-#ifndef _light_h_
-#define _light_h_
+#ifndef _functions_h_
+#define _functions_h_
 
-#include "vector.h"
+float sqr(float x);
 
-typedef struct {
-	int id;
-	int enable;
-	Vector3 pos;
-	float color[4];
-
-	int spot;
-	float dir[3];
-	float exponent;
-	float cutoff;
-} Light;
-
-extern Light sgLight[];
-
-int addPointLight(float x, float y, float z);
-int addSpotLight(float x, float y, float z, float dx, float dy, float dz, float exponent, float cutoff);
-
-void toggleLight(int index);
-void enableLight(int index);
-void disableLight(int index);
-
-void setLights(void);
+float min(float a, float b);
+float max(float a, float b);
+float clamp(float x, float lo, float up);
 
 #endif

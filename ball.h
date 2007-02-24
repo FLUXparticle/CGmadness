@@ -36,10 +36,6 @@
 typedef struct {
 	float mass;
 	float radius;
-	float inertia;
-	
-	float staticFriction;
-	float dynamicFriction;
 	
 	Vector3 pos;
 	Vector3 velocity;

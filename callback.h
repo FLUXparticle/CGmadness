@@ -56,8 +56,9 @@ typedef struct {
 extern Viewport sgWindowViewport;
 
 void setUpdateFunc(funcUpdate update);
+void setPreDisplayFunc(funcDraw preDisplay);
 	
-void addRenderTarget(RenderTarget* target);
+void centerMouse(int* x, int* y);
 
 void startDisplay(void);
 

@@ -23,9 +23,11 @@
 #ifndef _game_h_
 #define _game_h_
 
-void loadNewLevel(void); 
-void initGame(char* filename);
-void initLevel(char* filename);
+#define MOUSE_CONTROL 0
+
+void loadNewLevel(void);
+int initGame(void);
+int initLevel(char* filename);
 void resumeGame(void);
 
 void drawGameReflection(void);

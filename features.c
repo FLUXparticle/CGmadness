@@ -22,7 +22,7 @@
 
 #include "features.h"
 
-#include <GL/glew.h>
+#include "shader.h"
 
 #include <stdio.h>
 
@@ -37,6 +37,9 @@ static int sgShaderAvailable;
 
 static int gUseShadows = 0;
 static int gUseFog = 0;
+static int gUseSpotlight = 0;
+
+GLhandleARB sgSpotlightShader = 0;
 
 void initFeatures(int argc, char* argv[]) {
 	sgShaderAvailable = 1;
@@ -62,7 +65,17 @@ void initFeatures(int argc, char* argv[]) {
 		printf("No two side stencil available :(\n");
 		sgTwoSideStencilAvailable = 0;
 	}
+	
+	if (hasShader()) {
+		sgSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
+		if (sgSpotlightShader) {
+			printf("Spotlight-Shader ready :-)\n");
+			setSpotlight(1);
+		}
+	}
 }
+
+/* has...? */
 
 int hasShader(void) {
 	return sgShaderAvailable;
@@ -80,6 +93,12 @@ int hasTwoSideStencil(void) {
 	return sgTwoSideStencilAvailable;
 }
 
+int hasSpotlight(void) {
+	return hasShader();
+}
+
+/* set */
+
 void setShadows(int use) {
 	gUseShadows = use;
 }
@@ -94,6 +113,12 @@ void setFog(int use) {
 	}
 }
 
+void setSpotlight(int use) {
+	gUseSpotlight = use;
+}
+
+/* use...? */
+
 int useFog(void) {
 	return gUseFog;
 }
@@ -102,11 +127,7 @@ int useShadows(void) {
 	return gUseShadows;
 }
 
-int hasSpotlight(void) {
-	return hasShader();
-}
-
 int useSpotlight(void) {
-	return hasSpotlight();
+	return hasSpotlight() && gUseSpotlight;
 }
 

@@ -22,15 +22,13 @@
 
 #include "vector.h"
 
+#include "functions.h"
+
 #include <math.h>
 
 /*
  * some vector calculations
  */
-
-float sqr(float x) {
-	return x * x;
-}
 
 float len(Vector3 v) {
 	return sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));

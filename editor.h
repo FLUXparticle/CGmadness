@@ -23,6 +23,10 @@
 #ifndef _editor_h_
 #define _editor_h_
 
-void initEditor(char* filename);
+int initEditor(char* filename);
+
+void resumeEditor(void);
+
+void saveLevel(void);
 
 #endif

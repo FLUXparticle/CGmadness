@@ -35,7 +35,15 @@
 #define ANGLESTEP 1.0f
 #define ZOOMSTEP 0.5f
 
-Vector3 sgCamera;
+#if (MOUSE_CONTROL)
+#  define CAMERA_MOVE_TIME_CONSTANT 100.0f
+#else
+#  define CAMERA_MOVE_TIME_CONSTANT 5.0f
+#endif
+
+#define THIS_CGM_VERSION 1
+
+Vector3 sgCamera = { 0.0f, 0.0f, 1.0f };
 Vector3 sgLookat = { 0.0f, 0.0f, 0.0f };
 
 int sgCntVertices;
@@ -63,6 +71,7 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	float error;
+	
 
 	/* new values */
 	diff = sub(camera, sgCamera);
@@ -212,10 +221,22 @@ int loadFieldFromFile(char* filename) {
 	FILE* file = fopen(filename, "rt");
 	int x,y;
 	int fileX, fileY;
+	int version;
 
-	if (!file) return 0;
+	if (!file) {
+		fprintf(stderr, "can not open file: %s\n", filename);
+		return 0;
+	}
 
 	sgLevel.texture = loadTexture("data/plate.tga", 1);
+
+	/* version number */
+	fscanf(file, "v%d", &version);
+
+	if (version > THIS_CGM_VERSION) {
+		fprintf(stderr, "incompatible version number: %d\n", version);
+		return 0;
+	}
 
 	/* read attributes */
 	fscanf(file, "%d %d", &sgLevel.start.x, &sgLevel.start.y);
@@ -281,6 +302,9 @@ int saveFieldToFile(char* filename) {
 	int x, y;
 
 	if (!file) return 0;
+
+	/* version number */
+	fprintf(file, "v%d\n", THIS_CGM_VERSION);
 
 	/* write atributes */
 	fprintf(file, "%d %d\n", sgLevel.start.x, sgLevel.start.y);

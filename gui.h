@@ -20,32 +20,54 @@
  *
  */
 
-#ifndef _light_h_
-#define _light_h_
+#ifndef _gui_h_
+#define _gui_h_
 
-#include "vector.h"
+#include "graph.h"
+#include "pick.h"
+
+typedef void (*funcClick)(void);
+
+typedef void (*funcChange)(void* self);
 
 typedef struct {
-	int id;
-	int enable;
-	Vector3 pos;
-	float color[4];
+	Object oButton;
+	Pick pButton;
+	funcClick click;
+} Button;
 
-	int spot;
-	float dir[3];
-	float exponent;
-	float cutoff;
-} Light;
+typedef struct {
+	int value;
+	Object oCheck;
+	Pick pCheck;
+	funcChange change;
+} Check;
 
-extern Light sgLight[];
+typedef struct {
+	int value;
+	int minValue;
+	int maxValue;
+	Object oSpinEdit;
+	Object oLeft;
+	Object oRight;
+	Pick pLeft;
+	Pick pRight;
+	funcChange change;
+} SpinEdit;
 
-int addPointLight(float x, float y, float z);
-int addSpotLight(float x, float y, float z, float dx, float dy, float dz, float exponent, float cutoff);
+void initGUI(void);
 
-void toggleLight(int index);
-void enableLight(int index);
-void disableLight(int index);
+/* Button */
 
-void setLights(void);
+void init3dButton(Button* button, float z, funcClick click, char* text);
+
+/* Check */
+
+void setCheck(Check* check, int value);
+void init3dCheck(Check* check, float z, funcChange change, char* text);
+
+/* SpinEdit */
+
+void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
 
 #endif
