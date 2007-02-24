@@ -1,8 +1,7 @@
 *.c.d
 *.tar.bz2
 *.zip
-cgmadness
-gmon.out
 .deps
 build
+cgmadness
 cgm-editor
