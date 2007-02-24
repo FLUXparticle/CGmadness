@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS :=
+CFLAGS := -O3
 LDFLAGS :=
 
 BUILD := build
