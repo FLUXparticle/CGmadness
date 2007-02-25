@@ -18,6 +18,7 @@
 CC := gcc
 CFLAGS := -O3
 LDFLAGS :=
+PERL := perl
 
 BUILD := build
 
@@ -39,7 +40,7 @@ else
 endif
 
 SRC     :=  $(wildcard *.c)
-MAINS   :=  $(shell ./mains.pl)
+MAINS   :=  $(shell $(PERL) mains.pl)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 LICENSE :=  license.txt
@@ -114,7 +115,7 @@ include $(DEPS)
 
 .deps/%.o.d: %.c modules.pl | .deps/.
 	@echo "  MODULES $@"
-	@./modules.pl $* > $@
+	@$(PERL) modules.pl $* > $@
 
 .deps/%.c.d: %.c | .deps/.
 	@echo "  DEP $@"
