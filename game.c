@@ -57,8 +57,6 @@ int sgGameSpotLight;
 
 static int gIsGameRunning;
 
-static Object goMenu;
-
 #if (MOUSE_CONTROL)
 static int gDragX = 0;
 static int gDragY = 0;
@@ -67,6 +65,8 @@ static int gDragY = 0;
 static float gDistance;
 static float gLatitude;
 static float gLongitude;
+
+static Vector3 gGameMenuPosistion;
 
 #if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
@@ -79,9 +79,8 @@ void pauseGame(void) {
 #if (MOUSE_CONTROL)
 	setDragFunc(NULL);
 #endif
-	showGameMenu(1);
+	showGameMenu(1, 0);
 	gIsGameRunning = 0;
-	goMenu.visible = 1;
 }
 
 void resumeGame(void) {
@@ -90,7 +89,6 @@ void resumeGame(void) {
 #endif
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsGameRunning = 1;
-	goMenu.visible = 0;
 }
 
 void updateGameCamera(float interval, Vector3 ball) {
@@ -173,15 +171,13 @@ void updateGame(float interval) {
 		updateGameCamera(interval, sgoBall.pos);
 	} else {
 		/* show menu */
-		Vector3 camera;
-		Vector3 lookat = goMenu.pos;
+		Vector3 camera = gGameMenuPosistion;
+		Vector3 lookat = gGameMenuPosistion;
 		
-		lookat.x = (sgLevel.size.x + 1.0f) / 2;
-		lookat.z += 5.0f;
-
-		camera = lookat;
 		camera.y -= 10.0f;
-		camera.z += 2.0f;
+		camera.z += 7.0f;
+
+		lookat.z += 5.0f;
 
 		updateGameMenu(interval);
 
@@ -198,8 +194,8 @@ void drawGame(void) {
 	drawGameField();
 	drawShadows(1);
 	
-	if (goMenu.visible)	{
-		drawObject(&goMenu);
+	if (!gIsGameRunning)	{
+		drawGameMenu();
 	}
 
 #if 0	
@@ -232,8 +228,8 @@ void drawGameReflection(void) {
 }
 
 void pickGame(void) {
-	if (goMenu.visible)	{
-		pickObject(&goMenu);
+	if (!gIsGameRunning)	{
+		pickGameMenu();
 	}
 }
 
@@ -249,17 +245,17 @@ int initLevel(char* filename) {
 	gDistance  =  5.0f;
 	gLatitude  = 20.0f;
 	gLongitude =  0.0f;
-
-	setObjectPosition3f(&goMenu, (sgLevel.size.x + 1.0f) / 2, -10.0f, 0.0f);
+	
+	gGameMenuPosistion.x = sgLevel.size.x / 2.0f;
+	gGameMenuPosistion.y = -10.0f; 
+	gGameMenuPosistion.z =   0.0f;
+	
+	setGameMenuPosistion(gGameMenuPosistion);
 
 	sgLight[sgGameSpotLight].pos.x = sgLevel.start.x + 0.5f;
 	sgLight[sgGameSpotLight].pos.y = sgLevel.start.y + 0.5f;
 	
-	updateGameCamera(0.0, goMenu.pos);
-
-	pauseGame();
-	showGameMenu(0);
-	resetBall();
+	updateGameCamera(0.0, gGameMenuPosistion);
 
 	return 1;
 }
@@ -306,6 +302,10 @@ void loadNewLevel(void) {
 	} else if (!initLevel(nextLevelname)) {
 		exit(1);
 	}
+
+	pauseGame();
+	showGameMenu(1, 1);
+	resetBall();
 }
 
 void initFog(void) {
@@ -334,15 +334,18 @@ int initGame(void) {
 	initBall();
 
 	/* menu (must be after ball) */
-	initGameMenu(&goMenu);
+	initGameMenu();
 
-	goMenu.visible = 0;
 	gIsGameRunning = 1;
 
 	/* level (must be after menu) */
  	if (!initLevel(getNextLevelName())) {
 		return 0;
 	}
+
+	pauseGame();
+	showGameMenu(0, 0);
+	resetBall();
 
 	updateGameField();
 

@@ -25,10 +25,16 @@
 
 #include "graph.h"
 
-void initGameMenu(Object* obj);
+void initGameMenu(void);
 
-void showGameMenu(int pause);
+void showGameMenu(int pause, int next);
 
 void updateGameMenu(float interval);
+
+void setGameMenuPosistion(Vector3 pos);
+
+void drawGameMenu(void);
+
+void pickGameMenu(void);
 
 #endif
