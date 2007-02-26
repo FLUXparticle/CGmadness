@@ -70,7 +70,10 @@ extern int* sgQuadInShadow;
 extern Vector3 sgForward;
 extern Vector3 sgRight;
 
+void initCommon(void);
 void destroyCommon(void);
+
+void resetCamera(void);
 
 int loadFieldFromFile(char* filename);
 int saveFieldToFile(char* filename);

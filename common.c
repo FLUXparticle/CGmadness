@@ -43,8 +43,8 @@
 
 #define THIS_CGM_VERSION 1
 
-Vector3 sgCamera = { 0.0f, 0.0f, 1.0f };
-Vector3 sgLookat = { 0.0f, 0.0f, 0.0f };
+Vector3 sgCamera;
+Vector3 sgLookat;
 
 int sgCntVertices;
 
@@ -205,6 +205,10 @@ void getVertIndex(int x, int y, int* start, int* end) {
 	}
 }
 
+void initCommon(void) {
+	resetCamera();
+}
+
 void destroyCommon(void) {
 	FREE(sgLevel.field[0]);
 	FREE(sgLevel.field);
@@ -215,6 +219,16 @@ void destroyCommon(void) {
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
+}
+
+void resetCamera(void) {
+	sgCamera.x = 0.0f;
+	sgCamera.y = 0.0f;
+	sgCamera.z = 1.0f;
+	
+	sgLookat.x = 0.0f;
+	sgLookat.y = 0.0f;
+	sgLookat.z = 0.0f;
 }
 
 int loadFieldFromFile(char* filename) {

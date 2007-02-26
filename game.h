@@ -29,6 +29,7 @@ void loadNewLevel(void);
 int initGame(void);
 int initLevel(char* filename);
 void resumeGame(void);
+void resetGame(void);
 
 void drawGameReflection(void);
 

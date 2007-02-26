@@ -68,6 +68,7 @@ static Object goLogo;
 static Object goMainMenu;
 static Object goNextMenu;
 static Object goHelpMenu;
+static Object goEndMenu;
 
 static Object* gCurMenu;
 
@@ -102,6 +103,10 @@ static void clickButtonQuit(void) {
 	exit(0);
 }
 
+static void clickButtonAgain(void) {
+	resetGame();
+}
+
 static void clickButtonBack(void) {
 	gCurMenu = &goMainMenu; 
 }
@@ -123,13 +128,25 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed('q')) {
 			clickButtonQuit();
 		}
-	} else {
-		if (gCurMenu == &goNextMenu && wasKeyPressed(KEY_ENTER)) {
+	} else if (gCurMenu == &goNextMenu) {
+		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
 		}
 		
 		if (wasKeyPressed(KEY_ESC)) {
 			clickButtonBack();
+		}
+	} else if (gCurMenu == &goHelpMenu) {
+		if (wasKeyPressed(KEY_ESC)) {
+			clickButtonBack();
+		}
+	} else if (gCurMenu == &goEndMenu) {
+		if (wasKeyPressed(KEY_ENTER)) {
+			clickButtonAgain();
+		}
+		
+		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q')) {
+			clickButtonQuit();
 		}
 	}
 }
@@ -157,16 +174,22 @@ void pickGameMenu(void) {
 	glPopMatrix();
 }
 
-void showGameMenu(int pause, int next) {
-	gbStart.oButton.visible = !pause;
-	gbResume.oButton.visible = pause;
-	
-	if (next) {
-		gCurMenu = &goNextMenu;
-	} else {
+void showGameMenu(int menu) {
+	gbStart.oButton.visible = menu == 0;
+	gbResume.oButton.visible = menu != 0;
+
+	switch (menu) {
+	case 0:
+	case 1:
 		gCurMenu = &goMainMenu;
+		break;
+	case 2:
+		gCurMenu = &goNextMenu;
+		break;
+	case 3:
+		gCurMenu = &goEndMenu;
+		break;
 	} 
-	
 
 	setCheck(&gcFog, useFog());
 	setCheck(&gcShadows, useShadows());
@@ -180,6 +203,8 @@ void initGameMenu() {
 	static Button bBack;
 	static Button bContinue;
 	static Button bMain;
+	static Button bAgain;
+	static Button bQuit2;
 	
 	static SpinEdit spinEditBall;
 
@@ -292,4 +317,14 @@ void initGameMenu() {
 
 	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
  	addSubObject(&goHelpMenu, &bBack.oButton);
+
+	/* game complete menu */
+	initObjectGroup(&goEndMenu);
+
+	init3dButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
+  addSubObject(&goEndMenu, &bAgain.oButton);
+	
+	init3dButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
+ 	addSubObject(&goEndMenu, &bQuit2.oButton);
+
 }

@@ -79,7 +79,7 @@ void pauseGame(void) {
 #if (MOUSE_CONTROL)
 	setDragFunc(NULL);
 #endif
-	showGameMenu(1, 0);
+	showGameMenu(1);
 	gIsGameRunning = 0;
 }
 
@@ -274,6 +274,9 @@ char* getNextLevelName(void) {
 	if (!allLevels) {
 		allLevels = textFileRead("levels/default.lev");
 		nextLevel = allLevels;
+	} else if (nextLevel != allLevels) {
+		*nextLevel = '\n';
+		nextLevel++;
 	}
 
 	curLevel = nextLevel;
@@ -282,9 +285,9 @@ char* getNextLevelName(void) {
 
 	if (nextLevel) {
 		*nextLevel = '\0';
-		nextLevel++;
 		return curLevel;
 	} else {
+		nextLevel = allLevels;
 		return NULL;
 	}
 }
@@ -292,20 +295,26 @@ char* getNextLevelName(void) {
 void loadNewLevel(void) {
 	char* nextLevelname = getNextLevelName();
 
-	destroyLevel();
-
 	if (!nextLevelname) {
-		/*
-		 * TODO nice game end
-		 */
-		exit(0);
-	} else if (!initLevel(nextLevelname)) {
-		exit(1);
+		pauseGame();
+		showGameMenu(3);
+	} else {
+		destroyLevel();
+		if (initLevel(nextLevelname)) {
+			pauseGame();
+			showGameMenu(2);
+			resetBall();
+		} else {
+			exit(1);
+		}
 	}
+}
 
-	pauseGame();
-	showGameMenu(1, 1);
-	resetBall();
+void resetGame(void) {
+	loadNewLevel();
+	showGameMenu(0);
+	updateGameField();
+	resetCamera();
 }
 
 void initFog(void) {
@@ -321,8 +330,10 @@ void initFog(void) {
 }
 
 int initGame(void) {
+	initCommon();
+	
 	initObjects();
-
+	
 	glColor3f(1.0f, 1.0f, 1.0f);
 	sgGameMainLight = addPointLight(-200.0f, -200.0f, 100.0f);
 	glColor3f(1.0f, 1.0f, 0.0f);
@@ -344,7 +355,7 @@ int initGame(void) {
 	}
 
 	pauseGame();
-	showGameMenu(0, 0);
+	showGameMenu(0);
 	resetBall();
 
 	updateGameField();

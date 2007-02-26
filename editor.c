@@ -402,7 +402,7 @@ int initEditor(char* filename) {
 	gFilename = filename;
 	if (!loadFieldFromFile(gFilename)) {
 		/*
-		 * TODO if no file is not there create one, but only if size is given
+		 * TODO if file is not there create one, but only if size is given
 		 */
 		return 0;
 	}

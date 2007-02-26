@@ -27,7 +27,7 @@
 
 void initGameMenu(void);
 
-void showGameMenu(int pause, int next);
+void showGameMenu(int menu);
 
 void updateGameMenu(float interval);
 

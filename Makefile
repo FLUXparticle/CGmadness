@@ -43,8 +43,8 @@ SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-LICENSE :=  license.txt
-README  :=  README
+DOC     :=  license.txt cgm-editor-README.txt
+DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))
 OBJS    :=  $(SRC:%.c=$(BUILD)/%.o)
@@ -81,21 +81,21 @@ CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(LICENSE) $(README)
+$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DOC_DEV)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: tar
 tar: $(TAR)
 
-$(TAR): $(EXEC) $(DATA) $(LICENSE)
+$(TAR): $(EXEC) $(DATA) $(DOC)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 
 .PHONY: zip
 zip: $(ZIP)
 
-$(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(LICENSE)
+$(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
 	@zip $@ $^ > /dev/null
 
