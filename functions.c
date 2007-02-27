@@ -38,3 +38,7 @@ float clamp(float x, float lo, float up) {
 	return min(up, max(lo, x));
 }
 
+int between(int x, int min, int max) {
+	return x >= min && x <= max;
+}
+

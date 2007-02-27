@@ -25,6 +25,8 @@
 #include "callback.h"
 #include "texture.h"
 
+#include "functions.h"
+
 #include "debug.h"
 
 #include <GL/glu.h>
@@ -231,18 +233,64 @@ void resetCamera(void) {
 	sgLookat.z = 0.0f;
 }
 
+void allocLevelDataMemory(void) {
+	int x;
+
+	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
+	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
+	for (x = 1; x < sgLevel.size.x; x++) {
+		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
+	}
+
+  /* init level stuff */
+	sgMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	sgMaxQuads = 5 * sgMaxPlates;
+	sgMaxVertices = 4 * sgMaxQuads;
+	
+	sgCntVertices = 0;
+	MALLOC(sgVertices, sgMaxVertices * sizeof(Vector3));
+	MALLOC(sgNormals, sgMaxVertices * sizeof(Vector3));
+	MALLOC(sgIndexVertices, sgMaxPlates * sizeof(int));
+	MALLOC(sgQuadInShadow, sgMaxQuads * sizeof(int));
+}
+
+void newLevel(void) {
+	int x, y;
+
+	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x, sgLevel.size.y);
+
+	sgLevel.start.x = 0;
+	sgLevel.start.y = 0;
+
+	sgLevel.finish.x = sgLevel.size.x - 1;
+	sgLevel.finish.y = sgLevel.size.y - 1;
+
+	allocLevelDataMemory();
+
+	for (x = 0; x < sgLevel.size.x; x++) {
+		for (y = 0; y < sgLevel.size.y; y++) {
+			Plate* p = &sgLevel.field[x][y];
+			p->z = 0;
+			p->dzx = 0;
+			p->dzy = 0;
+		}
+	}
+}
+
 int loadFieldFromFile(char* filename) {
 	FILE* file = fopen(filename, "rt");
-	int x,y;
+	int x, y;
 	int fileX, fileY;
 	int version;
+
+	if (sgLevel.texture == 0) {
+		sgLevel.texture = loadTexture("data/plate.tga", 1);
+	}
 
 	if (!file) {
 		fprintf(stderr, "can not open file: %s\n", filename);
 		return 0;
 	}
-
-	sgLevel.texture = loadTexture("data/plate.tga", 1);
 
 	/* version number */
 	fscanf(file, "v%d", &version);
@@ -263,12 +311,7 @@ int loadFieldFromFile(char* filename) {
 		sgLevel.size.y = fileY;
 	}
 
-	/* alloc memory for data */
-	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
-	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
-	for (x = 1; x < sgLevel.size.x; x++) {
-		sgLevel.field[x] = sgLevel.field[0] + x * sgLevel.size.y;
-	}
+	allocLevelDataMemory();
 
 	/* reading data */
 	for (x = 0; x < sgLevel.size.x; x++) {
@@ -296,17 +339,6 @@ int loadFieldFromFile(char* filename) {
 	}
 
 	fclose(file);
-	
-  /* init level stuff */
-	sgMaxPlates = sgLevel.size.x * sgLevel.size.y;
-	sgMaxQuads = 5 * sgMaxPlates;
-	sgMaxVertices = 4 * sgMaxQuads;
-	
-	sgCntVertices = 0;
-	MALLOC(sgVertices, sgMaxVertices * sizeof(Vector3));
-	MALLOC(sgNormals, sgMaxVertices * sizeof(Vector3));
-	MALLOC(sgIndexVertices, sgMaxPlates * sizeof(int));
-	MALLOC(sgQuadInShadow, sgMaxQuads * sizeof(int));
 	
 	return 1;
 }

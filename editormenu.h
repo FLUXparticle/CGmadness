@@ -25,10 +25,16 @@
 
 #include "graph.h"
 
-void initEditorMenu(Object* obj);
+void initEditorMenu(void);
 
-void showEditorMenu(void);
+void showEditorMenu(int menu);
 
 void updateEditorMenu(float interval);
+
+void setEditorMenuPosition(Vector3 pos);
+
+void drawEditorMenu(void);
+
+void pickEditorMenu(void);
 
 #endif

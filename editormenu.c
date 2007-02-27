@@ -47,6 +47,8 @@ typedef struct {
  * help text
  */
 static LeftRight gTextHelp[] = {
+	{ "Cursor", "Move" },
+	{ "Shift", "Multi Select" },
 	{ "W A S D", "Pitch" },
 	{ "R F", "Hight" },
 	{ "Y X C V B N", "Camera" },
@@ -54,8 +56,16 @@ static LeftRight gTextHelp[] = {
 	{ "Esc", "Menu" },
 };
 
-static Object goHelpText;
-static Object goMainText;
+static Vector3 gEditorMenuPosition;
+
+static Object goLogo;
+static Object goMainMenu;
+static Object goHelpMenu;
+
+static Object goSuccessfulText;
+static Object goFailedText;
+
+static Object* gCurMenu;
 
 /* events */
 
@@ -68,8 +78,7 @@ static void clickButtonSave(void) {
 }
 
 static void clickButtonHelp(void) {
-	goHelpText.visible = 1;
-	goMainText.visible = 0;
+	gCurMenu = &goHelpMenu;
 }
 
 static void clickButtonQuit(void) {
@@ -77,12 +86,11 @@ static void clickButtonQuit(void) {
 }
 
 static void clickButtonBack(void) {
-	goHelpText.visible = 0;
-	goMainText.visible = 1;
+	gCurMenu = &goMainMenu;
 }
 
 void updateEditorMenu(float interval) {
-	if (goMainText.visible) {
+	if (gCurMenu == &goMainMenu) {
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
 			clickButtonEdit();
 		}
@@ -98,25 +106,61 @@ void updateEditorMenu(float interval) {
 		if (wasKeyPressed('q')) {
 			clickButtonQuit();
 		}
-	} else if (goHelpText.visible) {
-		if (wasKeyPressed(KEY_ESC)) {
+	} else {
+		if (wasKeyPressed(KEY_ENTER) || wasKeyPressed(KEY_ESC)) {
 			clickButtonBack();
 		}
 	}
 }
 
-void showEditorMenu(void) {
+void showEditorMenu(int menu) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	
+	switch (menu) {
+	case 0:
+		gCurMenu = &goMainMenu;
+		break;
+	case 1:
+		gCurMenu = &goSuccessfulText;
+		break;
+	case 2:
+		gCurMenu = &goFailedText;
+		break;
+	}
 }
 
-void initEditorMenu(Object* obj) {
+void setEditorMenuPosition(Vector3 pos) {
+	gEditorMenuPosition = pos;
+}
+
+void drawEditorMenu(void) {
+	glPushMatrix();
+		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
+		
+		drawObject(&goLogo);
+		drawObject(gCurMenu);
+	
+	glPopMatrix();
+}
+
+void pickEditorMenu(void) {
+	glPushMatrix();
+		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
+		
+		pickObject(gCurMenu);
+	
+	glPopMatrix();
+}
+
+void initEditorMenu() {
 	static Button bEdit;
 	static Button bSave;
 	static Button bHelp;
 	static Button bQuit;
 	static Button bBack;
+	static Button bSuccessful;
+	static Button bFailed;
 	
-	static Object oLogo;	
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 
 	int i;
@@ -127,39 +171,32 @@ void initEditorMenu(Object* obj) {
 	 * put all together
 	 */
 
-	initObjectGroup(obj);
-	
 	/* menu logo */
-	initObject(&oLogo, drawSquare);
-	oLogo.texture = loadTexture("data/logo.tga", 0);
-	setObjectPosition3f(&oLogo, 0.0f, 0.0f, 8.0f);
-	setObjectScale3f(&oLogo, 4.0f, 1.0f, 1.0f);
+	initObject(&goLogo, drawSquare);
+	goLogo.texture = loadTexture("data/logo.tga", 0);
+	setObjectPosition3f(&goLogo, 0.0f, 0.0f, 8.0f);
+	setObjectScale3f(&goLogo, 4.0f, 1.0f, 1.0f);
 
-	rotateObjectX(&oLogo, 90.0f);
-	addSubObject(obj, &oLogo);
+	rotateObjectX(&goLogo, 90.0f);
 
 	/* main menu */
-	initObjectGroup(&goMainText);
+	initObjectGroup(&goMainMenu);
 
 	init3dButton(&bEdit, 6.0f, clickButtonEdit, "Edit");
-  addSubObject(&goMainText, &bEdit.oButton);
+  addSubObject(&goMainMenu, &bEdit.oButton);
 	
 	init3dButton(&bSave, 5.0f, clickButtonSave, "Save");
-  addSubObject(&goMainText, &bSave.oButton);
+  addSubObject(&goMainMenu, &bSave.oButton);
 	
 	init3dButton(&bHelp, 4.0f, clickButtonHelp, "Help");
-  addSubObject(&goMainText, &bHelp.oButton);
+  addSubObject(&goMainMenu, &bHelp.oButton);
 	
 	init3dButton(&bQuit, 3.0f, clickButtonQuit, "Quit");
-  addSubObject(&goMainText, &bQuit.oButton);
-
-	addSubObject(obj, &goMainText);
+  addSubObject(&goMainMenu, &bQuit.oButton);
 
 	/* help text */
-	initObjectGroup(&goHelpText);
+	initObjectGroup(&goHelpMenu);
 	
-	goHelpText.visible = 0;
-
 	for (i = 0; i < LENGTH(gTextHelp); i++) {
 		float z = 6.0f - i;
 		float length;
@@ -172,7 +209,7 @@ void initEditorMenu(Object* obj) {
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
 			
-	  	addSubObject(&goHelpText, o);
+	  	addSubObject(&goHelpMenu, o);
 		}
 
 		{
@@ -183,12 +220,20 @@ void initEditorMenu(Object* obj) {
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
 			
-	  	addSubObject(&goHelpText, o);
+	  	addSubObject(&goHelpMenu, o);
 		}
 	}
 
 	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
- 	addSubObject(&goHelpText, &bBack.oButton);
+ 	addSubObject(&goHelpMenu, &bBack.oButton);
+ 	
+ 	/* response */
 
-	addSubObject(obj, &goHelpText);
+	initObjectGroup(&goSuccessfulText);
+	init3dButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully");
+ 	addSubObject(&goSuccessfulText, &bSuccessful.oButton);
+
+	initObjectGroup(&goFailedText);
+	init3dButton(&bFailed, 5.0, clickButtonBack, "operation failed");
+ 	addSubObject(&goFailedText, &bFailed.oButton);
 }

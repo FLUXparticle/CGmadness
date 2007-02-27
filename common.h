@@ -75,6 +75,7 @@ void destroyCommon(void);
 
 void resetCamera(void);
 
+void newLevel(void);
 int loadFieldFromFile(char* filename);
 int saveFieldToFile(char* filename);
 

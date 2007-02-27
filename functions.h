@@ -29,4 +29,6 @@ float min(float a, float b);
 float max(float a, float b);
 float clamp(float x, float lo, float up);
 
+int between(int x, int min, int max);
+
 #endif

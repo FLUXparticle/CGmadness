@@ -31,6 +31,8 @@
 #define CURSOR_LEFT 2
 #define CURSOR_RIGHT 3
 
+int getModifiers(void);
+
 int wasKeyPressed(unsigned char key);
 int isKeyPressed(unsigned char key);
 int isCursorPressed(int cursor);

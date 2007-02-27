@@ -30,6 +30,8 @@
 #include "callback.h"
 #include "keyboard.h"
 
+#include "functions.h"
+
 #include "types.h"
 #include "debug.h"
 
@@ -39,6 +41,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#define MAX_LEVEL_SIZE 100
 
 static int gEditorMainLight;
 
@@ -53,25 +57,24 @@ static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
 
-static Object goMenu;
+static Vector3 gEditorMenuPosition;
 
 void pauseEditor(void) {
-	showEditorMenu();
+	showEditorMenu(0);
 	gIsEditorRunning = 0;
-	goMenu.visible = 1;
 }
 
 void resumeEditor(void) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsEditorRunning = 1;
-	goMenu.visible = 0;
 }
 
 void saveLevel(void) {
-	saveFieldToFile(gFilename);
-	/*
-	 * TODO say if save was successfull
-	 */
+	if (saveFieldToFile(gFilename)) {
+		showEditorMenu(1);
+	} else {
+		showEditorMenu(2);
+	}
 }
 
 void updateEditorCamera(float interval, Vector3 ball) {
@@ -84,8 +87,8 @@ void updateEditorCamera(float interval, Vector3 ball) {
   /* camera controls for editor */
 
 	/* zoom */
-	if (isKeyPressed('c')) distance += 0.1f;
-	if (isKeyPressed('v') && distance > 0.5) distance -= 0.1f;
+	if (isKeyPressed('v')) distance += 0.1f;
+	if (isKeyPressed('c') && distance > 0.5) distance -= 0.1f;
 
 	/* rotation */
 	if (wasKeyPressed('b')) gCamAngle--; 
@@ -215,8 +218,8 @@ void moveMarkerDown(int markermode) {
 }
 
 void animateEditor(float interval) {
-	static int markermode = 0;
 	static int singlemode = 0;
+	int markermode = 0;
 
 	/* editor controls for changing environment */	
 	if (wasKeyPressed('a')) {
@@ -275,9 +278,7 @@ void animateEditor(float interval) {
 	  }
 	}
 	
-	if (wasFunctionPressed(4)) {
-		markermode = !markermode;
-	}
+	markermode = getModifiers() == GLUT_ACTIVE_SHIFT;
 
 	if (wasFunctionPressed(5)) {
 		singlemode = !singlemode;
@@ -317,15 +318,13 @@ void updateEditor(float interval) {
 		animateEditor(interval);
 	} else {
 		/* show menu */
-		Vector3 camera;
-		Vector3 lookat = goMenu.pos;
+		Vector3 camera = gEditorMenuPosition;
+		Vector3 lookat = gEditorMenuPosition;
 		
-		lookat.x = (sgLevel.size.x + 1.0f) / 2;
-		lookat.z += 5.0f;
-
-		camera = lookat;
 		camera.y -= 10.0f;
-		camera.z += 2.0f;
+		camera.z += 7.0f;
+
+		lookat.z += 5.0f;
 
 		updateEditorMenu(interval);
 
@@ -384,14 +383,14 @@ void drawEditorField(void) {
 void drawEditor(void) {
 	drawEditorField();
 
-	if (goMenu.visible)	{
-		drawObject(&goMenu);
+	if (!gIsEditorRunning)	{
+		drawEditorMenu();
 	}
 }
 
 void pickEditor(void) {
-	if (goMenu.visible)	{
-		pickObject(&goMenu);
+	if (!gIsEditorRunning)	{
+		pickEditorMenu();
 	}
 }
 
@@ -401,10 +400,11 @@ int initEditor(char* filename) {
 
 	gFilename = filename;
 	if (!loadFieldFromFile(gFilename)) {
-		/*
-		 * TODO if file is not there create one, but only if size is given
-		 */
-		return 0;
+		if (between(sgLevel.size.x, 0, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 0, MAX_LEVEL_SIZE)) {
+			newLevel();
+		} else {
+			return 0;
+		}
 	}
 
 	sgWindowViewport.draw = drawEditor;
@@ -416,12 +416,15 @@ int initEditor(char* filename) {
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	initEditorMenu(&goMenu);
+	initEditorMenu();
 
-	goMenu.visible = 1;
-	gIsEditorRunning = 0;
+	gEditorMenuPosition.x = sgLevel.size.x / 2.0f;
+	gEditorMenuPosition.y = -10.0f;
+	gEditorMenuPosition.z =   0.0f;
+	
+	setEditorMenuPosition(gEditorMenuPosition);
 
-	setObjectPosition3f(&goMenu, (sgLevel.size.x + 1.0f) / 2, -10.0f, 0.0f);
-
+	pauseEditor();
+		
 	return 1;
 }

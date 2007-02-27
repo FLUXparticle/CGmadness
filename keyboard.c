@@ -59,6 +59,12 @@ int gCursorKeys[MAX_CURSORS];
 
 int gFunctionKeys[MAX_FUNCTION];
 
+int gModifiers = 0;
+
+int getModifiers(void) {
+	return gModifiers; 
+}
+
 int isPressed(int* key) {
 	return *key == GLUT_DOWN;
 }
@@ -98,10 +104,12 @@ int wasFunctionPressed(int index) {
 
 void keyboardDown(unsigned char key, int x, int y) {
 	gKeys[key] = GLUT_DOWN;
+	gModifiers = glutGetModifiers();
 }
 
 void keyboardUp(unsigned char key, int x, int y) {
 	gKeys[key] = GLUT_UP;
+	gModifiers = glutGetModifiers();
 }
 
 int* getSpecialKeyPtr(int key) {
@@ -126,6 +134,7 @@ void specialKeyDown(int key, int x, int y) {
 
 	if (ptr) {
 		*ptr = GLUT_DOWN;
+		gModifiers = glutGetModifiers();
 	}
 }
 
@@ -134,6 +143,7 @@ void specialKeyUp(int key, int x, int y) {
 
 	if (ptr) {
 		*ptr = GLUT_UP;
+		gModifiers = glutGetModifiers();
 	}
 }
 
