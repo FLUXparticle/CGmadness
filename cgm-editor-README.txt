@@ -1,5 +1,3 @@
-(If you can not read this file with Notepad, try to open it with WordPad.)
-
 CGM-Editor
 
 
