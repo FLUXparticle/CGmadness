@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
 	if (!file) {
 		usage();
-		exit(1);
+		return 1;
 	}
 	
 	/* --- */
