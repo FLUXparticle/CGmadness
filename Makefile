@@ -75,7 +75,7 @@ $(BUILD)/%.o: %.c | $(BUILD)/.
 TAR := $(PROJECT).tar.bz2
 SRC_TAR := $(PROJECT)-src.tar.bz2
 ZIP := $(PROJECT).zip
-CMD := $(PROJECT).cmd
+CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
 .PHONY: src
