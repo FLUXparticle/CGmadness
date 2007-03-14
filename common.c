@@ -150,10 +150,11 @@ int getSideSquare(int x, int y, int side, Square* square) {
 
 	getRoofSquare(x, y, &roofsquare);
 
-	dx = roofsquare.vertices[j].y - roofsquare.vertices[side].y;
+	dx =   roofsquare.vertices[j].y - roofsquare.vertices[side].y;
 	dy = -(roofsquare.vertices[j].x - roofsquare.vertices[side].x);
 
-	if (getFieldEdgeHeight(x, y, side) <= getFieldEdgeHeight(x + dx, y + dy, i2) && getFieldEdgeHeight(x, y, j) <= getFieldEdgeHeight(x + dx, y + dy, j2))  {
+	if (getFieldEdgeHeight(x, y, side) <= getFieldEdgeHeight(x + dx, y + dy, i2) &&
+	    getFieldEdgeHeight(x, y, j)    <= getFieldEdgeHeight(x + dx, y + dy, j2))  {
 		return 0;
 	}
 

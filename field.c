@@ -108,7 +108,7 @@ void addVertex(float x, float y, float z) {
 	sgCntVertices++;
 }
 
-void addSquare(Square* square) {
+void addSquare(const Square* square) {
 	int i;
 	setNormal(square->normal.x, square->normal.y, square->normal.z);
 
@@ -388,7 +388,6 @@ void drawGameFieldSpotlightParts(void) {
 	}
 
 		glDrawElements(GL_QUADS, gCntSpotlightIndices, GL_UNSIGNED_INT, gSpotlightIndices);
-
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);

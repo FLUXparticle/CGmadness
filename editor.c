@@ -43,6 +43,7 @@
 #include <math.h>
 
 #define MAX_LEVEL_SIZE 100
+#define MAX_LEVEL_HIGHT 100
 
 static int gEditorMainLight;
 
@@ -118,30 +119,7 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	sgLight[0].pos = sgCamera;
 }
 
-void changeMarkerAreaSingle(int incz, int incdzx, int incdzy) {
-	int i;
-	int j;
-	for (i = gCurStart.x; i <= gCurEnd.x; i++) {
-		for (j = gCurStart.y; j <= gCurEnd.y; j++) {
-				Plate* p = &sgLevel.field[i][j];
-				int z = p->z;
-				int dzx = p->dzx;
-				int dzy = p->dzy;
-			
-      	z += incz;
-				dzx += incdzx;
-				dzy += incdzy;
-				
-				if ((z - (abs(dzx) + abs(dzy)) >= 0) && (z - abs(dzx + dzy) >= 0))  {
-					p->z = z;
-					p->dzx = dzx;
-					p->dzy = dzy;
-				}
-			}
-		}
-}
-
-void changeMarkerArea(int incdzx, int incdzy) {
+void changeMarkerArea(int incz, int incdzx, int incdzy) {
 	int x;
 	int y;
 	int incx;
@@ -158,11 +136,11 @@ void changeMarkerArea(int incdzx, int incdzy) {
 			int dzx = p->dzx;
 			int dzy = p->dzy;
 			
-			z += incx + incy;
+			z += incz + incx + incy;
 			dzx += incdzx;
 			dzy += incdzy;
 			
-			if ((z - (abs(dzx) + abs(dzy)) >= 0) && (z - abs(dzx + dzy) >= 0))  {
+			if (z - (abs(dzx) + abs(dzy)) >= 0 && z + (abs(dzx) + abs(dzy)) <= MAX_LEVEL_HIGHT)  {
 				p->z = z;
 				p->dzx = dzx;
 				p->dzy = dzy;
@@ -218,49 +196,32 @@ void moveMarkerDown(int markermode) {
 }
 
 void animateEditor(float interval) {
-	static int singlemode = 0;
 	int markermode = 0;
 
 	/* editor controls for changing environment */	
 	if (wasKeyPressed('a')) {
-		if (singlemode) {
-			changeMarkerAreaSingle(0, gCos[gCamAngle], gSin[gCamAngle]);
-		} else {
-			changeMarkerArea(gCos[gCamAngle], gSin[gCamAngle]);
-		}
+		changeMarkerArea(0, gCos[gCamAngle], gSin[gCamAngle]);
 	}
 	
 	if (wasKeyPressed('d')) {
-		if (singlemode) {
-			changeMarkerAreaSingle(0, -gCos[gCamAngle], -gSin[gCamAngle]);
-		} else {
-			changeMarkerArea(-gCos[gCamAngle], -gSin[gCamAngle]);
-		}
+		changeMarkerArea(0, -gCos[gCamAngle], -gSin[gCamAngle]);
 	}
 
 	
 	if (wasKeyPressed('s')) {
-		if (singlemode) {
-			changeMarkerAreaSingle(0, -gSin[gCamAngle], gCos[gCamAngle]);
-		} else {
-			changeMarkerArea(-gSin[gCamAngle], gCos[gCamAngle]);
-		}
+		changeMarkerArea(0, -gSin[gCamAngle], gCos[gCamAngle]);
 	}
 	
 	if (wasKeyPressed('w')) {
-		if (singlemode) {
-			changeMarkerAreaSingle(0, gSin[gCamAngle], -gCos[gCamAngle]);
-		} else {
-			changeMarkerArea(gSin[gCamAngle], -gCos[gCamAngle]);
-		}
+		changeMarkerArea(0, gSin[gCamAngle], -gCos[gCamAngle]);
   }
 	
 	if (wasKeyPressed('f'))  {
-		changeMarkerAreaSingle(-1, 0, 0);
+		changeMarkerArea(-1, 0, 0);
 	}
 	
 	if (wasKeyPressed('r')) {
-		changeMarkerAreaSingle(1, 0, 0)	;
+		changeMarkerArea(1, 0, 0)	;
 	}
 	
 	/* editor controls for current field */
@@ -279,10 +240,6 @@ void animateEditor(float interval) {
 	}
 	
 	markermode = getModifiers() == GLUT_ACTIVE_SHIFT;
-
-	if (wasFunctionPressed(5)) {
-		singlemode = !singlemode;
-	}
 
 	/*  editor controls for moving selection */
 	if (wasCursorPressed(CURSOR_LEFT)) {
