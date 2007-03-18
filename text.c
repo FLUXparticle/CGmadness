@@ -34,7 +34,7 @@
 
 #define SCALE 0.1f
 
-void drawBitmapText(char *str) {
+void drawBitmapText(const char *str) {
 	glDisable(GL_DEPTH_TEST);
 	for (; *str; str++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
@@ -57,8 +57,8 @@ void addChar(Object* obj, float* x, funcDraw draw, float width) {
 	addSubObject(obj, oChar);
 }
 
-float makeTextObject(Object* obj, char* text) {
-	char* s;
+float makeTextObject(Object* obj, const char* text) {
+	const char* s;
 	float x = 0;
 	
 	initObjectGroup(obj);

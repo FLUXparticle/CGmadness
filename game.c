@@ -233,7 +233,7 @@ void pickGame(void) {
 	}
 }
 
-int initLevel(char* filename) {
+int initLevel(const char* filename) {
 	if (!loadFieldFromFile(filename)) {
 		return 0;
 	}

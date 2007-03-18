@@ -64,7 +64,7 @@ List removeHead(List list) {
 	return tail;
 }
 
-List removeElement(List list, void* element) {
+List removeElement(List list, const void* element) {
 	if (!list) {
 		return list;
 	}

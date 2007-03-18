@@ -32,7 +32,7 @@
 /*
  * Gibt ggf. Fehlermeldungen bei der Compilierung aus
  */
-int printInfoLog(GLhandleARB obj, char* text) {
+int printInfoLog(GLhandleARB obj, const char* text) {
 	int infologLength = 0;
 	int charsWritten  = 0;
 	char* infoLog;
@@ -55,7 +55,7 @@ int printInfoLog(GLhandleARB obj, char* text) {
 /*
  * Erzeugt ein Programm aus einem Vertex- und einem FragmentShader
  */
-GLhandleARB makeShader(char* vertexShaderFilename, char* fragmentShaderFilename) {
+GLhandleARB makeShader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
 	char* vs;
 	char* fs;
 	int compiled;

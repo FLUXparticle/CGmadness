@@ -27,7 +27,7 @@
 
 void loadNewLevel(void);
 int initGame(void);
-int initLevel(char* filename);
+int initLevel(const char* filename);
 void resumeGame(void);
 void resetGame(void);
 

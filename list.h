@@ -34,7 +34,7 @@ struct Node {
 
 List prependElement(List list, void* element);
 List appendElement(List list, void* element);
-List removeElement(List list, void* element);
+List removeElement(List list, const void* element);
 List removeAll(List list);
 
 #endif

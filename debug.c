@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* dbgMalloc(int size, char* pointername, char* filename, int line) {
+void* dbgMalloc(int size, const char* pointername, const char* filename, int line) {
 	void* p = malloc(size);
 	if (p) {
 		fprintf(stderr, "%s : %d -- malloc %s:%d\n", pointername, size, filename, line);
@@ -35,7 +35,7 @@ void* dbgMalloc(int size, char* pointername, char* filename, int line) {
 	return p;
 }
 
-void dbgFree(void* p, char* pointername, char* filename, int line) {
+void dbgFree(void* p, const char* pointername, const char* filename, int line) {
 	fprintf(stderr, "%s -- free %s:%d\n", pointername, filename, line);
 	free(p);
 }

@@ -186,7 +186,7 @@ int loadTGA(FILE* file, Image* image, char** error) {
 	return 1;
 }
 
-int loadTexture(char* filename, int mipmapping) {
+int loadTexture(const char* filename, int mipmapping) {
 	GLuint id;
 	Image image;
 	FILE* file = fopen(filename, "rb");

@@ -76,8 +76,8 @@ void destroyCommon(void);
 void resetCamera(void);
 
 void newLevel(void);
-int loadFieldFromFile(char* filename);
-int saveFieldToFile(char* filename);
+int loadFieldFromFile(const char* filename);
+int saveFieldToFile(const char* filename);
 
 void getRoofSquare(int x, int y, Square* square); 
 int getSideSquare(int x, int y, int side, Square* square);

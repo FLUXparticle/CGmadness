@@ -70,15 +70,15 @@ void setObjectScale2f(Object* obj, float x, float y);
 void setObjectScale3f(Object* obj, float x, float y, float z);
 
 void addSubObject(Object* obj, Object* subObject);
-void delSubObject(Object* obj, Object* subObject);
+void delSubObject(Object* obj, const Object* subObject);
 void clearSubObjects(Object* obj);
 
 void setAttributes(float red, float green, float blue, float ambient, float diffuse, float shininess);
 	
-void drawObject(Object* obj);
+void drawObject(const Object* obj);
 
-void pickObject(Object* obj);
+void pickObject(const Object* obj);
 
-void drawTrianglesVerticesNormals(int count, float* vertices, float* normals);
+void drawTrianglesVerticesNormals(int count, const float* vertices, const float* normals);
 
 #endif

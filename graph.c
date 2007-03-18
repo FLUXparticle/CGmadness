@@ -150,7 +150,7 @@ void addSubObject(Object* obj, Object* subObject) {
 	obj->subObjects = appendElement(obj->subObjects, subObject);
 }
 
-void delSubObject(Object* obj, Object* subObject) {
+void delSubObject(Object* obj, const Object* subObject) {
 	obj->subObjects = removeElement(obj->subObjects, subObject);
 }
 
@@ -195,7 +195,7 @@ void pickList(List list) {
 	}
 }
 
-void pickObject(Object* obj) {
+void pickObject(const Object* obj) {
 	int isNameOnStack;
 	
 	if (!obj->visible) {
@@ -240,7 +240,7 @@ void drawList(List list) {
 	}
 }
 
-void drawObject(Object* obj) {
+void drawObject(const Object* obj) {
 	if (!obj->visible) {
 		return;
 	}
@@ -285,7 +285,7 @@ void drawObject(Object* obj) {
 	glPopMatrix();
 }
 
-void drawTrianglesVerticesNormals(int count, float* vertices, float* normals)
+void drawTrianglesVerticesNormals(int count, const float* vertices, const float* normals)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);

@@ -34,9 +34,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#define ANGLESTEP 1.0f
-#define ZOOMSTEP 0.5f
-
 #if (MOUSE_CONTROL)
 #  define CAMERA_MOVE_TIME_CONSTANT 100.0f
 #else
@@ -278,7 +275,7 @@ void newLevel(void) {
 	}
 }
 
-int loadFieldFromFile(char* filename) {
+int loadFieldFromFile(const char* filename) {
 	FILE* file = fopen(filename, "rt");
 	int x, y;
 	int fileX, fileY;
@@ -344,7 +341,7 @@ int loadFieldFromFile(char* filename) {
 	return 1;
 }
 
-int saveFieldToFile(char* filename) {
+int saveFieldToFile(const char* filename) {
 	FILE* file = fopen(filename, "wt");
 	int x, y;
 

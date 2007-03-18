@@ -25,8 +25,8 @@
 
 #include "graph.h"
 
-void drawBitmapText(char* str);
+void drawBitmapText(const char* str);
 
-float makeTextObject(Object* obj, char* text);
+float makeTextObject(Object* obj, const char* text);
 
 #endif

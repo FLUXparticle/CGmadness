@@ -60,18 +60,27 @@ static int gMaxFieldShadowVolumeVertices;
 static int gStencilBits;
 
 typedef struct {
-	Vector3 corners[8];
-	
-	struct {
-		int corners[2];
-		int faces[2];
-	} edges[12];
-	
-	struct {
-		int corners[4];
-		int inShadow;
-	} faces[6];
-} Cubic;
+  float a;
+  float b;
+  float c;
+  float d;
+} Hyperplane2D;
+
+typedef struct {
+  Vector3 e1;
+  Vector3 e2;
+  Hyperplane2D plane;
+} BSPShadow;
+
+void initHyperplane2D(Hyperplane2D* plane, Vector3 v1, Vector3 v2, Vector3 v3) {
+  Vector3 s1 = sub(v1, v2);
+  Vector3 s2 = sub(v3, v2);
+  Vector3 n = norm(cross(s1, s2));
+  plane->a = n.x;
+  plane->b = n.y;
+  plane->c = n.z;
+  plane->d = -dot(v1, n);
+}
 
 /*
  * WARNING: light source must be heigher than projected point
