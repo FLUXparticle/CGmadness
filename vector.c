@@ -30,25 +30,25 @@
  * some vector calculations
  */
 
-float len(Vector3 v) {
+float len(const Vector3 v) {
 	return sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));
 }
 
 void normalize(Vector3* v) {
-	float l = len(*v);
-	if (l > 0.0f) {
-		v->x /= l;
-		v->y /= l;
-		v->z /= l;
-	}
 }
 
-Vector3 norm(Vector3 v) {
-	normalize(&v);
-	return v;
+Vector3 norm(const Vector3 a) {
+  float l = len(a);
+  Vector3 b = mkVector3(0.0f, 0.0f, 0.0f);
+  if (l > 0.0f) {
+    b.x = a.x / l;
+    b.y = a.y / l;
+    b.z = a.z / l;
+  }
+	return b;
 }
 
-Vector3 scale(float s, Vector3 a) {
+Vector3 scale(float s, const Vector3 a) {
 	Vector3 b;
 
 	b.x = s * a.x;
@@ -58,7 +58,7 @@ Vector3 scale(float s, Vector3 a) {
 	return b;
 }
 
-Vector3 add(Vector3 a, Vector3 b) {
+Vector3 add(const Vector3 a, const Vector3 b) {
 	Vector3 c;
 
 	c.x = a.x + b.x;
@@ -68,7 +68,7 @@ Vector3 add(Vector3 a, Vector3 b) {
 	return c;
 }
 
-Vector3 sub(Vector3 a, Vector3 b) {
+Vector3 sub(const Vector3 a, const Vector3 b) {
 	Vector3 c;
 
 	c.x = a.x - b.x;
@@ -78,7 +78,7 @@ Vector3 sub(Vector3 a, Vector3 b) {
 	return c;
 }
 
-Vector3 neg(Vector3 a) {
+Vector3 neg(const Vector3 a) {
 	Vector3 b;
 
 	b.x = -a.x;
@@ -88,11 +88,11 @@ Vector3 neg(Vector3 a) {
 	return b;
 }
 
-float dot(Vector3 a, Vector3 b) {
+float dot(const Vector3 a, const Vector3 b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-Vector3 cross(Vector3 a, Vector3 b) {
+Vector3 cross(const Vector3 a, const Vector3 b) {
 	Vector3 c;
 
 	c.x = a.y * b.z - b.y * a.z;

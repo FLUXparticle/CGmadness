@@ -84,3 +84,23 @@ List removeAll(List list) {
 
 	return list;
 }
+
+int countElements(const List list) {
+  if (!list) {
+    return 0;
+  }
+  
+  return 1 + countElements(list->next);
+}
+
+void* getElement(const List list, int index) {
+  if (!list) {
+    return NULL;
+  }
+  
+  if (index == 0) {
+    return list->info;
+  }
+  
+  return getElement(list->next, index - 1);
+}

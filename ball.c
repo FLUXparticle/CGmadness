@@ -85,7 +85,7 @@ int hasBallShader(void) {
 	return gShaderBall != 0;
 }
 
-float getMaxZValue(Square* square) {
+float getMaxZValue(const Square* square) {
 	int i;
 	float res = 0.0f;
 	for (i = 0 ; i < 4; i++) {
@@ -114,21 +114,6 @@ void changeBall(int layout) {
 	for (i = 0; i < 6; i++) {
 		gTargetCube[i].enabled = reflection;
 	}
-}
-
-void switchRenderTarget(RenderTarget* target) {
-	if (hasFramebuffer()) {
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, target->framebuffer);
-		if (target->framebuffer != 0) {
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target->texTarget, target->texID, 0);	
-/*			glReadBuffer(GL_COLOR_ATTACHMENT0_EXT); 
-		} else {
-			glReadBuffer(GL_BACK); */
-		}
-	}
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glViewport(0, 0, target->width, target->height);
 }
 
 void updateReflection(void) {
@@ -172,17 +157,10 @@ void updateReflection(void) {
 			RenderTarget* target = &gTargetCube[i];
 			Viewport* v = target->viewport;
 
-/*			int attachment = GL_COLOR_ATTACHMENT0_EXT; */
-
-/*			TIME(switchRenderTarget(target)); */
 #if DEBUG_TIME
 			PRINT_INT(i);
 #endif
 			TIME(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, gCubeMapBall, 0));
-/*
-			GL_DEBUG(glReadBuffer(attachment));
-			GL_DEBUG(glDrawBuffer(attachment));
-*/
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			glMatrixMode(GL_PROJECTION);
@@ -203,7 +181,6 @@ void updateReflection(void) {
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-/*		glReadBuffer(GL_BACK); */
 		
 		gDirtyReflection = 0;
 	}
@@ -335,7 +312,7 @@ void animateBall(float interval) {
 	}
 #endif
 
-	normalize(&force);
+	force = norm(force);
 
 	sgoBall.velocity = add(sgoBall.velocity, scale(MOVE_FORCE / sgoBall.mass * interval, force));
 
@@ -424,7 +401,7 @@ void animateBall(float interval) {
 
 	sgoBall.pos = ball;
 
-	normalize(&normal);
+	normal = norm(normal);
 
 	/* contact to surface? */
 	if (collision) {

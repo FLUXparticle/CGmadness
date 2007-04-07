@@ -37,4 +37,7 @@ List appendElement(List list, void* element);
 List removeElement(List list, const void* element);
 List removeAll(List list);
 
+int countElements(const List list);
+void* getElement(const List list, int index);
+
 #endif

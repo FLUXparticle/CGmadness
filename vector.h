@@ -38,23 +38,21 @@ typedef struct {
 
 float sqr(float x);
 
-float len(Vector3 v);
+float len(const Vector3 v);
 
-void normalize(Vector3* v);
+Vector3 norm(const Vector3 v);
 
-Vector3 norm(Vector3 v);
+Vector3 scale(float s, const Vector3 a);
 
-Vector3 scale(float s, Vector3 a);
+Vector3 add(const Vector3 a, const Vector3 b);
 
-Vector3 add(Vector3 a, Vector3 b);
+Vector3 sub(const Vector3 a, const Vector3 b);
 
-Vector3 sub(Vector3 a, Vector3 b);
+Vector3 neg(const Vector3 a);
 
-Vector3 neg(Vector3 a);
+float dot(const Vector3 a, const Vector3 b);
 
-float dot(Vector3 a, Vector3 b);
-
-Vector3 cross(Vector3 a, Vector3 b);
+Vector3 cross(const Vector3 a, const Vector3 b);
 
 Vector3 mkVector3(float x, float y, float z);
 

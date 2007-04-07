@@ -65,7 +65,7 @@ int getModifiers(void) {
 	return gModifiers; 
 }
 
-int isPressed(int* key) {
+int isPressed(const int* key) {
 	return *key == GLUT_DOWN;
 }
 
