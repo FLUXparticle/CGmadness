@@ -363,7 +363,9 @@ int saveFieldToFile(const char* filename) {
 		}
 	}
 
-	fclose(file);
+	if (fclose(file) != 0) {
+		return 0;
+	}
 
 	return 1;
 }

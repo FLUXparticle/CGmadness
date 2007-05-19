@@ -47,6 +47,7 @@ char* textFileRead(const char* fn) {
 				count = fread(content, sizeof(char), count, fp);
 				content[count] = '\0';
 			}
+
 			fclose(fp);
 		}
 	}
@@ -61,11 +62,14 @@ int textFileWrite(const char *fn, const char *s) {
 		fp = fopen(fn,"w");
 
 		if (fp != NULL) {
-			
-			if (fwrite(s,sizeof(char),strlen(s),fp) == strlen(s))
+			if (fwrite(s,sizeof(char),strlen(s),fp) == strlen(s)) {
 				status = 1;
-			fclose(fp);
+			}
+
+			if (fclose(fp) != 0) {
+				return 0;
+			}
 		}
 	}
-	return(status);
+	return status;
 }
