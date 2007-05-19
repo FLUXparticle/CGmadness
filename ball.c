@@ -202,7 +202,6 @@ void resetBall(void) {
 	sgoBall.angularRate.z = 0.0f;
 	
 	gIsBallInPieces = 0;
-	gDirtyReflection = 1;
 }
 
 void explodeBall(void) {
@@ -219,6 +218,7 @@ void explodeBall(void) {
 	sgoBall.velocity = speed;
 	
 	gIsBallInPieces = 1;
+	gDirtyReflection = 1;
 }
 
 void initCubeMap(void) {
@@ -440,8 +440,6 @@ void animateBall(float interval) {
 	if (isKeyPressed(KEY_ENTER)) {
 		explodeBall();
 	}
-
-	gDirtyReflection = 1;
 }
 
 void updateBall(float interval) {
@@ -450,6 +448,8 @@ void updateBall(float interval) {
 	} else if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
 		resetBall();
 	}
+
+	gDirtyReflection = 1;
 }
 
 void activateBallShader(void) {

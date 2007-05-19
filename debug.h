@@ -48,8 +48,10 @@ void dbgFree(void* p, const char* pointername, const char* filename, int line);
 
 #else
 
-#  define MALLOC(p, size) p = malloc(size)
+#  define MALLOC(p, size) p = saveMalloc(size, #p, __FILE__, __LINE__)
 #  define FREE(p) free(p)
+
+void* saveMalloc(int size, const char* pointername, const char* filename, int line);
 
 #endif
 

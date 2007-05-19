@@ -30,7 +30,7 @@ void* dbgMalloc(int size, const char* pointername, const char* filename, int lin
 	if (p) {
 		fprintf(stderr, "%s : %d -- malloc %s:%d\n", pointername, size, filename, line);
 	} else {
-		fprintf(stderr, "%s : %d -- could not malloc %s:%d\n", pointername, size, filename, line);
+		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size, filename, line);
 	}
 	return p;
 }
@@ -38,4 +38,13 @@ void* dbgMalloc(int size, const char* pointername, const char* filename, int lin
 void dbgFree(void* p, const char* pointername, const char* filename, int line) {
 	fprintf(stderr, "%s -- free %s:%d\n", pointername, filename, line);
 	free(p);
+}
+
+void* saveMalloc(int size, const char* pointername, const char* filename, int line) {
+	void* p = malloc(size);
+	if (!p) {
+		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size, filename, line);
+		exit(1);
+	}
+	return p;
 }
