@@ -43,6 +43,7 @@ SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
+DEV     :=  mains.pl
 DOC     :=  license.txt cgm-editor-README.txt
 DOC_DEV :=  $(DOC) README
 
@@ -81,7 +82,7 @@ CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DOC_DEV)
+$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
 

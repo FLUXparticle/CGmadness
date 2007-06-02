@@ -20,6 +20,8 @@
  *
  */
 
+#define SKYSPHERE 1
+
 #include "game.h"
 
 #include "common.h"
@@ -36,6 +38,7 @@
 #include "keyboard.h"
 #include "mouse.h"
 #include "callback.h"
+#include "environment.h"
 
 #include "functions.h"
 
@@ -49,6 +52,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#define FOG_DENSITY 0.003f
+#define FOG_START 20.0f
+#define FOG_END   30.0f
 
 int sgRenderPass = 8;
 
@@ -106,7 +113,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 	gDragY = 0;
 #else
 	/* zoom */
-	if (isKeyPressed('f')) gDistance += 0.1f;
+	if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
 	if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
 
 	/* rotation */
@@ -191,39 +198,17 @@ void drawGame(void) {
 	/*
 	 * WARNING: alpha blending does not seem to work in texture-buffer
 	 */
+	drawEnvironment();
 	drawGameField();
 	drawShadows(1);
 	
 	if (!gIsGameRunning)	{
 		drawGameMenu();
 	}
-
-#if 0	
-	{
-		float scale = 1.0f / 100.0f;
-		char text[] = "Hallo???";
-		char *p;
-		
-		glPushMatrix();
-	    glTranslatef(0.0f, 0.0f, 0.0f);
-	    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-	    glScalef(scale, scale, scale);
-	    
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
-/*			glEnable(GL_LINE_SMOOTH);*/
-			glLineWidth(2.0);
-			for (p = text; *p; p++) {
-				glutStrokeCharacter(GLUT_STROKE_ROMAN, *p);
-			}
-			glDisable(GL_BLEND);
-/*			glDisable(GL_LINE_SMOOTH);*/
-     glPopMatrix();
-	}
-#endif
 }
 
 void drawGameReflection(void) {
+	drawEnvironment();
 	drawGameField();
 }
 
@@ -318,15 +303,24 @@ void resetGame(void) {
 }
 
 void initFog(void) {
-	float value;
-	int ivalue;
+	int mode = GL_EXP;
+	float density = FOG_DENSITY;
+	float start = FOG_START;
+	float end = FOG_END;
+#if 0
+	float color[] = {0.651f, 0.682f, 1.0f, 0.0f};
+#else
+	float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
+#endif
 
-	ivalue = GL_LINEAR;
-	glFogiv(GL_FOG_MODE, &ivalue);
-	value = FOG_START;
-	glFogfv(GL_FOG_START, &value);
-	value = FOG_END;
-	glFogfv(GL_FOG_END, &value);
+	glFogiv(GL_FOG_MODE, &mode);
+	if (mode == GL_EXP) {
+		glFogfv(GL_FOG_DENSITY, &density);
+	} else {
+		glFogfv(GL_FOG_START, &start);
+		glFogfv(GL_FOG_END, &end);
+	}
+	glFogfv(GL_FOG_COLOR, color);
 }
 
 int initGame(void) {
@@ -340,6 +334,10 @@ int initGame(void) {
   sgGameSpotLight = addSpotLight(0.0f, 0.0f, 8.0f, 0.0f, 0.0f, -1.0f, 10.0f, 50.0f);
 
 	initFog();
+
+#if 0
+	glClearColor(0.651f, 0.682f, 1.0f, 1.0f);
+#endif
 	
 	/* ball */
 	initBall();
@@ -347,12 +345,14 @@ int initGame(void) {
 	/* menu (must be after ball) */
 	initGameMenu();
 
-	gIsGameRunning = 1;
-
 	/* level (must be after menu) */
  	if (!initLevel(getNextLevelName())) {
 		return 0;
 	}
+
+	initEnvironment();
+
+	gIsGameRunning = 1;
 
 	pauseGame();
 	showGameMenu(0);

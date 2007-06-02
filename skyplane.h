@@ -20,30 +20,20 @@
  *
  */
 
-#ifndef _types_h_
-#define _types_h_
+#ifndef _skyplane_h_
+#define _skyplane_h_
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "types.h"
+#include "texture.h"
 
-#define PI 3.14159265358979323846
+#include <GL/glew.h>
+#include <GL/glut.h>
 
-#ifndef NULL
-#define NULL ((void*) 0)
-#endif
+#include <stdio.h>
+#include <stdlib.h>
 
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
-
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+void initSkyplane(float PlanetRadius, float AtmosphereRadius, float hTile, float vTile, float alpha, int divs, int exponentialFadeout);
+void drawSkyplane(void);
+void destroySkyplane(void);
 
 #endif

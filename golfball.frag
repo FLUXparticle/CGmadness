@@ -20,6 +20,8 @@
  *
  */
 
+#version 110
+
 uniform samplerCube Environment;
 
 uniform float useFog;
@@ -55,7 +57,7 @@ void main() {
 	vec4 colReflection = textureCube(Environment, vec3(gl_TextureMatrix[0] * vec4(reflVec, 1)));
 
 	/* Nebel berechnen */
-	float fog = (1.0 - useFog * clamp((gl_FogFragCoord - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0));
+	float fog = (useFog * exp(-gl_FogFragCoord * gl_Fog.density));
 
 	/* Alles zusammensetzen */
 	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), 1.0) * fog;

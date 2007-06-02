@@ -204,6 +204,9 @@ void destroyGameField(void) {
 	FREE(gColors);
 }
 
+/*
+ * render from close to far
+ */
 void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
 	if (sizeX == 0 || sizeY == 0) {
 		return;
@@ -253,29 +256,11 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
 }
 
 void updateGameField(void) {
-	static int mxFog = 0;
-	static int myFog = 0;
-
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
 	
-	if (gDirtyField || (mx != mxFog || my != myFog)) {
-		if (useFog()) {
-			int x1 = max(mx - FOG_REGION, 0);
-			int y1 = max(my - FOG_REGION, 0);
-			int x2 = min(mx + FOG_REGION + 1, sgLevel.size.x);
-			int y2 = min(my + FOG_REGION + 1, sgLevel.size.y);
-
-			gCntIndices = 0;
-			bsp(x1, y1, x2 - x1, y2 - y1, mx, my);
-		} else {
-			gCntIndices = 0;
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my);
-		}
-
-		mxFog = mx;
-		myFog = my;
-	}
+	gCntIndices = 0;
+	bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my);
 
 	if (useSpotlight())	{
 		static int mxSpot = 0;
@@ -349,7 +334,7 @@ void drawGameField(void) {
 	glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
 
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
-	
+
 	glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_LIGHTING);

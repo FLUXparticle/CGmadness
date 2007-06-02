@@ -20,30 +20,13 @@
  *
  */
 
-#ifndef _types_h_
-#define _types_h_
+#ifndef _environment_h_
+#define _environment_h_
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#define ENVIRONMENT_SIZE 600.0f
+#define WATER_LEVEL -0.5f
 
-#define PI 3.14159265358979323846
-
-#ifndef NULL
-#define NULL ((void*) 0)
-#endif
-
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
-
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+void initEnvironment(void);
+void drawEnvironment(void);
 
 #endif

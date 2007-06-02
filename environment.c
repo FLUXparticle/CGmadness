@@ -20,30 +20,25 @@
  *
  */
 
-#ifndef _types_h_
-#define _types_h_
+#include "environment.h"
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "skysphere.h"
+#include "skyplane.h"
+#include "water.h"
 
-#define PI 3.14159265358979323846
+#include <GL/gl.h>
 
-#ifndef NULL
-#define NULL ((void*) 0)
-#endif
+void initEnvironment(void) {
+ 	initSkysphere();
+ 	initSkyplane(2000.0f, 180.0, 3 , 3, 0.85f, 40, 0);
+	initWater();
+}
 
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
+void drawEnvironment(void) {
+	glDisable(GL_DEPTH_TEST);
+		drawSkysphere();
+		drawSkyplane();
+	glEnable(GL_DEPTH_TEST);
 
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
-
-#endif
+	drawWater();
+}
