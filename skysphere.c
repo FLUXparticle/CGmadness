@@ -62,7 +62,7 @@ void initSkysphere(void) {
 			/* Calculate Vertexpositions */
 			vx = cos(angle2) * cos(angle1);
 			vy = sin(angle2) * cos(angle1);
-			vz = 0.6 * sin(angle1);
+			vz = 0.1f * sin(angle1);
 			
 			VertexBuffer[j * (SIDES + 1) + i].x = vx;
 			VertexBuffer[j * (SIDES + 1) + i].z = vz;

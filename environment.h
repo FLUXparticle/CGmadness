@@ -23,7 +23,7 @@
 #ifndef _environment_h_
 #define _environment_h_
 
-#define ENVIRONMENT_SIZE 600.0f
+#define ENVIRONMENT_SIZE 400.0f
 #define WATER_LEVEL -0.5f
 
 void initEnvironment(void);
