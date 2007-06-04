@@ -3,3 +3,4 @@ HotSeat - Geisterkugel
 Portals
 Sound/Musik
 Verschiedene Texturen
+Rätzel
