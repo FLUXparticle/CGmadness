@@ -30,6 +30,8 @@
 
 #include <GL/gl.h>
 
+#define SHOW_LINES 0
+
 static int gWaterTexture;
 
 void initWater(void) {
@@ -37,35 +39,60 @@ void initWater(void) {
 }
 
 void drawWater(void) {
+	int i;
+
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gWaterTexture);
 	glDisable(GL_LIGHTING);
+
+#if (SHOW_LINES)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
 
 	glPushMatrix();
 		glPushMatrix();
 			glColor3f(1.0f, 1.0f, 1.0f);
 
 			glTranslatef(0.0f, 0.0f, WATER_LEVEL);
-			glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, 1.0f);
 
-			glBegin(GL_POLYGON);
-				glNormal3f(0.0f,  0.0f, 1.0f);
-				
-				glTexCoord2f(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
-				glVertex2f(-1.0f, -1.0f);
-				
-				glTexCoord2f(-ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
-				glVertex2f(1.0f, -1.0f);
-				
-				glTexCoord2f(-ENVIRONMENT_SIZE, -ENVIRONMENT_SIZE);
-				glVertex2f(1.0f, 1.0f);
-				
-				glTexCoord2f(ENVIRONMENT_SIZE, -ENVIRONMENT_SIZE);
-				glVertex2f(-1.0f, 1.0f);
-			glEnd();
+			glNormal3f(0.0f,  0.0f, 1.0f);
+			for (i = 0; i < ENVIRONMENT_SIZE; i++) {
+				glBegin(GL_TRIANGLE_STRIP);
+					
+					glTexCoord2f(-i, i);
+					glVertex2f(-i, -i);
+					glTexCoord2f(-(i + 1), i + 1);
+					glVertex2f(-(i + 1), -(i + 1));
+					
+					glTexCoord2f(i, i);
+					glVertex2f(i, -i);
+					glTexCoord2f(i + 1, i + 1);
+					glVertex2f(i + 1, -(i + 1));
+					
+					glTexCoord2f(i, -i);
+					glVertex2f(i, i);
+					glTexCoord2f(i + 1, -(i + 1));
+					glVertex2f(i + 1, i + 1);
+					
+					glTexCoord2f(-i, -i);
+					glVertex2f(-i, i);
+					glTexCoord2f(-(i + 1), -(i + 1));
+					glVertex2f(-(i + 1), i + 1);
+
+					glTexCoord2f(-i, i);
+					glVertex2f(-i, -i);
+					glTexCoord2f(-(i + 1), i + 1);
+					glVertex2f(-(i + 1), -(i + 1));
+					
+				glEnd();
+			}
 		glPopMatrix();
 
 	glPopMatrix();
+
+#if (SHOW_LINES)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);

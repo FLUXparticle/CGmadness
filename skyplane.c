@@ -136,26 +136,27 @@ void initSkyplane(float PlanetRadius, float AtmosphereRadius, float hTile, float
 void drawSkyplane(void) {
 	int i;
 	
-  glDisable(GL_LIGHTING);
 	glPushMatrix();
 
+  	glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texID);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		glBindTexture(GL_TEXTURE_2D, texID);
+
 		glBegin(GL_TRIANGLES);
-		for (i = 0; i< numOfIndices; i++) {
-			glColor4f(1.0f, 1.0f, 1.0f, PlaneVerts[Indices[i]].alpha);
-			glTexCoord2f(PlaneVerts[Indices[i]].u, PlaneVerts[Indices[i]].v);
-			glVertex3f(PlaneVerts[Indices[i]].x, PlaneVerts[Indices[i]].y, PlaneVerts[Indices[i]].z);
-		}
+			for (i = 0; i< numOfIndices; i++) {
+				glColor4f(1.0f, 1.0f, 1.0f, PlaneVerts[Indices[i]].alpha);
+				glTexCoord2f(PlaneVerts[Indices[i]].u, PlaneVerts[Indices[i]].v);
+				glVertex3f(PlaneVerts[Indices[i]].x, PlaneVerts[Indices[i]].y, PlaneVerts[Indices[i]].z);
+			}
 		glEnd();
 		
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_LIGHTING);
+
 	glPopMatrix(); 
-	glEnable(GL_LIGHTING);
 }
 
 void destroySkyPlane(void){

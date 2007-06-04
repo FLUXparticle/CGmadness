@@ -25,6 +25,9 @@
 #include "environment.h"
 
 #include "vector.h"
+#include "types.h"
+
+#include <stdio.h>
 
 #define DAMPENING 0.8
 
@@ -35,12 +38,14 @@
 #define SLICES 48
 
 /* Vertexcount of the dome */
-#define NUMVERTS (SIDES + 1) * (SLICES + 1)
-#define NUMINDICES (SLICES * (SLICES + 1) * 2)
+#define NUMVERTS ((SLICES + 1) * (SIDES + 1))
+#define NUMINDICES (SLICES * (SIDES + 1) * 2)
+
+#define USE_VERTEX_ARRAY 0
 
 Vector3 VertexBuffer[NUMVERTS];
 Vector2 TextureBuffer[NUMVERTS];
-unsigned int IndexBuffer[NUMINDICES];
+GLuint IndexBuffer[NUMINDICES];
 
 void initSkysphere(void) {
 	int i;  
@@ -86,23 +91,38 @@ void initSkysphere(void) {
 }
 
 void drawSkysphere(void) {
-	int j;
+	int i, j;
 	
 	glColor3f(0.651f, 0.682f, 1.0f);
 	glDisable(GL_LIGHTING);
+
 	glPushMatrix();
 
 		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
 		glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
+
+#if (USE_VERTEX_ARRAY)
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, VertexBuffer);
+#endif
 
 		for (j = 0; j < SLICES; j++) {
+#if (USE_VERTEX_ARRAY)
 			glDrawElements(GL_TRIANGLE_STRIP, (SIDES + 1) * 2, GL_UNSIGNED_INT, &IndexBuffer[j * (SIDES + 1) * 2]);
+#else
+			glBegin(GL_TRIANGLE_STRIP);
+			for (i = 0; i < (SIDES + 1) * 2; i++) {
+				glVertex3f(VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].x, VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].y, VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].z);
+			}
+			glEnd();
+#endif
 		}
 
+#if (USE_VERTEX_ARRAY)
 		glDisableClientState(GL_VERTEX_ARRAY);
+#endif
 	
 	glPopMatrix();
+
 	glEnable(GL_LIGHTING);
 }

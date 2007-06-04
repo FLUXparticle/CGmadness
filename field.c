@@ -178,6 +178,8 @@ void initGameField(void) {
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
 		bufferdata(gColors);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
 	printf("sgMaxVertices: %d\n", sgMaxVertices);
