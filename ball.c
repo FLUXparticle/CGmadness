@@ -521,7 +521,6 @@ void activateBallShader(void) {
 		glUseProgram(gShaderBall);
 
 		glUniform1i(glGetUniformLocation(gShaderBall, "Environment"), 0);
-		glUniform1f(glGetUniformLocation(gShaderBall, "useFog"), useFog());
 		glUniform1f(glGetUniformLocation(gShaderBall, "reflection"), reflection);
 	}
 }

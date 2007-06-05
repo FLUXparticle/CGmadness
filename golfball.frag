@@ -24,8 +24,6 @@
 
 uniform samplerCube Environment;
 
-uniform float useFog;
-
 uniform float reflection;
 
 varying vec4 diffuse, ambient;
@@ -57,7 +55,7 @@ void main() {
 	vec4 colReflection = textureCube(Environment, vec3(gl_TextureMatrix[0] * vec4(reflVec, 1)));
 
 	/* Nebel berechnen */
-	float fog = (useFog * exp(-gl_FogFragCoord * gl_Fog.density));
+	float fog = exp(-gl_FogFragCoord * gl_Fog.density);
 
 	/* Alles zusammensetzen */
 	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), 1.0) * fog;

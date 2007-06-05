@@ -165,9 +165,6 @@ void updateGame(float interval) {
 		if (wasFunctionPressed(2)) {
 			setShadows(!useShadows());
 		}
-		if (wasFunctionPressed(3)) {
-			setFog(!useFog());
-		}
 
 		updateBall(interval);
 
@@ -313,6 +310,7 @@ void initFog(void) {
 	float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 #endif
 
+	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);
 	if (mode == GL_EXP) {
 		glFogfv(GL_FOG_DENSITY, &density);

@@ -41,8 +41,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define FOG_REGION 52
-
 #define WITHOUT_DEPTH_TEST 0
 #define WITH_STENCIL_TEST 0
 #define TWO_PASS 0

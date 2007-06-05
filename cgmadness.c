@@ -71,9 +71,6 @@ int main(int argc, char* argv[]) {
 
 	glEnable(GL_DEPTH_TEST);
 	
-	/* per-vertex-fog */
-	glHint(GL_FOG_HINT, GL_FASTEST);
-
 	glEnable(GL_NORMALIZE);
 
   glEnable(GL_CULL_FACE);

@@ -35,12 +35,10 @@ int hasVertexbuffer(void);
 int hasTwoSideStencil(void);
 int hasSpotlight(void);
 
-void setFog(int use);
 void setShadows(int use);
 void setSpotlight(int use);
 
 int useShadows(void);
-int useFog(void);
 int useSpotlight(void);
 
 #endif

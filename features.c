@@ -36,7 +36,6 @@ static int sgTwoSideStencilAvailable;
 static int sgShaderAvailable;
 
 static int gUseShadows = 0;
-static int gUseFog = 0;
 static int gUseSpotlight = 0;
 
 GLhandleARB sgSpotlightShader = 0;
@@ -103,25 +102,11 @@ void setShadows(int use) {
 	gUseShadows = use;
 }
 
-void setFog(int use) {
-	gUseFog = use;
-
-	if (use) {
-		glEnable(GL_FOG);
-	} else {
-		glDisable(GL_FOG);
-	}
-}
-
 void setSpotlight(int use) {
 	gUseSpotlight = use;
 }
 
 /* use...? */
-
-int useFog(void) {
-	return gUseFog;
-}
 
 int useShadows(void) {
 	return gUseShadows;
