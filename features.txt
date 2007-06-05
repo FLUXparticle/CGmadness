@@ -1,4 +1,5 @@
 Multi-Player: Pass the Madness
+Zeitmessung -> Highscore
 HotSeat - Geisterkugel
 Portals
 Sound/Musik
