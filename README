@@ -27,7 +27,7 @@ Cygwin:
 	download "GLEW"-source from http://glew.sourceforge.net/
 	start cygwin
 	go into glew source directory
-	build glew with "make CFLAGS.EXTRA=-mno-cygwin LDFLAGS.EXTRA=-mno-cygwin"
+	build glew with "make CFLAGS.EXTRA=-mno-cygwin LDFLAGS.EXTRA=-mno-cygwin SYSTEM=mingw"
 	copy content of glew/include into cygwin/usr/include/w32api/
 	copy content of glew/lib into cygwin/lib/w32api/
 	also copy glew/lib/glew32.dll into "CG Madness" source directory or windows/system32
