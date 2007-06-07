@@ -106,8 +106,8 @@ void updateGameCamera(float interval, Vector3 ball) {
   /* game controls for camera */
 
 #if (MOUSE_CONTROL)
-	gLongitude -= 12.0f * interval * gDragX;
-	gLatitude += 12.0f * interval * gDragY;
+	gLongitude -= 5.0f * interval * gDragX;
+	gLatitude += 5.0f * interval * gDragY;
 	
 	gDragX = 0;
 	gDragY = 0;
@@ -133,7 +133,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 
 	moveCamera(interval, dest, ball);
 	
-#if (0 && MOUSE_CONTROL)
+#if (MOUSE_CONTROL)
 	sgCamera = dest;
 #endif
 

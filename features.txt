@@ -1,7 +1,11 @@
 Multi-Player: Pass the Madness
 Zeitmessung -> Highscore
 HotSeat - Geisterkugel
+Replays speichern/abspielen
+Level hash
 Portals
 Sound/Musik
 Verschiedene Texturen
 Rätzel
+Homepage mit Vote für Features
+Levels uploaden und bewerten
