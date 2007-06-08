@@ -27,6 +27,7 @@
 #define WATER_LEVEL -0.5f
 
 void initEnvironment(void);
+void updateEnvironment(float interval);
 void drawEnvironment(void);
 
 #endif

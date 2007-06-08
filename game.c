@@ -189,6 +189,8 @@ void updateGame(float interval) {
 	}
 	
 	updateGameField();
+
+	updateEnvironment(interval);
 }
 
 void drawGame(void) {
@@ -304,11 +306,7 @@ void initFog(void) {
 	float density = FOG_DENSITY;
 	float start = FOG_START;
 	float end = FOG_END;
-#if 0
-	float color[] = {0.651f, 0.682f, 1.0f, 0.0f};
-#else
 	float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
-#endif
 
 	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);

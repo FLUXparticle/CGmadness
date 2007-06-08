@@ -34,6 +34,10 @@ void initEnvironment(void) {
 	initWater();
 }
 
+void updateEnvironment(float interval) {
+	updateWater(interval);
+}
+
 void drawEnvironment(void) {
 	glDisable(GL_DEPTH_TEST);
 		drawSkysphere();

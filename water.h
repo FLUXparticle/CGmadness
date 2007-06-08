@@ -24,6 +24,7 @@
 #define _water_h_
 
 void initWater(void);
+void updateWater(float interval);
 void drawWater(void);
 
 #endif

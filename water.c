@@ -28,67 +28,119 @@
 #include "texture.h"
 #include "environment.h"
 
+#include "functions.h"
+
 #include <GL/gl.h>
+
+#include <stdio.h>
 
 #define SHOW_LINES 0
 
 static int gWaterTexture;
+static float gWaterAnim;
 
 void initWater(void) {
 	gWaterTexture = loadTexture("data/water.tga", 1);
+	gWaterAnim = 0.0f;
+}
+
+void updateWater(float interval) {
+	gWaterAnim += interval * 0.05f;
+
+	if (gWaterAnim > 2.0f) {
+		gWaterAnim -= 2.0f;
+	}
+}
+
+void drawWaterPolygones(void) {
+	float i = 0.0f;
+	float j;
+
+	for (j = 1.0f; i < ENVIRONMENT_SIZE; j *= 2) {
+		glBegin(GL_TRIANGLE_STRIP);
+
+			glTexCoord2f(-i, i);
+			glVertex2f(-i, -i);
+			glTexCoord2f(-j, j);
+			glVertex2f(-j, -j);
+
+			glTexCoord2f(i, i);
+			glVertex2f(i, -i);
+			glTexCoord2f(j, j);
+			glVertex2f(j, -j);
+
+			glTexCoord2f(i, -i);
+			glVertex2f(i, i);
+			glTexCoord2f(j, -j);
+			glVertex2f(j, j);
+
+			glTexCoord2f(-i, -i);
+			glVertex2f(-i, i);
+			glTexCoord2f(-j, -j);
+			glVertex2f(-j, j);
+
+			glTexCoord2f(-i, i);
+			glVertex2f(-i, -i);
+			glTexCoord2f(-j, j);
+			glVertex2f(-j, -j);
+
+		glEnd();
+
+		i = j;
+	}
 }
 
 void drawWater(void) {
-	int i;
+	glDisable(GL_LIGHTING);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gWaterTexture);
-	glDisable(GL_LIGHTING);
 
 #if (SHOW_LINES)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glNormal3f(0.0f,  0.0f, 1.0f);
+
 	glPushMatrix();
+
+		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
+		
+		glMatrixMode(GL_TEXTURE);
 		glPushMatrix();
-			glColor3f(1.0f, 1.0f, 1.0f);
+			glTranslatef(gWaterAnim * 0.5f, gWaterAnim * 0.5f, 0.0f);
+			glScalef(0.25f, 0.25f, 1.0f);
 
-			glTranslatef(0.0f, 0.0f, WATER_LEVEL);
+			drawWaterPolygones();
 
-			glNormal3f(0.0f,  0.0f, 1.0f);
-			for (i = 0; i < ENVIRONMENT_SIZE; i++) {
-				glBegin(GL_TRIANGLE_STRIP);
-					
-					glTexCoord2f(-i, i);
-					glVertex2f(-i, -i);
-					glTexCoord2f(-(i + 1), i + 1);
-					glVertex2f(-(i + 1), -(i + 1));
-					
-					glTexCoord2f(i, i);
-					glVertex2f(i, -i);
-					glTexCoord2f(i + 1, i + 1);
-					glVertex2f(i + 1, -(i + 1));
-					
-					glTexCoord2f(i, -i);
-					glVertex2f(i, i);
-					glTexCoord2f(i + 1, -(i + 1));
-					glVertex2f(i + 1, i + 1);
-					
-					glTexCoord2f(-i, -i);
-					glVertex2f(-i, i);
-					glTexCoord2f(-(i + 1), -(i + 1));
-					glVertex2f(-(i + 1), i + 1);
-
-					glTexCoord2f(-i, i);
-					glVertex2f(-i, -i);
-					glTexCoord2f(-(i + 1), i + 1);
-					glVertex2f(-(i + 1), -(i + 1));
-					
-				glEnd();
-			}
 		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
 
 	glPopMatrix();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+
+	glPushMatrix();
+
+		glTranslatef(0.0f, 0.0f, WATER_LEVEL + 0.1f);
+		
+		glMatrixMode(GL_TEXTURE);
+		glPushMatrix();
+			glTranslatef(gWaterAnim, gWaterAnim, 0.0f);
+			glScalef(0.25f, 0.25f, 1.0f);
+
+			drawWaterPolygones();
+
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
+	glPopMatrix();
+
+	glDisable(GL_BLEND);
 
 #if (SHOW_LINES)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
