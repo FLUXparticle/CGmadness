@@ -34,8 +34,6 @@
 
 #include <stdio.h>
 
-#define SHOW_LINES 0
-
 static int gWaterTexture;
 static float gWaterAnim;
 
@@ -96,10 +94,6 @@ void drawWater(void) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gWaterTexture);
 
-#if (SHOW_LINES)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
-
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glNormal3f(0.0f,  0.0f, 1.0f);
 
@@ -141,10 +135,6 @@ void drawWater(void) {
 	glPopMatrix();
 
 	glDisable(GL_BLEND);
-
-#if (SHOW_LINES)
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#endif
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
