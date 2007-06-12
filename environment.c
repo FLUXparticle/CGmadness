@@ -67,8 +67,9 @@ void drawEnvironment(void) {
 
 	glPopMatrix();
 
+	drawWater();
+
 	glDisable(GL_DEPTH_TEST);
-		drawWater();
 		drawSkysphere();
 		drawSkyplane();
 	glEnable(GL_DEPTH_TEST);
