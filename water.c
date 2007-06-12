@@ -94,8 +94,12 @@ void drawWater(void) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gWaterTexture);
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glNormal3f(0.0f,  0.0f, 1.0f);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glNormal3f(0.0f, 0.0f, 1.0f);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
 
 	glPushMatrix();
 
@@ -103,7 +107,7 @@ void drawWater(void) {
 		
 		glMatrixMode(GL_TEXTURE);
 		glPushMatrix();
-			glTranslatef(gWaterAnim * 0.5f, gWaterAnim * 0.5f, 0.0f);
+			glTranslatef(gWaterAnim, gWaterAnim, 0.0f);
 			glScalef(0.25f, 0.25f, 1.0f);
 
 			drawWaterPolygones();
@@ -113,18 +117,15 @@ void drawWater(void) {
 
 	glPopMatrix();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
 	glPushMatrix();
 
-		glTranslatef(0.0f, 0.0f, WATER_LEVEL + 0.1f);
+		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
 		
 		glMatrixMode(GL_TEXTURE);
 		glPushMatrix();
-			glTranslatef(gWaterAnim, gWaterAnim, 0.0f);
+			glTranslatef(gWaterAnim * 0.5f, gWaterAnim * 0.5f, 0.0f);
 			glScalef(0.25f, 0.25f, 1.0f);
 
 			drawWaterPolygones();
