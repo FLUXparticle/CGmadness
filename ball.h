@@ -63,4 +63,6 @@ int hasBallTexture(void);
 int hasBallReflection(void);
 int hasBallShader(void);
 
+int useBallReflection(void);
+
 #endif

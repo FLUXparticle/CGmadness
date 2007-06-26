@@ -30,21 +30,12 @@
 #include <stdio.h>
 
 int createFBuffer(int width, int height, unsigned int target, unsigned int color_tex, RenderTarget* context) {
-	unsigned int fb;
-	unsigned int depth_stencil_rb;
+	GLuint fb;
 
   glGenFramebuffersEXT(1, &fb);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
 
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, color_tex, 0);
-
-	/* initialize depth renderbuffer */
-	glGenRenderbuffersEXT(1, &depth_stencil_rb);
-
-	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_stencil_rb);
-	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, width, height);
-	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_stencil_rb);
-	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_stencil_rb);
 
 	{
 		GLenum status;
@@ -102,7 +93,7 @@ int initFBuffer(int width, int height, RenderTarget* context) {
   glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_2D, color_tex);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -118,7 +109,7 @@ int initFBuffer(int width, int height, RenderTarget* context) {
 }
 
 int initFBufferCube(int width, int height, RenderTarget context[6]) {
-	unsigned int color_tex;
+	GLuint color_tex;
 	int i;
 
   glGenTextures(1, &color_tex);
@@ -139,7 +130,6 @@ int initFBufferCube(int width, int height, RenderTarget context[6]) {
 		return 0;
 	}
 
-/*	GL_DEBUG(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, context[0].framebuffer)); */
 	for (i = 1; i < 6; i++) {
 		context[i].width = width;
 		context[i].height = height;
@@ -147,7 +137,6 @@ int initFBufferCube(int width, int height, RenderTarget context[6]) {
 		context[i].texTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
 		context[i].texID = color_tex;
 		context[i].viewport = NULL;
-/*		GL_DEBUG(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, context[i].texTarget, context[i].texID, 0)); */
 	}
 
 	return color_tex;

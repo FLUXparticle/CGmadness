@@ -27,6 +27,7 @@
 
 #include "light.h"
 #include "vector.h"
+#include "ball.h"
 #include "features.h"
 
 #include "functions.h"
@@ -64,6 +65,9 @@ static unsigned int gVBuffers[4];
 
 static int gCntIndices;
 static int* gIndices;
+
+static int gCntBallReflectionIndices;
+static int* gBallReflectionIndices;
 
 static int gCntSpotlightIndices;
 static int* gSpotlightIndices;
@@ -185,6 +189,7 @@ void initGameField(void) {
 
 	gCntIndices = 0;
 	MALLOC(gIndices, sgCntVertices * sizeof(int));
+	MALLOC(gBallReflectionIndices, sgCntVertices * sizeof(int));
 
 	if (hasSpotlight()) {
 		gCntSpotlightIndices = 0;
@@ -200,6 +205,7 @@ void destroyGameField(void) {
 	}
 
   FREE(gIndices);
+  FREE(gBallReflectionIndices);
 	FREE(gTexCoords);
 	FREE(gColors);
 }
@@ -207,7 +213,7 @@ void destroyGameField(void) {
 /*
  * render from close to far
  */
-void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
+void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int farToClose, int* indices, int* index) {
 	if (sizeX == 0 || sizeY == 0) {
 		return;
 	} else if (sizeX == 1 && sizeY == 1) {
@@ -218,7 +224,7 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
 		getVertIndex(startX, startY, &start, &end);
 		
 		for (q = start; q < end; q++) {
-			gIndices[gCntIndices++] = q;
+			indices[(*index)++] = q;
 		}
 	} else {
 		int startX1 = startX;
@@ -231,26 +237,26 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY) {
 		int sizeX2 = sizeX;
 		int sizeY2 = sizeY;
 
-		int side;
+		int closer;
 
 		if (sizeX > sizeY) {
 			sizeX1 = sizeX / 2;
 			sizeX2 = sizeX - sizeX1;
 			startX2 = startX1 + sizeX1;
-			side = viewX < startX2;
+			closer = viewX < startX2;
 		} else {
 			sizeY1 = sizeY / 2;
 			sizeY2 = sizeY - sizeY1;
 			startY2 = startY1 + sizeY1;
-			side = viewY < startY2;
+			closer = viewY < startY2;
 		}
 
-		if (side) {
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY);
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY);
+		if (farToClose ^ closer) {
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
 		} else {
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY);
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
 		}
 	}
 }
@@ -260,7 +266,15 @@ void updateGameField(void) {
 	int my = floor(sgCamera.y);
 	
 	gCntIndices = 0;
-	bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my);
+	bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+
+	if (useBallReflection()) {
+		int bx = floor(sgoBall.pos.x);
+		int by = floor(sgoBall.pos.y);
+
+		gCntBallReflectionIndices = 0;
+		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+	}
 
 	if (useSpotlight())	{
 		static int mxSpot = 0;
@@ -299,7 +313,7 @@ void updateGameField(void) {
 	gDirtyField = 0;
 }
 
-void drawGameField(void) {
+void drawGameField(int ballReflection) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -333,7 +347,7 @@ void drawGameField(void) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
 
-		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, gIndices);
+		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
 
 	glDisable(GL_TEXTURE_2D);
 

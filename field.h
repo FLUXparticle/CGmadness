@@ -29,7 +29,7 @@ void initGameField(void);
 
 void updateGameField(void);
 
-void drawGameField(void);
+void drawGameField(int ballReflection);
 void drawGameFieldSpotlightParts(void);
 
 #endif

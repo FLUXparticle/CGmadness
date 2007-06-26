@@ -59,7 +59,7 @@ void drawEnvironment(void) {
 				drawSkyplane();
 			glEnable(GL_DEPTH_TEST);
 
-			drawGameField();		
+			drawGameField(0);
 			drawGameBall();
 
 		glCullFace(GL_BACK);

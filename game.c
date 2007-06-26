@@ -198,17 +198,19 @@ void drawGame(void) {
 	 * WARNING: alpha blending does not seem to work in texture-buffer
 	 */
 	drawEnvironment();
-	drawGameField();
+	drawGameField(0);
 	drawShadows(1);
-	
+
 	if (!gIsGameRunning)	{
 		drawGameMenu();
 	}
 }
 
 void drawGameReflection(void) {
+#if 1
 	drawEnvironment();
-	drawGameField();
+	drawGameField(1);
+#endif
 }
 
 void pickGame(void) {
