@@ -333,10 +333,6 @@ int initGame(void) {
 
 	initFog();
 
-#if 0
-	glClearColor(0.651f, 0.682f, 1.0f, 1.0f);
-#endif
-	
 	/* ball */
 	initBall();
 

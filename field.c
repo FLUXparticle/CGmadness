@@ -63,10 +63,10 @@ static Vector2* gTexCoords;
 static Color4* gColors;
 static unsigned int gVBuffers[4];
 
-static int gCntIndices;
+static int gCntIndices = 0;
 static int* gIndices;
 
-static int gCntBallReflectionIndices;
+static int gCntBallReflectionIndices = 0;
 static int* gBallReflectionIndices;
 
 static int gCntSpotlightIndices;
@@ -262,18 +262,34 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int
 }
 
 void updateGameField(void) {
+	static int lastMX = 0;
+	static int lastMY = 0;
+
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
 	
-	gCntIndices = 0;
-	bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY)) {
+		gCntIndices = 0;
+		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+
+		lastMX = mx;
+		lastMY = my;
+	}
 
 	if (useBallReflection()) {
+		static int lastBX = 0;
+		static int lastBY = 0;
+
 		int bx = floor(sgoBall.pos.x);
 		int by = floor(sgoBall.pos.y);
 
-		gCntBallReflectionIndices = 0;
-		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY)) {
+			gCntBallReflectionIndices = 0;
+			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+
+			lastBX = bx;
+			lastBY = by;
+		}
 	}
 
 	if (useSpotlight())	{

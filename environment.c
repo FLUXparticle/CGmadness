@@ -44,6 +44,8 @@ void updateEnvironment(float interval) {
 void drawEnvironment(void) {
 	GLdouble equation[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
+	glColorMask(1,1,1,0);
+
 	glPushMatrix();
 
 		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
@@ -73,4 +75,6 @@ void drawEnvironment(void) {
 		drawSkysphere();
 		drawSkyplane();
 	glEnable(GL_DEPTH_TEST);
+
+	glColorMask(1,1,1,1);
 }
