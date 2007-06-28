@@ -141,19 +141,12 @@ void updateReflection(void) {
 
 	if (useBallReflection() && gDirtyReflection) {
 		int i;
-/*
-		int max;
-		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &max);
-		PRINT_INT(max);
-*/
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(&gViewportCube[0].projection[0][0]);
 
 		glViewport(0, 0, CUBE_MAP_SIZE, CUBE_MAP_SIZE);
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, gTargetCube[0].framebuffer));
-
-		glDisable(GL_DEPTH_TEST);
 
 		for (i = 0; i < 6; i++) {
 			RenderTarget* target = &gTargetCube[i];
@@ -162,7 +155,6 @@ void updateReflection(void) {
 #if DEBUG_TIME
 			PRINT_INT(i);
 #endif
-
 			TIME(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, gCubeMapBall, 0));
 
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -184,10 +176,7 @@ void updateReflection(void) {
  			TIME(drawGameReflection());
 		}
 
-		glEnable(GL_DEPTH_TEST);
-
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-		glDrawBuffer(GL_BACK);
 		
 		gDirtyReflection = 0;
 	}
@@ -209,6 +198,7 @@ void resetBall(void) {
 	sgoBall.angularRate.z = 0.0f;
 	
 	gIsBallInPieces = 0;
+	gDirtyReflection = 1;
 }
 
 void explodeBall(void) {
@@ -447,6 +437,8 @@ void animateBall(float interval) {
 	if (isKeyPressed(KEY_ENTER)) {
 		explodeBall();
 	}
+
+	gDirtyReflection = 1;
 }
 
 void updateBall(float interval) {
