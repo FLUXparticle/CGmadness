@@ -152,7 +152,7 @@ void updateXSideSquareTexCoords(Square* square, int x, int z, float z1, float z2
 		square->texcoords[i].x = square->vertices[i].x;
 		square->texcoords[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
 		square->lightmap[i].x = (x + a * (square->vertices[i].x - x) + b) / sgLevel.size.x;
-		square->lightmap[i].y = (z + a * (square->vertices[i].z - z) + b) / MAX_LEVEL_HEIGHT;
+		square->lightmap[i].y = (z + a * (square->vertices[i].z - z) + b) / (MAX_LEVEL_HEIGHT + 1);
 	}
 }
 
@@ -173,7 +173,7 @@ void updateYSideSquareTexCoords(Square* square, int y, int z, float z1, float z2
 		square->texcoords[i].x = square->vertices[i].y;
 		square->texcoords[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
 		square->lightmap[i].x = (y + a * (square->vertices[i].y - y) + b) / sgLevel.size.y;
-		square->lightmap[i].y = (z + a * (square->vertices[i].z - z) + b) / MAX_LEVEL_HEIGHT;
+		square->lightmap[i].y = (z + a * (square->vertices[i].z - z) + b) / (MAX_LEVEL_HEIGHT + 1);
 	}
 }
 
@@ -407,13 +407,13 @@ void initTextures(void) {
 	MALLOC(gDataWalls[3], sgLevel.size.x * sizeof(**gDataWalls));
 
 	for (x = 0; x < sgLevel.size.x; x++) {
-		allocSubLightMaps(&gDataWalls[1][x], sgLevel.size.y, MAX_LEVEL_HEIGHT);
-		allocSubLightMaps(&gDataWalls[3][x], sgLevel.size.y, MAX_LEVEL_HEIGHT);
+		allocSubLightMaps(&gDataWalls[1][x], sgLevel.size.y, MAX_LEVEL_HEIGHT + 1);
+		allocSubLightMaps(&gDataWalls[3][x], sgLevel.size.y, MAX_LEVEL_HEIGHT + 1);
 	}
 
 	for (y = 0; y < sgLevel.size.y; y++) {
-		allocSubLightMaps(&gDataWalls[0][y], sgLevel.size.x, MAX_LEVEL_HEIGHT);
-		allocSubLightMaps(&gDataWalls[2][y], sgLevel.size.x, MAX_LEVEL_HEIGHT);
+		allocSubLightMaps(&gDataWalls[0][y], sgLevel.size.x, MAX_LEVEL_HEIGHT + 1);
+		allocSubLightMaps(&gDataWalls[2][y], sgLevel.size.x, MAX_LEVEL_HEIGHT + 1);
 	}
 }
 
