@@ -28,6 +28,8 @@
 #include "graph.h"
 #include "callback.h"
 #include "keyboard.h"
+#include "texture.h"
+#include "lightmap.h"
 
 #include "functions.h"
 
@@ -245,6 +247,7 @@ void animateEditor(float interval) {
 
 	if (gDirtyLightmaps) {
 		updateTextures(0);
+		lightMapToTexture(sgLevel.lightMap);
 		gDirtyLightmaps = 0;
 	}
 
@@ -411,8 +414,12 @@ int initEditor(char* filename) {
 		}
 	}
 
-	initTextures();
-	updateTextures(1);
+	if (sgLevel.plateTexture == 0) {
+		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+	}
+
+	sgLevel.lightMap = genTexture();
+	lightMapToTexture(sgLevel.lightMap);
 	gDirtyLightmaps = 0;
 
 	sgWindowViewport.draw = drawEditor;

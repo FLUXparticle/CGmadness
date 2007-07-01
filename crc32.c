@@ -20,40 +20,39 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#include "crc32.h"
 
-#include "vector.h"
+#define CRC32_POLYNOMIAL 0xEDB88320
 
-#include <GL/gl.h>
+unsigned int gRegister;
 
-#define LIGHT_MAP_SIZE 8
+void resetCRC32(void)
+{
+	gRegister = 0xffffffff;
+}
 
-#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
+void nextBit(int bit)
+{
+	int regBit = gRegister & 1;
 
-typedef struct {
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} LightMap;
+	gRegister >>= 1;
 
-void allocLightMap(int cntSubLightMaps);
+	if (regBit != bit)
+	{
+		gRegister ^= CRC32_POLYNOMIAL;
+	}
+}
 
-int getCntAllocatedSubLightMaps(void);
+void nextByte(unsigned char byte)
+{
+	int i;
+	for (i = 0; i < 8; i++)
+	{
+		nextBit((byte >> i) & 1);
+	}
+}
 
-void freeLightMap(void);
-
-void lightMapToTexture(GLuint texID);
-
-void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP]);
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
-
-void setLightMap(LightMap* lightMap, int x, int y, GLfloat value);
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
-
-#endif
+unsigned int getCRC32(void)
+{
+	return gRegister;
+}

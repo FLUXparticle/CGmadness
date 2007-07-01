@@ -35,6 +35,8 @@
 #include "mouse.h"
 #include "callback.h"
 #include "environment.h"
+#include "texture.h"
+#include "lightmap.h"
 
 #include "functions.h"
 
@@ -211,8 +213,12 @@ int initLevel(const char* filename) {
 		return 0;
 	}
 
-	initTextures();
-	updateTextures(1);
+	if (sgLevel.plateTexture == 0) {
+		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+	}
+
+	sgLevel.lightMap = genTexture();
+	lightMapToTexture(sgLevel.lightMap);
 
 	initGameField();
 

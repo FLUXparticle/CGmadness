@@ -20,40 +20,11 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#ifndef _crc32_h_
+#define _crc32_h_
 
-#include "vector.h"
-
-#include <GL/gl.h>
-
-#define LIGHT_MAP_SIZE 8
-
-#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
-
-typedef struct {
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} LightMap;
-
-void allocLightMap(int cntSubLightMaps);
-
-int getCntAllocatedSubLightMaps(void);
-
-void freeLightMap(void);
-
-void lightMapToTexture(GLuint texID);
-
-void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP]);
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
-
-void setLightMap(LightMap* lightMap, int x, int y, GLfloat value);
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
+void resetCRC32(void);
+void nextByte(unsigned char byte);
+unsigned int getCRC32(void);
 
 #endif

@@ -23,9 +23,9 @@
 #include "common.h"
 
 #include "callback.h"
-#include "texture.h"
 #include "lightmap.h"
 #include "progress.h"
+#include "crc32.h"
 
 #include "functions.h"
 
@@ -35,8 +35,7 @@
 
 #include <stdio.h>
 #include <math.h>
-
-#define LINEAR_FILTER 1
+#include <assert.h>
 
 #if (MOUSE_CONTROL)
 # define CAMERA_MOVE_TIME_CONSTANT 100.0f
@@ -44,7 +43,7 @@
 # define CAMERA_MOVE_TIME_CONSTANT 5.0f
 #endif
 
-#define THIS_CGM_VERSION 1
+#define THIS_CGM_VERSION 2
 
 #define BOTTOM -0.0f
 
@@ -344,7 +343,7 @@ void updatePlate(int x, int y) {
 					}
 
 					for (i = 0; i < 4; i++) {
-						square->lightmap[i] = transformCoords(&gDataWalls[side][(side % 2) ? x : y], square->lightmap[i]);
+						square->lightmap[i] = transformCoords(&gDataWalls[side][(side % 2 != 0) ? x : y], square->lightmap[i]);
 					}
 
 					updateSquareAttributes(square);
@@ -372,32 +371,13 @@ int getSideSquares(int x, int y, int side, Square** square) {
 	return p->cntSideSquares[side];
 }
 
-GLuint genTexture(void) {
-	GLuint texID;
-
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-#if LINEAR_FILTER
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-#else
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-#endif
-
-	return texID;
-}
-
 void initTextures(void) {
+	int countSubLightMaps = sgLevel.size.x * sgLevel.size.y + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+
 	int x;
 	int y;
 
-	sgLevel.lightMap = genTexture();
-
-	allocLightMap(sgLevel.size.x * sgLevel.size.y + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1));
+	allocLightMap(countSubLightMaps);
 
 	allocSubLightMaps(&gLightMapFloor, sgLevel.size.x, sgLevel.size.y);
 
@@ -617,10 +597,6 @@ void updateTextures(int verbose) {
 			}
 		}
 	}
-
-	/*****/
-
-	lightMapToTexture(sgLevel.lightMap);
 }
 
 void initCommon(void) {
@@ -696,15 +672,34 @@ void newLevel(void) {
 	}
 }
 
+int readInt(FILE* file) {
+	int value;
+
+	fscanf(file, "%i", &value);
+	nextByte(value);
+
+	return value;
+}
+
+void readFieldCoord(FILE* file, FieldCoord* coord) {
+	coord->x = readInt(file);
+	coord->y = readInt(file);
+}
+
+void readFieldPlate(FILE* file, Plate* plate) {
+	plate->z = readInt(file);
+	plate->dzx = readInt(file);
+	plate->dzy = readInt(file);
+}
+
 int loadFieldFromFile(const char* filename) {
 	FILE* file = fopen(filename, "rt");
-	int x, y;
-	int fileX, fileY;
-	int version;
+	int result = 1;
 
-	if (sgLevel.plateTexture == 0) {
-		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
-	}
+	int x, y;
+	FieldCoord fileCoords;
+	unsigned int version;
+	unsigned int crc32;
 
 	if (!file) {
 		fprintf(stderr, "can not open file: %s\n", filename);
@@ -712,22 +707,23 @@ int loadFieldFromFile(const char* filename) {
 	}
 
 	/* version number */
-	fscanf(file, "v%d", &version);
+	fscanf(file, "v%u", &version);
 
 	if (version > THIS_CGM_VERSION) {
-		fprintf(stderr, "incompatible version number: %d\n", version);
+		fprintf(stderr, "incompatible version number: %u\n", version);
 		return 0;
 	}
 
+	resetCRC32();
+
 	/* read attributes */
-	fscanf(file, "%d %d", &sgLevel.start.x, &sgLevel.start.y);
-	fscanf(file, "%d %d", &sgLevel.finish.x, &sgLevel.finish.y);
-  fscanf(file, "%d %d", &fileX, &fileY);
+	readFieldCoord(file, &sgLevel.start);
+	readFieldCoord(file, &sgLevel.finish);
+	readFieldCoord(file, &fileCoords);
 
 	/* read size from file, if not given through program parameters */
 	if (sgLevel.size.x < 0 || sgLevel.size.y < 0) {
-		sgLevel.size.x = fileX;
-		sgLevel.size.y = fileY;
+		sgLevel.size = fileCoords;
 	}
 
 	allocLevelDataMemory();
@@ -736,8 +732,8 @@ int loadFieldFromFile(const char* filename) {
 	for (x = 0; x < sgLevel.size.x; x++) {
 		for (y = 0; y < sgLevel.size.y; y++) {
 			Plate* p = &sgLevel.field[x][y];
-			if (x < fileX && y < fileY) {
-				fscanf(file, "%d %d %d", &p->z, &p->dzx, &p->dzy);
+			if (x < fileCoords.x && y < fileCoords.y) {
+				readFieldPlate(file, p);
 			} else { /* growing */
 				p->z = 0;
 				p->dzx = 0;
@@ -748,20 +744,84 @@ int loadFieldFromFile(const char* filename) {
 		}
 
 		/* shrinking */
-		if (fileY > sgLevel.size.y) {
-			int dummyZ;
-			int dummyDZX;
-			int dummyDZY;
+		if (fileCoords.y > sgLevel.size.y) {
+			Plate dummyPlate;
 
-			for (y = sgLevel.size.y; y < fileY; y++) {
-				fscanf(file, "%d %d %d", &dummyZ, &dummyDZX, &dummyDZY);
+			for (y = sgLevel.size.y; y < fileCoords.y; y++) {
+				readFieldPlate(file, &dummyPlate);
 			}
 		}
 	}
 
+	initTextures();
+
+	if (version >= 2)
+	{
+		fscanf(file, "%x\n", &crc32);
+
+		if (crc32 != getCRC32())
+		{
+			fprintf(stderr, "checksum mismatch: %s\n", filename);
+			result = 0;
+		}
+		else
+		{
+			int cntSubLightMaps = getCntAllocatedSubLightMaps();
+
+			int i;
+			int j;
+
+			for (i = 0; i < cntSubLightMaps; i++)
+			{
+				GLfloat data[SIZEOF_LIGHT_MAP];
+
+				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
+				{
+					int value = readInt(file);
+					data[j] = (float) value / 255;
+				}
+
+				setSubLightMap(i, data);
+			}
+
+			fscanf(file, "%x\n", &crc32);
+
+			if (crc32 != getCRC32())
+			{
+				fprintf(stderr, "checksum mismatch: %s\n", filename);
+				result = 0;
+			}
+		}
+	}
+	else
+	{
+		updateTextures(1);
+	}
+
 	fclose(file);
 
-	return 1;
+	return result;
+}
+
+void writeInt(FILE* file, int value) {
+	fprintf(file, "%i", value);
+	nextByte(value);
+}
+
+void writeFieldCoord(FILE* file, const FieldCoord coord) {
+	writeInt(file, coord.x);
+	fputc(' ', file);
+	writeInt(file, coord.y);
+	fputc('\n', file);
+}
+
+void writeFieldPlate(FILE* file, const Plate* plate) {
+	writeInt(file, plate->z);
+	fputc(' ', file);
+	writeInt(file, plate->dzx);
+	fputc(' ', file);
+	writeInt(file, plate->dzy);
+	fputc('\n', file);
 }
 
 int saveFieldToFile(const char* filename) {
@@ -771,19 +831,46 @@ int saveFieldToFile(const char* filename) {
 	if (!file) return 0;
 
 	/* version number */
-	fprintf(file, "v%d\n", THIS_CGM_VERSION);
+	fprintf(file, "v%u\n", THIS_CGM_VERSION);
+
+	resetCRC32();
 
 	/* write atributes */
-	fprintf(file, "%d %d\n", sgLevel.start.x, sgLevel.start.y);
-	fprintf(file, "%d %d\n", sgLevel.finish.x, sgLevel.finish.y);
-	fprintf(file, "%d %d\n", sgLevel.size.x, sgLevel.size.y);
+	writeFieldCoord(file, sgLevel.start);
+	writeFieldCoord(file, sgLevel.finish);
+	writeFieldCoord(file, sgLevel.size);
 
 	/* write data */
 	for (x = 0; x < sgLevel.size.x; x++) {
 		for (y = 0; y < sgLevel.size.y; y++) {
 			Plate* p = &sgLevel.field[x][y];
-			fprintf(file, "%d %d %d\n", p->z, p->dzx, p->dzy);
+			writeFieldPlate(file, p);
 		}
+	}
+
+	fprintf(file, "%08X\n", getCRC32());
+
+	{
+		int cntSubLightMaps = getCntAllocatedSubLightMaps();
+
+		int i;
+		int j;
+
+		for (i = 0; i < cntSubLightMaps; i++)
+		{
+			GLfloat data[SIZEOF_LIGHT_MAP];
+
+			getSubLightMap(i, data);
+
+			for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
+			{
+				writeInt(file, (int) (clamp(data[j], 0.0f, 1.0f) * 255));
+				fputc(' ', file);
+			}
+			fputc('\n', file);
+		}
+
+		fprintf(file, "%08X\n", getCRC32());
 	}
 
 	if (fclose(file) != 0) {

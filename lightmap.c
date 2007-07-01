@@ -47,6 +47,11 @@ int nextPowerOfTwo(int i) {
 	return j;
 }
 
+int getCntAllocatedSubLightMaps(void)
+{
+	return gAllocatedSubLightMaps;
+}
+
 void allocLightMap(int cntSubLightMaps) {
 	gRows = 1;
 	do {
@@ -72,10 +77,20 @@ void freeLightMap(void) {
 	gAllocatedSubLightMaps = 0;
 }
 
-void setSubLightMap(int index, int sx, int sy, GLfloat value) {
+GLfloat* getSubLightMapPixelPointer(int index, int sx, int sy) {
 	int x = (index % gCols) * LIGHT_MAP_SIZE + sx;
 	int y = (index / gCols) * LIGHT_MAP_SIZE + sy;
-	gData[y * gSizeX + x] = value;
+	return &gData[y * gSizeX + x];
+}
+
+void setSubLightMapPixel(int index, int sx, int sy, GLfloat value) {
+	GLfloat* p = getSubLightMapPixelPointer(index, sx, sy);
+	*p = value;
+}
+
+GLfloat getSubLightMapPixel(int index, int sx, int sy) {
+	GLfloat* p = getSubLightMapPixelPointer(index, sx, sy);
+	return *p;
 }
 
 Vector2 transformSubCoords(int index, const Vector2 coords) {
@@ -85,6 +100,38 @@ Vector2 transformSubCoords(int index, const Vector2 coords) {
 void lightMapToTexture(GLuint texID) {
 	glBindTexture(GL_TEXTURE_2D, texID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, gSizeX, gSizeY, 0, GL_LUMINANCE, GL_FLOAT, gData);
+}
+
+void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP])
+{
+	int i = 0;
+
+	int x;
+	int y;
+
+	for (y = 0; y < LIGHT_MAP_SIZE; y++)
+	{
+		for (x = 0; x < LIGHT_MAP_SIZE; x++)
+		{
+			data[i++] = getSubLightMapPixel(index, x, y);
+		}
+	}
+}
+
+void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP])
+{
+	int i = 0;
+
+	int x;
+	int y;
+
+	for (y = 0; y < LIGHT_MAP_SIZE; y++)
+	{
+		for (x = 0; x < LIGHT_MAP_SIZE; x++)
+		{
+			setSubLightMapPixel(index, x, y, data[i++]);
+		}
+	}
 }
 
 /*****/
@@ -103,7 +150,7 @@ void setLightMap(LightMap* lightMap, int x, int y, GLfloat value) {
 	assert(y >= 0 && y < lightMap->sizeY * LIGHT_MAP_SIZE);
 
 	index = lightMap->idxSubLightMap + (y / LIGHT_MAP_SIZE) * lightMap->sizeX + (x / LIGHT_MAP_SIZE);
-	setSubLightMap(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
+	setSubLightMapPixel(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
 }
 
 Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords) {

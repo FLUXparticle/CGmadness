@@ -20,40 +20,47 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#include "callback.h"
 
-#include "vector.h"
+#include "main.h"
+#include "common.h"
 
-#include <GL/gl.h>
+#include <stdio.h>
+#include <string.h>
 
-#define LIGHT_MAP_SIZE 8
+void usage(void)
+{
+	printf("usage: upgrade-cgm <cgm-file>\n");
+}
 
-#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
+int main(int argc, char* argv[])
+{
+	char* file = NULL;
+	int i;
 
-typedef struct {
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} LightMap;
+	message();
 
-void allocLightMap(int cntSubLightMaps);
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
 
-int getCntAllocatedSubLightMaps(void);
+	/* read parameters */
+	for (i = 1; i < argc; )
+	{
+		file = argv[i++];
+	}
 
-void freeLightMap(void);
+	if (!file)
+	{
+		usage();
+		return 1;
+	}
 
-void lightMapToTexture(GLuint texID);
+	if (loadFieldFromFile(file) && saveFieldToFile(file))
+	{
+		printf("'%s' upgraded successfully.\n", file);
+	} else {
+		printf("'%s' not upgraded!\n", file);
+	}
 
-void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP]);
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
-
-void setLightMap(LightMap* lightMap, int x, int y, GLfloat value);
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
-
-#endif
+  return 0;
+}
