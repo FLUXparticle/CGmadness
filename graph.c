@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -48,7 +48,7 @@ void initObject(Object* obj, funcDraw draw) {
 	obj->ambient = 0.2f;
 	obj->diffuse = 0.8f;
 	obj->shininess = 0.0f;
-	
+
 	obj->texture = -1;
 
 	obj->draw = draw;
@@ -56,7 +56,7 @@ void initObject(Object* obj, funcDraw draw) {
 	obj->pickName = -1;
 
 	obj->visible = 1;
-	
+
 	obj->subObjects = NULL;
 }
 
@@ -163,7 +163,7 @@ void setAttributes(float red, float green, float blue, float ambient, float diff
 	float matDiffuse[4];
 	float matSpecular[4];
 	float specular;
-	
+
 	matAmbient[0] = ambient * red;
 	matAmbient[1] = ambient * green;
 	matAmbient[2] = ambient * blue;
@@ -179,6 +179,10 @@ void setAttributes(float red, float green, float blue, float ambient, float diff
 	matSpecular[1] = specular;
 	matSpecular[2] = specular;
 	matSpecular[3] = 1.0f;
+
+/*
+	glColor3fv(matDiffuse);
+*/
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT, matAmbient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, matDiffuse);
@@ -197,13 +201,13 @@ void pickList(List list) {
 
 void pickObject(const Object* obj) {
 	int isNameOnStack;
-	
+
 	if (!obj->visible) {
 		return;
 	}
 
 	glPushMatrix();
-	
+
 	if (obj->pickName >= 0) {
 		glPushName(obj->pickName);
 		isNameOnStack = 1;
@@ -223,7 +227,7 @@ void pickObject(const Object* obj) {
 
 	/* call draw functions of sub objects */
 	pickList(obj->subObjects);
-	
+
 	if (obj->pickName >= 0) {
 		glPopName();
 	}
@@ -246,7 +250,7 @@ void drawObject(const Object* obj) {
 	}
 
 	glPushMatrix();
-	
+
 	glTranslatef(obj->pos.x, obj->pos.y, obj->pos.z);
 	glMultMatrixf(obj->rotMatrix);
 	glScalef(obj->scaleX, obj->scaleY, obj->scaleZ);
@@ -262,12 +266,12 @@ void drawObject(const Object* obj) {
 
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &alpha);
 		}
-		
+
 		if (alpha > 0) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-		
+
 		/* call draw function */
 		obj->draw();
 

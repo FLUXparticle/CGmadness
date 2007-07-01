@@ -20,17 +20,33 @@
  *
  */
 
-#ifndef _functions_h_
-#define _functions_h_
+#ifndef _lightmap_h_
+#define _lightmap_h_
 
-float sqr(float x);
+#include "vector.h"
 
-float min(float a, float b);
-int mini(int a, int b);
-float max(float a, float b);
-int maxi(int a, int b);
-float clamp(float x, float lo, float up);
+#include <GL/gl.h>
 
-int between(int x, int min, int max);
+#define LIGHT_MAP_SIZE 8
+
+typedef struct {
+	int sizeX;
+	int sizeY;
+	int idxSubLightMap;
+} LightMap;
+
+void allocLightMap(int cntSubLightMaps);
+
+void freeLightMap(void);
+
+void lightMapToTexture(GLuint texID);
+
+/*****/
+
+void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
+
+void setLightMap(LightMap* lightMap, int x, int y, GLfloat value);
+
+Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
 
 #endif

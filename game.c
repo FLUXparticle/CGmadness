@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -20,17 +20,13 @@
  *
  */
 
-#define SKYSPHERE 1
-
 #include "game.h"
 
 #include "common.h"
 
 #include "graph.h"
-#include "light.h"
 #include "objects.h"
 #include "ball.h"
-#include "shadows.h"
 #include "field.h"
 #include "gamemenu.h"
 #include "files.h"
@@ -54,13 +50,8 @@
 #include <math.h>
 
 #define FOG_DENSITY 0.003f
-#define FOG_START 20.0f
-#define FOG_END   30.0f
 
 int sgRenderPass = 8;
-
-int sgGameMainLight;
-int sgGameSpotLight;
 
 static int gIsGameRunning;
 
@@ -108,7 +99,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 #if (MOUSE_CONTROL)
 	gLongitude -= 5.0f * interval * gDragX;
 	gLatitude += 5.0f * interval * gDragY;
-	
+
 	gDragX = 0;
 	gDragY = 0;
 #else
@@ -123,7 +114,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 	/* height */
 	if (isKeyPressed('w')) gLatitude += 120.0f * interval;
 	if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
-	
+
 	gLatitude = clamp(gLatitude, -89.0f, 89.0f);
 #endif
 
@@ -132,7 +123,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
 
 	moveCamera(interval, dest, ball);
-	
+
 #if (MOUSE_CONTROL)
 	sgCamera = dest;
 #endif
@@ -146,7 +137,7 @@ void updateGameCamera(float interval, Vector3 ball) {
 void updateGame(float interval) {
 	if (gIsGameRunning) {
 		int i = 0;
-		
+
 		if (wasKeyPressed(KEY_ESC)) {
 			pauseGame();
 		}
@@ -168,16 +159,12 @@ void updateGame(float interval) {
 
 		updateBall(interval);
 
-		sgLight[sgGameSpotLight].pos = sgoBall.pos;
-
-		updateShadows();
-
 		updateGameCamera(interval, sgoBall.pos);
 	} else {
 		/* show menu */
 		Vector3 camera = gGameMenuPosistion;
 		Vector3 lookat = gGameMenuPosistion;
-		
+
 		camera.y -= 10.0f;
 		camera.z += 7.0f;
 
@@ -187,7 +174,7 @@ void updateGame(float interval) {
 
 		moveCamera(interval, camera, lookat);
 	}
-	
+
 	updateGameField();
 
 	updateEnvironment(interval);
@@ -199,7 +186,7 @@ void drawGame(void) {
 	 */
 	drawEnvironment();
 	drawGameField(0);
-	drawShadows(1);
+	drawGameBall();
 
 	if (!gIsGameRunning)	{
 		drawGameMenu();
@@ -223,24 +210,22 @@ int initLevel(const char* filename) {
 	if (!loadFieldFromFile(filename)) {
 		return 0;
 	}
-	
-	initGameField();
 
-	initShadowVolumes();
+	initTextures();
+	updateTextures(1);
+
+	initGameField();
 
 	gDistance  =  5.0f;
 	gLatitude  = 20.0f;
 	gLongitude =  0.0f;
-	
+
 	gGameMenuPosistion.x = sgLevel.size.x / 2.0f;
-	gGameMenuPosistion.y = -10.0f; 
+	gGameMenuPosistion.y = -10.0f;
 	gGameMenuPosistion.z =   0.0f;
-	
+
 	setGameMenuPosistion(gGameMenuPosistion);
 
-	sgLight[sgGameSpotLight].pos.x = sgLevel.start.x + 0.5f;
-	sgLight[sgGameSpotLight].pos.y = sgLevel.start.y + 0.5f;
-	
 	updateGameCamera(0.0, gGameMenuPosistion);
 
 	return 1;
@@ -249,7 +234,6 @@ int initLevel(const char* filename) {
 void destroyLevel(void) {
 	destroyGameField();
 	destroyCommon();
-	destroyShadowVolumes();
 }
 
 char* getNextLevelName(void) {
@@ -306,30 +290,18 @@ void resetGame(void) {
 void initFog(void) {
 	int mode = GL_EXP;
 	float density = FOG_DENSITY;
-	float start = FOG_START;
-	float end = FOG_END;
 	float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);
-	if (mode == GL_EXP) {
-		glFogfv(GL_FOG_DENSITY, &density);
-	} else {
-		glFogfv(GL_FOG_START, &start);
-		glFogfv(GL_FOG_END, &end);
-	}
+	glFogfv(GL_FOG_DENSITY, &density);
 	glFogfv(GL_FOG_COLOR, color);
 }
 
 int initGame(void) {
 	initCommon();
-	
+
 	initObjects();
-	
-	glColor3f(1.0f, 1.0f, 1.0f);
-	sgGameMainLight = addPointLight(-200.0f, -200.0f, 100.0f);
-	glColor3f(1.0f, 1.0f, 0.0f);
-  sgGameSpotLight = addSpotLight(0.0f, 0.0f, 8.0f, 0.0f, 0.0f, -1.0f, 10.0f, 50.0f);
 
 	initFog();
 

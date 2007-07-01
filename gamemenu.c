@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -90,7 +90,7 @@ static void changeShadows(void* self) {
 }
 
 static void clickButtonHelp(void) {
-	gCurMenu = &goHelpMenu; 
+	gCurMenu = &goHelpMenu;
 }
 
 static void clickButtonQuit(void) {
@@ -102,7 +102,7 @@ static void clickButtonAgain(void) {
 }
 
 static void clickButtonBack(void) {
-	gCurMenu = &goMainMenu; 
+	gCurMenu = &goMainMenu;
 }
 
 void updateGameMenu(float interval) {
@@ -110,7 +110,7 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
 		}
-		
+
 		if (gbResume.oButton.visible && wasKeyPressed(KEY_ESC)) {
 			clickButtonStart();
 		}
@@ -126,7 +126,7 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
 		}
-		
+
 		if (wasKeyPressed(KEY_ESC)) {
 			clickButtonBack();
 		}
@@ -138,7 +138,7 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonAgain();
 		}
-		
+
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q')) {
 			clickButtonQuit();
 		}
@@ -150,21 +150,26 @@ void setGameMenuPosistion(Vector3 pos) {
 }
 
 void drawGameMenu(void) {
-	glPushMatrix();
-		glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
-		
-		drawObject(&goLogo);
-		drawObject(gCurMenu);
-	
-	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+		setSomeLight();
+
+		glPushMatrix();
+			glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
+
+			drawObject(&goLogo);
+			drawObject(gCurMenu);
+
+		glPopMatrix();
+	glDisable(GL_LIGHTING);
 }
 
 void pickGameMenu(void) {
 	glPushMatrix();
 		glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
-		
+
 		pickObject(gCurMenu);
-		
+
 	glPopMatrix();
 }
 
@@ -183,7 +188,7 @@ void showGameMenu(int menu) {
 	case 3:
 		gCurMenu = &goEndMenu;
 		break;
-	} 
+	}
 
 	setCheck(&gcShadows, useShadows());
 
@@ -198,14 +203,14 @@ void initGameMenu() {
 	static Button bMain;
 	static Button bAgain;
 	static Button bQuit2;
-	
+
 	static SpinEdit spinEditBall;
 
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
 	int i;
-	
+
 	initGUI();
 
 	/*
@@ -218,15 +223,15 @@ void initGameMenu() {
 	if (hasBallTexture()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_TEXTURE;
 	}
-	
+
 	if (hasBallReflection()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_METAL;
 	}
-	
+
 	if (hasBallShader()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL;
 	}
-	
+
 	if (hasBallShader() && hasBallReflection()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL_METAL;
 	}
@@ -250,19 +255,19 @@ void initGameMenu() {
 
 	init3dButton(&gbStart, 5.5f, clickButtonStart, "Start");
   addSubObject(&goMainMenu, &gbStart.oButton);
-	
+
 	init3dButton(&gbResume, 5.5f, clickButtonStart, "Resume");
   addSubObject(&goMainMenu, &gbResume.oButton);
 
 	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.7f, &oBall, changeBallEdit);
 	addSubObject(&goMainMenu, &spinEditBall.oSpinEdit);
-	
+
 	init3dCheck(&gcShadows, 3.5f, changeShadows, "Shadows");
   addSubObject(&goMainMenu, &gcShadows.oCheck);
 
 	init3dButton(&bHelp, 2.5f,clickButtonHelp, "Help");
   addSubObject(&goMainMenu, &bHelp.oButton);
-	
+
 	init3dButton(&bQuit, 1.5f, clickButtonQuit, "Quit");
   addSubObject(&goMainMenu, &bQuit.oButton);
 
@@ -271,13 +276,13 @@ void initGameMenu() {
 
 	init3dButton(&bContinue, 5.5f, clickButtonStart, "Continue");
   addSubObject(&goNextMenu, &bContinue.oButton);
-	
+
 	init3dButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
  	addSubObject(&goNextMenu, &bMain.oButton);
 
 	/* help menu */
 	initObjectGroup(&goHelpMenu);
-	
+
 	for (i = 0; i < LENGTH(gTextHelp); i++) {
 		float z = 6.0f - i;
 		float length;
@@ -289,18 +294,18 @@ void initGameMenu() {
 			setObjectPosition3f(o, -5.0f, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-			
+
 	  	addSubObject(&goHelpMenu, o);
 		}
 
 		{
 			Object* o = &oTextHelp[2 * i + 1];
-			
+
 			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
 			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-			
+
 	  	addSubObject(&goHelpMenu, o);
 		}
 	}
@@ -313,7 +318,7 @@ void initGameMenu() {
 
 	init3dButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
   addSubObject(&goEndMenu, &bAgain.oButton);
-	
+
 	init3dButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
  	addSubObject(&goEndMenu, &bQuit2.oButton);
 

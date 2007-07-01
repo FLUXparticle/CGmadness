@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -32,7 +32,7 @@
 #include "features.h"
 #include "keyboard.h"
 #include "texture.h"
-#include "light.h"
+#include "field.h"
 
 #include "debug.h"
 
@@ -43,19 +43,17 @@
 #include <string.h>
 #include <math.h>
 
+#include <assert.h>
+
 #define MOVE_FORCE 5.0f
-
 #define GRAVITY 9.81f
-
 #define JUMP_FORCE (50.0f * MOVE_FORCE)
-
 #define DAMPING 0.99f
-
 #define ELASTICITY 0.5f
-
 
 #define CUBE_MAP_SIZE 128
 
+#define SHOW_COLLISION_QUADS 0
 
 RenderTarget gTargetCube[6];
 static Viewport gViewportCube[6];
@@ -85,16 +83,6 @@ int hasBallShader(void) {
 	return gShaderBall != 0;
 }
 
-float getMaxZValue(const Square* square) {
-	int i;
-	float res = 0.0f;
-	for (i = 0 ; i < 4; i++) {
-		if (square->vertices[i].z > res)
-			res = square->vertices[i].z;
-	}
-	return res;
-}
-
 int useBallShader(void) {
 	return hasShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
@@ -120,7 +108,7 @@ void updateReflection(void) {
 	static Vector3 lookat[] = {
 		{  1.0f,  0.0f,  0.0f },
 		{ -1.0f,  0.0f,  0.0f },
-		
+
 		{  0.0f,  1.0f,  0.0f },
 		{  0.0f, -1.0f,  0.0f },
 
@@ -131,10 +119,10 @@ void updateReflection(void) {
 	static Vector3 up[] = {
 		{ 0.0f, -1.0f,  0.0f },
 		{ 0.0f, -1.0f,  0.0f },
-		
+
 		{ 0.0f,  0.0f,  1.0f },
 		{ 0.0f,  0.0f, -1.0f },
-		
+
 		{ 0.0f, -1.0f,  0.0f },
     { 0.0f, -1.0f,  0.0f }
 	};
@@ -170,14 +158,11 @@ void updateReflection(void) {
 					up[i].x, up[i].y, up[i].z
 					);
 
-			glEnable(GL_LIGHTING);
-			setLights();
-
  			TIME(drawGameReflection());
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-		
+
 		gDirtyReflection = 0;
 	}
 }
@@ -192,11 +177,11 @@ void resetBall(void) {
 	sgoBall.velocity.x = 0.0f;
 	sgoBall.velocity.y = 0.0f;
 	sgoBall.velocity.z = 0.0f;
-	
+
 	sgoBall.angularRate.x = 0.0f;
 	sgoBall.angularRate.y = 0.0f;
 	sgoBall.angularRate.z = 0.0f;
-	
+
 	gIsBallInPieces = 0;
 	gDirtyReflection = 1;
 }
@@ -208,12 +193,12 @@ void explodeBall(void) {
 	resetBall();
 
 	sgoBall.velocity.z = -10.0f;
-	
+
 	initExplosion(pos, speed, sgoBall.pos, sgoBall.velocity);
 
 	sgoBall.pos = pos;
 	sgoBall.velocity = speed;
-	
+
 	gIsBallInPieces = 1;
 	gDirtyReflection = 1;
 }
@@ -223,7 +208,7 @@ void initCubeMap(void) {
 	int i;
 
 	initProjectMat(m, 90.0f);
-	
+
 	/* init framebuffer for cubemap */
 	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
 
@@ -245,7 +230,7 @@ void initBall(void) {
 			printf("Golfball-Shader ready :-)\n");
 		}
 	}
-	
+
 	if (hasFramebuffer()) {
 		initCubeMap();
 	}
@@ -255,9 +240,40 @@ void initBall(void) {
 	sgoBall.mass = 1.0f;
 	sgoBall.radius = 0.2f;
 
-	sgoBall.orientation = mkQuaternion(0.0f, mkVector3(0.0f, 0.0f, 1.0f));
+	sgoBall.orientation = mkQuaternion(0.0f, vector3(0.0f, 0.0f, 1.0f));
 
 	setPreDisplayFunc(updateReflection);
+}
+
+Vector3 collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 normal) {
+	Vector3 a = midpoint(quad);
+
+	float dToPlane = dot(sphere, normal) - dot(a, normal);
+	Vector3 b = sub(sphere, scale(dToPlane, normal));
+
+	int i;
+
+	for (i = 0; i < 4; i++) {
+		int j = (i + 1) % 4;
+		Vector3 edge = sub(quad[j], quad[i]);
+
+		if (len(edge) > 0.0f) {
+			Vector3 e = quad[i];
+			Vector3 n = cross(edge, normal);
+
+			float da = dot(e, n) - dot(a, n);
+			float db = dot(b, n) - dot(e, n);
+
+			assert(da > 0.0f);
+
+			if (db > 0.0f) {
+				float d = da + db;
+				b = add(scale(da / d, b), scale(db / d, a));
+			}
+		}
+	}
+
+	return b;
 }
 
 void animateBall(float interval) {
@@ -267,7 +283,7 @@ void animateBall(float interval) {
 	int y;
 	int dx;
 	int dy;
-	
+
 	Vector3 force = { 0.0f, 0.0f, 0.0f };
 	Vector3 normal = { 0.0f, 0.0f, 0.0f };
 
@@ -279,15 +295,15 @@ void animateBall(float interval) {
 	if (isKeyPressed('a')) {
 		force = sub(force, sgRight);
 	}
-	
+
 	if (isKeyPressed('d')) {
 		force = add(force, sgRight);
 	}
-	
+
 	if (isKeyPressed('s')) {
 		force = sub(force, sgForward);
 	}
-	
+
 	if (isKeyPressed('w')) {
 		force = add(force, sgForward);
 	}
@@ -295,15 +311,15 @@ void animateBall(float interval) {
 	if (isCursorPressed(CURSOR_LEFT)) {
 		force = sub(force, sgRight);
 	}
-	
+
 	if (isCursorPressed(CURSOR_RIGHT)) {
 		force = add(force, sgRight);
 	}
-	
+
 	if (isCursorPressed(CURSOR_DOWN)) {
 		force = sub(force, sgForward);
 	}
-	
+
 	if (isCursorPressed(CURSOR_UP)) {
 		force = add(force, sgForward);
 	}
@@ -331,66 +347,39 @@ void animateBall(float interval) {
 			int end;
 
 			getVertIndex(x + dx, y + dy, &start, &end);
-			
+
 			for (q = start; q < end; q += 4) {
 				Vector3* quad = &sgVertices[q];
-
-				Vector3 dist;
-				Vector3 move;
-
-				float l;
-				int i;
-
 				Vector3 dir = sgNormals[q];
 
-				/* a = project ball center on plane */
-				Vector3 a = sub(ball, quad[0]);
+				Vector3 a = collisionPoint(ball, quad, dir);
 
-				if (dot(a, dir) >= sgoBall.radius) {
-					continue;
-				}
+				/* dist = vector from ball center to quad */
+				Vector3 dist = sub(a, ball);
+				float l = len(dist);
 
-				a = sub(a, scale(dot(a, dir), dir));
-				a = add(a, quad[0]);
-				
-				for (i = 0; i < 4; i++) {
-					int j = (i + 1) % 4;
-					Vector3 b;
-					Vector3 n;
-					float na;
-				
-					/* b = edge */	
-					b = sub(quad[j], quad[i]);
-
-					/* na = distance from a to edge */
-					n = norm(cross(dir, b));
-					na = dot(sub(a, quad[i]), n);
-
-					/* if a is out of quad, it is moved to edge */
-					if (na < 0) {
-						a = add(a, scale(-na, n));
-					}
-				}
-
-				/* dist = vector from ball center to quad */	
-				dist = sub(a, ball);
-				l = len(dist);
-
-				/* move = vector to move the ball out of quad */
-				move = scale(-((sgoBall.radius - l) / l), dist);
-				
         /* collision? */
 				if (l < sgoBall.radius) {
+#if SHOW_COLLISION_QUADS
+					static Color4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
+#endif
+
+					/* move = vector to move the ball out of quad */
+					Vector3 move = scale(-((sgoBall.radius - l) / l), dist);
+
 					/* some rotation for a better look */
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
-					
+
 					sgoBall.angularRate = scale(dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
-					
+
 					ball = add(ball, move);
 
 					normal = add(normal, move);
 					collision = 1;
+#if SHOW_COLLISION_QUADS
+					setSquareColor(q, red);
+#endif
 				}
 			}
 		}
@@ -425,9 +414,9 @@ void animateBall(float interval) {
 
 	/* damping */
 	sgoBall.velocity = scale(DAMPING, sgoBall.velocity);
-	
-	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation); 
-					
+
+	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation);
+
 	/* falling to infinity */
 	if (sgoBall.pos.z < -10.0f) {
 		explodeBall();
@@ -452,18 +441,23 @@ void updateBall(float interval) {
 }
 
 void activateBallShader(void) {
-	int x;
-	int y;
-	Matrix m;
+	Vector3 normal = vector3(0.0f, 0.0f, 1.0f);
+	float light =	approximation(sgoBall.pos, normal);
+
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(light, light, light);
 
 	switch (gBallLayout) {
-		case BALL_LAYOUT_DEFAULT:
-			setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
+		case BALL_LAYOUT_DEFAULT: {
+			glColor3f(light, 0.0f, 0.0f);
 			break;
-		case BALL_LAYOUT_TEXTURE:
+		}
+		case BALL_LAYOUT_TEXTURE: {
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, gTextureBall);
+
 			break;
+		}
 		case BALL_LAYOUT_METAL:
 			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
 			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
@@ -473,10 +467,7 @@ void activateBallShader(void) {
 			glEnable(GL_TEXTURE_GEN_T);
 			glEnable(GL_TEXTURE_GEN_R);
 
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
-			glEnable(GL_COLOR_MATERIAL);
-			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-			glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
 			break;
 		case BALL_LAYOUT_GOLFBALL:
 			break;
@@ -485,6 +476,10 @@ void activateBallShader(void) {
 	}
 
 	if (useBallReflection()) {
+		int x;
+		int y;
+		Matrix m;
+
 		for (x = 0; x < 4; x++) {
 			for (y = 0; y < 4; y++) {
 				if (x < 3 && y < 3) {
@@ -507,7 +502,7 @@ void activateBallShader(void) {
 
 	if (useBallShader()) {
 		float reflection;
-		
+
 		if (useBallReflection()) {
 			reflection = 0.7f;
 		} else {
@@ -516,7 +511,7 @@ void activateBallShader(void) {
 			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
 			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
 		}
-		
+
 		glUseProgram(gShaderBall);
 
 		glUniform1i(glGetUniformLocation(gShaderBall, "Environment"), 0);
@@ -525,6 +520,8 @@ void activateBallShader(void) {
 }
 
 void deactivateBallShader(void) {
+	glDisable(GL_COLOR_MATERIAL);
+
 	switch (gBallLayout) {
 		case BALL_LAYOUT_DEFAULT:
 			break;
@@ -535,9 +532,6 @@ void deactivateBallShader(void) {
 			glDisable(GL_TEXTURE_GEN_S);
 			glDisable(GL_TEXTURE_GEN_T);
 			glDisable(GL_TEXTURE_GEN_R);
-
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glDisable(GL_COLOR_MATERIAL);
 			break;
 		case BALL_LAYOUT_GOLFBALL:
 			break;
@@ -547,13 +541,13 @@ void deactivateBallShader(void) {
 
 	if (useBallReflection()) {
 		glDisable(GL_TEXTURE_CUBE_MAP_EXT);
-		
+
 		glMatrixMode(GL_TEXTURE);
 		glPopMatrix();
-		
+
 		glMatrixMode(GL_MODELVIEW);
 	}
-	
+
 	if (useBallShader()) {
 		glUseProgram(0);
 
@@ -574,18 +568,41 @@ void drawMenuBall(void) {
 void drawGameBall(void) {
 	int shader = useBallShader();
 
-	glPushMatrix();
+	activateBallShader();
 
-	glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
-	glScalef(sgoBall.radius, sgoBall.radius, sgoBall.radius);
-	quaternionTransform(sgoBall.orientation);
+		if (gBallLayout == BALL_LAYOUT_DEFAULT) {
+			float pos[4]  = { 0.0f, 0.0f, 1.0f, 0.0f };
+			float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+			float diffuse[4]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+			float specular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	/* explosion? */
-	if (gIsBallInPieces) {
-		drawExplosion(shader);
-	} else {
-		drawBallObject(shader);
-	}
+			glLightfv(GL_LIGHT0, GL_POSITION, pos);
+			glLightfv(GL_LIGHT0, GL_AMBIENT,  ambient);
+			glLightfv(GL_LIGHT0, GL_DIFFUSE,  diffuse);
+			glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+			glEnable(GL_LIGHT0);
 
-	glPopMatrix();
+			glEnable(GL_LIGHTING);
+		}
+
+		glPushMatrix();
+
+			glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
+			glScalef(sgoBall.radius, sgoBall.radius, sgoBall.radius);
+			quaternionTransform(sgoBall.orientation);
+
+			/* explosion? */
+			if (gIsBallInPieces) {
+				drawExplosion(shader);
+			} else {
+				drawBallObject(shader);
+			}
+
+		glPopMatrix();
+
+		if (gBallLayout == BALL_LAYOUT_DEFAULT) {
+			glDisable(GL_LIGHTING);
+		}
+
+	deactivateBallShader();
 }

@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -59,9 +59,22 @@ void initGUI() {
 		/* loading arrow textures */
 		initMenuObject(&goLeft, loadTexture("data/left.tga", 0));
 		initMenuObject(&goRight, loadTexture("data/right.tga", 0));
-		
+
 		gInitialize = 1;
 	}
+}
+
+void setSomeLight(void) {
+	float pos[4]  = { 0.0f, -1.0f, 0.0f, 0.0f };
+	float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float diffuse[4]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float specular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT,  ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE,  diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glEnable(GL_LIGHT0);
 }
 
 /*** Button ***/
@@ -73,7 +86,7 @@ void pickButton(void* data) {
 
 void init3dButton(Button* button, float z, funcClick click, char* text) {
 	initTextObject(&button->oButton, text, z);
- 	
+
 	button->click = click;
 
 	if (click) {
@@ -148,13 +161,13 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 	setObjectPosition2f(&spinedit->oLeft, -4.3f, 0.0f);
 	addSubObject(&spinedit->oLeft, &goLeft);
 	addSubObject(&spinedit->oSpinEdit, &spinedit->oLeft);
-	
-	/* arror right */	
+
+	/* arror right */
 	initObjectGroup(&spinedit->oRight);
 	setObjectPosition2f(&spinedit->oRight, 3.3f, 0.0f);
 	addSubObject(&spinedit->oRight, &goRight);
 	addSubObject(&spinedit->oSpinEdit, &spinedit->oRight);
-	
+
 	/* object between arrows */
 	addSubObject(&spinedit->oSpinEdit, obj);
 

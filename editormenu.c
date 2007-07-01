@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -94,7 +94,7 @@ void updateEditorMenu(float interval) {
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
 			clickButtonEdit();
 		}
-		
+
 		if (wasKeyPressed('s')) {
 			clickButtonSave();
 		}
@@ -115,7 +115,7 @@ void updateEditorMenu(float interval) {
 
 void showEditorMenu(int menu) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-	
+
 	switch (menu) {
 	case 0:
 		gCurMenu = &goMainMenu;
@@ -134,21 +134,27 @@ void setEditorMenuPosition(Vector3 pos) {
 }
 
 void drawEditorMenu(void) {
-	glPushMatrix();
-		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
-		
-		drawObject(&goLogo);
-		drawObject(gCurMenu);
-	
-	glPopMatrix();
+	glEnable(GL_LIGHTING);
+
+		setSomeLight();
+
+		glPushMatrix();
+			glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
+
+			drawObject(&goLogo);
+			drawObject(gCurMenu);
+
+		glPopMatrix();
+
+	glDisable(GL_LIGHTING);
 }
 
 void pickEditorMenu(void) {
 	glPushMatrix();
 		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
-		
+
 		pickObject(gCurMenu);
-	
+
 	glPopMatrix();
 }
 
@@ -160,11 +166,11 @@ void initEditorMenu() {
 	static Button bBack;
 	static Button bSuccessful;
 	static Button bFailed;
-	
+
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 
 	int i;
-	
+
 	initGUI();
 
 	/*
@@ -184,19 +190,19 @@ void initEditorMenu() {
 
 	init3dButton(&bEdit, 6.0f, clickButtonEdit, "Edit");
   addSubObject(&goMainMenu, &bEdit.oButton);
-	
+
 	init3dButton(&bSave, 5.0f, clickButtonSave, "Save");
   addSubObject(&goMainMenu, &bSave.oButton);
-	
+
 	init3dButton(&bHelp, 4.0f, clickButtonHelp, "Help");
   addSubObject(&goMainMenu, &bHelp.oButton);
-	
+
 	init3dButton(&bQuit, 3.0f, clickButtonQuit, "Quit");
   addSubObject(&goMainMenu, &bQuit.oButton);
 
 	/* help text */
 	initObjectGroup(&goHelpMenu);
-	
+
 	for (i = 0; i < LENGTH(gTextHelp); i++) {
 		float z = 6.0f - i;
 		float length;
@@ -208,25 +214,25 @@ void initEditorMenu() {
 			setObjectPosition3f(o, -5.0f, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-			
+
 	  	addSubObject(&goHelpMenu, o);
 		}
 
 		{
 			Object* o = &oTextHelp[2 * i + 1];
-			
+
 			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
 			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-			
+
 	  	addSubObject(&goHelpMenu, o);
 		}
 	}
 
 	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
  	addSubObject(&goHelpMenu, &bBack.oButton);
- 	
+
  	/* response */
 
 	initObjectGroup(&goSuccessfulText);

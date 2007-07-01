@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -36,16 +36,16 @@
 void drawSquare(void) {
 	glBegin(GL_POLYGON);
 		glNormal3f(0.0f,  0.0f, 1.0f);
-		
+
 		glTexCoord2f(0.0f, 1.0f);
 		glVertex2f(-1.0f, -1.0f);
-		
+
 		glTexCoord2f(1.0f, 1.0f);
 		glVertex2f( 1.0f, -1.0f);
-		
+
 		glTexCoord2f(1.0f, 0.0f);
 		glVertex2f( 1.0f,  1.0f);
-		
+
 		glTexCoord2f(0.0f, 0.0f);
 		glVertex2f(-1.0f,  1.0f);
 	glEnd();
@@ -83,31 +83,41 @@ static int gIsokaederIndices[20][3] = {
 
 static int gCntBallVertices;
 static Vector3 gBallVertices[CNT_BALL_VERTICES];
+static Vector3 gBallColors[CNT_BALL_VERTICES];
 static Vector3 gBallTexCoordsDefault[CNT_BALL_VERTICES];
 static Vector3 gBallTexCoordsShader[CNT_BALL_VERTICES];
 
 void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s) {
+	Vector3 z = vector3(0.0f, 0.0f, 1.0f);
 	int i;
 	if (depth == 0) {
 		float u0 = 0.5f * atan2(tri[0].x, tri[0].y) / PI + 0.5f;
 		for (i = 0; i < 3; i++) {
+			float light = 1.0f - acos(dot(tri[i], z)) / PI;
+
 			Vector3 texCoordDefault;
 			Vector3 texCoordShader;
+			Vector3 color;
 
 			texCoordShader = norm(sub(tri[i], hole));
 
 			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / PI + 0.5f;
 			texCoordDefault.y = asin(tri[i].z) / PI + 0.5f;
 			texCoordDefault.z = 0.0f;
-			
+
 			if (texCoordDefault.x - u0 > 0.5f) {
 				texCoordDefault.x -= 1.0f;
 			} else if (u0 - texCoordDefault.x > 0.5f) {
 				texCoordDefault.x += 1.0f;
 			}
 
+			color.x = light;
+			color.y = light;
+			color.z = light;
+
 			if (gCntBallVertices < CNT_BALL_VERTICES) {
 				gBallVertices[gCntBallVertices] = tri[i];
+				gBallColors[gCntBallVertices] = color;
 				gBallTexCoordsDefault[gCntBallVertices] = texCoordDefault;
 				gBallTexCoordsShader[gCntBallVertices] = texCoordShader;
 				gCntBallVertices++;
@@ -120,7 +130,7 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s) {
 		for (i = 0; i < 3; i++) {
 			mid[i] = norm(scale(0.5f, add(tri[i], tri[(i + 1) % 3])));
 		}
-		
+
 		for (i = 0; i < 3; i++) {
 			smallTri[0] = tri[i];
 			smallTri[1] = mid[i];
@@ -135,9 +145,9 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s) {
 
 void initObjects(void) {
 	int i, j;
-	
+
   gCntBallVertices = 0;
-	
+
 	for (i = 0; i < LENGTH(gIsokaederIndices); i++) {
 		Vector3 tri[3];
 		Vector3 mid = { 0.0f, 0.0f, 0.0f };
@@ -148,7 +158,7 @@ void initObjects(void) {
 		}
 
 		mid = scale(1.0f / 3.0f, mid);
-		
+
 		subdiv(SUB_DIVS_DEPTH, tri, tri[0], 1.0f / len(sub(tri[0], mid)));
 	}
 }
@@ -157,19 +167,27 @@ void drawBallObject(int shader) {
 	glVertexPointer(3, GL_FLOAT, 0, gBallVertices);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	if (shader) {	
+#if 0
+	glColorPointer(3, GL_FLOAT, 0, gBallColors);
+	glEnableClientState(GL_COLOR_ARRAY);
+#endif
+
+	if (shader) {
 		glTexCoordPointer(3, GL_FLOAT, 0, gBallTexCoordsShader);
 	} else {
 		glTexCoordPointer(3, GL_FLOAT, 0, gBallTexCoordsDefault);
 	}
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	
+
 	glNormalPointer(GL_FLOAT, 0, gBallVertices);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	
+
 		glDrawArrays(GL_TRIANGLES, 0, gCntBallVertices);
-	
+
 	glDisableClientState(GL_VERTEX_ARRAY);
+#if 0
+	glDisableClientState(GL_COLOR_ARRAY);
+#endif
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
@@ -186,7 +204,7 @@ void drawBallObject(int shader) {
 
 typedef struct {
 	Vector3 vertices[PARTS_TOGETHER * 3];
-	
+
 	Vector3 pos;
 	Vector3 offset;
 	Vector3 speed;
@@ -245,11 +263,11 @@ void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos, Vector3
 
 		gFragments[i].offset = mid;
 		gFragments[i].speed = scale(200.0f, mid);
-		
+
 		gFragments[i].rotation.x = 0.0f;
 		gFragments[i].rotation.y = 0.0f;
 		gFragments[i].rotation.z = 0.0f;
-		
+
 		gFragments[i].rotSpeed.x = 360.0f * randFloat();
 		gFragments[i].rotSpeed.y = 360.0f * randFloat();
 		gFragments[i].rotSpeed.z = 360.0f * randFloat();
@@ -289,7 +307,7 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 	*pos = add(*pos, scale(b1, gEndPos));
 	*pos = add(*pos, scale(b2, gStartSpeed));
 	*pos = add(*pos, scale(b3, gEndSpeed));
-	
+
 	for (i = 0; i < LENGTH(gFragments); i++) {
 		Vector3 rotError;
 
@@ -298,7 +316,7 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 		gFragments[i].pos.y = 0.0f;
 		gFragments[i].pos.z = 0.0f;
 
-		gFragments[i].pos = add(gFragments[i].pos, scale(b0 + b1, gFragments[i].offset)); 
+		gFragments[i].pos = add(gFragments[i].pos, scale(b0 + b1, gFragments[i].offset));
 		gFragments[i].pos = add(gFragments[i].pos, scale(b2, gFragments[i].speed));
 
 		/* rotation */
@@ -312,9 +330,9 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 
 		gFragments[i].rotation = add(gFragments[i].rotation, scale(T2 * interval, rotError));
 	}
-	
+
 	gExplosionTime += interval;
-	
+
 	return gExplosionTime >= gMaxExplosionTime;
 }
 
@@ -338,7 +356,7 @@ void drawExplosion(int shader) {
 		glBegin(GL_TRIANGLES);
 			for (j = 0; j < LENGTH(gFragments[i].vertices); j++) {
 				glNormal3fv(&gBallVertices[v + j].x);
-				
+
 				if (shader) {
 					glTexCoord3fv(&gBallTexCoordsShader[v + j].x);
 				} else {

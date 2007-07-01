@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -48,19 +48,19 @@ Vector2 TextureBuffer[NUMVERTS];
 GLuint IndexBuffer[NUMINDICES];
 
 void initSkysphere(void) {
-	int i;  
+	int i;
 	int j;
 	int ind;
 	float vx,vy,vz;
-	
+
 	/* Calculate deltaTheta */
 	float angle1;
 	float angle2;
-	
+
 	for (j = 0; j <= SLICES; j++) {
 		/* deltaPhi */
 		angle1 = j * (PI / 2.0f) / SLICES;
-		
+
 		for (i = 0; i <= SIDES; i++) {
 			angle2 = i * (2.0f * PI) / SIDES;
 
@@ -68,18 +68,18 @@ void initSkysphere(void) {
 			vx = cos(angle2) * cos(angle1);
 			vy = sin(angle2) * cos(angle1);
 			vz = 0.1f * sin(angle1);
-			
+
 			VertexBuffer[j * (SIDES + 1) + i].x = vx;
 			VertexBuffer[j * (SIDES + 1) + i].z = vz;
 			VertexBuffer[j * (SIDES + 1) + i].y = vy;
-			
+
 #if 0
 			TextureBuffer[j * (SIDES + 1) + i].x = (float)(i) / (float)(SIDES);
 			TextureBuffer[j * (SIDES + 1) + i].y = (float)(j) / (float)(SLICES);
 #endif
 		}
 	}
-	
+
 	/* Calculate Indices */
 	ind = 0;
 	for(j = 1; j <= SLICES; j++) {
@@ -87,14 +87,13 @@ void initSkysphere(void) {
 			IndexBuffer[ind++] = (j - 1) * (SIDES + 1) + i;
 			IndexBuffer[ind++] = j * (SIDES + 1) + i;
 		}
-	}	
+	}
 }
 
 void drawSkysphere(void) {
 	int i, j;
-	
+
 	glColor3f(0.651f, 0.682f, 1.0f);
-	glDisable(GL_LIGHTING);
 
 	glPushMatrix();
 
@@ -121,8 +120,6 @@ void drawSkysphere(void) {
 #if (USE_VERTEX_ARRAY)
 		glDisableClientState(GL_VERTEX_ARRAY);
 #endif
-	
-	glPopMatrix();
 
-	glEnable(GL_LIGHTING);
+	glPopMatrix();
 }

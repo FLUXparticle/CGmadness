@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -19,14 +19,13 @@
  * $Id$
  *
  */
- 
+
 #include "editor.h"
 
 #include "common.h"
 #include "editormenu.h"
 
 #include "graph.h"
-#include "light.h"
 #include "callback.h"
 #include "keyboard.h"
 
@@ -41,11 +40,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <float.h>
 
-#define MAX_LEVEL_SIZE 100
-#define MAX_LEVEL_HIGHT 100
+#define DRAW_DEBUG_LINES 0
 
-static int gEditorMainLight;
+typedef struct {
+	Vector3 v1;
+	Vector3 v2;
+} Line;
+
+#if (DRAW_DEBUG_LINES)
+Line gLines[10 * 10 * LIGHT_MAP_SIZE * LIGHT_MAP_SIZE * 32 * 8];
+int gCntLines = 0;
+#endif
 
 static int gIsEditorRunning;
 
@@ -59,6 +66,8 @@ static int gCos[] = { 1, 0, -1, 0 };
 static char* gFilename;
 
 static Vector3 gEditorMenuPosition;
+
+static int gDirtyLightmaps;
 
 void pauseEditor(void) {
 	showEditorMenu(0);
@@ -78,6 +87,14 @@ void saveLevel(void) {
 	}
 }
 
+#if (DRAW_DEBUG_LINES)
+void addLine(Vector3 v1, Vector3 v2) {
+	gLines[gCntLines].v1 = v1;
+	gLines[gCntLines].v2 = v2;
+	gCntLines++;
+}
+#endif
+
 void updateEditorCamera(float interval, Vector3 ball) {
 	static float distance = 5.0f;
 	static float height = 2.0f;
@@ -92,7 +109,7 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	if (isKeyPressed('c') && distance > 0.5) distance -= 0.1f;
 
 	/* rotation */
-	if (wasKeyPressed('b')) gCamAngle--; 
+	if (wasKeyPressed('b')) gCamAngle--;
 	if (wasKeyPressed('n')) gCamAngle++;
 
 	if (gCamAngle <  0) gCamAngle += 4;
@@ -101,7 +118,7 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	/* height */
 	if (isKeyPressed('x')) height += 0.1f;
 	if (isKeyPressed('y')) height -= 0.1f;
-	
+
 	/* look at */
 	marker.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 	marker.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
@@ -115,8 +132,6 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	dest.z = ball.z + height;
 
 	moveCamera(interval, dest, marker);
-
-	sgLight[0].pos = sgCamera;
 }
 
 void changeMarkerArea(int incz, int incdzx, int incdzy) {
@@ -124,33 +139,37 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 	int y;
 	int incx;
 	int incy;
-	
+
 	incx = -(gCurEnd.x - gCurStart.x) * incdzx;
-	
+
 	for (x = gCurStart.x; x <= gCurEnd.x; x++) {
 		incy = -(gCurEnd.y - gCurStart.y) * incdzy;
-		
+
 		for (y = gCurStart.y; y <= gCurEnd.y; y++) {
 			Plate* p = &sgLevel.field[x][y];
   		int z = p->z;
 			int dzx = p->dzx;
 			int dzy = p->dzy;
-			
+
 			z += incz + incx + incy;
 			dzx += incdzx;
 			dzy += incdzy;
-			
-			if (z - (abs(dzx) + abs(dzy)) >= 0 && z + (abs(dzx) + abs(dzy)) <= MAX_LEVEL_HIGHT)  {
+
+			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy))) <= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)  {
 				p->z = z;
 				p->dzx = dzx;
 				p->dzy = dzy;
 			}
 
+			p->dirty = 1;
+
 			incy += 2 * incdzy;
 		}
-		
+
 		incx += 2 * incdzx;
 	}
+
+	gDirtyLightmaps = 1;
 }
 
 void modBetween(int* value, int mod, int min, int max) {
@@ -198,32 +217,37 @@ void moveMarkerDown(int markermode) {
 void animateEditor(float interval) {
 	int markermode = 0;
 
-	/* editor controls for changing environment */	
+	/* editor controls for changing environment */
 	if (wasKeyPressed('a')) {
 		changeMarkerArea(0, gCos[gCamAngle], gSin[gCamAngle]);
 	}
-	
+
 	if (wasKeyPressed('d')) {
 		changeMarkerArea(0, -gCos[gCamAngle], -gSin[gCamAngle]);
 	}
 
-	
+
 	if (wasKeyPressed('s')) {
 		changeMarkerArea(0, -gSin[gCamAngle], gCos[gCamAngle]);
 	}
-	
+
 	if (wasKeyPressed('w')) {
 		changeMarkerArea(0, gSin[gCamAngle], -gCos[gCamAngle]);
   }
-	
+
 	if (wasKeyPressed('f'))  {
 		changeMarkerArea(-1, 0, 0);
 	}
-	
+
 	if (wasKeyPressed('r')) {
 		changeMarkerArea(1, 0, 0)	;
 	}
-	
+
+	if (gDirtyLightmaps) {
+		updateTextures(0);
+		gDirtyLightmaps = 0;
+	}
+
 	/* editor controls for current field */
 	if (wasKeyPressed('1')) {
 		if (gCurStart.x != sgLevel.finish.x || gCurStart.y != sgLevel.finish.y) {
@@ -231,29 +255,29 @@ void animateEditor(float interval) {
 			sgLevel.start.y = gCurStart.y;
 		}
 	}
-	
+
 	if (wasKeyPressed('2')) {
 		if (gCurStart.x != sgLevel.start.x || gCurStart.y != sgLevel.start.y) {
 			sgLevel.finish.x = gCurStart.x;
 			sgLevel.finish.y = gCurStart.y;
 	  }
 	}
-	
+
 	markermode = getModifiers() == GLUT_ACTIVE_SHIFT;
 
 	/*  editor controls for moving selection */
 	if (wasCursorPressed(CURSOR_LEFT)) {
 		moveMarkerLeft(markermode);
 	}
-	
+
 	if (wasCursorPressed(CURSOR_RIGHT)) {
 		moveMarkerRight(markermode);
 	}
-	
+
 	if (wasCursorPressed(CURSOR_DOWN)) {
 		moveMarkerDown(markermode);
 	}
-	
+
 	if (wasCursorPressed(CURSOR_UP)) {
 		moveMarkerUp(markermode);
 	}
@@ -262,14 +286,14 @@ void animateEditor(float interval) {
 void updateEditor(float interval) {
 	if (gIsEditorRunning) {
 		Vector3 markerPos;
-  
+
 		if (wasKeyPressed(KEY_ESC)) {
 			pauseEditor();
 		}
 
 		markerPos.x = gCurStart.x + 0.5f;
 		markerPos.y = gCurStart.y + 0.5f;
-		markerPos.z = SCALE_Z * sgLevel.field[gCurStart.x][gCurStart.y].z;
+		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
 
 		updateEditorCamera(interval, markerPos);
 		animateEditor(interval);
@@ -277,7 +301,7 @@ void updateEditor(float interval) {
 		/* show menu */
 		Vector3 camera = gEditorMenuPosition;
 		Vector3 lookat = gEditorMenuPosition;
-		
+
 		camera.y -= 10.0f;
 		camera.z += 7.0f;
 
@@ -286,55 +310,81 @@ void updateEditor(float interval) {
 		updateEditorMenu(interval);
 
 		moveCamera(interval, camera, lookat);
-		sgLight[0].pos = sgCamera;
 	}
 }
 
 void drawEditorField(void) {
-	Square square;
-	int i, j;
+	int i;
+	int j;
 	FieldCoord cur;
-	
-	glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
+	Square square;
 
-		glBegin(GL_QUADS);
-		
+	glActiveTextureARB(GL_TEXTURE0_ARB);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
+
+	glActiveTextureARB(GL_TEXTURE1_ARB);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
-				
+
 				if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y) {
-					setAttributes(1.0f, 0.0f, 0.0f, 0.2f, 0.8f, 0.0f);
+					glColor3f(1.0f, 0.0f, 0.0f);
 				} else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y) {
-					setAttributes(0.0f, 1.0f, 0.0f, 0.2f, 0.8f, 0.0f);
+					glColor3f(0.0f, 1.0f, 0.0f);
 				} else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y) {
-					setAttributes(0.0f, 0.0f, 1.0f, 0.2f, 0.8f, 0.0f);
+					glColor3f(0.0f, 0.0f, 1.0f);
 				} else {
-					setAttributes(1.0f, 1.0f, 1.0f, 0.2f, 0.8f, 0.0f);
+					glColor3f(1.0f, 1.0f, 1.0f);
 				}
-				
+
 				getRoofSquare(cur.x, cur.y, &square);
-	
-				glNormal3fv(&square.normal.x);
-				for (i = 0; i < 4; i++) {
-					glTexCoord2fv(&square.texcoords[i].x);
-					glVertex3fv(&square.vertices[i].x);
-				}
-	
-				for (j = 0; j < 4; j++) {
-					if (getSideSquare(cur.x, cur.y, j, &square)) {
-						glNormal3fv(&square.normal.x);
-						for (i = 0; i < 4; i++) {
-							glTexCoord2fv(&square.texcoords[i].x);
-							glVertex3fv(&square.vertices[i].x);
+
+				glBegin(GL_QUADS);
+					glNormal3fv(&square.normal.x);
+					for (i = 0; i < 4; i++) {
+						glMultiTexCoord2fvARB(GL_TEXTURE0_ARB, &square.texcoords[i].x);
+						glMultiTexCoord2fvARB(GL_TEXTURE1_ARB, &square.lightmap[i].x);
+						glVertex3fv(&square.vertices[i].x);
+					}
+				glEnd();
+
+				glColor3f(1.0f, 1.0f, 1.0f);
+
+				glBegin(GL_QUADS);
+					for (j = 0; j < 4; j++) {
+						Square* squares;
+						int cnt = getSideSquares(cur.x, cur.y, j, &squares);
+						int k;
+						for (k = 0; k < cnt; k++) {
+							glNormal3fv(&squares[k].normal.x);
+							for (i = 0; i < 4; i++) {
+								glMultiTexCoord2fvARB(GL_TEXTURE0_ARB, &squares[k].texcoords[i].x);
+								glMultiTexCoord2fvARB(GL_TEXTURE1_ARB, &squares[k].lightmap[i].x);
+								glVertex3fv(&squares[k].vertices[i].x);
+							}
 						}
 					}
-				}
+				glEnd();
 			}
-		}	
-	  glEnd();
-  
-  glDisable(GL_TEXTURE_2D);
+		}
+
+		glDisable(GL_TEXTURE_2D);
+
+		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glDisable(GL_TEXTURE_2D);
+
+#if (DRAW_DEBUG_LINES)
+	glBegin(GL_LINES);
+	for (i = 0; i < gCntLines; i++) {
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(gLines[i].v1.x, gLines[i].v1.y, gLines[i].v1.z);
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(gLines[i].v2.x, gLines[i].v2.y, gLines[i].v2.z);
+	}
+	glEnd();
+#endif
 }
 
 void drawEditor(void) {
@@ -352,9 +402,6 @@ void pickEditor(void) {
 }
 
 int initEditor(char* filename) {
-	glColor3f(1.0f, 1.0f, 1.0f);
-	gEditorMainLight = addPointLight(0.0f, 0.0f, 0.0f);
-
 	gFilename = filename;
 	if (!loadFieldFromFile(gFilename)) {
 		if (between(sgLevel.size.x, 0, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 0, MAX_LEVEL_SIZE)) {
@@ -363,6 +410,10 @@ int initEditor(char* filename) {
 			return 0;
 		}
 	}
+
+	initTextures();
+	updateTextures(1);
+	gDirtyLightmaps = 0;
 
 	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.pick = pickEditor;
@@ -378,10 +429,10 @@ int initEditor(char* filename) {
 	gEditorMenuPosition.x = sgLevel.size.x / 2.0f;
 	gEditorMenuPosition.y = -10.0f;
 	gEditorMenuPosition.z =   0.0f;
-	
+
 	setEditorMenuPosition(gEditorMenuPosition);
 
 	pauseEditor();
-		
+
 	return 1;
 }

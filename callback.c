@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -22,7 +22,6 @@
 
 #include "callback.h"
 
-#include "light.h"
 #include "text.h"
 
 #include "debug.h"
@@ -97,10 +96,10 @@ void display(void) {
 		predisplayTime = (float) sumPredisplayTime / glutGet(GLUT_ELAPSED_TIME);
 #endif
 	}
-	
+
 	glViewport(0, 0, gTargetWindow.width, gTargetWindow.height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	
+
 	{
 		Viewport* v = gTargetWindow.viewport;
 		float aspect = (float) gTargetWindow.height / gTargetWindow.width;
@@ -108,12 +107,9 @@ void display(void) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(&v->projection[0][0]);
 		glScalef(aspect, 1.0f, 1.0f);
-		
+
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(&v->view[0][0]);
-
-		glEnable(GL_LIGHTING);
-		setLights();
 
 		v->draw();
 	}
@@ -133,7 +129,6 @@ void display(void) {
 		char text[20];
 		sprintf(text, "FPS: %4.1f", gFPS);
 #endif
-		glDisable(GL_LIGHTING);
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glRasterPos2f(0.0f, 0.0f);
 		drawBitmapText(text);

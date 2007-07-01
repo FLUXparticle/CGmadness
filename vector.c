@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -39,7 +39,7 @@ void normalize(Vector3* v) {
 
 Vector3 norm(const Vector3 a) {
   float l = len(a);
-  Vector3 b = mkVector3(0.0f, 0.0f, 0.0f);
+  Vector3 b = vector3(0.0f, 0.0f, 0.0f);
   if (l > 0.0f) {
     b.x = a.x / l;
     b.y = a.y / l;
@@ -102,14 +102,35 @@ Vector3 cross(const Vector3 a, const Vector3 b) {
 	return c;
 }
 
-Vector3 mkVector3(float x, float y, float z) {
+Vector2 vector2(float x, float y) {
+	Vector2 v;
+
+	v.x = x;
+	v.y = y;
+
+	return v;
+}
+
+Vector3 vector3(float x, float y, float z) {
 	Vector3 v;
-	
+
 	v.x = x;
 	v.y = y;
 	v.z = z;
-	
+
 	return v;
+}
+
+Vector3 midpoint(const Vector3* quad) {
+	Vector3 mid = vector3(0.0f, 0.0f, 0.0f);
+
+	int i;
+
+	for (i = 0; i < 4; i++) {
+		mid = add(mid, scale(1.0f / 4.0f, quad[i]));
+	}
+
+	return mid;
 }
 
 /*
@@ -127,11 +148,11 @@ void initProjectMat(Matrix m, float fov) {
 	}
 
 	m[0][0] = f;
-	
+
 	m[1][1] = f;
-	
+
 	m[2][2] = -1;
 	m[2][3] = -1;
-	
+
 	m[3][2] = -2 * 0.01f;
 }

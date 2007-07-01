@@ -32,7 +32,7 @@
 
 static int gUseTextures = 0;
 
-void initTextures(void) {
+void initTextureEnvironment(void) {
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	gUseTextures = 1;
 }
@@ -206,7 +206,7 @@ int loadTexture(const char* filename, int mipmapping) {
 	}
 
 	if (!gUseTextures) {
-		initTextures();
+		initTextureEnvironment();
 	}
 
 	glGenTextures(1, &id);

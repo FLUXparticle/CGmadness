@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -25,7 +25,6 @@
 #include "common.h"
 #include "game.h"
 
-#include "light.h"
 #include "vector.h"
 #include "ball.h"
 #include "features.h"
@@ -46,22 +45,15 @@
 #define WITH_STENCIL_TEST 0
 #define TWO_PASS 0
 
-typedef struct {
-	float r;
-	float g;
-	float b;
-	float a;
-} Color4;
-
 static Vector2 gDefaultTexCoord;
+static Vector2 gDefaultLightMapCoord;
 static Vector3 gDefaultNormal;
 static Color4 gDefaultColor;
 
-static Vector3 gLight;
-
 static Vector2* gTexCoords;
+static Vector2* gLightMapCoords;
 static Color4* gColors;
-static unsigned int gVBuffers[4];
+static unsigned int gVBuffers[5];
 
 static int gCntIndices = 0;
 static int* gIndices;
@@ -72,102 +64,126 @@ static int* gBallReflectionIndices;
 static int gCntSpotlightIndices;
 static int* gSpotlightIndices;
 
+static int* gIndexVertices;
+
 static int gDirtyField;
 
-void setColor(float r, float g, float b, float a) {
-	gDefaultColor.r = r;
-	gDefaultColor.g = g;
-	gDefaultColor.b = b;
-	gDefaultColor.a = a;
+void setColor(Color4 col) {
+	gDefaultColor = col;
 }
 
-void setTexCoord(float u, float v) {
-	gDefaultTexCoord.x = u;
-	gDefaultTexCoord.y = v;
+void setTexCoord(Vector2 uv) {
+	gDefaultTexCoord = uv;
 }
 
-void setNormal(float x, float y, float z) {
-	gDefaultNormal.x = x;
-	gDefaultNormal.y = y;
-	gDefaultNormal.z = z;
+void setLightMapCoord(Vector2 uv) {
+	gDefaultLightMapCoord = uv;
 }
 
-void addVertex(float x, float y, float z) {
-	float LdotN;
+void setNormal(Vector3 n) {
+	gDefaultNormal = n;
+}
 
+void addVertex(Vector3 v) {
 	gTexCoords[sgCntVertices] = gDefaultTexCoord;
+	gLightMapCoords[sgCntVertices] = gDefaultLightMapCoord;
 	sgNormals[sgCntVertices] = gDefaultNormal;
 	gColors[sgCntVertices] = gDefaultColor;
 
-	sgVertices[sgCntVertices].x = x;
-	sgVertices[sgCntVertices].y = y;
-	sgVertices[sgCntVertices].z = z;
-
-	LdotN = max(dot(norm(sub(gLight, sgVertices[sgCntVertices])), gDefaultNormal), 0.0f) + 0.4f;
-
-	gColors[sgCntVertices].a = LdotN;
+	sgVertices[sgCntVertices] = v;
 
 	sgCntVertices++;
 }
 
 void addSquare(const Square* square) {
 	int i;
-	setNormal(square->normal.x, square->normal.y, square->normal.z);
+	setNormal(square->normal);
 
 	for (i = 0; i < 4; i++) {
-		setTexCoord(square->texcoords[i].x, square->texcoords[i].y);
-		addVertex(square->vertices[i].x, square->vertices[i].y, square->vertices[i].z);
+		setTexCoord(square->texcoords[i]);
+		setLightMapCoord(square->lightmap[i]);
+		addVertex(square->vertices[i]);
 	}
+}
+
+void getVertIndex(int x, int y, int* start, int* end) {
+	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y) {
+		int index = y * sgLevel.size.x + x;
+		*start = gIndexVertices[index];
+		index++;
+		if (index < sgMaxPlates) {
+			*end = gIndexVertices[index];
+		} else {
+			*end = sgCntVertices;
+		}
+	} else {
+		*start = 0;
+		*end = 0;
+	}
+}
+
+void setSquareColor(int q, Color4 col) {
+	int i;
+
+	for (i = 0; i < 4; i++) {
+		gColors[q + i] = col;
+	}
+}
+
+void setRoofColor(int x, int y, Color4 col) {
+	int start;
+	int end;
+
+	getVertIndex(x, y, &start, &end);
+
+	setSquareColor(start, col);
 }
 
 #define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * sgCntVertices, (x), GL_STATIC_DRAW_ARB);
 
 void initGameField(void) {
-	int x, y;
+	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
+	static Color4 blue  = { 0.0f, 0.0f, 1.0f, 1.0f };
+	static Color4 white = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	int x;
+	int y;
 	int i;
+	int k;
 	int index = 0;
-	int quad = 0;
 
-	Square square;
-
+	MALLOC(gIndexVertices, sgMaxPlates * sizeof(int));
   MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
+  MALLOC(gLightMapCoords, sgMaxVertices * sizeof(Vector2));
 	MALLOC(gColors, sgMaxVertices * sizeof(Color4));
 
-	gLight = sgLight[sgGameMainLight].pos;
+	setColor(white);
 
 	for (y = 0; y < sgLevel.size.y; y++) {
 		for (x = 0; x < sgLevel.size.x; x++) {
-			sgIndexVertices[index++] = sgCntVertices;
+			Square square;
 
-			if (sgLevel.start.x == x && sgLevel.start.y == y) {
-				setColor(0.0f, 1.0f, 0.0f, 1.0f);
-			} else if (sgLevel.finish.x == x && sgLevel.finish.y == y) {
-				setColor(0.0f, 0.0f, 1.0f, 1.0f);
-			} else {
-				setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			}
+			gIndexVertices[index++] = sgCntVertices;
 
 			getRoofSquare(x, y, &square);
 
 			addSquare(&square);
 
-			sgQuadInShadow[quad++] = 0;
-
-			setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			
 			for (i = 0; i < 4; i++) {
-				if (getSideSquare(x, y, i, &square)) {
-					addSquare(&square);
-					sgQuadInShadow[quad++] = 0;
-			  } else {
-					sgQuadInShadow[quad++] = 1;
+				Square* squares;
+				int cnt = getSideSquares(x, y, i, &squares);
+				for (k = 0; k < cnt; k++) {
+					addSquare(&squares[k]);
 				}
 			}
 		}
 	}
 
+	setRoofColor(sgLevel.start.x, sgLevel.start.y, green);
+	setRoofColor(sgLevel.finish.x, sgLevel.finish.y, blue);
+
 	if (hasVertexbuffer()) {
-		glGenBuffersARB(4, gVBuffers);
+		glGenBuffersARB(LENGTH(gVBuffers), gVBuffers);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
 		bufferdata(sgVertices);
@@ -179,6 +195,9 @@ void initGameField(void) {
 		bufferdata(gTexCoords);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
+		bufferdata(gLightMapCoords);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[4]);
 		bufferdata(gColors);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -204,9 +223,11 @@ void destroyGameField(void) {
   	FREE(gSpotlightIndices);
 	}
 
+	FREE(gIndexVertices);
   FREE(gIndices);
   FREE(gBallReflectionIndices);
 	FREE(gTexCoords);
+	FREE(gLightMapCoords);
 	FREE(gColors);
 }
 
@@ -222,7 +243,7 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int
 		int q;
 
 		getVertIndex(startX, startY, &start, &end);
-		
+
 		for (q = start; q < end; q++) {
 			indices[(*index)++] = q;
 		}
@@ -267,7 +288,7 @@ void updateGameField(void) {
 
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
-	
+
 	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY)) {
 		gCntIndices = 0;
 		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
@@ -292,6 +313,7 @@ void updateGameField(void) {
 		}
 	}
 
+#if 0
 	if (useSpotlight())	{
 		static int mxSpot = 0;
 		static int mySpot = 0;
@@ -313,7 +335,7 @@ void updateGameField(void) {
 					int q;
 
 					getVertIndex(mx + dx, my + dy, &start, &end);
-					
+
 					for (q = start; q < end; q++) {
 						gSpotlightIndices[gCntSpotlightIndices++] = q;
 					}
@@ -325,6 +347,7 @@ void updateGameField(void) {
 			maxSpot = max;
 		}
 	}
+#endif
 
 	gDirtyField = 0;
 }
@@ -332,42 +355,60 @@ void updateGameField(void) {
 void drawGameField(int ballReflection) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
+
+  glClientActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glClientActiveTextureARB(GL_TEXTURE1_ARB);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	glEnableClientState(GL_COLOR_ARRAY);
-	glEnable(GL_COLOR_MATERIAL);
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
-		
+
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
 		glNormalPointer(GL_FLOAT, 0, NULL);
-		
+
+	  glClientActiveTextureARB(GL_TEXTURE0_ARB);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-		
+
+	  glClientActiveTextureARB(GL_TEXTURE1_ARB);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[4]);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
 	} else {
 		glVertexPointer(3, GL_FLOAT, 0, sgVertices);
-		
+
 		glNormalPointer(GL_FLOAT, 0, sgNormals);
-		
+
+	  glClientActiveTextureARB(GL_TEXTURE0_ARB);
 		glTexCoordPointer(2, GL_FLOAT, 0, gTexCoords);
-		
+
+	  glClientActiveTextureARB(GL_TEXTURE1_ARB);
+		glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
+
 		glColorPointer(4, GL_FLOAT, 0, gColors);
 	}
 
-	glDisable(GL_LIGHTING);
-
+  glActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.texture);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
+
+  glActiveTextureARB(GL_TEXTURE1_ARB);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
 
+  glActiveTextureARB(GL_TEXTURE1_ARB);
 	glDisable(GL_TEXTURE_2D);
 
-	glEnable(GL_LIGHTING);
+  glActiveTextureARB(GL_TEXTURE0_ARB);
+	glDisable(GL_TEXTURE_2D);
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -375,30 +416,34 @@ void drawGameField(int ballReflection) {
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+
+  glClientActiveTextureARB(GL_TEXTURE1_ARB);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glClientActiveTextureARB(GL_TEXTURE0_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	glDisableClientState(GL_COLOR_ARRAY);
-	glDisable(GL_COLOR_MATERIAL);
 }
 
 void drawGameFieldSpotlightParts(void) {
+#if 0
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
- 
-	glDisable(GL_LIGHTING);
+
 	glDepthFunc(GL_EQUAL);
 	glDepthMask(0);
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
-		
+
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
 		glNormalPointer(GL_FLOAT, 0, NULL);
 	} else {
 		glVertexPointer(3, GL_FLOAT, 0, sgVertices);
-		
+
 		glNormalPointer(GL_FLOAT, 0, sgNormals);
 	}
 
@@ -408,10 +453,10 @@ void drawGameFieldSpotlightParts(void) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
-	glEnable(GL_LIGHTING);
 	glDepthFunc(GL_LESS);
 	glDepthMask(1);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+#endif
 }
