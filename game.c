@@ -238,6 +238,8 @@ int initLevel(const char* filename) {
 }
 
 void destroyLevel(void) {
+	glDeleteTextures(1, &sgLevel.lightMap);
+
 	destroyGameField();
 	destroyCommon();
 }

@@ -31,8 +31,8 @@
 
 #define DAMPENING 0.8
 
-#define SIDES  30
-#define SLICES 48
+#define SIDES  12
+#define SLICES 3
 
 /* Vertexcount of the dome */
 #define NUMVERTS ((SLICES + 1) * (SIDES + 1))

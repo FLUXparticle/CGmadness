@@ -35,7 +35,7 @@
 #define hTile 3
 #define vTile 3
 #define ALPHA 0.85f
-#define DIVS 40
+#define DIVS 3
 #define exponentialFadeout 0
 
 #define NUM_OF_VERTS ((DIVS + 1) * (DIVS + 1))

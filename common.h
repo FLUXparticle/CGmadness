@@ -60,8 +60,8 @@ typedef struct {
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
-	int plateTexture;
-	int lightMap;
+	unsigned int plateTexture;
+	unsigned int lightMap;
 } Level;
 
 extern Vector3 sgCamera;
