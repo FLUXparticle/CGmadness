@@ -347,8 +347,8 @@ void drawEditorField(void) {
 				glBegin(GL_QUADS);
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
-						glMultiTexCoord2fvARB(GL_TEXTURE0, &square.texcoords[i].x);
-						glMultiTexCoord2fvARB(GL_TEXTURE1, &square.lightmap[i].x);
+						glMultiTexCoord2fv(GL_TEXTURE0, &square.texcoords[i].x);
+						glMultiTexCoord2fv(GL_TEXTURE1, &square.lightmap[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
 				glEnd();
@@ -363,8 +363,8 @@ void drawEditorField(void) {
 						for (k = 0; k < cnt; k++) {
 							glNormal3fv(&squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fvARB(GL_TEXTURE0, &squares[k].texcoords[i].x);
-								glMultiTexCoord2fvARB(GL_TEXTURE1, &squares[k].lightmap[i].x);
+								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].texcoords[i].x);
+								glMultiTexCoord2fv(GL_TEXTURE1, &squares[k].lightmap[i].x);
 								glVertex3fv(&squares[k].vertices[i].x);
 							}
 						}
