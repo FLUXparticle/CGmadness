@@ -31,6 +31,10 @@
 
 #include <GL/gl.h>
 
+#define REFLECTION 1
+#define SKY 1
+#define WATER 1
+
 void initEnvironment(void) {
  	initSkysphere();
  	initSkyplane();
@@ -42,9 +46,9 @@ void updateEnvironment(float interval) {
 }
 
 void drawEnvironment(void) {
+#if (WATER)
+# if (REFLECTION)
 	GLdouble equation[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-
-	glColorMask(1,1,1,0);
 
 	glPushMatrix();
 
@@ -56,10 +60,12 @@ void drawEnvironment(void) {
 		glEnable(GL_CLIP_PLANE0);
 		glCullFace(GL_FRONT);
 
+#  if (SKY)
 			glDisable(GL_DEPTH_TEST);
 				drawSkysphere();
 				drawSkyplane();
 			glEnable(GL_DEPTH_TEST);
+#  endif
 
 			drawGameField(0);
 			drawGameBall();
@@ -68,13 +74,15 @@ void drawEnvironment(void) {
 		glDisable(GL_CLIP_PLANE0);
 
 	glPopMatrix();
+#endif
 
 	drawWater();
+# endif
 
+#if (SKY)
 	glDisable(GL_DEPTH_TEST);
 		drawSkysphere();
 		drawSkyplane();
 	glEnable(GL_DEPTH_TEST);
-
-	glColorMask(1,1,1,1);
+#endif
 }
