@@ -48,6 +48,7 @@ static Button gbStart;
 static Button gbResume;
 
 static Check gcShadows;
+static Check gcReflection;
 
 /*
  * help text
@@ -87,6 +88,11 @@ static void changeBallEdit(void* self) {
 static void changeShadows(void* self) {
 	Check* check = self;
 	setShadows(check->value);
+}
+
+static void changeReflection(void* self) {
+	Check* check = self;
+	setReflection(check->value);
 }
 
 static void clickButtonHelp(void) {
@@ -191,6 +197,7 @@ void showGameMenu(int menu) {
 	}
 
 	setCheck(&gcShadows, useShadows());
+	setCheck(&gcReflection, useReflection());
 
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
@@ -253,22 +260,25 @@ void initGameMenu() {
 
 	initObject(&oBall, drawMenuBall);
 
-	init3dButton(&gbStart, 5.5f, clickButtonStart, "Start");
+	init3dButton(&gbStart, 6.0f, clickButtonStart, "Start");
   addSubObject(&goMainMenu, &gbStart.oButton);
 
-	init3dButton(&gbResume, 5.5f, clickButtonStart, "Resume");
+	init3dButton(&gbResume, 6.0f, clickButtonStart, "Resume");
   addSubObject(&goMainMenu, &gbResume.oButton);
 
-	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.7f, &oBall, changeBallEdit);
+	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
 	addSubObject(&goMainMenu, &spinEditBall.oSpinEdit);
 
-	init3dCheck(&gcShadows, 3.5f, changeShadows, "Shadows");
+	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
   addSubObject(&goMainMenu, &gcShadows.oCheck);
 
-	init3dButton(&bHelp, 2.5f,clickButtonHelp, "Help");
+	init3dCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
+  addSubObject(&goMainMenu, &gcReflection.oCheck);
+
+	init3dButton(&bHelp, 2.0f,clickButtonHelp, "Help");
   addSubObject(&goMainMenu, &bHelp.oButton);
 
-	init3dButton(&bQuit, 1.5f, clickButtonQuit, "Quit");
+	init3dButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
   addSubObject(&goMainMenu, &bQuit.oButton);
 
 	/* next level menu */

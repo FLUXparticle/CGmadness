@@ -22,6 +22,7 @@
 
 #include "environment.h"
 
+#include "features.h"
 #include "skysphere.h"
 #include "skyplane.h"
 #include "water.h"
@@ -47,34 +48,35 @@ void updateEnvironment(float interval) {
 
 void drawEnvironment(void) {
 #if (WATER)
-# if (REFLECTION)
-	GLdouble equation[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+	if (useReflection())
+	{
+		GLdouble equation[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	glPushMatrix();
+		glPushMatrix();
 
-		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
-		glScalef(1.0f, 1.0f, -1.0f);
-		glClipPlane(GL_CLIP_PLANE0, equation);
-		glTranslatef(0.0f, 0.0f, -WATER_LEVEL);
+			glTranslatef(0.0f, 0.0f, WATER_LEVEL);
+			glScalef(1.0f, 1.0f, -1.0f);
+			glClipPlane(GL_CLIP_PLANE0, equation);
+			glTranslatef(0.0f, 0.0f, -WATER_LEVEL);
 
-		glEnable(GL_CLIP_PLANE0);
-		glCullFace(GL_FRONT);
+			glEnable(GL_CLIP_PLANE0);
+			glCullFace(GL_FRONT);
 
 #  if (SKY)
-			glDisable(GL_DEPTH_TEST);
-				drawSkysphere();
-				drawSkyplane();
-			glEnable(GL_DEPTH_TEST);
+				glDisable(GL_DEPTH_TEST);
+					drawSkysphere();
+					drawSkyplane();
+				glEnable(GL_DEPTH_TEST);
 #  endif
 
-			drawGameField(0);
-			drawGameBall();
+				drawGameField(0);
+				drawGameBall();
 
-		glCullFace(GL_BACK);
-		glDisable(GL_CLIP_PLANE0);
+			glCullFace(GL_BACK);
+			glDisable(GL_CLIP_PLANE0);
 
-	glPopMatrix();
-#endif
+		glPopMatrix();
+	}
 
 	drawWater();
 # endif

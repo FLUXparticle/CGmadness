@@ -159,6 +159,10 @@ void updateGame(float interval) {
 			setShadows(!useShadows());
 		}
 
+		if (wasFunctionPressed(3)) {
+			setReflection(!useReflection());
+		}
+
 		updateBall(interval);
 
 		updateGameCamera(interval, sgoBall.pos);

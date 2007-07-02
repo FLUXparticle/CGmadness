@@ -35,37 +35,43 @@ static int gVertexbufferAvailable;
 static int gTwoSideStencilAvailable;
 static int gShaderAvailable;
 
-static int gUseShadows = 0;
 static int gUseSpotlight = 0;
+static int gUseShadows = 0;
+static int gUseReflection = 0;
 
 GLhandleARB sgSpotlightShader = 0;
 
 void initFeatures(int argc, char* argv[]) {
 	gShaderAvailable = 1;
-	if (!GLEW_ARB_vertex_shader || !GLEW_ARB_fragment_shader) {
+	if (!GLEW_ARB_vertex_shader || !GLEW_ARB_fragment_shader)
+	{
 		printf("No OpenGL 2.0 shader available :(\n");
 		gShaderAvailable = 0;
 	}
 
 	gFramebufferAvailable = 1;
-	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil) {
+	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil)
+	{
 		printf("No framebuffer object available :(\n");
 		gFramebufferAvailable = 0;
 	}
 
 	gVertexbufferAvailable = 1;
-	if (!GLEW_ARB_vertex_buffer_object) {
+	if (!GLEW_ARB_vertex_buffer_object)
+	{
 		printf("No vertex buffer object available :(\n");
 		gVertexbufferAvailable = 0;
 	}
 
 	gTwoSideStencilAvailable = 1;
-	if (!GLEW_EXT_stencil_two_side || !GLEW_EXT_stencil_wrap) {
+	if (!GLEW_EXT_stencil_two_side || !GLEW_EXT_stencil_wrap)
+	{
 		printf("No two side stencil available :(\n");
 		gTwoSideStencilAvailable = 0;
 	}
 
-	if (hasShader()) {
+	if (hasShader())
+	{
 		sgSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
 		if (sgSpotlightShader) {
 			printf("Spotlight-Shader ready :-)\n");
@@ -76,43 +82,62 @@ void initFeatures(int argc, char* argv[]) {
 
 /* has...? */
 
-int hasShader(void) {
+int hasShader(void)
+{
 	return gShaderAvailable;
 }
 
-int hasFramebuffer(void) {
+int hasFramebuffer(void)
+{
 	return gFramebufferAvailable;
 }
 
-int hasVertexbuffer(void) {
+int hasVertexbuffer(void)
+{
 	return gVertexbufferAvailable;
 }
 
-int hasTwoSideStencil(void) {
+int hasTwoSideStencil(void)
+{
 	return gTwoSideStencilAvailable;
 }
 
-int hasSpotlight(void) {
+int hasSpotlight(void)
+{
 	return 0 && hasShader();
 }
 
 /* set */
 
-void setShadows(int use) {
+void setSpotlight(int use)
+{
+	gUseSpotlight = use;
+}
+
+void setShadows(int use)
+{
 	gUseShadows = use;
 }
 
-void setSpotlight(int use) {
-	gUseSpotlight = use;
+void setReflection(int use)
+{
+	gUseReflection = use;
 }
 
 /* use...? */
 
-int useShadows(void) {
+int useSpotlight(void)
+{
+	return hasSpotlight() && gUseSpotlight;
+}
+
+int useShadows(void)
+{
 	return gUseShadows;
 }
 
-int useSpotlight(void) {
-	return hasSpotlight() && gUseSpotlight;
+int useReflection(void)
+{
+	return gUseReflection;
 }
 
