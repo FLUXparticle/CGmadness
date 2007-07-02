@@ -31,7 +31,7 @@
 
 #include <GL/gl.h>
 
-#define REFLECTION 0
+#define REFLECTION 1
 #define SKY 1
 #define WATER 1
 
