@@ -54,8 +54,8 @@ void updateWater(float interval)
 
 void multiTexCoord2f(float u, float v)
 {
-	glMultiTexCoord2fARB(GL_TEXTURE0_ARB, 1.0f * gWaterAnim + 0.25f * u, 1.0f * gWaterAnim + 0.25f * v);
-	glMultiTexCoord2fARB(GL_TEXTURE1_ARB, 0.5f * gWaterAnim + 0.25f * u, 0.5f * gWaterAnim + 0.25f * v);
+	glMultiTexCoord2f(GL_TEXTURE0, 1.0f * gWaterAnim + 0.25f * u, 1.0f * gWaterAnim + 0.25f * v);
+	glMultiTexCoord2f(GL_TEXTURE1, 0.5f * gWaterAnim + 0.25f * u, 0.5f * gWaterAnim + 0.25f * v);
 }
 
 void drawWaterPolygones(void)
@@ -111,19 +111,19 @@ void drawWater(void)
 
 		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
 
-		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glActiveTexture(GL_TEXTURE0);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, gWaterTexture);
 
-		glActiveTextureARB(GL_TEXTURE1_ARB);
+		glActiveTexture(GL_TEXTURE1);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, gWaterTexture);
 
 			drawWaterPolygones();
 
-		glActiveTextureARB(GL_TEXTURE1_ARB);
+		glActiveTexture(GL_TEXTURE1);
 		glDisable(GL_TEXTURE_2D);
-		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_TEXTURE_2D);
 
 	glPopMatrix();

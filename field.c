@@ -349,12 +349,12 @@ void drawGameField(int ballReflection) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 
-  glClientActiveTextureARB(GL_TEXTURE0_ARB);
+  glClientActiveTextureARB(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	if (useShadows())
 	{
-		glClientActiveTextureARB(GL_TEXTURE1_ARB);
+		glClientActiveTextureARB(GL_TEXTURE1);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
@@ -367,13 +367,13 @@ void drawGameField(int ballReflection) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
 		glNormalPointer(GL_FLOAT, 0, NULL);
 
-	  glClientActiveTextureARB(GL_TEXTURE0_ARB);
+	  glClientActiveTextureARB(GL_TEXTURE0);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
 		if (useShadows())
 		{
-			glClientActiveTextureARB(GL_TEXTURE1_ARB);
+			glClientActiveTextureARB(GL_TEXTURE1);
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
 			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 		}
@@ -385,25 +385,25 @@ void drawGameField(int ballReflection) {
 
 		glNormalPointer(GL_FLOAT, 0, sgNormals);
 
-	  glClientActiveTextureARB(GL_TEXTURE0_ARB);
+	  glClientActiveTextureARB(GL_TEXTURE0);
 		glTexCoordPointer(2, GL_FLOAT, 0, gTexCoords);
 
 		if (useShadows())
 		{
-			glClientActiveTextureARB(GL_TEXTURE1_ARB);
+			glClientActiveTextureARB(GL_TEXTURE1);
 			glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
 		}
 
 		glColorPointer(4, GL_FLOAT, 0, gColors);
 	}
 
-  glActiveTextureARB(GL_TEXTURE0_ARB);
+  glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
 
 	if (useShadows())
 	{
-	  glActiveTextureARB(GL_TEXTURE1_ARB);
+	  glActiveTexture(GL_TEXTURE1);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 	}
@@ -412,11 +412,11 @@ void drawGameField(int ballReflection) {
 
 	if (useShadows())
 	{
-		glActiveTextureARB(GL_TEXTURE1_ARB);
+		glActiveTexture(GL_TEXTURE1);
 		glDisable(GL_TEXTURE_2D);
 	}
 
-  glActiveTextureARB(GL_TEXTURE0_ARB);
+  glActiveTexture(GL_TEXTURE0);
 	glDisable(GL_TEXTURE_2D);
 
 	if (hasVertexbuffer()) {
@@ -428,11 +428,11 @@ void drawGameField(int ballReflection) {
 
 	if (useShadows())
 	{
-		glClientActiveTextureARB(GL_TEXTURE1_ARB);
+		glClientActiveTextureARB(GL_TEXTURE1);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
-  glClientActiveTextureARB(GL_TEXTURE0_ARB);
+  glClientActiveTextureARB(GL_TEXTURE0);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glDisableClientState(GL_COLOR_ARRAY);
