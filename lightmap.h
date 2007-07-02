@@ -25,8 +25,6 @@
 
 #include "vector.h"
 
-#include <GL/gl.h>
-
 #define LIGHT_MAP_SIZE 8
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
@@ -43,16 +41,16 @@ int getCntAllocatedSubLightMaps(void);
 
 void freeLightMap(void);
 
-void lightMapToTexture(GLuint texID);
+void lightMapToTexture(unsigned int texID);
 
-void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP]);
+void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
+void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
 
 void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
 
-void setLightMap(LightMap* lightMap, int x, int y, GLfloat value);
+void setLightMap(LightMap* lightMap, int x, int y, float value);
 
 Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
 

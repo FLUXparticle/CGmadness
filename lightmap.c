@@ -24,6 +24,8 @@
 
 #include "debug.h"
 
+#include <GL/gl.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -34,7 +36,7 @@ static int gCols;
 static int gRows;
 static int gSizeX;
 static int gSizeY;
-static GLfloat* gData;
+static float* gData;
 static int gAllocatedSubLightMaps;
 
 int nextPowerOfTwo(int i) {
@@ -77,19 +79,19 @@ void freeLightMap(void) {
 	gAllocatedSubLightMaps = 0;
 }
 
-GLfloat* getSubLightMapPixelPointer(int index, int sx, int sy) {
+float* getSubLightMapPixelPointer(int index, int sx, int sy) {
 	int x = (index % gCols) * LIGHT_MAP_SIZE + sx;
 	int y = (index / gCols) * LIGHT_MAP_SIZE + sy;
 	return &gData[y * gSizeX + x];
 }
 
-void setSubLightMapPixel(int index, int sx, int sy, GLfloat value) {
-	GLfloat* p = getSubLightMapPixelPointer(index, sx, sy);
+void setSubLightMapPixel(int index, int sx, int sy, float value) {
+	float* p = getSubLightMapPixelPointer(index, sx, sy);
 	*p = value;
 }
 
-GLfloat getSubLightMapPixel(int index, int sx, int sy) {
-	GLfloat* p = getSubLightMapPixelPointer(index, sx, sy);
+float getSubLightMapPixel(int index, int sx, int sy) {
+	float* p = getSubLightMapPixelPointer(index, sx, sy);
 	return *p;
 }
 
@@ -97,12 +99,12 @@ Vector2 transformSubCoords(int index, const Vector2 coords) {
 	return vector2(((index % gCols) + coords.x) / gCols, ((index / gCols) + coords.y) / gRows);
 }
 
-void lightMapToTexture(GLuint texID) {
+void lightMapToTexture(unsigned int texID) {
 	glBindTexture(GL_TEXTURE_2D, texID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, gSizeX, gSizeY, 0, GL_LUMINANCE, GL_FLOAT, gData);
 }
 
-void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP])
+void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
 {
 	int i = 0;
 
@@ -118,7 +120,7 @@ void getSubLightMap(int index, GLfloat data[SIZEOF_LIGHT_MAP])
 	}
 }
 
-void setSubLightMap(int index, const GLfloat data[SIZEOF_LIGHT_MAP])
+void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 {
 	int i = 0;
 
@@ -143,7 +145,7 @@ void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY) {
 	gAllocatedSubLightMaps += sizeX * sizeY;
 }
 
-void setLightMap(LightMap* lightMap, int x, int y, GLfloat value) {
+void setLightMap(LightMap* lightMap, int x, int y, float value) {
 	int index;
 
 	assert(x >= 0 && x < lightMap->sizeX * LIGHT_MAP_SIZE);
