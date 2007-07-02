@@ -21,143 +21,110 @@
  */
 
 #include "skyplane.h"
+
 #include "features.h"
+#include "functions.h"
+#include "vector.h"
 
 #include "debug.h"
 
 #include <math.h>
 
-typedef struct tVertex {
-	float x;
-	float y;
-	float z;
+#define PLANET_RADIUS 2000.0f
+#define ATMOSPHERE_RADIUS 180.0f
+#define hTile 3
+#define vTile 3
+#define ALPHA 0.85f
+#define DIVS 40
+#define exponentialFadeout 0
 
-	float alpha;
+#define NUM_OF_VERTS ((DIVS + 1) * (DIVS + 1))
+#define NUM_OF_INDICES (DIVS * DIVS * 2 * 3)
 
-	float u;
-	float v;
-} tVertex;
+static int texID;
 
-int numOfVerts;
-int numOfIndices;
-int texID;
+static Vector3 gPlaneVerts[NUM_OF_VERTS];
+static Vector2 gPlaneTexCoords[NUM_OF_VERTS];
+static Color4 gPlaneColors[NUM_OF_VERTS];
+static GLuint gIndices[NUM_OF_INDICES];
 
-tVertex  *PlaneVerts = NULL;
-int 	   *Indices = NULL;
+void initSkyplane(void) {
+	float planeSize = 2.0f * PLANET_RADIUS / sqrt(2.0);
+	float delta = planeSize / DIVS;
+	float alpharadius_squared = sqr(planeSize * ALPHA * 0.5f);
+	float planetradius_squared = sqr(PLANET_RADIUS);
 
-void initSkyplane(float PlanetRadius, float AtmosphereRadius, float hTile, float vTile, float alpha, int divs, int exponentialFadeout) {
-	float planeSize;
-	float delta;
-	float tex_delta;
-	float xdist;
-	float ydist;
-	float xheight;
-	float yheight;
-	float height;
-	float alpharadius_squared;
-	float planetradius_squared;
 	int i;
 	int j;
-	tVertex SV;
 	int index = 0;
 
 	texID = loadTexture("data/clouds.tga", 1);
 
-  if (divs < 1) {
-		divs = 1;
-	}
+	for (i = 0; i <= DIVS; i++) {
+		for (j = 0; j <= DIVS; j++) {
+			int idx = i * (DIVS + 1) + j;
 
-	if (alpha > 1.0f) {
-		alpha = 1.0f;
-	}
+			float xdist = (j * delta) - (0.5f * planeSize);
+			float ydist = (i * delta) - (0.5f * planeSize);
 
-	numOfVerts = (divs + 1) * (divs + 1);
-	numOfIndices = divs * divs * 2 * 3;
+			float xheight = sqr(xdist);
+			float yheight = sqr(ydist);
+			float height = (xheight + yheight) / planetradius_squared;
 
-	MALLOC(PlaneVerts, numOfVerts * sizeof(tVertex));
-	MALLOC(Indices,    numOfIndices * sizeof(int));
+			float zdist = (1.0f - height) * ATMOSPHERE_RADIUS;
 
-	planeSize =  sqrt(((2.0 * PlanetRadius) * (2.0 * PlanetRadius)) * 0.5);
-	delta     =  planeSize / divs;
-	tex_delta =  1.0f / divs;
+			float u = hTile * ((float) j / DIVS);
+			float v = vTile * ((float) i / DIVS);
 
-	alpharadius_squared  = (planeSize * alpha * 0.5f) * (planeSize * alpha * 0.5f);
-	planetradius_squared = PlanetRadius*PlanetRadius;
+			float alpha = (xheight + yheight) / alpharadius_squared;
 
-	for (i = 0; i <= divs; i++) {
-		for (j = 0; j <= divs; j++) {
-			xdist = ( -0.5f * planeSize) + (j * delta);
-			ydist = ( -0.5f * planeSize) + (i * delta);
+#if (exponentialFadeout)
+			alpha = sqr(alpha) * alpha;
+#endif
 
-			xheight = xdist * xdist;
-			yheight = ydist * ydist;
-			height = (xheight + yheight) / planetradius_squared;
+			alpha = max(0.0f, 1.0f - alpha);
 
-			SV.x = xdist;
-			SV.y = ydist;
-			SV.z = (1.f - height) * AtmosphereRadius;
- 			SV.alpha = (xheight + yheight) / alpharadius_squared;
-
-			if (exponentialFadeout) {
-	      SV.alpha = SV.alpha * SV.alpha * SV.alpha;
-			}
-
-			SV.alpha = 1.0f - SV.alpha;
-
-			if (SV.alpha < 0.0f) {
-	      SV.alpha = 0.0f;
-			}
-
-			/* Calculate the texture coordinates */
-			SV.u = hTile * ((float) j * tex_delta);
-			SV.v = vTile * ((float) i * tex_delta);
-
-			PlaneVerts[i * (divs + 1) + j] = SV;
+			gPlaneVerts[idx] = vector3(xdist, ydist, zdist);
+			gPlaneTexCoords[idx] = vector2(u, v);
+			gPlaneColors[idx] = color4(1.0f, 1.0f, 1.0f, alpha);
 		}
 	}
 
-	for (i = 0; i < divs; i++) {
-		for(j = 0; j < divs; j++) {
-			int startVert;
+	for (i = 0; i < DIVS; i++) {
+		for(j = 0; j < DIVS; j++) {
+			int startVert = i * (DIVS + 1) + j;
 
-			startVert  = i * (divs + 1) + j;
+			gIndices[index++] = startVert;
+			gIndices[index++] = startVert + DIVS + 1;
+			gIndices[index++] = startVert + 1;
 
-			Indices[index++] = startVert;
-			Indices[index++] = startVert + divs + 1;
-			Indices[index++] = startVert + 1;
-
-			Indices[index++] = startVert + 1;
-			Indices[index++] = startVert + divs + 1;
-			Indices[index++] = startVert + divs + 2;
+			gIndices[index++] = startVert + 1;
+			gIndices[index++] = startVert + DIVS + 1;
+			gIndices[index++] = startVert + DIVS + 2;
 		}
 	}
 }
 
 void drawSkyplane(void) {
-	int i;
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glPushMatrix();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, texID);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glVertexPointer(3, GL_FLOAT, 0, gPlaneVerts);
+		glTexCoordPointer(2, GL_FLOAT, 0, gPlaneTexCoords);
+		glColorPointer(4, GL_FLOAT, 0, gPlaneColors);
 
-		glBegin(GL_TRIANGLES);
-			for (i = 0; i< numOfIndices; i++) {
-				glColor4f(1.0f, 1.0f, 1.0f, PlaneVerts[Indices[i]].alpha);
-				glTexCoord2f(PlaneVerts[Indices[i]].u, PlaneVerts[Indices[i]].v);
-				glVertex3f(PlaneVerts[Indices[i]].x, PlaneVerts[Indices[i]].y, PlaneVerts[Indices[i]].z);
-			}
-		glEnd();
+			glDrawElements(GL_TRIANGLES, NUM_OF_INDICES, GL_UNSIGNED_INT, gIndices);
 
-		glDisable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 
-	glPopMatrix();
-}
-
-void destroySkyPlane(void){
-	FREE(PlaneVerts);
-	FREE(Indices);
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }

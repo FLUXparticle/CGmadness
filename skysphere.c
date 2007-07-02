@@ -31,21 +31,20 @@
 
 #define DAMPENING 0.8
 
-/* SIDES of the skydome */
 #define SIDES  30
-
-/* SLICES of the skydome */
 #define SLICES 48
 
 /* Vertexcount of the dome */
 #define NUMVERTS ((SLICES + 1) * (SIDES + 1))
 #define NUMINDICES (SLICES * (SIDES + 1) * 2)
 
-#define USE_VERTEX_ARRAY 0
+#define SKY_TEXTURE 0
 
-Vector3 VertexBuffer[NUMVERTS];
-Vector2 TextureBuffer[NUMVERTS];
-GLuint IndexBuffer[NUMINDICES];
+static Vector3 gVertexBuffer[NUMVERTS];
+#if (SKY_TEXTURE)
+static Vector2 gTextureBuffer[NUMVERTS];
+#endif
+static GLuint gIndexBuffer[NUMINDICES];
 
 void initSkysphere(void) {
 	int i;
@@ -69,13 +68,13 @@ void initSkysphere(void) {
 			vy = sin(angle2) * cos(angle1);
 			vz = 0.1f * sin(angle1);
 
-			VertexBuffer[j * (SIDES + 1) + i].x = vx;
-			VertexBuffer[j * (SIDES + 1) + i].z = vz;
-			VertexBuffer[j * (SIDES + 1) + i].y = vy;
+			gVertexBuffer[j * (SIDES + 1) + i].x = vx;
+			gVertexBuffer[j * (SIDES + 1) + i].z = vz;
+			gVertexBuffer[j * (SIDES + 1) + i].y = vy;
 
-#if 0
-			TextureBuffer[j * (SIDES + 1) + i].x = (float)(i) / (float)(SIDES);
-			TextureBuffer[j * (SIDES + 1) + i].y = (float)(j) / (float)(SLICES);
+#if (SKY_TEXTURE)
+			gTextureBuffer[j * (SIDES + 1) + i].x = (float) i / SIDES;
+			gTextureBuffer[j * (SIDES + 1) + i].y = (float) j / SLICES;
 #endif
 		}
 	}
@@ -84,14 +83,14 @@ void initSkysphere(void) {
 	ind = 0;
 	for(j = 1; j <= SLICES; j++) {
 		for(i = 0; i <= SIDES; i++) {
-			IndexBuffer[ind++] = (j - 1) * (SIDES + 1) + i;
-			IndexBuffer[ind++] = j * (SIDES + 1) + i;
+			gIndexBuffer[ind++] = (j - 1) * (SIDES + 1) + i;
+			gIndexBuffer[ind++] = j * (SIDES + 1) + i;
 		}
 	}
 }
 
 void drawSkysphere(void) {
-	int i, j;
+	int j;
 
 	glColor3f(0.651f, 0.682f, 1.0f);
 
@@ -100,26 +99,14 @@ void drawSkysphere(void) {
 		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
 		glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
 
-#if (USE_VERTEX_ARRAY)
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, VertexBuffer);
-#endif
+		glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
 
-		for (j = 0; j < SLICES; j++) {
-#if (USE_VERTEX_ARRAY)
-			glDrawElements(GL_TRIANGLE_STRIP, (SIDES + 1) * 2, GL_UNSIGNED_INT, &IndexBuffer[j * (SIDES + 1) * 2]);
-#else
-			glBegin(GL_TRIANGLE_STRIP);
-			for (i = 0; i < (SIDES + 1) * 2; i++) {
-				glVertex3f(VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].x, VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].y, VertexBuffer[IndexBuffer[j * (SIDES + 1) * 2 + i]].z);
+			for (j = 0; j < SLICES; j++) {
+				glDrawElements(GL_TRIANGLE_STRIP, (SIDES + 1) * 2, GL_UNSIGNED_INT, &gIndexBuffer[j * (SIDES + 1) * 2]);
 			}
-			glEnd();
-#endif
-		}
 
-#if (USE_VERTEX_ARRAY)
 		glDisableClientState(GL_VERTEX_ARRAY);
-#endif
 
 	glPopMatrix();
 }

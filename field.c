@@ -25,7 +25,6 @@
 #include "common.h"
 #include "game.h"
 
-#include "vector.h"
 #include "ball.h"
 #include "features.h"
 
@@ -65,8 +64,6 @@ static int gCntSpotlightIndices;
 static int* gSpotlightIndices;
 
 static int* gIndexVertices;
-
-static int gDirtyField;
 
 void setColor(Color4 col) {
 	gDefaultColor = col;
@@ -214,8 +211,6 @@ void initGameField(void) {
 		gCntSpotlightIndices = 0;
 		MALLOC(gSpotlightIndices, sgCntVertices * sizeof(int));
 	}
-
-	gDirtyField = 1;
 }
 
 void destroyGameField(void) {
@@ -323,7 +318,7 @@ void updateGameField(void) {
 		int my = floor(sgLight[sgGameSpotLight].pos.y);
 		int max = ceil(sgLight[sgGameSpotLight].pos.z * tan(sgLight[sgGameSpotLight].cutoff * PI / 180.0f));
 
-		if (gDirtyField || (mx != mxSpot || my != mySpot || max != maxSpot)) {
+		if (mx != mxSpot || my != mySpot || max != maxSpot) {
 			int dx;
 			int dy;
 
@@ -348,8 +343,6 @@ void updateGameField(void) {
 		}
 	}
 #endif
-
-	gDirtyField = 0;
 }
 
 void drawGameField(int ballReflection) {
@@ -358,8 +351,12 @@ void drawGameField(int ballReflection) {
 
   glClientActiveTextureARB(GL_TEXTURE0_ARB);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	if (useShadows())
+	{
+		glClientActiveTextureARB(GL_TEXTURE1_ARB);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
 
 	glEnableClientState(GL_COLOR_ARRAY);
 
@@ -374,9 +371,12 @@ void drawGameField(int ballReflection) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
-	  glClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		if (useShadows())
+		{
+			glClientActiveTextureARB(GL_TEXTURE1_ARB);
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
+			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		}
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[4]);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
@@ -388,8 +388,11 @@ void drawGameField(int ballReflection) {
 	  glClientActiveTextureARB(GL_TEXTURE0_ARB);
 		glTexCoordPointer(2, GL_FLOAT, 0, gTexCoords);
 
-	  glClientActiveTextureARB(GL_TEXTURE1_ARB);
-		glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
+		if (useShadows())
+		{
+			glClientActiveTextureARB(GL_TEXTURE1_ARB);
+			glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
+		}
 
 		glColorPointer(4, GL_FLOAT, 0, gColors);
 	}
@@ -398,14 +401,20 @@ void drawGameField(int ballReflection) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+	if (useShadows())
+	{
+	  glActiveTextureARB(GL_TEXTURE1_ARB);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+	}
 
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);
-	glDisable(GL_TEXTURE_2D);
+	if (useShadows())
+	{
+		glActiveTextureARB(GL_TEXTURE1_ARB);
+		glDisable(GL_TEXTURE_2D);
+	}
 
   glActiveTextureARB(GL_TEXTURE0_ARB);
 	glDisable(GL_TEXTURE_2D);
@@ -417,8 +426,12 @@ void drawGameField(int ballReflection) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 
-  glClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	if (useShadows())
+	{
+		glClientActiveTextureARB(GL_TEXTURE1_ARB);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+
   glClientActiveTextureARB(GL_TEXTURE0_ARB);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 

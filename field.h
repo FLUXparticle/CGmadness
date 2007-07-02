@@ -23,12 +23,7 @@
 #ifndef _field_h_
 #define _field_h_
 
-typedef struct {
-	float r;
-	float g;
-	float b;
-	float a;
-} Color4;
+#include "vector.h"
 
 void setSquareColor(int q, Color4 col);
 

@@ -33,14 +33,6 @@ void resetCRC32(void)
 
 void nextBit(int bit)
 {
-	int regBit = gRegister & 1;
-
-	gRegister >>= 1;
-
-	if (regBit != bit)
-	{
-		gRegister ^= CRC32_POLYNOMIAL;
-	}
 }
 
 void nextByte(unsigned char byte)
@@ -48,7 +40,15 @@ void nextByte(unsigned char byte)
 	int i;
 	for (i = 0; i < 8; i++)
 	{
-		nextBit((byte >> i) & 1);
+		int bit = (byte >> i) & 1;
+		int regBit = gRegister & 1;
+
+		gRegister >>= 1;
+
+		if (regBit != bit)
+		{
+			gRegister ^= CRC32_POLYNOMIAL;
+		}
 	}
 }
 

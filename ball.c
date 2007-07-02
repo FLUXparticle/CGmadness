@@ -104,7 +104,8 @@ void changeBall(int layout) {
 	}
 }
 
-void updateReflection(void) {
+void updateReflection(void)
+{
 	static Vector3 lookat[] = {
 		{  1.0f,  0.0f,  0.0f },
 		{ -1.0f,  0.0f,  0.0f },
@@ -127,7 +128,8 @@ void updateReflection(void) {
     { 0.0f, -1.0f,  0.0f }
 	};
 
-	if (useBallReflection() && gDirtyReflection) {
+	if (useBallReflection() && gDirtyReflection)
+	{
 		int i;
 
 		glMatrixMode(GL_PROJECTION);
