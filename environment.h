@@ -24,7 +24,6 @@
 #define _environment_h_
 
 #define ENVIRONMENT_SIZE 400.0f
-#define WATER_LEVEL 0.0f
 
 void initEnvironment(void);
 void updateEnvironment(float interval);

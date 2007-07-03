@@ -39,4 +39,5 @@ void main() {
  	normal = normalize(gl_NormalMatrix * vec3(gl_Normal));
 
 	gl_Position = ftransform();
+	gl_ClipVertex = ecPos;
 }

@@ -96,7 +96,6 @@ void drawSkysphere(void) {
 
 	glPushMatrix();
 
-		glTranslatef(0.0f, 0.0f, WATER_LEVEL);
 		glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
