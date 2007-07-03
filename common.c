@@ -22,7 +22,6 @@
 
 #include "common.h"
 
-#include "callback.h"
 #include "lightmap.h"
 #include "progress.h"
 #include "crc32.h"
@@ -34,6 +33,7 @@
 #include <GL/glu.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <assert.h>
 
@@ -46,9 +46,6 @@
 #define THIS_CGM_VERSION 2
 
 #define BOTTOM -0.0f
-
-Vector3 sgCamera;
-Vector3 sgLookat;
 
 int sgCntVertices;
 
@@ -93,34 +90,6 @@ float getMaxZValue(const Square* square) {
 		}
 	}
 	return res;
-}
-
-void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
-	Vector3 diff;
-	Vector3 up = { 0.0f, 0.0f, 1.0f };
-	float error;
-
-
-	/* new values */
-	diff = sub(camera, sgCamera);
-	error = len(diff);
-	sgCamera = add(sgCamera, scale(5.0f * interval * error, norm(diff)));
-
-	diff = sub(lookat, sgLookat);
-	error = len(diff);
-	sgLookat = add(sgLookat, scale(5.0f * interval * error, norm(diff)));
-
-	/* set camera */
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	gluLookAt(
-			sgCamera.x,  sgCamera.y, sgCamera.z,
-			sgLookat.x, sgLookat.y, sgLookat.z,
-			up.x, up.y, up.z
-			);
-
-	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
 }
 
 int getFieldEdgeHeight(int x, int y, int edge) {
@@ -599,10 +568,6 @@ void updateTextures(int verbose) {
 	}
 }
 
-void initCommon(void) {
-	resetCamera();
-}
-
 void destroyCommon(void) {
 	FREE(gDataWalls[0]);
 	FREE(gDataWalls[1]);
@@ -618,16 +583,6 @@ void destroyCommon(void) {
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
-}
-
-void resetCamera(void) {
-	sgCamera.x = 0.0f;
-	sgCamera.y = 0.0f;
-	sgCamera.z = 1.0f;
-
-	sgLookat.x = 0.0f;
-	sgLookat.y = 0.0f;
-	sgLookat.z = 0.0f;
 }
 
 void allocLevelDataMemory(void) {

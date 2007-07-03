@@ -23,6 +23,7 @@
 #include "field.h"
 
 #include "common.h"
+#include "camera.h"
 #include "game.h"
 
 #include "ball.h"

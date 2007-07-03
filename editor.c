@@ -27,6 +27,7 @@
 
 #include "graph.h"
 #include "callback.h"
+#include "camera.h"
 #include "keyboard.h"
 #include "texture.h"
 #include "lightmap.h"

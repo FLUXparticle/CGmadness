@@ -64,9 +64,6 @@ typedef struct {
 	unsigned int lightMap;
 } Level;
 
-extern Vector3 sgCamera;
-extern Vector3 sgLookat;
-
 extern Level sgLevel;
 
 extern int sgMaxPlates;
@@ -86,8 +83,6 @@ void updateTextures(int verbose);
 void initCommon(void);
 void destroyCommon(void);
 
-void resetCamera(void);
-
 void newLevel(void);
 int loadFieldFromFile(const char* filename);
 int saveFieldToFile(const char* filename);
@@ -98,8 +93,6 @@ void getRoofSquare(int x, int y, Square* square);
 int getSideSquares(int x, int y, int side, Square** square);
 
 float getMaxZValue(const Square* square);
-
-void moveCamera(float interval, Vector3 camera, Vector3 lookat);
 
 void getVertIndex(int x, int y, int* start, int* end);
 

@@ -20,45 +20,15 @@
  *
  */
 
-#include "main.h"
-#include "common.h"
+#ifndef _camera_h_
+#define _camera_h_
 
-#include <stdio.h>
-#include <string.h>
+#include "vector.h"
 
-void usage(void)
-{
-	printf("usage: upgrade-cgm <cgm-file>\n");
-}
+extern Vector3 sgCamera;
+extern Vector3 sgLookat;
 
-int main(int argc, char* argv[])
-{
-	char* file = NULL;
-	int i;
+void resetCamera(void);
+void moveCamera(float interval, Vector3 camera, Vector3 lookat);
 
-	message();
-
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-
-	/* read parameters */
-	for (i = 1; i < argc; )
-	{
-		file = argv[i++];
-	}
-
-	if (!file)
-	{
-		usage();
-		return 1;
-	}
-
-	if (loadFieldFromFile(file) && saveFieldToFile(file))
-	{
-		printf("'%s' upgraded successfully.\n", file);
-	} else {
-		printf("'%s' not upgraded!\n", file);
-	}
-
-  return 0;
-}
+#endif

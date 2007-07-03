@@ -33,6 +33,7 @@
 #include "features.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "camera.h"
 #include "callback.h"
 #include "environment.h"
 #include "texture.h"
@@ -311,7 +312,7 @@ void initFog(void) {
 }
 
 int initGame(void) {
-	initCommon();
+	resetCamera();
 
 	initObjects();
 

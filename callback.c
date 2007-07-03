@@ -213,6 +213,8 @@ void startTimer(int callsPerSecond) {
 	timer(glutGet(GLUT_ELAPSED_TIME));
 }
 
+/*** Picking ***/
+
 int pick(int x, int y) {
   int viewport[4];
 	float aspect;
