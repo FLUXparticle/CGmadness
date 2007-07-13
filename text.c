@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -34,15 +34,44 @@
 
 #define SCALE 0.1f
 
-void drawBitmapText(const char *str) {
-	glDisable(GL_DEPTH_TEST);
+void drawBitmapText(const char *str)
+{
 	for (; *str; str++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
 	}
-	glEnable(GL_DEPTH_TEST);
 }
 
-void addChar(Object* obj, float* x, funcDraw draw, float width) {
+void drawStrokeText(const char* str)
+{
+	const char* s;
+	for (s = str; *s; s++) {
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
+	}
+}
+
+float widthStrokeText(const char* str)
+{
+	float width = 0.0f;
+
+	const char* s;
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(5.0);
+
+  for (s = str; *s; s++) {
+		width += glutStrokeWidth(GLUT_STROKE_ROMAN, *s);
+	}
+
+	glDisable(GL_BLEND);
+	glDisable(GL_LINE_SMOOTH);
+
+	return width;
+}
+
+void addChar(Object* obj, float* x, funcDraw draw, float width)
+{
 	Object* oChar;
 
 	MALLOC(oChar, sizeof(Object));
@@ -57,10 +86,11 @@ void addChar(Object* obj, float* x, funcDraw draw, float width) {
 	addSubObject(obj, oChar);
 }
 
-float makeTextObject(Object* obj, const char* text) {
+float makeTextObject(Object* obj, const char* text)
+{
 	const char* s;
 	float x = 0;
-	
+
 	initObjectGroup(obj);
 
 	for (s = text; *s; s++) {

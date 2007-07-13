@@ -45,6 +45,7 @@ typedef struct {
 } Ball;
 
 extern Ball sgoBall;
+extern int sgIsBallInPieces;
 
 void initBall(void);
 

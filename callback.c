@@ -83,6 +83,10 @@ void display(void) {
 	static int cntPredisplayTime = 0;
 	float predisplayTime = 0.0f;
 #endif
+
+	Viewport* v = gTargetWindow.viewport;
+	float aspect = (float) gTargetWindow.height / gTargetWindow.width;
+
 	if (gPreDisplay) {
 #if(DEBUG_PREDISPLAY)
 		int after;
@@ -101,9 +105,6 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	{
-		Viewport* v = gTargetWindow.viewport;
-		float aspect = (float) gTargetWindow.height / gTargetWindow.width;
-
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(&v->projection[0][0]);
 		glScalef(aspect, 1.0f, 1.0f);
@@ -121,18 +122,37 @@ void display(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	{
+	glDisable(GL_DEPTH_TEST);
+
+		if (v->drawHUD)
+		{
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+
+					glScalef(aspect, 1.0f, 1.0f);
+
+					glMatrixMode(GL_MODELVIEW);
+
+					v->drawHUD(1.0f / aspect, 1.0f);
+
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+		}
+
+		{
 #if(DEBUG_PREDISPLAY)
-		char text[48];
-		sprintf(text, "FPS: %4.1f PredisplayTime: %4.1f%%", gFPS, predisplayTime * 100.0f);
+			char text[48];
+			sprintf(text, "FPS: %4.1f PredisplayTime: %4.1f%%", gFPS, predisplayTime * 100.0f);
 #else
-		char text[20];
-		sprintf(text, "FPS: %4.1f", gFPS);
+			char text[20];
+			sprintf(text, "FPS: %4.1f", gFPS);
 #endif
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glRasterPos2f(0.0f, 0.0f);
-		drawBitmapText(text);
-	}
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			glRasterPos2f(0.0f, 0.0f);
+			drawBitmapText(text);
+		}
+
+	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
 	framerate();
@@ -166,7 +186,6 @@ void startDisplay(void) {
 	}
 
 	/* RenderTarget for main window */
-	gTargetWindow.enabled = 1;
 	gTargetWindow.framebuffer = 0;
 	gTargetWindow.viewport = &sgWindowViewport;
 

@@ -425,6 +425,7 @@ int initEditor(char* filename) {
 	gDirtyLightmaps = 0;
 
 	sgWindowViewport.draw = drawEditor;
+	sgWindowViewport.drawHUD = NULL;
 	sgWindowViewport.pick = pickEditor;
 	setUpdateFunc(updateEditor);
 

@@ -36,6 +36,7 @@
 #include "camera.h"
 #include "callback.h"
 #include "environment.h"
+#include "text.h"
 #include "texture.h"
 #include "lightmap.h"
 
@@ -57,6 +58,8 @@
 int sgRenderPass = 8;
 
 static int gIsGameRunning;
+
+static float gGameTime;
 
 #if (MOUSE_CONTROL)
 static int gDragX = 0;
@@ -167,6 +170,11 @@ void updateGame(float interval) {
 		updateBall(interval);
 
 		updateGameCamera(interval, sgoBall.pos);
+
+		if (!sgIsBallInPieces)
+		{
+			gGameTime += interval;
+		}
 	} else {
 		/* show menu */
 		Vector3 camera = gGameMenuPosistion;
@@ -185,6 +193,32 @@ void updateGame(float interval) {
 	updateGameField();
 
 	updateEnvironment(interval);
+}
+
+void drawGameHUD(float widthWindow, float heightWindow)
+{
+	int seconds = (int) gGameTime;
+	float scale = 0.0005;
+
+	char strTime[10];
+	float width;
+	float height;
+
+	sprintf(strTime, "%d:%02d.%01d",  seconds / 60, seconds % 60, (int) ((gGameTime - seconds) * 10.0f));
+
+	width = widthStrokeText(strTime) * scale;
+	height = 119.05 * scale;
+
+	glColor3f(1.0f, 1.0f, 0.0f);
+
+	glPushMatrix();
+
+		glTranslatef((widthWindow - width) / 2.0f, (heightWindow - height), 0.0f);
+		glScalef(scale, scale, scale);
+
+		drawStrokeText(strTime);
+
+	glPopMatrix();
 }
 
 void drawGame(void) {
@@ -213,6 +247,11 @@ void pickGame(void) {
 	}
 }
 
+void resetGameTime(void)
+{
+	gGameTime = 0.0f;
+}
+
 int initLevel(const char* filename) {
 	if (!loadFieldFromFile(filename)) {
 		return 0;
@@ -238,6 +277,8 @@ int initLevel(const char* filename) {
 	setGameMenuPosistion(gGameMenuPosistion);
 
 	updateGameCamera(0.0, gGameMenuPosistion);
+
+	resetGameTime();
 
 	return 1;
 }
@@ -340,6 +381,7 @@ int initGame(void) {
 	updateGameField();
 
 	sgWindowViewport.draw = drawGame;
+	sgWindowViewport.drawHUD = drawGameHUD;
 	sgWindowViewport.pick = pickGame;
 	setUpdateFunc(updateGame);
 

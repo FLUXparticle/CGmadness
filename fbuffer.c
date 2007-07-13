@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -80,8 +80,6 @@ int createFBuffer(int width, int height, unsigned int target, unsigned int color
 	context->width = width;
 	context->height = height;
 	context->framebuffer = fb;
-	context->texTarget = target;
-	context->texID = color_tex;
 	context->viewport = NULL;
 
 	return 1;
@@ -134,8 +132,6 @@ int initFBufferCube(int width, int height, RenderTarget context[6]) {
 		context[i].width = width;
 		context[i].height = height;
 		context[i].framebuffer = context[0].framebuffer;
-		context[i].texTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
-		context[i].texID = color_tex;
 		context[i].viewport = NULL;
 	}
 
