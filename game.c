@@ -198,7 +198,8 @@ void updateGame(float interval) {
 void drawGameHUD(float widthWindow, float heightWindow)
 {
 	int seconds = (int) gGameTime;
-	float scale = 0.0005;
+	float scale = 0.06f;
+	float widthDefault = widthStrokeText("x:xx.x") * scale;
 
 	char strTime[10];
 	float width;
@@ -207,13 +208,13 @@ void drawGameHUD(float widthWindow, float heightWindow)
 	sprintf(strTime, "%d:%02d.%01d",  seconds / 60, seconds % 60, (int) ((gGameTime - seconds) * 10.0f));
 
 	width = widthStrokeText(strTime) * scale;
-	height = 119.05 * scale;
+	height = scale;
 
 	glColor3f(1.0f, 1.0f, 0.0f);
 
 	glPushMatrix();
 
-		glTranslatef((widthWindow - width) / 2.0f, (heightWindow - height), 0.0f);
+		glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height), 0.0f);
 		glScalef(scale, scale, scale);
 
 		drawStrokeText(strTime);

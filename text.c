@@ -34,6 +34,8 @@
 
 #define SCALE 0.1f
 
+#define STROKE_SIZE 119.05f
+
 void drawBitmapText(const char *str)
 {
 	for (; *str; str++) {
@@ -43,10 +45,28 @@ void drawBitmapText(const char *str)
 
 void drawStrokeText(const char* str)
 {
+	float scale = 1.0f / STROKE_SIZE;
+
 	const char* s;
-	for (s = str; *s; s++) {
-		glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
-	}
+
+	glPushMatrix();
+
+		glScalef(scale, scale, scale);
+
+		glEnable(GL_BLEND);
+		glEnable(GL_LINE_SMOOTH);
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glLineWidth(4.0f);
+
+			for (s = str; *s; s++) {
+				glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
+			}
+
+		glDisable(GL_BLEND);
+		glDisable(GL_LINE_SMOOTH);
+
+	glPopMatrix();
 }
 
 float widthStrokeText(const char* str)
@@ -55,19 +75,11 @@ float widthStrokeText(const char* str)
 
 	const char* s;
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_LINE_SMOOTH);
-	glLineWidth(5.0);
-
   for (s = str; *s; s++) {
 		width += glutStrokeWidth(GLUT_STROKE_ROMAN, *s);
 	}
 
-	glDisable(GL_BLEND);
-	glDisable(GL_LINE_SMOOTH);
-
-	return width;
+	return width / STROKE_SIZE;
 }
 
 void addChar(Object* obj, float* x, funcDraw draw, float width)
