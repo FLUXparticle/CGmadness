@@ -26,7 +26,6 @@
 
 #include "debug.h"
 
-#include <GL/glew.h>
 #include <GL/glut.h>
 
 #include <stdio.h>
@@ -216,7 +215,7 @@ void startTimer(int callsPerSecond) {
 /*** Picking ***/
 
 int pick(int x, int y) {
-  int viewport[4];
+  GLint viewport[4];
 	float aspect;
 
 	int width  = gTargetWindow.width;

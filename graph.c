@@ -22,7 +22,7 @@
 
 #include "graph.h"
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 
@@ -97,7 +97,7 @@ void setObjectGroupColor(Object* obj, float r, float g, float b) {
 }
 
 void rotateObject(Object* obj, float angle, float* axis) {
-	int matrixMode;
+	GLint matrixMode;
 
 	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
 	glMatrixMode(GL_MODELVIEW);
@@ -212,7 +212,7 @@ void pickObject(const Object* obj) {
 		glPushName(obj->pickName);
 		isNameOnStack = 1;
 	} else {
-		int stackDepth;
+		GLint stackDepth;
 		glGetIntegerv(GL_NAME_STACK_DEPTH, &stackDepth);
 		isNameOnStack = (stackDepth > 0);
 	}
@@ -256,7 +256,7 @@ void drawObject(const Object* obj) {
 	glScalef(obj->scaleX, obj->scaleY, obj->scaleZ);
 
 	if (obj->draw) {
-		int alpha = 0;
+		GLint alpha = 0;
 
 		setAttributes(obj->colRed, obj->colGreen, obj->colBlue, obj->ambient, obj->diffuse, obj->shininess);
 

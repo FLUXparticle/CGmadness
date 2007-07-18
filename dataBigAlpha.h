@@ -25,7 +25,7 @@
 
 #include "graph.h"
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 extern float widthBigAlpha[];
 

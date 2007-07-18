@@ -25,6 +25,9 @@
 
 #include "vector.h"
 
+#include <GL/glew.h>
+#include <GL/glew.h>
+
 #define MAX_LEVEL_SIZE 100
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
@@ -60,8 +63,8 @@ typedef struct {
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
-	unsigned int plateTexture;
-	unsigned int lightMap;
+	GLuint plateTexture;
+	GLuint lightMap;
 } Level;
 
 extern Level sgLevel;

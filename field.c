@@ -35,7 +35,7 @@
 #include "debug.h"
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +53,7 @@ static Color4 gDefaultColor;
 static Vector2* gTexCoords;
 static Vector2* gLightMapCoords;
 static Color4* gColors;
-static unsigned int gVBuffers[5];
+static GLuint gVBuffers[5];
 
 static int gCntIndices = 0;
 static int* gIndices;

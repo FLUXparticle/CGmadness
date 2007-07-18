@@ -24,7 +24,7 @@
 
 #include "debug.h"
 
-#include <GL/glu.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -42,7 +42,7 @@ static int gUseReflection = 0;
 GLhandleARB sgSpotlightShader = 0;
 
 void initFeatures(int argc, char* argv[]) {
-	gShaderAvailable = 1;
+	gShaderAvailable = 0;
 	if (!GLEW_ARB_vertex_shader || !GLEW_ARB_fragment_shader)
 	{
 		printf("No OpenGL 2.0 shader available :(\n");

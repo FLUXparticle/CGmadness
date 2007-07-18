@@ -25,7 +25,7 @@
 #include "debug.h"
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 
@@ -88,7 +88,7 @@ int createFBuffer(int width, int height, unsigned int target, unsigned int color
 }
 
 int initFBuffer(int width, int height, RenderTarget* context) {
-	unsigned int color_tex;
+	GLuint color_tex;
 
   glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_2D, color_tex);
