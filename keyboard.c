@@ -1,17 +1,17 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -62,7 +62,7 @@ int gFunctionKeys[MAX_FUNCTION];
 int gModifiers = 0;
 
 int getModifiers(void) {
-	return gModifiers; 
+	return gModifiers;
 }
 
 int isPressed(const int* key) {
@@ -95,11 +95,11 @@ int wasCursorPressed(int cursor) {
 }
 
 int isFunctionPressed(int index) {
-	return index >= 1 && index < MAX_FUNCTION && isPressed(&gFunctionKeys[index - 1]);
+	return index >= 1 && index <= MAX_FUNCTION && isPressed(&gFunctionKeys[index - 1]);
 }
 
 int wasFunctionPressed(int index) {
-	return index >= 1 && index < MAX_FUNCTION && wasPressed(&gFunctionKeys[index - 1]);
+	return index >= 1 && index <= MAX_FUNCTION && wasPressed(&gFunctionKeys[index - 1]);
 }
 
 void keyboardDown(unsigned char key, int x, int y) {
@@ -158,7 +158,7 @@ void startKeyboard(void) {
 	for (i = 0; i < MAX_FUNCTION; i++) {
 		gFunctionKeys[i] = GLUT_UP;
 	}
-	
+
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp);
 	glutSpecialFunc(specialKeyDown);

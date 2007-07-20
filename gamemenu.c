@@ -44,6 +44,10 @@ typedef struct {
 	char* right;
 } LeftRight;
 
+static int gResume;
+
+static Object goLogo;
+
 static Button gbStart;
 static Button gbResume;
 
@@ -64,13 +68,12 @@ static LeftRight gTextHelp[] = {
 
 static Vector3 gGameMenuPosition;
 
-static Object goLogo;
-static Object goMainMenu;
-static Object goNextMenu;
-static Object goHelpMenu;
-static Object goEndMenu;
+Menu gMenuMain;
+Menu gMenuHelp;
+Menu gMenuNext;
+Menu gMenuEnd;
 
-static Object* gCurMenu;
+Menu* gCurMenu;
 
 /* events */
 
@@ -96,7 +99,7 @@ static void changeReflection(void* self) {
 }
 
 static void clickButtonHelp(void) {
-	gCurMenu = &goHelpMenu;
+	gCurMenu = &gMenuHelp;
 }
 
 static void clickButtonQuit(void) {
@@ -108,16 +111,17 @@ static void clickButtonAgain(void) {
 }
 
 static void clickButtonBack(void) {
-	gCurMenu = &goMainMenu;
+	gCurMenu = &gMenuMain;
 }
 
 void updateGameMenu(float interval) {
-	if (gCurMenu == &goMainMenu) {
+	if (gCurMenu == &gMenuMain)
+	{
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
 		}
 
-		if (gbResume.oButton.visible && wasKeyPressed(KEY_ESC)) {
+		if (gResume && wasKeyPressed(KEY_ESC)) {
 			clickButtonStart();
 		}
 
@@ -128,7 +132,9 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed('q')) {
 			clickButtonQuit();
 		}
-	} else if (gCurMenu == &goNextMenu) {
+	}
+	else if (gCurMenu == &gMenuNext)
+	{
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
 		}
@@ -136,15 +142,18 @@ void updateGameMenu(float interval) {
 		if (wasKeyPressed(KEY_ESC)) {
 			clickButtonBack();
 		}
-	} else if (gCurMenu == &goHelpMenu) {
+	}
+	else if (gCurMenu == &gMenuHelp)
+	{
 		if (wasKeyPressed(KEY_ESC)) {
 			clickButtonBack();
 		}
-	} else if (gCurMenu == &goEndMenu) {
+	}
+	else if (gCurMenu == &gMenuEnd)
+	{
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonAgain();
 		}
-
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q')) {
 			clickButtonQuit();
 		}
@@ -164,7 +173,7 @@ void drawGameMenu(void) {
 			glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
 
 			drawObject(&goLogo);
-			drawObject(gCurMenu);
+			drawMenuItem(&gCurMenu->item);
 
 		glPopMatrix();
 	glDisable(GL_LIGHTING);
@@ -174,25 +183,24 @@ void pickGameMenu(void) {
 	glPushMatrix();
 		glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
 
-		pickObject(gCurMenu);
+		pickMenuItem(&gCurMenu->item);
 
 	glPopMatrix();
 }
 
 void showGameMenu(int menu) {
-	gbStart.oButton.visible = menu == 0;
-	gbResume.oButton.visible = menu != 0;
+	gResume = menu != 0;
 
 	switch (menu) {
 	case 0:
 	case 1:
-		gCurMenu = &goMainMenu;
+		gCurMenu = &gMenuMain;
 		break;
 	case 2:
-		gCurMenu = &goNextMenu;
+		gCurMenu = &gMenuNext;
 		break;
 	case 3:
-		gCurMenu = &goEndMenu;
+		gCurMenu = &gMenuEnd;
 		break;
 	}
 
@@ -256,43 +264,23 @@ void initGameMenu() {
 	rotateObjectX(&goLogo, 90.0f);
 
 	/* main menu */
-	initObjectGroup(&goMainMenu);
-
 	initObject(&oBall, drawMenuBall);
 
-	init3dButton(&gbStart, 6.0f, clickButtonStart, "Start");
-  addSubObject(&goMainMenu, &gbStart.oButton);
-
-	init3dButton(&gbResume, 6.0f, clickButtonStart, "Resume");
-  addSubObject(&goMainMenu, &gbResume.oButton);
+	initButton(&gbStart, 6.0f, clickButtonStart, "Start");
+	initButton(&gbResume, 6.0f, clickButtonStart, "Resume");
 
 	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
-	addSubObject(&goMainMenu, &spinEditBall.oSpinEdit);
-
 	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
-  addSubObject(&goMainMenu, &gcShadows.oCheck);
-
 	init3dCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
-  addSubObject(&goMainMenu, &gcReflection.oCheck);
 
-	init3dButton(&bHelp, 2.0f,clickButtonHelp, "Help");
-  addSubObject(&goMainMenu, &bHelp.oButton);
-
-	init3dButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
-  addSubObject(&goMainMenu, &bQuit.oButton);
+	initButton(&bHelp, 2.0f,clickButtonHelp, "Help");
+	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
 
 	/* next level menu */
-	initObjectGroup(&goNextMenu);
-
-	init3dButton(&bContinue, 5.5f, clickButtonStart, "Continue");
-  addSubObject(&goNextMenu, &bContinue.oButton);
-
-	init3dButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
- 	addSubObject(&goNextMenu, &bMain.oButton);
+	initButton(&bContinue, 5.5f, clickButtonStart, "Continue");
+	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
 
 	/* help menu */
-	initObjectGroup(&goHelpMenu);
-
 	for (i = 0; i < LENGTH(gTextHelp); i++) {
 		float z = 6.0f - i;
 		float length;
@@ -304,8 +292,6 @@ void initGameMenu() {
 			setObjectPosition3f(o, -5.0f, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-
-	  	addSubObject(&goHelpMenu, o);
 		}
 
 		{
@@ -315,21 +301,12 @@ void initGameMenu() {
 			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
 			setObjectScalef(o, SCALE_FONT);
 			rotateObjectX(o, 90.0f);
-
-	  	addSubObject(&goHelpMenu, o);
 		}
 	}
 
-	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
- 	addSubObject(&goHelpMenu, &bBack.oButton);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
 
 	/* game complete menu */
-	initObjectGroup(&goEndMenu);
-
-	init3dButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
-  addSubObject(&goEndMenu, &bAgain.oButton);
-
-	init3dButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
- 	addSubObject(&goEndMenu, &bQuit2.oButton);
-
+	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
+	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
 }

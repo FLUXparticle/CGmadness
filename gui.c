@@ -77,6 +77,16 @@ void setSomeLight(void) {
 	glEnable(GL_LIGHT0);
 }
 
+/*** MenuItem ***/
+
+void drawMenuItem(MenuItem* item)
+{
+}
+
+void pickMenuItem(MenuItem* item)
+{
+}
+
 /*** Button ***/
 
 void pickButton(void* data) {
@@ -84,14 +94,15 @@ void pickButton(void* data) {
 	button->click();
 }
 
-void init3dButton(Button* button, float z, funcClick click, char* text) {
-	initTextObject(&button->oButton, text, z);
-
-	button->click = click;
+void initButton(Button* button, float z, funcClick click, char* text)
+{
+	button->click = NULL;
+	button->item.pickName = -1;
 
 	if (click) {
-		initPick(&button->pButton, pickButton, button);
-		setObjectPick(&button->oButton, &button->pButton);
+		button->click = click;
+		initPick(&button->item.pick, pickButton, button);
+		button->item.pickName = setPick(&button->item.pick);
 	}
 }
 

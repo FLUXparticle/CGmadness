@@ -31,12 +31,6 @@ typedef void (*funcClick)(void);
 typedef void (*funcChange)(void* self);
 
 typedef struct {
-	Object oButton;
-	Pick pButton;
-	funcClick click;
-} Button;
-
-typedef struct {
 	int value;
 	Object oCheck;
 	Pick pCheck;
@@ -55,13 +49,46 @@ typedef struct {
 	funcChange change;
 } SpinEdit;
 
+/***/
+
+typedef enum {
+	MI_UNDEFINED,
+	MI_MENU,
+	MI_BUTTON
+} MenuItemType;
+
+typedef struct {
+	MenuItemType type;
+
+	Pick pick;
+	int pickName;
+} MenuItem;
+
+typedef struct {
+	MenuItem item;
+	MenuItem* subitems;
+} Menu;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
+	funcClick click;
+} Button;
+
 void initGUI(void);
 
 void setSomeLight(void);
 
+/* MenuItem */
+
+void drawMenuItem(MenuItem* item);
+void pickMenuItem(MenuItem* item);
+void clickMenuItem(MenuItem* item);
+
 /* Button */
 
-void init3dButton(Button* button, float z, funcClick click, char* text);
+void initButton(Button* button, float z, funcClick click, char* text);
 
 /* Check */
 

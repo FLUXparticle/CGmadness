@@ -188,17 +188,10 @@ void initEditorMenu() {
 	/* main menu */
 	initObjectGroup(&goMainMenu);
 
-	init3dButton(&bEdit, 6.0f, clickButtonEdit, "Edit");
-  addSubObject(&goMainMenu, &bEdit.oButton);
-
-	init3dButton(&bSave, 5.0f, clickButtonSave, "Save");
-  addSubObject(&goMainMenu, &bSave.oButton);
-
-	init3dButton(&bHelp, 4.0f, clickButtonHelp, "Help");
-  addSubObject(&goMainMenu, &bHelp.oButton);
-
-	init3dButton(&bQuit, 3.0f, clickButtonQuit, "Quit");
-  addSubObject(&goMainMenu, &bQuit.oButton);
+	initButton(&bEdit, 6.0f, clickButtonEdit, "Edit");
+	initButton(&bSave, 5.0f, clickButtonSave, "Save");
+	initButton(&bHelp, 4.0f, clickButtonHelp, "Help");
+	initButton(&bQuit, 3.0f, clickButtonQuit, "Quit");
 
 	/* help text */
 	initObjectGroup(&goHelpMenu);
@@ -230,16 +223,13 @@ void initEditorMenu() {
 		}
 	}
 
-	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
- 	addSubObject(&goHelpMenu, &bBack.oButton);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
 
  	/* response */
 
 	initObjectGroup(&goSuccessfulText);
-	init3dButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully");
- 	addSubObject(&goSuccessfulText, &bSuccessful.oButton);
+	initButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully");
 
 	initObjectGroup(&goFailedText);
-	init3dButton(&bFailed, 5.0, clickButtonBack, "operation failed");
- 	addSubObject(&goFailedText, &bFailed.oButton);
+	initButton(&bFailed, 5.0, clickButtonBack, "operation failed");
 }
