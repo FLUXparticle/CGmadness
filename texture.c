@@ -82,18 +82,14 @@ void nextPixel(TGAHeader* header, int* pos) {
 
 static GLubyte readByte(FILE* file)
 {
-  int byte = fgetc(file);
-  printf("%03d\n", byte);
-  return byte;
+  return fgetc(file);
 }
 
 GLushort readShort(FILE* file)
 {
   int lower = readByte(file);
   int upper = readByte(file);
-  int word = (upper << 8) | lower;
-  printf("%05d\n", word);
-  return word;
+  return (upper << 8) | lower;
 }
 
 int readHeader(FILE* file, TGAHeader* header)
