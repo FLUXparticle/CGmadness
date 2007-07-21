@@ -59,7 +59,7 @@ typedef struct {
 	GLushort height;
 	GLubyte bitsPerPixel;
 	GLubyte attrImage;
-} __attribute__((__packed__)) TGAHeader;
+} TGAHeader;
 
 void copyPixel(GLubyte* data, int pos, GLubyte* pixel, int components) {
 	data[pos++] = pixel[2];
@@ -80,13 +80,47 @@ void nextPixel(TGAHeader* header, int* pos) {
 	}
 }
 
+static GLubyte readByte(FILE* file)
+{
+  int byte = fgetc(file);
+  printf("%03d\n", byte);
+  return byte;
+}
+
+GLushort readShort(FILE* file)
+{
+  int lower = readByte(file);
+  int upper = readByte(file);
+  int word = (upper << 8) | lower;
+  printf("%05d\n", word);
+  return word;
+}
+
+int readHeader(FILE* file, TGAHeader* header)
+{
+  header->lenID            = readByte(file);
+  header->typePalette      = readByte(file);
+  header->typeImage        = readByte(file);
+  header->startPalette     = readShort(file);
+  header->lenPalette       = readShort(file);
+  header->sizePaletteEntry = readByte(file);
+  header->startX           = readShort(file);
+  header->startY           = readShort(file);
+  header->width            = readShort(file);
+  header->height           = readShort(file);
+  header->bitsPerPixel     = readByte(file);
+  header->attrImage        = readByte(file);
+
+  return 1;
+}
+
 int loadTGA(FILE* file, Image* image, char** error) {
 	TGAHeader header;
 	int compressed;
 	int size;
 	int pixels;
 
-	if (fread(&header, sizeof(header), 1, file) != 1) {
+	if (!readHeader(file, &header)) {
 		*error = "header";
 		return 0;
 	}
@@ -130,6 +164,7 @@ int loadTGA(FILE* file, Image* image, char** error) {
 		image->format = GL_RGBA;
 		break;
 	default:
+    printf("BPP: %d\n", header.bitsPerPixel);
 		*error = "Components";
 		return 0;
 	}
