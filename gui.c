@@ -77,16 +77,6 @@ void setSomeLight(void) {
 	glEnable(GL_LIGHT0);
 }
 
-/*** MenuItem ***/
-
-void drawMenuItem(MenuItem* item)
-{
-}
-
-void pickMenuItem(MenuItem* item)
-{
-}
-
 /*** Button ***/
 
 void pickButton(void* data) {
@@ -96,14 +86,33 @@ void pickButton(void* data) {
 
 void initButton(Button* button, float z, funcClick click, char* text)
 {
-	button->click = NULL;
+	button->item.z = z;
 	button->item.pickName = -1;
+
+	button->text = text;
+	button->click = NULL;
 
 	if (click) {
 		button->click = click;
 		initPick(&button->item.pick, pickButton, button);
 		button->item.pickName = setPick(&button->item.pick);
 	}
+}
+
+void drawButton(const Button* button)
+{
+	static float scale = 0.1f * SCALE_FONT;
+
+	char* text = button->text;
+	float width = widthFont3DText(text);
+
+	glPushMatrix();
+
+		glScalef(scale, scale, scale);
+		glTranslatef(-width / 2.0f, 0.0f, 0.0f);
+		drawFont3DText(text);
+
+	glPopMatrix();
 }
 
 /*** Check ***/
@@ -194,3 +203,46 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 	setObjectPick(&spinedit->oRight, &spinedit->pRight);
 
 }
+/*** MenuItem ***/
+
+void drawMenuItem(const MenuItem* item)
+{
+	glPushMatrix();
+
+		glTranslatef(0.0f, item->z, 0.0f);
+
+		switch(item->type)
+		{
+			case MI_BUTTON:
+				drawButton((const Button*) item);
+				break;
+			default:
+				break;
+		}
+
+	glPopMatrix();
+}
+
+void pickMenuItem(MenuItem* item)
+{
+}
+
+/*** Menu ***/
+
+void initMenu(Menu* menu, int cntItems, MenuItem** items)
+{
+	menu->cntItems = cntItems;
+	menu->items = items;
+}
+
+void drawMenu(const Menu* menu)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		drawMenuItem(menu->items[i]);
+	}
+}
+
+

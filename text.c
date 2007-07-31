@@ -32,6 +32,8 @@
 
 #include <GL/glut.h>
 
+#include <stdio.h>
+
 #define SCALE 0.1f
 
 #define STROKE_SIZE 119.05f
@@ -41,6 +43,19 @@ void drawBitmapText(const char *str)
 	for (; *str; str++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
 	}
+}
+
+float widthStrokeText(const char* str)
+{
+	float width = 0.0f;
+
+	const char* s;
+
+  for (s = str; *s; s++) {
+		width += glutStrokeWidth(GLUT_STROKE_ROMAN, *s);
+	}
+
+	return width / STROKE_SIZE;
 }
 
 void drawStrokeText(const char* str)
@@ -67,19 +82,6 @@ void drawStrokeText(const char* str)
 		glDisable(GL_LINE_SMOOTH);
 
 	glPopMatrix();
-}
-
-float widthStrokeText(const char* str)
-{
-	float width = 0.0f;
-
-	const char* s;
-
-  for (s = str; *s; s++) {
-		width += glutStrokeWidth(GLUT_STROKE_ROMAN, *s);
-	}
-
-	return width / STROKE_SIZE;
 }
 
 void addChar(Object* obj, float* x, funcDraw draw, float width)
@@ -124,4 +126,60 @@ float makeTextObject(Object* obj, const char* text)
 	}
 
 	return x;
+}
+
+float widthFont3DText(const char* str)
+{
+	float width = 0.0f;
+
+	const char* s;
+
+	for (s = str; *s; s++) {
+		if (*s >= 'A' && *s <= 'Z') {
+			int i = *s - 'A';
+			width += widthBigAlpha[i];
+		}
+		if (*s >= 'a' && *s <= 'z') {
+			int i = *s - 'a';
+			width += widthSmallAlpha[i];
+		}
+		if (*s >= '0' && *s <= '9') {
+			int i = *s - '0';
+			width += widthDigits[i];
+		}
+		if (*s == ' ') {
+			width += 0.5f;
+		}
+	}
+
+	return width;
+}
+
+void drawFont3DChar(funcDraw draw, float width)
+{
+	draw();
+	glTranslatef(width, 0.0f, 0.0f);
+}
+
+void drawFont3DText(const char* str)
+{
+	const char* s;
+
+	for (s = str; *s; s++) {
+		if (*s >= 'A' && *s <= 'Z') {
+			int i = *s - 'A';
+			drawFont3DChar(drawBigAlpha[i], widthBigAlpha[i]);
+		}
+		if (*s >= 'a' && *s <= 'z') {
+			int i = *s - 'a';
+			drawFont3DChar(drawSmallAlpha[i], widthSmallAlpha[i]);
+		}
+		if (*s >= '0' && *s <= '9') {
+			int i = *s - '0';
+			drawFont3DChar(drawDigits[i], widthDigits[i]);
+		}
+		if (*s == ' ') {
+			glTranslatef(0.5f, 0.0f, 0.0f);
+		}
+	}
 }

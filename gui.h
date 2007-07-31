@@ -25,6 +25,8 @@
 
 #include "graph.h"
 #include "pick.h"
+#include "vector.h"
+#include "types.h"
 
 typedef void (*funcClick)(void);
 
@@ -52,21 +54,22 @@ typedef struct {
 /***/
 
 typedef enum {
-	MI_UNDEFINED,
-	MI_MENU,
+	MI_UNDEFINED = -1,
 	MI_BUTTON
 } MenuItemType;
 
 typedef struct {
 	MenuItemType type;
 
+	float z;
+
 	Pick pick;
 	int pickName;
 } MenuItem;
 
 typedef struct {
-	MenuItem item;
-	MenuItem* subitems;
+	int cntItems;
+	MenuItem** items;
 } Menu;
 
 typedef struct {
@@ -80,12 +83,6 @@ void initGUI(void);
 
 void setSomeLight(void);
 
-/* MenuItem */
-
-void drawMenuItem(MenuItem* item);
-void pickMenuItem(MenuItem* item);
-void clickMenuItem(MenuItem* item);
-
 /* Button */
 
 void initButton(Button* button, float z, funcClick click, char* text);
@@ -98,5 +95,18 @@ void init3dCheck(Check* check, float z, funcChange change, char* text);
 /* SpinEdit */
 
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+
+/* MenuItem */
+
+void drawMenuItem(const MenuItem* item);
+void pickMenuItem(MenuItem* item);
+void clickMenuItem(MenuItem* item);
+
+/* Menu */
+
+#define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
+
+void initMenu(Menu* menu, int cntItems, MenuItem** items);
+void drawMenu(const Menu* menu);
 
 #endif

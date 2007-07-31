@@ -35,6 +35,7 @@
 
 #include <GL/glut.h>
 
+#include <stdio.h>
 #include <string.h>
 
 #define SCALE_FONT 0.5f
@@ -171,21 +172,24 @@ void drawGameMenu(void) {
 
 		glPushMatrix();
 			glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
+			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
 			drawObject(&goLogo);
-			drawMenuItem(&gCurMenu->item);
-
+			drawMenu(gCurMenu);
 		glPopMatrix();
+
 	glDisable(GL_LIGHTING);
 }
 
 void pickGameMenu(void) {
+#if 0
 	glPushMatrix();
 		glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
 
 		pickMenuItem(&gCurMenu->item);
 
 	glPopMatrix();
+#endif
 }
 
 void showGameMenu(int menu) {
@@ -224,6 +228,12 @@ void initGameMenu() {
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
+	static MenuItem* itemsMain[] = {
+		&gbStart.item,
+		&bHelp.item,
+		&bQuit.item
+	};
+
 	int i;
 
 	initGUI();
@@ -258,10 +268,8 @@ void initGameMenu() {
 	/* menu logo */
 	initObject(&goLogo, drawSquare);
 	goLogo.texture = loadTexture("data/logo.tga", 0);
-	setObjectPosition3f(&goLogo, 0.0f, 0.0f, 8.0f);
+	setObjectPosition3f(&goLogo, 0.0f, 8.0f, 0.0f);
 	setObjectScale3f(&goLogo, 4.0f, 1.0f, 1.0f);
-
-	rotateObjectX(&goLogo, 90.0f);
 
 	/* main menu */
 	initObject(&oBall, drawMenuBall);
@@ -273,8 +281,10 @@ void initGameMenu() {
 	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
 	init3dCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
 
-	initButton(&bHelp, 2.0f,clickButtonHelp, "Help");
+	initButton(&bHelp, 2.0f, clickButtonHelp, "Help");
 	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
+
+	INIT_MENU(&gMenuMain, itemsMain);
 
 	/* next level menu */
 	initButton(&bContinue, 5.5f, clickButtonStart, "Continue");
