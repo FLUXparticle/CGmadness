@@ -411,7 +411,7 @@ void animateBall(float interval) {
 	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation);
 
 	/* falling to infinity */
-	if (sgoBall.pos.z < -10.0f) {
+	if (sgoBall.pos.z < -1.0f) {
 		explodeBall();
 	}
 

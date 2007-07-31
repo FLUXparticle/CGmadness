@@ -49,9 +49,6 @@ static int gResume;
 
 static Object goLogo;
 
-static Button gbStart;
-static Button gbResume;
-
 static Check gcShadows;
 static Check gcReflection;
 
@@ -69,7 +66,8 @@ static LeftRight gTextHelp[] = {
 
 static Vector3 gGameMenuPosition;
 
-Menu gMenuMain;
+Menu gMenuMain1;
+Menu gMenuMain2;
 Menu gMenuHelp;
 Menu gMenuNext;
 Menu gMenuEnd;
@@ -112,11 +110,14 @@ static void clickButtonAgain(void) {
 }
 
 static void clickButtonBack(void) {
-	gCurMenu = &gMenuMain;
+	/*
+	 * TODO save last menu
+	 */
+	gCurMenu = &gMenuMain1;
 }
 
 void updateGameMenu(float interval) {
-	if (gCurMenu == &gMenuMain)
+	if (gCurMenu == &gMenuMain1 || gCurMenu == &gMenuMain2)
 	{
 		if (wasKeyPressed(KEY_ENTER)) {
 			clickButtonStart();
@@ -197,8 +198,10 @@ void showGameMenu(int menu) {
 
 	switch (menu) {
 	case 0:
+		gCurMenu = &gMenuMain1;
+		break;
 	case 1:
-		gCurMenu = &gMenuMain;
+		gCurMenu = &gMenuMain2;
 		break;
 	case 2:
 		gCurMenu = &gMenuNext;
@@ -215,6 +218,8 @@ void showGameMenu(int menu) {
 }
 
 void initGameMenu() {
+	static Button bStart;
+	static Button bResume;
 	static Button bQuit;
 	static Button bHelp;
 	static Button bBack;
@@ -228,8 +233,14 @@ void initGameMenu() {
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
-	static MenuItem* itemsMain[] = {
-		&gbStart.item,
+	static MenuItem* itemsMain1[] = {
+		&bStart.item,
+		&bHelp.item,
+		&bQuit.item
+	};
+
+	static MenuItem* itemsMain2[] = {
+		&bResume.item,
 		&bHelp.item,
 		&bQuit.item
 	};
@@ -274,8 +285,8 @@ void initGameMenu() {
 	/* main menu */
 	initObject(&oBall, drawMenuBall);
 
-	initButton(&gbStart, 6.0f, clickButtonStart, "Start");
-	initButton(&gbResume, 6.0f, clickButtonStart, "Resume");
+	initButton(&bStart, 6.0f, clickButtonStart, "Start");
+	initButton(&bResume, 6.0f, clickButtonStart, "Resume");
 
 	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
 	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
@@ -284,7 +295,8 @@ void initGameMenu() {
 	initButton(&bHelp, 2.0f, clickButtonHelp, "Help");
 	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
 
-	INIT_MENU(&gMenuMain, itemsMain);
+	INIT_MENU(&gMenuMain1, itemsMain1);
+	INIT_MENU(&gMenuMain2, itemsMain2);
 
 	/* next level menu */
 	initButton(&bContinue, 5.5f, clickButtonStart, "Continue");

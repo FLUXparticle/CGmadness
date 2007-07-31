@@ -35,6 +35,8 @@
 
 /*** common ***/
 
+static float scaleButton = 0.1f * SCALE_FONT;
+
 static Object goLeft;
 static Object goRight;
 
@@ -86,10 +88,15 @@ void pickButton(void* data) {
 
 void initButton(Button* button, float z, funcClick click, char* text)
 {
-	button->item.z = z;
+	button->text = text;
+
+	button->item.width = widthFont3DText(button->text);
+	button->item.height = 0.9f;
+
+	button->item.position = vector2(-button->item.width / 2.0f * scaleButton, z);
+
 	button->item.pickName = -1;
 
-	button->text = text;
 	button->click = NULL;
 
 	if (click) {
@@ -101,16 +108,10 @@ void initButton(Button* button, float z, funcClick click, char* text)
 
 void drawButton(const Button* button)
 {
-	static float scale = 0.1f * SCALE_FONT;
-
-	char* text = button->text;
-	float width = widthFont3DText(text);
-
 	glPushMatrix();
 
-		glScalef(scale, scale, scale);
-		glTranslatef(-width / 2.0f, 0.0f, 0.0f);
-		drawFont3DText(text);
+		glScalef(scaleButton, scaleButton, scaleButton);
+		drawFont3DText(button->text);
 
 	glPopMatrix();
 }
@@ -209,7 +210,7 @@ void drawMenuItem(const MenuItem* item)
 {
 	glPushMatrix();
 
-		glTranslatef(0.0f, item->z, 0.0f);
+		glTranslatef(item->position.x, item->position.y, 0.0f);
 
 		switch(item->type)
 		{

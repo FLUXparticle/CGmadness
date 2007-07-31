@@ -61,7 +61,9 @@ typedef enum {
 typedef struct {
 	MenuItemType type;
 
-	float z;
+	Vector2 position;
+	float width;
+	float height;
 
 	Pick pick;
 	int pickName;
