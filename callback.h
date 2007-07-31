@@ -24,20 +24,21 @@
 #define _callback_h_
 
 #include "graph.h"
+#include "mouse.h"
 
 #include "types.h"
 
 typedef void (*funcUpdate)(float interval);
 typedef void (*funcDrawHUD)(float width, float height);
 
-typedef void (*funcDoPick)(void);
+typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* direction, MouseEvent event);
 
 typedef struct {
 	Matrix projection;
 	Matrix view;
 	funcDraw draw;
 	funcDrawHUD drawHUD;
-	funcDoPick pick;
+	funcDoMouseEvent mouseEvent;
 } Viewport;
 
 typedef struct {
@@ -59,6 +60,6 @@ void startDisplay(void);
 
 void startTimer(int callsPerSecond);
 
-int pick(int x, int y);
+void mouseEvent(int x, int y, MouseEvent event);
 
 #endif

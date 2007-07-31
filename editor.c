@@ -400,13 +400,16 @@ void drawEditor(void) {
 	}
 }
 
-void pickEditor(void) {
-	if (!gIsEditorRunning)	{
+void pickEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
+{
+	if (!gIsEditorRunning)
+	{
 		pickEditorMenu();
 	}
 }
 
-int initEditor(char* filename) {
+int initEditor(char* filename)
+{
 	gFilename = filename;
 	if (!loadFieldFromFile(gFilename)) {
 		if (between(sgLevel.size.x, 0, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 0, MAX_LEVEL_SIZE)) {
@@ -426,7 +429,7 @@ int initEditor(char* filename) {
 
 	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.drawHUD = NULL;
-	sgWindowViewport.pick = pickEditor;
+	sgWindowViewport.mouseEvent = pickEditor;
 	setUpdateFunc(updateEditor);
 
 	gCurStart.x = 0;

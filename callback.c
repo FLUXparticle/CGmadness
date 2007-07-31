@@ -23,6 +23,7 @@
 #include "callback.h"
 
 #include "text.h"
+#include "camera.h"
 
 #include "debug.h"
 
@@ -234,39 +235,26 @@ void startTimer(int callsPerSecond) {
 
 /*** Picking ***/
 
-int pick(int x, int y) {
-  int viewport[4];
-	float aspect;
-
+void mouseEvent(int mx, int my, MouseEvent event) {
 	int width  = gTargetWindow.width;
 	int height = gTargetWindow.height;
+	float aspect = (float) height / width;
+	float f = tan(FOV / 2.0f * PI / 180.0f);
+	float x = (float) mx / width * 2.0f - 1.0f;
+	float y = (float) my / height * 2.0f - 1.0f;
+
+	Vector3 dir = vector3(aspect * f * x, f * -y, -1.0f);
 
 	Viewport* v = gTargetWindow.viewport;
 
-	viewport[0] = 0;
-	viewport[1] = 0;
-	viewport[2] = width;
-	viewport[3] = height;
-	aspect = (float) height / width;
+	Vector3 position = sgCamera;
+	Vector3 direction;
 
-	glRenderMode(GL_SELECT);
+	direction.x = dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
+	direction.y = dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
+	direction.z = dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
 
-	glInitNames();
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	gluPickMatrix(x, height - y, 5, 5, viewport);
-
-	glMultMatrixf(&v->projection[0][0]);
-	glScalef(aspect, 1.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(&v->view[0][0]);
-	gTargetWindow.viewport->pick();
-	glFlush();
-
-	return glRenderMode(GL_RENDER);
+	gTargetWindow.viewport->mouseEvent(&position, &direction, event);
 }
 
 void centerMouse(int* x, int* y)

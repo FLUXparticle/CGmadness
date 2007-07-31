@@ -26,9 +26,11 @@
 #include "pick.h"
 #include "objects.h"
 #include "texture.h"
+#include "debug.h"
 
 #include <GL/glut.h>
 
+#include <stdio.h>
 #include <string.h>
 
 #define SCALE_FONT 0.5f
@@ -81,36 +83,32 @@ void setSomeLight(void) {
 
 /*** Button ***/
 
-void pickButton(void* data) {
-	Button* button = data;
-	button->click();
-}
-
 void initButton(Button* button, float z, funcClick click, char* text)
 {
+	button->click = click;
 	button->text = text;
 
-	button->item.width = widthFont3DText(button->text);
+	button->item.width = widthFont3DText(button->text) * scaleButton;
 	button->item.height = 0.9f;
 
-	button->item.position = vector2(-button->item.width / 2.0f * scaleButton, z);
+	button->item.position = vector2(-button->item.width / 2.0f, z);
+}
 
-	button->item.pickName = -1;
-
-	button->click = NULL;
-
-	if (click) {
-		button->click = click;
-		initPick(&button->item.pick, pickButton, button);
-		button->item.pickName = setPick(&button->item.pick);
+void clickButton(Button* button)
+{
+	if (button->click)
+	{
+		button->click();
 	}
 }
 
 void drawButton(const Button* button)
 {
+	float scale = scaleButton * (1.0f + 0.1f * button->item.emphasize);
+
 	glPushMatrix();
 
-		glScalef(scaleButton, scaleButton, scaleButton);
+		glScalef(scale, scale, scale);
 		drawFont3DText(button->text);
 
 	glPopMatrix();
@@ -206,6 +204,18 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 }
 /*** MenuItem ***/
 
+void updateMenuItem(MenuItem* item, float interval)
+{
+	if (item->hover)
+	{
+		item->emphasize += 5.0f * interval * (1.0f - item->emphasize);
+	}
+	else
+	{
+		item->emphasize += 5.0f * interval * (0.0f - item->emphasize);
+	}
+}
+
 void drawMenuItem(const MenuItem* item)
 {
 	glPushMatrix();
@@ -224,8 +234,30 @@ void drawMenuItem(const MenuItem* item)
 	glPopMatrix();
 }
 
-void pickMenuItem(MenuItem* item)
+void clickMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 {
+	item->hover = 0;
+
+	if (x >= item->position.x               && y >= item->position.y &&
+	    x <= item->position.x + item->width && y <= item->position.y + item->height)
+	{
+		switch (event)
+		{
+			case MOUSE_CLICK:
+				switch(item->type)
+				{
+					case MI_BUTTON:
+						clickButton((Button*) item);
+						break;
+					default:
+						break;
+				}
+				break;
+			case MOUSE_MOTION:
+				item->hover = 1;
+				break;
+		}
+	}
 }
 
 /*** Menu ***/
@@ -234,6 +266,16 @@ void initMenu(Menu* menu, int cntItems, MenuItem** items)
 {
 	menu->cntItems = cntItems;
 	menu->items = items;
+}
+
+void updateMenu(Menu* menu, float interval)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		updateMenuItem(menu->items[i], interval);
+	}
 }
 
 void drawMenu(const Menu* menu)
@@ -246,4 +288,12 @@ void drawMenu(const Menu* menu)
 	}
 }
 
+void clickMenu(Menu* menu, float x, float y, MouseEvent event)
+{
+	int i;
 
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		clickMenuItem(menu->items[i], x, y, event);
+	}
+}

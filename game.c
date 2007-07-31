@@ -70,8 +70,6 @@ static float gDistance;
 static float gLatitude;
 static float gLongitude;
 
-static Vector3 gGameMenuPosistion;
-
 #if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
 	gDragX += dx;
@@ -176,18 +174,8 @@ void updateGame(float interval) {
 			gGameTime += interval;
 		}
 	} else {
-		/* show menu */
-		Vector3 camera = gGameMenuPosistion;
-		Vector3 lookat = gGameMenuPosistion;
-
-		camera.y -= 10.0f;
-		camera.z += 7.0f;
-
-		lookat.z += 5.0f;
-
 		updateGameMenu(interval);
 
-		moveCamera(interval, camera, lookat);
 	}
 
 	updateGameField();
@@ -242,9 +230,11 @@ void drawGameReflection(void) {
 #endif
 }
 
-void pickGame(void) {
-	if (!gIsGameRunning)	{
-		pickGameMenu();
+void pickGame(const Vector3* position, const Vector3* direction, MouseEvent event)
+{
+	if (!gIsGameRunning)
+	{
+		pickGameMenu(position, direction, event);
 	}
 }
 
@@ -254,6 +244,8 @@ void resetGameTime(void)
 }
 
 int initLevel(const char* filename) {
+	static Vector3 gameMenuPosition;
+
 	if (!loadFieldFromFile(filename)) {
 		return 0;
 	}
@@ -271,13 +263,11 @@ int initLevel(const char* filename) {
 	gLatitude  = 20.0f;
 	gLongitude =  0.0f;
 
-	gGameMenuPosistion.x = sgLevel.size.x / 2.0f;
-	gGameMenuPosistion.y = -10.0f;
-	gGameMenuPosistion.z =   0.0f;
+	gameMenuPosition.x = sgLevel.size.x / 2.0f;
+	gameMenuPosition.y = -10.0f;
+	gameMenuPosition.z =   0.0f;
 
-	setGameMenuPosistion(gGameMenuPosistion);
-
-	updateGameCamera(0.0, gGameMenuPosistion);
+	setGameMenuPosistion(gameMenuPosition);
 
 	resetGameTime();
 
@@ -383,7 +373,7 @@ int initGame(void) {
 
 	sgWindowViewport.draw = drawGame;
 	sgWindowViewport.drawHUD = drawGameHUD;
-	sgWindowViewport.pick = pickGame;
+	sgWindowViewport.mouseEvent = pickGame;
 	setUpdateFunc(updateGame);
 
 	return 1;

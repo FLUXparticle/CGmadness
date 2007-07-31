@@ -26,6 +26,7 @@
 #include "graph.h"
 #include "pick.h"
 #include "vector.h"
+#include "mouse.h"
 #include "types.h"
 
 typedef void (*funcClick)(void);
@@ -65,8 +66,8 @@ typedef struct {
 	float width;
 	float height;
 
-	Pick pick;
-	int pickName;
+	int hover;
+	float emphasize;
 } MenuItem;
 
 typedef struct {
@@ -98,17 +99,13 @@ void init3dCheck(Check* check, float z, funcChange change, char* text);
 
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
 
-/* MenuItem */
-
-void drawMenuItem(const MenuItem* item);
-void pickMenuItem(MenuItem* item);
-void clickMenuItem(MenuItem* item);
-
 /* Menu */
 
 #define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
 
 void initMenu(Menu* menu, int cntItems, MenuItem** items);
+void updateMenu(Menu* menu, float interval);
 void drawMenu(const Menu* menu);
+void clickMenu(Menu* menu, float x, float y, MouseEvent event);
 
 #endif

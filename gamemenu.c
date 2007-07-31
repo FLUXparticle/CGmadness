@@ -32,6 +32,8 @@
 #include "features.h"
 #include "keyboard.h"
 #include "gui.h"
+#include "camera.h"
+#include "debug.h"
 
 #include <GL/glut.h>
 
@@ -117,6 +119,18 @@ static void clickButtonBack(void) {
 }
 
 void updateGameMenu(float interval) {
+	Vector3 camera = gGameMenuPosition;
+	Vector3 lookat = gGameMenuPosition;
+
+	camera.y -= 10.0f;
+	camera.z += 7.0f;
+
+	lookat.z += 5.0f;
+
+	moveCamera(interval, camera, lookat);
+
+	updateMenu(gCurMenu, interval);
+
 	if (gCurMenu == &gMenuMain1 || gCurMenu == &gMenuMain2)
 	{
 		if (wasKeyPressed(KEY_ENTER)) {
@@ -182,15 +196,17 @@ void drawGameMenu(void) {
 	glDisable(GL_LIGHTING);
 }
 
-void pickGameMenu(void) {
-#if 0
-	glPushMatrix();
-		glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
+void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event) {
+	Vector3 newPosition = sub(*position, gGameMenuPosition);
 
-		pickMenuItem(&gCurMenu->item);
+	if (newPosition.y < 0.0f && direction->y > 0.0f)
+	{
+		float t = -newPosition.y / direction->y;
+		float x = newPosition.x + t * direction->x;
+		float y = newPosition.z + t * direction->z;
 
-	glPopMatrix();
-#endif
+		clickMenu(gCurMenu, x, y, event);
+	}
 }
 
 void showGameMenu(int menu) {
@@ -233,13 +249,15 @@ void initGameMenu() {
 	static Object oTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
-	static MenuItem* itemsMain1[] = {
+	static MenuItem* itemsMain1[] =
+	{
 		&bStart.item,
 		&bHelp.item,
 		&bQuit.item
 	};
 
-	static MenuItem* itemsMain2[] = {
+	static MenuItem* itemsMain2[] =
+	{
 		&bResume.item,
 		&bHelp.item,
 		&bQuit.item
