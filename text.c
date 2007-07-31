@@ -148,7 +148,7 @@ float widthFont3DText(const char* str)
 			width += widthDigits[i];
 		}
 		if (*s == ' ') {
-			width += 0.5f;
+			width += 5.0f;
 		}
 	}
 
@@ -179,7 +179,7 @@ void drawFont3DText(const char* str)
 			drawFont3DChar(drawDigits[i], widthDigits[i]);
 		}
 		if (*s == ' ') {
-			glTranslatef(0.5f, 0.0f, 0.0f);
+			glTranslatef(5.0f, 0.0f, 0.0f);
 		}
 	}
 }

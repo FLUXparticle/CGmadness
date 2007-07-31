@@ -23,7 +23,6 @@
 #include "mouse.h"
 
 #include "callback.h"
-#include "pick.h"
 
 #include <GL/glut.h>
 
@@ -76,8 +75,13 @@ void mouseMotion(int x, int y)
 void setDragFunc(funcDrag drag)
 {
 	gDrag = drag;
-	if (gDrag) {
+	if (gDrag)
+	{
 		centerMouse(&gLastX, &gLastY);
+	}
+	else
+	{
+		mouseEvent(gLastX, gLastY, MOUSE_MOTION);
 	}
 }
 

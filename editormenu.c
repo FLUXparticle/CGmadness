@@ -26,7 +26,6 @@
 
 #include "text.h"
 #include "graph.h"
-#include "pick.h"
 #include "objects.h"
 #include "texture.h"
 #include "keyboard.h"

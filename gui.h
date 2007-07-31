@@ -24,7 +24,6 @@
 #define _gui_h_
 
 #include "graph.h"
-#include "pick.h"
 #include "vector.h"
 #include "mouse.h"
 #include "types.h"
@@ -35,8 +34,6 @@ typedef void (*funcChange)(void* self);
 
 typedef struct {
 	int value;
-	Object oCheck;
-	Pick pCheck;
 	funcChange change;
 } Check;
 
@@ -44,11 +41,6 @@ typedef struct {
 	int value;
 	int minValue;
 	int maxValue;
-	Object oSpinEdit;
-	Object oLeft;
-	Object oRight;
-	Pick pLeft;
-	Pick pRight;
 	funcChange change;
 } SpinEdit;
 

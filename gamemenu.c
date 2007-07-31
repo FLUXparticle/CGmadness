@@ -24,7 +24,6 @@
 
 #include "text.h"
 #include "graph.h"
-#include "pick.h"
 #include "objects.h"
 #include "texture.h"
 #include "ball.h"
@@ -263,6 +262,12 @@ void initGameMenu() {
 		&bQuit.item
 	};
 
+	static MenuItem* itemsNext[] =
+	{
+		&bContinue.item,
+		&bMain.item
+	};
+
 	int i;
 
 	initGUI();
@@ -319,6 +324,8 @@ void initGameMenu() {
 	/* next level menu */
 	initButton(&bContinue, 5.5f, clickButtonStart, "Continue");
 	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
+
+	INIT_MENU(&gMenuNext, itemsNext);
 
 	/* help menu */
 	for (i = 0; i < LENGTH(gTextHelp); i++) {

@@ -23,7 +23,6 @@
 #include "gui.h"
 
 #include "text.h"
-#include "pick.h"
 #include "objects.h"
 #include "texture.h"
 #include "debug.h"
@@ -108,6 +107,7 @@ void drawButton(const Button* button)
 
 	glPushMatrix();
 
+		glTranslatef(-0.5f * button->item.width * 0.1f * button->item.emphasize, 0.0f, 0.0f);
 		glScalef(scale, scale, scale);
 		drawFont3DText(button->text);
 
@@ -119,11 +119,13 @@ void drawButton(const Button* button)
 void setCheck(Check* check, int value) {
 	check->value = value;
 
+#if 0
 	if (check->value) {
 		setObjectGroupColor(&check->oCheck, 1.0f, 1.0f, 1.0f);
 	} else {
 		setObjectGroupColor(&check->oCheck, 0.5f, 0.5f, 0.5f);
 	}
+#endif
 
 	check->change(check);
 }
@@ -134,14 +136,13 @@ void pickCheck(void* data) {
 }
 
 void init3dCheck(Check* check, float z, funcChange change, char* text) {
+#if 0
 	initTextObject(&check->oCheck, text, z);
+#endif
 
 	check->change = change;
 
 	setCheck(check, 1);
-
-	initPick(&check->pCheck, pickCheck, check);
-	setObjectPick(&check->oCheck, &check->pCheck);
 }
 
 /*** SpinEdit ***/
@@ -169,6 +170,7 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 	spinedit->minValue = min;
 	spinedit->maxValue = max;
 
+#if 0
 	initObjectGroup(&spinedit->oSpinEdit);
 
 	setObjectPosition3f(&spinedit->oSpinEdit, 0.0f, 0.0f, z);
@@ -189,30 +191,34 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 
 	/* object between arrows */
 	addSubObject(&spinedit->oSpinEdit, obj);
+#endif
 
 	spinedit->change = change;
 
 	change(spinedit);
 
+#if 0
 	/* register callbacks for arrows */
 	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
 	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
 
 	initPick(&spinedit->pRight, pickSpinEditRight, spinedit);
 	setObjectPick(&spinedit->oRight, &spinedit->pRight);
-
+#endif
 }
 /*** MenuItem ***/
+
+#define EMPHASIZE_SPEED 10.0f
 
 void updateMenuItem(MenuItem* item, float interval)
 {
 	if (item->hover)
 	{
-		item->emphasize += 5.0f * interval * (1.0f - item->emphasize);
+		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
 	}
 	else
 	{
-		item->emphasize += 5.0f * interval * (0.0f - item->emphasize);
+		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
 	}
 }
 
