@@ -409,6 +409,7 @@ void drawGameField(int ballReflection) {
 		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 	}
 
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
 
 	if (useShadows())
@@ -419,6 +420,16 @@ void drawGameField(int ballReflection) {
 
   glActiveTexture(GL_TEXTURE0);
 	glDisable(GL_TEXTURE_2D);
+
+#if 0
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(5.0f);
+
+		glColor3f(0.0f, 0.0f, 0.0f);
+		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
 
 	if (hasVertexbuffer()) {
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
