@@ -238,7 +238,7 @@ void startTimer(int callsPerSecond) {
 void mouseEvent(int mx, int my, MouseEvent event) {
 	int width  = gTargetWindow.width;
 	int height = gTargetWindow.height;
-	float aspect = (float) height / width;
+	float aspect = (float) width / height;
 	float f = tan(FOV / 2.0f * PI / 180.0f);
 	float x = (float) mx / width * 2.0f - 1.0f;
 	float y = (float) my / height * 2.0f - 1.0f;
