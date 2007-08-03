@@ -96,6 +96,7 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 #define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
 
 void initMenu(Menu* menu, int cntItems, MenuItem** items);
+void showMenu(Menu* menu);
 void updateMenu(Menu* menu, float interval);
 void drawMenu(const Menu* menu);
 void clickMenu(Menu* menu, float x, float y, MouseEvent event);

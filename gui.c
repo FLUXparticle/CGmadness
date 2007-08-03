@@ -274,6 +274,16 @@ void initMenu(Menu* menu, int cntItems, MenuItem** items)
 	menu->items = items;
 }
 
+void showMenu(Menu* menu)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		menu->items[i]->emphasize = 0.0f;
+	}
+}
+
 void updateMenu(Menu* menu, float interval)
 {
 	int i;

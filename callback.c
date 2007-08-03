@@ -203,6 +203,12 @@ void startDisplay(void) {
 
 int gMillis;
 
+struct {
+	Vector3 position;
+	Vector3 direction;
+	MouseEvent event;
+} gLastMouseEvent;
+
 void timer(int lastCallTime) {
   int thisCallTime = glutGet(GLUT_ELAPSED_TIME);
 	int lastUpdateTime = lastCallTime;
@@ -211,6 +217,7 @@ void timer(int lastCallTime) {
 
 	while (nextUpdateTime < thisCallTime) {
 		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
+		gTargetWindow.viewport->mouseEvent(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
 		gUpdate(interval);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
@@ -254,7 +261,14 @@ void mouseEvent(int mx, int my, MouseEvent event) {
 	direction.y = dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
 	direction.z = dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
 
-	gTargetWindow.viewport->mouseEvent(&position, &direction, event);
+	if (event == MOUSE_CLICK)
+	{
+		gTargetWindow.viewport->mouseEvent(&position, &direction, event);
+	}
+
+	gLastMouseEvent.position = position;
+	gLastMouseEvent.direction = direction;
+	gLastMouseEvent.event = MOUSE_MOTION;
 }
 
 void centerMouse(int* x, int* y)

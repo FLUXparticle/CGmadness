@@ -46,8 +46,6 @@ typedef struct {
 	char* right;
 } LeftRight;
 
-static int gResume;
-
 static Object goLogo;
 
 static Check gcShadows;
@@ -99,7 +97,7 @@ static void changeReflection(void* self) {
 }
 
 static void clickButtonHelp(void) {
-	gCurMenu = &gMenuHelp;
+	showGameMenu(4);
 }
 
 static void clickButtonQuit(void) {
@@ -114,7 +112,7 @@ static void clickButtonBack(void) {
 	/*
 	 * TODO save last menu
 	 */
-	gCurMenu = &gMenuMain1;
+	showGameMenu(0);
 }
 
 void updateGameMenu(float interval) {
@@ -136,7 +134,7 @@ void updateGameMenu(float interval) {
 			clickButtonStart();
 		}
 
-		if (gResume && wasKeyPressed(KEY_ESC)) {
+		if (gCurMenu == &gMenuMain2 && wasKeyPressed(KEY_ESC)) {
 			clickButtonStart();
 		}
 
@@ -209,8 +207,6 @@ void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent 
 }
 
 void showGameMenu(int menu) {
-	gResume = menu != 0;
-
 	switch (menu) {
 	case 0:
 		gCurMenu = &gMenuMain1;
@@ -224,7 +220,12 @@ void showGameMenu(int menu) {
 	case 3:
 		gCurMenu = &gMenuEnd;
 		break;
+	case 4:
+		gCurMenu = &gMenuHelp;
+		break;
 	}
+
+	showMenu(gCurMenu);
 
 	setCheck(&gcShadows, useShadows());
 	setCheck(&gcReflection, useReflection());
