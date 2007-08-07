@@ -36,7 +36,7 @@
 
 /*** common ***/
 
-static float scaleButton = 0.1f * SCALE_FONT;
+static float scaleText = 0.1f * SCALE_FONT;
 
 static Object goLeft;
 static Object goRight;
@@ -87,7 +87,9 @@ void initButton(Button* button, float z, funcClick click, char* text)
 	button->click = click;
 	button->text = text;
 
-	button->item.width = widthFont3DText(button->text) * scaleButton;
+	button->item.type = MI_BUTTON;
+
+	button->item.width = widthFont3DText(button->text) * scaleText;
 	button->item.height = 0.9f;
 
 	button->item.position = vector2(-button->item.width / 2.0f, z);
@@ -103,12 +105,13 @@ void clickButton(Button* button)
 
 void drawButton(const Button* button)
 {
-	float scale = scaleButton * (1.0f + 0.1f * button->item.emphasize);
+	float scale = scaleText * (1.0f + 0.1f * button->item.emphasize);
 
 	glPushMatrix();
 
 		glTranslatef(-0.5f * button->item.width * 0.1f * button->item.emphasize, 0.0f, 0.0f);
 		glScalef(scale, scale, scale);
+
 		drawFont3DText(button->text);
 
 	glPopMatrix();
@@ -116,33 +119,51 @@ void drawButton(const Button* button)
 
 /*** Check ***/
 
-void setCheck(Check* check, int value) {
+void setCheck(Check* check, int value)
+{
 	check->value = value;
-
-#if 0
-	if (check->value) {
-		setObjectGroupColor(&check->oCheck, 1.0f, 1.0f, 1.0f);
-	} else {
-		setObjectGroupColor(&check->oCheck, 0.5f, 0.5f, 0.5f);
-	}
-#endif
-
 	check->change(check);
 }
 
-void pickCheck(void* data) {
-	Check* check = data;
-	setCheck(check, !check->value);
-}
-
-void init3dCheck(Check* check, float z, funcChange change, char* text) {
-#if 0
-	initTextObject(&check->oCheck, text, z);
-#endif
-
+void initCheck(Check* check, float z, funcChange change, char* text)
+{
+	check->text = text;
 	check->change = change;
 
+	check->item.type = MI_CHECK;
+
+	check->item.width = widthFont3DText(check->text) * scaleText;
+	check->item.height = 0.9f;
+
+	check->item.position = vector2(-check->item.width / 2.0f, z);
+
 	setCheck(check, 1);
+}
+
+void drawCheck(const Check* check)
+{
+	float scale = scaleText * (1.0f + 0.1f * check->item.emphasize);
+
+	glPushMatrix();
+
+		glTranslatef(-0.5f * check->item.width * 0.1f * check->item.emphasize, 0.0f, 0.0f);
+		glScalef(scale, scale, scale);
+
+		if (check->value) {
+			glColor3f(1.0f, 1.0f, 1.0f);
+		} else {
+			glColor3f(0.5f, 0.5f, 0.5f);
+		}
+
+			drawFont3DText(check->text);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+	glPopMatrix();
+}
+
+void clickCheck(Check* check) {
+	setCheck(check, !check->value);
 }
 
 /*** SpinEdit ***/
@@ -233,6 +254,9 @@ void drawMenuItem(const MenuItem* item)
 			case MI_BUTTON:
 				drawButton((const Button*) item);
 				break;
+			case MI_CHECK:
+				drawCheck((const Check*) item);
+				break;
 			default:
 				break;
 		}
@@ -254,6 +278,9 @@ void clickMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 				{
 					case MI_BUTTON:
 						clickButton((Button*) item);
+						break;
+					case MI_CHECK:
+						clickCheck((Check*) item);
 						break;
 					default:
 						break;

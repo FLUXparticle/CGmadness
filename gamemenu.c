@@ -179,6 +179,11 @@ void setGameMenuPosistion(Vector3 pos) {
 
 void drawGameMenu(void) {
 	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
 
 		setSomeLight();
 
@@ -191,6 +196,7 @@ void drawGameMenu(void) {
 		glPopMatrix();
 
 	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event) {
@@ -252,6 +258,8 @@ void initGameMenu() {
 	static MenuItem* itemsMain1[] =
 	{
 		&bStart.item,
+		&gcShadows.item,
+		&gcReflection.item,
 		&bHelp.item,
 		&bQuit.item
 	};
@@ -259,6 +267,8 @@ void initGameMenu() {
 	static MenuItem* itemsMain2[] =
 	{
 		&bResume.item,
+		&gcShadows.item,
+		&gcReflection.item,
 		&bHelp.item,
 		&bQuit.item
 	};
@@ -267,6 +277,12 @@ void initGameMenu() {
 	{
 		&bContinue.item,
 		&bMain.item
+	};
+
+	static MenuItem* itemsEnd[] =
+	{
+		&bAgain.item,
+		&bQuit2.item
 	};
 
 	int i;
@@ -313,8 +329,8 @@ void initGameMenu() {
 	initButton(&bResume, 6.0f, clickButtonStart, "Resume");
 
 	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
-	init3dCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
-	init3dCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
+	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
+	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
 
 	initButton(&bHelp, 2.0f, clickButtonHelp, "Help");
 	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
@@ -329,7 +345,8 @@ void initGameMenu() {
 	INIT_MENU(&gMenuNext, itemsNext);
 
 	/* help menu */
-	for (i = 0; i < LENGTH(gTextHelp); i++) {
+	for (i = 0; i < LENGTH(gTextHelp); i++)
+	{
 		float z = 6.0f - i;
 		float length;
 
@@ -357,4 +374,6 @@ void initGameMenu() {
 	/* game complete menu */
 	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
 	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
+
+	INIT_MENU(&gMenuEnd, itemsEnd);
 }

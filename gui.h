@@ -34,11 +34,6 @@ typedef void (*funcChange)(void* self);
 
 typedef struct {
 	int value;
-	funcChange change;
-} Check;
-
-typedef struct {
-	int value;
 	int minValue;
 	int maxValue;
 	funcChange change;
@@ -48,7 +43,8 @@ typedef struct {
 
 typedef enum {
 	MI_UNDEFINED = -1,
-	MI_BUTTON
+	MI_BUTTON,
+	MI_CHECK
 } MenuItemType;
 
 typedef struct {
@@ -71,8 +67,18 @@ typedef struct {
 	MenuItem item;
 
 	char* text;
+
 	funcClick click;
 } Button;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
+	int value;
+
+	funcChange change;
+} Check;
 
 void initGUI(void);
 
@@ -85,7 +91,7 @@ void initButton(Button* button, float z, funcClick click, char* text);
 /* Check */
 
 void setCheck(Check* check, int value);
-void init3dCheck(Check* check, float z, funcChange change, char* text);
+void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
