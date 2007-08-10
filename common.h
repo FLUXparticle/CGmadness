@@ -77,8 +77,9 @@ extern Vector3* sgNormals;
 extern Vector3 sgForward;
 extern Vector3 sgRight;
 
-void initTextures(void);
-void updateTextures(int verbose);
+void initAtlas(void);
+void updateLightMap(void);
+void updateColorMap(void);
 
 void initCommon(void);
 void destroyCommon(void);

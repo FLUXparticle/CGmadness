@@ -20,19 +20,39 @@
  *
  */
 
-#ifndef _field_h_
-#define _field_h_
-
 #include "color.h"
 
-void setSquareColor(int q, Color4 col);
+Color4 color4(float r, float g, float b, float a)
+{
+	Color4 col;
 
-void initGameField(void);
-void destroyGameField(void);
+	col.r = r;
+	col.g = g;
+	col.b = b;
+	col.a = a;
 
-void updateGameField(void);
+	return col;
+}
 
-void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
+Color3 color3(float r, float g, float b)
+{
+	Color3 col;
 
-#endif
+	col.r = r;
+	col.g = g;
+	col.b = b;
+
+	return col;
+}
+
+Color3 color3i(int r, int g, int b)
+{
+	return color3((float) r / 255, (float) g / 255, (float) b / 255);
+}
+
+Color3 interpolateColor(Color3 col1, Color3 col2, float t)
+{
+	float invT = 1.0f - t;
+
+	return color3(col1.r * invT + col2.r * t, col1.g * invT + col2.g * t, col1.b * invT + col2.b * t);
+}

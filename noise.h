@@ -20,19 +20,14 @@
  *
  */
 
-#ifndef _field_h_
-#define _field_h_
+#ifndef _noise_h_
+#define _noise_h_
+
+#include "atlas.h"
 
 #include "color.h"
 
-void setSquareColor(int q, Color4 col);
-
-void initGameField(void);
-void destroyGameField(void);
-
-void updateGameField(void);
-
-void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
+void initNoise(void);
+void genNoiseTexture(SubAtlas* subAtlas, Vector3 origin, Vector3 vx, Vector3 vy);
 
 #endif

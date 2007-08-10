@@ -20,19 +20,42 @@
  *
  */
 
-#ifndef _field_h_
-#define _field_h_
+#ifndef _atlas_h_
+#define _atlas_h_
 
+#include "vector.h"
 #include "color.h"
 
-void setSquareColor(int q, Color4 col);
+#define LIGHT_MAP_SIZE 8
+#define COLOR_MAP_SIZE 32
 
-void initGameField(void);
-void destroyGameField(void);
+#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
-void updateGameField(void);
+typedef struct {
+	int sizeX;
+	int sizeY;
+	int idxSubLightMap;
+} SubAtlas;
 
-void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
+void allocAtlas(int cntSubTextures);
+
+int getCntAllocatedSubLightMaps(void);
+
+void freeAtlas(void);
+
+void lightMapToTexture(unsigned int texID);
+void colorMapToTexture(unsigned int texID);
+
+void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
+void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
+
+/*****/
+
+void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY);
+
+void setLightMap(SubAtlas* subAtlas, int x, int y, float value);
+void setColorMap(SubAtlas* subAtlas, int x, int y, Color3 col);
+
+Vector2 transformCoords(const SubAtlas* subAtlas, const Vector2 coords);
 
 #endif

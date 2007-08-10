@@ -33,12 +33,14 @@
 
 static int gUseTextures = 0;
 
-void initTextureEnvironment(void) {
+void initTextureEnvironment(void)
+{
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	gUseTextures = 1;
 }
 
-typedef struct {
+typedef struct
+{
 	GLubyte components;
 	GLushort width;
 	GLushort height;
@@ -46,7 +48,8 @@ typedef struct {
 	GLubyte* data;
 } Image;
 
-typedef struct {
+typedef struct
+{
 	GLubyte lenID;
 	GLubyte typePalette;
 	GLubyte typeImage;
@@ -61,7 +64,8 @@ typedef struct {
 	GLubyte attrImage;
 } __attribute__((__packed__)) TGAHeader;
 
-void copyPixel(GLubyte* data, int pos, GLubyte* pixel, int components) {
+void copyPixel(GLubyte* data, int pos, GLubyte* pixel, int components)
+{
 	data[pos++] = pixel[2];
 	data[pos++] = pixel[1];
 	data[pos++] = pixel[0];
@@ -72,10 +76,12 @@ void copyPixel(GLubyte* data, int pos, GLubyte* pixel, int components) {
 
 #define BOTTOMUP(header) ((header).attrImage & 8)
 
-void nextPixel(TGAHeader* header, int* pos) {
+void nextPixel(TGAHeader* header, int* pos)
+{
 	int components = header->bitsPerPixel / 8;
 	*pos += components;
-	if (BOTTOMUP(*header) && *pos % (header->width * components) == 0) {
+	if (BOTTOMUP(*header) && *pos % (header->width * components) == 0)
+	{
 		*pos -= 2 * header->width * components;
 	}
 }

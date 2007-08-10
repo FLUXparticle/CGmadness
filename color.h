@@ -20,38 +20,27 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
-
-#include "vector.h"
-
-#define LIGHT_MAP_SIZE 8
-
-#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
+#ifndef _color_h_
+#define _color_h_
 
 typedef struct {
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} LightMap;
+	float r;
+	float g;
+	float b;
+} Color3;
 
-void allocLightMap(int cntSubLightMaps);
+typedef struct {
+	float r;
+	float g;
+	float b;
+	float a;
+} Color4;
 
-int getCntAllocatedSubLightMaps(void);
+Color4 color4(float r, float g, float b, float a);
 
-void freeLightMap(void);
+Color3 color3(float r, float g, float b);
+Color3 color3i(int r, int g, int b);
 
-void lightMapToTexture(unsigned int texID);
-
-void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
-
-void setLightMap(LightMap* lightMap, int x, int y, float value);
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
+Color3 interpolateColor(Color3 col1, Color3 col2, float t);
 
 #endif

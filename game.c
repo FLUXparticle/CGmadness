@@ -37,7 +37,10 @@
 #include "callback.h"
 #include "environment.h"
 #include "texture.h"
-#include "lightmap.h"
+#include "noise.h"
+#include "atlas.h"
+
+#include "color.h"
 
 #include "functions.h"
 
@@ -219,11 +222,20 @@ int initLevel(const char* filename) {
 	}
 
 	if (sgLevel.plateTexture == 0) {
+#if 0
+		sgLevel.plateTexture = genNoiseTexture(COLOR_MAP_SIZE, );
+#else
 		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+#endif
 	}
 
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
+
+	updateColorMap();
+
+	sgLevel.plateTexture = genTexture();
+	colorMapToTexture(sgLevel.plateTexture);
 
 	initGameField();
 
@@ -244,6 +256,7 @@ int initLevel(const char* filename) {
 
 void destroyLevel(void) {
 	glDeleteTextures(1, &sgLevel.lightMap);
+	glDeleteTextures(1, &sgLevel.plateTexture);
 
 	destroyGameField();
 	destroyCommon();

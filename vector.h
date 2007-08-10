@@ -36,18 +36,9 @@ typedef struct {
 	float z;
 } Vector3;
 
-typedef struct {
-	float r;
-	float g;
-	float b;
-	float a;
-} Color4;
-
 Vector2 vector2(float x, float y);
 
 Vector3 vector3(float x, float y, float z);
-
-Color4 color4(float r, float g, float b, float a);
 
 float sqr(float x);
 
