@@ -33,6 +33,5 @@ void destroyGameField(void);
 void updateGameField(void);
 
 void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
 
 #endif

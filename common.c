@@ -132,26 +132,42 @@ void updateSideSquareTexCoords(Square* square, int x, int y, int z, int side)
 	{
 		for (i = 0; i < 4; i++)
 		{
+#if 0
+			square->texcoord[i].x = square->vertices[i].x;
+			square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
+#else
+			square->texcoord[i].x = gEdgeX[i];
+			square->texcoord[i].y = gEdgeY[i];
+#endif
+
 			square->lightmap[i].x = a * (square->vertices[i].x - x) + b;
 			square->lightmap[i].y = z + a * (square->vertices[i].z - z) + b;
 			square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
 
-			square->texcoords[i].x = c * (square->vertices[i].x - x) + d;
-			square->texcoords[i].y = z + c * (square->vertices[i].z - z) + d;
-			square->texcoords[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->texcoords[i]);
+			square->colormap[i].x = c * (square->vertices[i].x - x) + d;
+			square->colormap[i].y = z + c * (square->vertices[i].z - z) + d;
+			square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
 		}
 	}
 	else
 	{
 		for (i = 0; i < 4; i++)
 		{
+#if 0
+	    square->texcoord[i].x = square->vertices[i].y;
+  	  square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
+#else
+			square->texcoord[i].x = gEdgeX[i];
+			square->texcoord[i].y = gEdgeY[i];
+#endif
+
 			square->lightmap[i].x = a * (square->vertices[i].y - y) + b;
 			square->lightmap[i].y = z + a * (square->vertices[i].z - z) + b;
 			square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
 
-			square->texcoords[i].x = c * (square->vertices[i].y - y) + d;
-			square->texcoords[i].y = z + c * (square->vertices[i].z - z) + d;
-			square->texcoords[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->texcoords[i]);
+			square->colormap[i].x = c * (square->vertices[i].y - y) + d;
+			square->colormap[i].y = z + c * (square->vertices[i].z - z) + d;
+			square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
 		}
 	}
 }
@@ -640,13 +656,16 @@ void updateTexCoords(void)
 
 			for (i = 0; i < 4; i++)
 			{
+				square->texcoord[i].x = gEdgeX[i];
+				square->texcoord[i].y = gEdgeY[i];
+
 				square->lightmap[i].x = a * gEdgeX[i] + b;
 				square->lightmap[i].y = a * gEdgeY[i] + b;
 				square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
 
-				square->texcoords[i].x = c * gEdgeX[i] + d;
-				square->texcoords[i].y = c * gEdgeY[i] + d;
-				square->texcoords[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->texcoords[i]);
+				square->colormap[i].x = c * gEdgeX[i] + d;
+				square->colormap[i].y = c * gEdgeY[i] + d;
+				square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
 			}
 		}
 	}

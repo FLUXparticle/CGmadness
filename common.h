@@ -31,8 +31,9 @@
 
 typedef struct {
 	Vector3 normal;
-	Vector2 texcoords[4];
+	Vector2 colormap[4];
 	Vector2 lightmap[4];
+	Vector2 texcoord[4];
 	Vector3 vertices[4];
 
 	float area;
@@ -60,7 +61,8 @@ typedef struct {
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
-	unsigned int plateTexture;
+	unsigned int borderTexture;
+	unsigned int colorMap;
 	unsigned int lightMap;
 } Level;
 

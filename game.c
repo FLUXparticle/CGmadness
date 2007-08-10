@@ -204,10 +204,8 @@ void drawGame(void) {
 }
 
 void drawGameReflection(void) {
-#if 1
 	drawEnvironment();
 	drawGameField(1);
-#endif
 }
 
 void pickGame(void) {
@@ -221,12 +219,8 @@ int initLevel(const char* filename) {
 		return 0;
 	}
 
-	if (sgLevel.plateTexture == 0) {
-#if 0
-		sgLevel.plateTexture = genNoiseTexture(COLOR_MAP_SIZE, );
-#else
-		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
-#endif
+	if (sgLevel.borderTexture == 0) {
+		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
 	}
 
 	sgLevel.lightMap = genTexture();
@@ -234,8 +228,8 @@ int initLevel(const char* filename) {
 
 	updateColorMap();
 
-	sgLevel.plateTexture = genTexture();
-	colorMapToTexture(sgLevel.plateTexture);
+	sgLevel.colorMap = genTexture();
+	colorMapToTexture(sgLevel.colorMap);
 
 	initGameField();
 
@@ -256,7 +250,7 @@ int initLevel(const char* filename) {
 
 void destroyLevel(void) {
 	glDeleteTextures(1, &sgLevel.lightMap);
-	glDeleteTextures(1, &sgLevel.plateTexture);
+	glDeleteTextures(1, &sgLevel.colorMap);
 
 	destroyGameField();
 	destroyCommon();

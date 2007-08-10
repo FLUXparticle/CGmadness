@@ -345,7 +345,7 @@ void drawEditorField(void) {
 
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
 
 	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
@@ -377,7 +377,7 @@ void drawEditorField(void) {
 				glBegin(GL_QUADS);
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
-						glMultiTexCoord2fv(GL_TEXTURE0, &square.texcoords[i].x);
+						glMultiTexCoord2fv(GL_TEXTURE0, &square.colormap[i].x);
 						glMultiTexCoord2fv(GL_TEXTURE1, &square.lightmap[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
@@ -393,7 +393,7 @@ void drawEditorField(void) {
 						for (k = 0; k < cnt; k++) {
 							glNormal3fv(&squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].texcoords[i].x);
+								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].colormap[i].x);
 								glMultiTexCoord2fv(GL_TEXTURE1, &squares[k].lightmap[i].x);
 								glVertex3fv(&squares[k].vertices[i].x);
 							}
@@ -450,9 +450,9 @@ int initEditor(char* filename)
 		}
 	}
 
-	if (sgLevel.plateTexture == 0)
+	if (sgLevel.colorMap == 0)
 	{
-		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+		sgLevel.colorMap = loadTexture("data/plate.tga", 1);
 	}
 
 	sgLevel.lightMap = genTexture();
