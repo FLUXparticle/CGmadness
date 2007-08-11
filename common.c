@@ -119,59 +119,6 @@ int getFieldEdgeHeight(int x, int y, int edge)
 	return 0;
 }
 
-void updateSideSquareTexCoords(Square* square, int x, int y, int z, int side)
-{
-	float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
-	float b = 1.0f / (2 * LIGHT_MAP_SIZE);
-	float c = (float) (COLOR_MAP_SIZE - 1) / COLOR_MAP_SIZE;
-	float d = 1.0f / (2 * COLOR_MAP_SIZE);
-
-	int i;
-
-	if (side % 2 == 0)
-	{
-		for (i = 0; i < 4; i++)
-		{
-#if 0
-			square->texcoord[i].x = square->vertices[i].x;
-			square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
-#else
-			square->texcoord[i].x = gEdgeX[i];
-			square->texcoord[i].y = gEdgeY[i];
-#endif
-
-			square->lightmap[i].x = a * (square->vertices[i].x - x) + b;
-			square->lightmap[i].y = z + a * (square->vertices[i].z - z) + b;
-			square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
-
-			square->colormap[i].x = c * (square->vertices[i].x - x) + d;
-			square->colormap[i].y = z + c * (square->vertices[i].z - z) + d;
-			square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
-		}
-	}
-	else
-	{
-		for (i = 0; i < 4; i++)
-		{
-#if 0
-	    square->texcoord[i].x = square->vertices[i].y;
-  	  square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
-#else
-			square->texcoord[i].x = gEdgeX[i];
-			square->texcoord[i].y = gEdgeY[i];
-#endif
-
-			square->lightmap[i].x = a * (square->vertices[i].y - y) + b;
-			square->lightmap[i].y = z + a * (square->vertices[i].z - z) + b;
-			square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
-
-			square->colormap[i].x = c * (square->vertices[i].y - y) + d;
-			square->colormap[i].y = z + c * (square->vertices[i].z - z) + d;
-			square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
-		}
-	}
-}
-
 void updateSquareAttributes(Square* square)
 {
 	square->mid = midpoint(square->vertices);
@@ -528,28 +475,17 @@ Orientation orientationFloor(int fx, int fy)
 
 Orientation orientationSide(int fx, int fy, int side)
 {
-	if (side % 2 == 0)
-	{
-		Orientation sideX;
+	int next = (side + 1) % 4;
+	int prev = (side + 3) % 4;
 
-		sideX.origin = vector3(fx, fy + (side / 2), 0.0f);
-		sideX.vx = vector3(1.0f, 0.0f, 0.0f);
-		sideX.vy = vector3(0.0f, 0.0f, 1.0f);
-		sideX.normal = vector3(0.0f, (side / 2) * 2.0f - 1.0f, 0.0f);
+	Orientation orientation;
 
-		return sideX;
-	}
-	else
-	{
-		Orientation sideY;
+	orientation.origin = vector3(fx + gEdgeX[side], fy + gEdgeY[side], 0.0f);
+	orientation.vx = vector3(gEdgeX[next] - gEdgeX[side], gEdgeY[next] - gEdgeY[side], 0.0f);
+	orientation.vy = vector3(0.0f, 0.0f, 1.0f);
+	orientation.normal = vector3(gEdgeX[side] - gEdgeX[prev], gEdgeY[side] - gEdgeY[prev], 0.0f);
 
-		sideY.origin = vector3(fx + 1 - (side / 2), fy, 0.0f);
-		sideY.vx = vector3(0.0f, 1.0f, 0.0f);
-		sideY.vy = vector3(0.0f, 0.0f, 1.0f);
-		sideY.normal = vector3(1.0f - (side / 2) * 2.0f, 0.0f, 0.0f);
-
-		return sideY;
-	}
+	return orientation;
 }
 
 void updateLightMap(void)
@@ -678,12 +614,41 @@ void updateTexCoords(void)
 
 			for (side = 0; side < 4; side++)
 			{
+				int next = (side + 1) % 4;
+
+				int x0 = x + gEdgeX[side];
+				int y0 = y + gEdgeY[side];
+
 				int k;
 				for (k = 0; k < p->cntSideSquares[side]; k++)
 				{
 					Square* square = &p->sides[side][k];
 
-					updateSideSquareTexCoords(square, x, y, (int) square->vertices[1].z, side);
+					int z0 = (int) square->vertices[1].z;
+
+					int i;
+					for (i = 0; i < 4; i++)
+					{
+						float tx = (gEdgeX[next] - gEdgeX[side]) * (square->vertices[i].x - x0);
+						float ty = (gEdgeY[next] - gEdgeY[side]) * (square->vertices[i].y - y0);
+						float tz = square->vertices[i].z - z0;
+
+				#if 0
+						square->texcoord[i].x = square->vertices[i].x;
+						square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
+				#else
+						square->texcoord[i].x = gEdgeX[i];
+						square->texcoord[i].y = gEdgeY[i];
+				#endif
+
+						square->lightmap[i].x = a * (tx + ty) + b;
+						square->lightmap[i].y = z0 + a * tz + b;
+						square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
+
+						square->colormap[i].x = c * (tx + ty) + d;
+						square->colormap[i].y = z0 + c * tz + d;
+						square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
+					}
 				}
 			}
 		}
