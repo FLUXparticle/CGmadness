@@ -619,7 +619,11 @@ void updateTexCoords(void)
 				int x0 = x + gEdgeX[side];
 				int y0 = y + gEdgeY[side];
 
-				int k;
+				int k = p->cntSideSquares[side] - 1;
+
+				float z1 = p->roof.vertices[side].z;
+				float z2 = p->roof.vertices[next].z;
+
 				for (k = 0; k < p->cntSideSquares[side]; k++)
 				{
 					Square* square = &p->sides[side][k];
@@ -633,19 +637,21 @@ void updateTexCoords(void)
 						float ty = (gEdgeY[next] - gEdgeY[side]) * (square->vertices[i].y - y0);
 						float tz = square->vertices[i].z - z0;
 
-				#if 0
-						square->texcoord[i].x = square->vertices[i].x;
-						square->texcoord[i].y = ((1.0f - t) * z1 + t * z2) - square->vertices[i].z;
+						float txy = tx + ty;
+
+				#if 1
+						square->texcoord[i].x = txy;
+						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z;
 				#else
 						square->texcoord[i].x = gEdgeX[i];
 						square->texcoord[i].y = gEdgeY[i];
 				#endif
 
-						square->lightmap[i].x = a * (tx + ty) + b;
+						square->lightmap[i].x = a * txy + b;
 						square->lightmap[i].y = z0 + a * tz + b;
 						square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
 
-						square->colormap[i].x = c * (tx + ty) + d;
+						square->colormap[i].x = c * txy + d;
 						square->colormap[i].y = z0 + c * tz + d;
 						square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
 					}
