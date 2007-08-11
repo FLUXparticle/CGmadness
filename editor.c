@@ -387,15 +387,17 @@ void drawEditorField(void) {
 
 				glBegin(GL_QUADS);
 					for (j = 0; j < 4; j++) {
-						Square* squares;
-						int cnt = getSideSquares(cur.x, cur.y, j, &squares);
+						SideFace face;
 						int k;
-						for (k = 0; k < cnt; k++) {
-							glNormal3fv(&squares[k].normal.x);
+
+						getSideFace(cur.x, cur.y, j, &face);
+
+						for (k = 0; k < face.cntSquares; k++) {
+							glNormal3fv(&face.squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].colormap[i].x);
-								glMultiTexCoord2fv(GL_TEXTURE1, &squares[k].lightmap[i].x);
-								glVertex3fv(&squares[k].vertices[i].x);
+								glMultiTexCoord2fv(GL_TEXTURE0, &face.squares[k].colormap[i].x);
+								glMultiTexCoord2fv(GL_TEXTURE1, &face.squares[k].lightmap[i].x);
+								glVertex3fv(&face.squares[k].vertices[i].x);
 							}
 						}
 					}

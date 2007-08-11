@@ -163,26 +163,34 @@ void updatePlate(int x, int y)
 
 		for (side = 0; side < 4; side++)
 		{
-			int j = (side + 1) % 4;
+			int next = (side + 1) % 4;
+			int prev = (side + 3) % 4;
 
-			int i2 = (side + 3) % 4;
-			int j2 = (side + 2) % 4;
+			int sideOpposite = (side + 3) % 4;
+			int nextOpposite = (side + 2) % 4;
+
+			int dx = gEdgeX[side] - gEdgeX[prev];
+			int dy = gEdgeY[side] - gEdgeY[prev];
 
 			int height1 = getFieldEdgeHeight(x, y, side);
-			int height2 = getFieldEdgeHeight(x, y, j);
+			int height2 = getFieldEdgeHeight(x, y, next);
 
-			int dx = gEdgeY[j] - gEdgeY[side];
-			int dy = gEdgeX[side] - gEdgeX[j];
+			int height3 = getFieldEdgeHeight(x + dx, y + dy, sideOpposite);
+			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
 
-			p->cntSideSquares[side] = 0;
+			SideFace* face = &p->sideFaces[side];
 
-			if (height1 > getFieldEdgeHeight(x + dx, y + dy, i2) ||
-					height2 > getFieldEdgeHeight(x + dx, y + dy, j2))
+			face->cntSquares = 0;
+
+			if (height1 > height3 ||
+					height2 > height4)
 			{
 				int x1 = x + gEdgeX[side];
 				int y1 = y + gEdgeY[side];
-				int x2 = x + gEdgeX[j];
-				int y2 = y + gEdgeY[j];
+				int x2 = x + gEdgeX[next];
+				int y2 = y + gEdgeY[next];
+
+				int startHeight = min(height3, height4);
 
 				int minHeight;
 				int maxHeight;
@@ -206,10 +214,14 @@ void updatePlate(int x, int y)
 					y3 = y2;
 				}
 
-				for (bottom = 0; bottom < minHeight; )
+				face->bottom = (float) startHeight / HEIGHT_STEPS;
+				face->top    = (float)   maxHeight / HEIGHT_STEPS;
+
+				for (bottom = startHeight; bottom < minHeight; )
 				{
-					int top = min(minHeight, bottom + HEIGHT_STEPS);
-					square = &p->sides[side][p->cntSideSquares[side]++];
+					int top = min(minHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
+
+					square = &face->squares[face->cntSquares++];
 
 					square->normal.x = dx;
 					square->normal.y = dy;
@@ -243,7 +255,7 @@ void updatePlate(int x, int y)
 					float t1 = (float) (bottom - minHeight) / (maxHeight - minHeight);
 					float t2 = (float) (top - minHeight) / (maxHeight - minHeight);
 
-					square = &p->sides[side][p->cntSideSquares[side]++];
+					square = &face->squares[face->cntSquares++];
 
 					square->normal.x = dx;
 					square->normal.y = dy;
@@ -284,34 +296,21 @@ void getRoofSquare(int x, int y, Square* square)
 	*square = p->roof;
 }
 
-int getSideSquares(int x, int y, int side, Square** square)
+void getSideFace(int x, int y, int side, SideFace* face)
 {
 	Plate* p = &sgLevel.field[x][y];
 	updatePlate(x, y);
-	*square = p->sides[side];
 
-	return p->cntSideSquares[side];
+	*face = p->sideFaces[side];
 }
 
 int quadsNeeded(int fx, int fy, int side)
 {
-	Square* squares;
-	int cnt = getSideSquares(fx, fy, side, &squares);
-	float maxZ = 0.0f;
+	SideFace face;
 
-	int k;
+	getSideFace(fx, fy, side, &face);
 
-	if (cnt == 0)
-	{
-		return 0;
-	}
-
-	for (k = 0; k < cnt; k++)
-	{
-		maxZ = max(maxZ, getMaxZValue(&squares[k]));
-	}
-
-	return ceil(maxZ);
+	return (int) (ceil(face.top) - floor(face.bottom));
 }
 
 void initAtlas(void)
@@ -422,12 +421,14 @@ float approximation(const Vector3 position, const Vector3 normal)
 
 			for (j = 0; j < 4; j++)
 			{
-				Square* squares;
-				int cnt = getSideSquares(x, y, j, &squares);
+				SideFace face;
 				int k;
-				for (k = 0; k < cnt; k++)
+
+				getSideFace(x, y, j, &face);
+
+				for (k = 0; k < face.cntSquares; k++)
 				{
-					light *= approximationSquare(position, normal, squares[k]);
+					light *= approximationSquare(position, normal, face.squares[k]);
 				}
 			}
 		}
@@ -478,9 +479,13 @@ Orientation orientationSide(int fx, int fy, int side)
 	int next = (side + 1) % 4;
 	int prev = (side + 3) % 4;
 
+	SideFace face;
+
 	Orientation orientation;
 
-	orientation.origin = vector3(fx + gEdgeX[side], fy + gEdgeY[side], 0.0f);
+	getSideFace(fx, fy, side, &face);
+
+	orientation.origin = vector3(fx + gEdgeX[side], fy + gEdgeY[side], floor(face.bottom));
 	orientation.vx = vector3(gEdgeX[next] - gEdgeX[side], gEdgeY[next] - gEdgeY[side], 0.0f);
 	orientation.vy = vector3(0.0f, 0.0f, 1.0f);
 	orientation.normal = vector3(gEdgeX[side] - gEdgeX[prev], gEdgeY[side] - gEdgeY[prev], 0.0f);
@@ -552,7 +557,6 @@ void updateColorMap(void)
 		}
 	}
 
-#if 1
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
@@ -565,7 +569,6 @@ void updateColorMap(void)
 			}
 		}
 	}
-#endif
 }
 
 void updateTexCoords(void)
@@ -619,14 +622,16 @@ void updateTexCoords(void)
 				int x0 = x + gEdgeX[side];
 				int y0 = y + gEdgeY[side];
 
-				int k = p->cntSideSquares[side] - 1;
+				SideFace* face = &p->sideFaces[side];
+
+				int k = face->cntSquares - 1;
 
 				float z1 = p->roof.vertices[side].z;
 				float z2 = p->roof.vertices[next].z;
 
-				for (k = 0; k < p->cntSideSquares[side]; k++)
+				for (k = 0; k < face->cntSquares; k++)
 				{
-					Square* square = &p->sides[side][k];
+					Square* square = &face->squares[k];
 
 					int z0 = (int) square->vertices[1].z;
 
@@ -639,20 +644,15 @@ void updateTexCoords(void)
 
 						float txy = tx + ty;
 
-				#if 1
 						square->texcoord[i].x = txy;
 						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z;
-				#else
-						square->texcoord[i].x = gEdgeX[i];
-						square->texcoord[i].y = gEdgeY[i];
-				#endif
 
 						square->lightmap[i].x = a * txy + b;
-						square->lightmap[i].y = z0 + a * tz + b;
+						square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
 						square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
 
 						square->colormap[i].x = c * txy + d;
-						square->colormap[i].y = z0 + c * tz + d;
+						square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
 						square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
 					}
 				}

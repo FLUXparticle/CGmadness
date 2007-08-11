@@ -158,7 +158,6 @@ void initGameField(void)
 	int x;
 	int y;
 	int i;
-	int k;
 	int index = 0;
 
 	MALLOC(gIndexVertices, sgMaxPlates * sizeof(int));
@@ -180,10 +179,13 @@ void initGameField(void)
 			addSquare(&square);
 
 			for (i = 0; i < 4; i++) {
-				Square* squares;
-				int cnt = getSideSquares(x, y, i, &squares);
-				for (k = 0; k < cnt; k++) {
-					addSquare(&squares[k]);
+				SideFace face;
+				int k;
+
+				getSideFace(x, y, i, &face);
+
+				for (k = 0; k < face.cntSquares; k++) {
+					addSquare(&face.squares[k]);
 				}
 			}
 		}

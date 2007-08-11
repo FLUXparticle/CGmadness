@@ -22,13 +22,8 @@
 
 #include "water.h"
 
-#include "objects.h"
-#include "common.h"
-#include "field.h"
 #include "texture.h"
 #include "environment.h"
-
-#include "functions.h"
 
 #include <GL/glew.h>
 
