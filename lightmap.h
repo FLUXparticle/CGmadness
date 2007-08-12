@@ -20,54 +20,13 @@
  *
  */
 
-#ifndef _vector_h_
-#define _vector_h_
+#ifndef _lightmap_h_
+#define _lightmap_h_
 
-#include "types.h"
+#include "atlas.h"
 
-typedef struct {
-	float x;
-	float y;
-} Vector2;
+#include "vector.h"
 
-typedef struct {
-	float x;
-	float y;
-	float z;
-} Vector3;
-
-typedef struct
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-} Orientation;
-
-Vector2 vector2(float x, float y);
-
-Vector3 vector3(float x, float y, float z);
-
-float sqr(float x);
-
-float len(const Vector3 v);
-
-Vector3 norm(const Vector3 v);
-
-Vector3 scale(float s, const Vector3 a);
-
-Vector3 add(const Vector3 a, const Vector3 b);
-
-Vector3 sub(const Vector3 a, const Vector3 b);
-
-Vector3 neg(const Vector3 a);
-
-float dot(const Vector3 a, const Vector3 b);
-
-Vector3 cross(const Vector3 a, const Vector3 b);
-
-Vector3 midpoint(const Vector3* quad);
-
-void initProjectMat(Matrix m, float fov);
+void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation);
 
 #endif

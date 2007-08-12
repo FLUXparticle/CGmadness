@@ -24,6 +24,8 @@
 
 #include "atlas.h"
 #include "noise.h"
+#include "lightmap.h"
+
 #include "progress.h"
 #include "crc32.h"
 
@@ -52,14 +54,6 @@ typedef struct
 {
 	SubAtlas sides[4];
 } CellLightMap;
-
-typedef struct
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-} Orientation;
 
 int sgCntVertices;
 
@@ -355,110 +349,6 @@ void initAtlas(void)
 	}
 }
 
-float approximationSquare(const Vector3 position, const Vector3 normal, const Square square)
-{
-	Vector3 d;
-	float r;
-	float d1;
-	float d2;
-
-	d = sub(square.mid, position);
-
-	r = len(d);
-
-	d = scale(1.0f / r, d);
-
-	d1 = dot(d, normal);
-	d2 = dot(d, square.normal);
-
-	if (d1 <= 0.0f || d2 <= 0.0f)
-	{
-		return 1.0f;
-	}
-
-	return 1.0f - ((d1 * d2) / (1.0f + PI * sqr(r) / square.area));
-}
-
-float approximation(const Vector3 position, const Vector3 normal)
-{
-	Vector3 z = vector3(0.0f, 0.0f, 1.0f);
-	float light = 1.0f - acos(dot(normal, z)) / PI;
-
-	int x;
-	int y;
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			int check = 0;
-
-			Square square;
-			int j;
-
-			if (len(sub(position, vector3(x + 0.5f, y + 0.5f, position.z))) > 6.0f)
-			{
-				continue;
-			}
-
-
-			getRoofSquare(x, y, &square);
-
-			for (j = 0; j < 4 && !check; j++)
-			{
-				if (dot(sub(square.vertices[j], position), normal) > 0.0f)
-				{
-					check = 1;
-				}
-			}
-
-			if (!check)
-			{
-				continue;
-			}
-
-			light *= approximationSquare(position, normal, square);
-
-			for (j = 0; j < 4; j++)
-			{
-				SideFace face;
-				int k;
-
-				getSideFace(x, y, j, &face);
-
-				for (k = 0; k < face.cntSquares; k++)
-				{
-					light *= approximationSquare(position, normal, face.squares[k]);
-				}
-			}
-		}
-	}
-
-	return light;
-}
-
-void makeAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation)
-{
-	int x;
-	int y;
-
-	for (x = 0; x < lightMap->sizeX * LIGHT_MAP_SIZE; x++)
-	{
-		for (y = 0; y < lightMap->sizeY * LIGHT_MAP_SIZE; y++)
-		{
-			float sx = (x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
-			float sy = (y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
-
-			Vector3 off = add(scale(sx, orientation.vx), scale(sy, orientation.vy));
-			Vector3 rayPosition = add(orientation.origin, off);
-
-			float light = approximation(rayPosition, orientation.normal);
-
-			setLightMap(lightMap, x, y, light);
-		}
-	}
-}
-
 Orientation orientationFloor(int fx, int fy)
 {
 	Square square;
@@ -513,7 +403,7 @@ void updateLightMap(void)
 		{
 			Orientation floor = orientationFloor(x, y);
 
-			makeAmbientOcclusionTexture(&SUB_ATLAS_FLOOR(x, y), floor);
+			genAmbientOcclusionTexture(&SUB_ATLAS_FLOOR(x, y), floor);
 
 			steps++;
 			setProgress((float) steps / cntSteps);
@@ -528,7 +418,7 @@ void updateLightMap(void)
 			{
 				Orientation orientation = orientationSide(x, y, side);
 
-				makeAmbientOcclusionTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation);
+				genAmbientOcclusionTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation);
 			}
 
 			steps++;
