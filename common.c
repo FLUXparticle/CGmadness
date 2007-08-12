@@ -301,7 +301,14 @@ int quadsNeeded(int fx, int fy, int side)
 
 	getSideFace(fx, fy, side, &face);
 
-	return (int) (ceil(face.top) - floor(face.bottom));
+	if (face.cntSquares > 0)
+	{
+		return (int) (ceil(face.top) - floor(face.bottom));
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 void initAtlas(void)
@@ -313,7 +320,6 @@ void initAtlas(void)
 	int side;
 
 	MALLOC(gSubAtlasFloor, sgLevel.size.x * sgLevel.size.y * sizeof(*gSubAtlasFloor));
-
 	MALLOC(gSubAtlasSides, sgLevel.size.x * sgLevel.size.y * sizeof(*gSubAtlasSides));
 
 	countSubLightMaps += sgLevel.size.x * sgLevel.size.y;
@@ -548,11 +554,17 @@ void updateTexCoords(void)
 	}
 }
 
-void destroyCommon(void)
+void destroyAtlas(void)
 {
+	FREE(gSubAtlasFloor);
 	FREE(gSubAtlasSides);
 
 	freeAtlas();
+}
+
+void destroyCommon(void)
+{
+	destroyAtlas();
 
 	FREE(sgLevel.field[0]);
 	FREE(sgLevel.field);
@@ -713,7 +725,7 @@ int loadFieldFromFile(const char* filename)
 
 		if (crc32 != getCRC32())
 		{
-			fprintf(stderr, "checksum mismatch: %s\n", filename);
+			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 			result = 0;
 		}
 		else
@@ -740,7 +752,7 @@ int loadFieldFromFile(const char* filename)
 
 			if (crc32 != getCRC32())
 			{
-				fprintf(stderr, "checksum mismatch: %s\n", filename);
+				fprintf(stderr, "2st checksum mismatch: %s\n", filename);
 				result = 0;
 			}
 		}

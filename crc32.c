@@ -28,10 +28,6 @@ void resetCRC32(void)
 	gRegister = 0xffffffff;
 }
 
-void nextBit(int bit)
-{
-}
-
 void nextByte(unsigned char byte)
 {
 	int i;
