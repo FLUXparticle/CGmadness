@@ -275,7 +275,7 @@ int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 norm
 				Vector3 a = sub(sphere, quad[i]);
 				Vector3 nn = norm(cross(cross(edge, a), edge));
 				float dToEdge = dot(sphere, nn) - dot(quad[i], nn);
-				float f = dot(a, norm(edge));
+				float f = dot(a, edge) / sqr(len(edge));
 
 				inside = 0;
 
