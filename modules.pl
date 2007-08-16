@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # CG Madness - a Marble Madness clone
-# Copyright (C) 2007  Sven Reinck
+# Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
