@@ -247,35 +247,81 @@ void initBall(void) {
 	setPreDisplayFunc(updateReflection);
 }
 
-Vector3 collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 normal) {
-	Vector3 a = midpoint(quad);
-
-	float dToPlane = dot(sphere, normal) - dot(a, normal);
-	Vector3 b = sub(sphere, scale(dToPlane, normal));
+int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 normal, Vector3* collision)
+{
+	float dToPlane = dot(sphere, normal) - dot(quad[0], normal);
+	int inside = 1;
 
 	int i;
 
-	for (i = 0; i < 4; i++) {
+	if (fabs(dToPlane) >= sgoBall.radius)
+	{
+		return 0;
+	}
+
+	PRINT_FLOAT(dToPlane);
+
+	for (i = 0; i < 4; i++)
+	{
 		int j = (i + 1) % 4;
 		Vector3 edge = sub(quad[j], quad[i]);
 
-		if (len(edge) > 0.0f) {
-			Vector3 e = quad[i];
-			Vector3 n = cross(edge, normal);
+		if (len(edge) > 0.0f)
+		{
+			Vector3 n = norm(cross(edge, normal));
 
-			float da = dot(e, n) - dot(a, n);
-			float db = dot(b, n) - dot(e, n);
+			if (dot(sphere, n) - dot(quad[i], n) >= 0.0f)
+			{
+				Vector3 a = sub(sphere, quad[i]);
+				Vector3 nn = norm(cross(cross(edge, a), edge));
+				float dToEdge = dot(sphere, nn) - dot(quad[i], nn);
+				float f = dot(a, norm(edge));
 
-			assert(da > 0.0f);
+				inside = 0;
 
-			if (db > 0.0f) {
-				float d = da + db;
-				b = add(scale(da / d, b), scale(db / d, a));
+				PRINT_FLOAT(dToEdge);
+
+				if (dToEdge >= sgoBall.radius)
+				{
+					return 0;
+				}
+
+				if (f <= 0.0f)
+				{
+					if (len(sub(sphere, quad[i])) < sgoBall.radius)
+					{
+						*collision = quad[i];
+
+						return 1;
+					}
+				}
+				else if (f >= 1.0f)
+				{
+					if (len(sub(sphere, quad[j])) < sgoBall.radius)
+					{
+						*collision = quad[j];
+
+						return 1;
+					}
+				}
+				else
+				{
+					*collision = sub(sphere, scale(dToEdge, nn));
+
+					return 1;
+				}
 			}
 		}
 	}
 
-	return b;
+	if (inside)
+	{
+		*collision = sub(sphere, scale(dToPlane, normal));
+
+		return 1;
+	}
+
+	return 0;
 }
 
 void animateBall(float interval) {
@@ -354,17 +400,17 @@ void animateBall(float interval) {
 				Vector3* quad = &sgVertices[q];
 				Vector3 dir = sgNormals[q];
 
-				Vector3 a = collisionPoint(ball, quad, dir);
+				Vector3 a;
 
-				/* dist = vector from ball center to quad */
-				Vector3 dist = sub(a, ball);
-				float l = len(dist);
-
-        /* collision? */
-				if (l < sgoBall.radius) {
+				if (collisionPoint(ball, quad, dir, &a))
+				{
 #if SHOW_COLLISION_QUADS
 					static Color4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
 #endif
+
+					/* dist = vector from ball center to quad */
+					Vector3 dist = sub(a, ball);
+					float l = len(dist);
 
 					/* move = vector to move the ball out of quad */
 					Vector3 move = scale(-((sgoBall.radius - l) / l), dist);
@@ -379,6 +425,7 @@ void animateBall(float interval) {
 
 					normal = add(normal, move);
 					collision = 1;
+
 #if SHOW_COLLISION_QUADS
 					setSquareColor(q, red);
 #endif
