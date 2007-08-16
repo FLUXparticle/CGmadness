@@ -71,27 +71,33 @@ static int gCubeMapBall;
 
 static int gTextureBall;
 
-int hasBallTexture(void) {
+int hasBallTexture(void)
+{
 	return gTextureBall >= 0;
 }
 
-int hasBallReflection(void) {
+int hasBallReflection(void)
+{
 	return gCubeMapBall != 0;
 }
 
-int hasBallShader(void) {
+int hasBallShader(void)
+{
 	return gShaderBall != 0;
 }
 
-int useBallShader(void) {
+int useBallShader(void)
+{
 	return hasShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
-int useBallReflection(void) {
+int useBallReflection(void)
+{
 	return hasFramebuffer() && (gBallLayout == BALL_LAYOUT_METAL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
-void changeBall(int layout) {
+void changeBall(int layout)
+{
 	int i;
 	int reflection;
 
@@ -169,7 +175,8 @@ void updateReflection(void)
 	}
 }
 
-void resetBall(void) {
+void resetBall(void)
+{
 	Square roofSquare;
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
 	sgoBall.pos.x = sgLevel.start.x + 0.5f;
@@ -188,7 +195,8 @@ void resetBall(void) {
 	gDirtyReflection = 1;
 }
 
-void explodeBall(void) {
+void explodeBall(void)
+{
 	Vector3 pos = sgoBall.pos;
 	Vector3 speed = sgoBall.velocity;
 
@@ -205,7 +213,8 @@ void explodeBall(void) {
 	gDirtyReflection = 1;
 }
 
-void initCubeMap(void) {
+void initCubeMap(void)
+{
 	Matrix m;
 	int i;
 
@@ -214,7 +223,8 @@ void initCubeMap(void) {
 	/* init framebuffer for cubemap */
 	gCubeMapBall = initFBufferCube(CUBE_MAP_SIZE, CUBE_MAP_SIZE, &gTargetCube[0]);
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < 6; i++)
+	{
 		memcpy(&gViewportCube[i].projection[0][0], &m, sizeof(Matrix));
 		gViewportCube[i].draw = drawGameReflection;
 
@@ -222,18 +232,24 @@ void initCubeMap(void) {
 	}
 }
 
-void initBall(void) {
-	if (hasShader()) {
+void initBall(void)
+{
+	if (hasShader())
+	{
 		gShaderBall = makeShader("golfball.vert", "golfball.frag");
 
-		if (gShaderBall == 0) {
+		if (gShaderBall == 0)
+		{
 			printf("Golfball-Shader not ready :-(\n");
-		} else {
+		}
+		else
+		{
 			printf("Golfball-Shader ready :-)\n");
 		}
 	}
 
-	if (hasFramebuffer()) {
+	if (hasFramebuffer())
+	{
 		initCubeMap();
 	}
 
@@ -259,8 +275,6 @@ int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 norm
 		return 0;
 	}
 
-	PRINT_FLOAT(dToPlane);
-
 	for (i = 0; i < 4; i++)
 	{
 		int j = (i + 1) % 4;
@@ -278,8 +292,6 @@ int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 norm
 				float f = dot(a, edge) / sqr(len(edge));
 
 				inside = 0;
-
-				PRINT_FLOAT(dToEdge);
 
 				if (dToEdge >= sgoBall.radius)
 				{
@@ -324,7 +336,8 @@ int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 norm
 	return 0;
 }
 
-void animateBall(float interval) {
+void animateBall(float interval)
+{
 	int collision = 0;
 	int q;
 	int x;
@@ -340,35 +353,43 @@ void animateBall(float interval) {
 
 	/* ball controls */
 #if (MOUSE_CONTROL)
-	if (isKeyPressed('a')) {
+	if (isKeyPressed('a'))
+	{
 		force = sub(force, sgRight);
 	}
 
-	if (isKeyPressed('d')) {
+	if (isKeyPressed('d'))
+	{
 		force = add(force, sgRight);
 	}
 
-	if (isKeyPressed('s')) {
+	if (isKeyPressed('s'))
+	{
 		force = sub(force, sgForward);
 	}
 
-	if (isKeyPressed('w')) {
+	if (isKeyPressed('w'))
+	{
 		force = add(force, sgForward);
 	}
 #else
-	if (isCursorPressed(CURSOR_LEFT)) {
+	if (isCursorPressed(CURSOR_LEFT))
+	{
 		force = sub(force, sgRight);
 	}
 
-	if (isCursorPressed(CURSOR_RIGHT)) {
+	if (isCursorPressed(CURSOR_RIGHT))
+	{
 		force = add(force, sgRight);
 	}
 
-	if (isCursorPressed(CURSOR_DOWN)) {
+	if (isCursorPressed(CURSOR_DOWN))
+	{
 		force = sub(force, sgForward);
 	}
 
-	if (isCursorPressed(CURSOR_UP)) {
+	if (isCursorPressed(CURSOR_UP))
+	{
 		force = add(force, sgForward);
 	}
 #endif
@@ -388,15 +409,18 @@ void animateBall(float interval) {
 	x = floor(ball.x);
 	y = floor(ball.y);
 
-  /* check only fields near by the ball */
-  for (dx = -1; dx <= 1; dx++) {
-		for (dy = -1; dy <= 1; dy++) {
+  /* check only fields near by the ball. check field under ball first!!! */
+  for (dx = 1; dx <= 3; dx++)
+  {
+		for (dy = 1; dy <= 3; dy++)
+		{
 			int start;
 			int end;
 
-			getVertIndex(x + dx, y + dy, &start, &end);
+			getVertIndex(x + (dx % 3) - 1, y + (dy % 3) - 1, &start, &end);
 
-			for (q = start; q < end; q += 4) {
+			for (q = start; q < end; q += 4)
+			{
 				Vector3* quad = &sgVertices[q];
 				Vector3 dir = sgNormals[q];
 
@@ -439,21 +463,28 @@ void animateBall(float interval) {
 	normal = norm(normal);
 
 	/* contact to surface? */
-	if (collision) {
+	if (collision)
+	{
 		float vn = dot(sgoBall.velocity, normal);
 		Vector3 rebound = scale(-(1 + ELASTICITY) * vn, normal);
 
-    if (len(rebound) > 3.0f * JUMP_FORCE * interval) {
+    if (len(rebound) > 3.0f * JUMP_FORCE * interval)
+    {
 			/* collision was to havy */
 			explodeBall();
-		} else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y) {
+		}
+		else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y)
+		{
 			/* reached finish quad */
 			loadNewLevel();
-		} else {
+		}
+		else
+		{
 			sgoBall.velocity = add(sgoBall.velocity, rebound);
 
 			/* jump */
-			if (isKeyPressed(' ')) {
+			if (isKeyPressed(' '))
+			{
 				sgoBall.velocity = add(sgoBall.velocity, scale(JUMP_FORCE / sgoBall.mass * interval, normal));
 			}
 		}
@@ -479,29 +510,37 @@ void animateBall(float interval) {
 	gDirtyReflection = 1;
 }
 
-void updateBall(float interval) {
-	if (!gIsBallInPieces) {
+void updateBall(float interval)
+{
+	if (!gIsBallInPieces)
+	{
 		animateBall(interval);
-	} else if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
+	}
+	else if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos))
+	{
 		resetBall();
 	}
 
 	gDirtyReflection = 1;
 }
 
-void activateBallShader(void) {
+void activateBallShader(void)
+{
 	Vector3 normal = vector3(0.0f, 0.0f, 1.0f);
 	float light =	approximation(sgoBall.pos, normal);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(light, light, light);
 
-	switch (gBallLayout) {
-		case BALL_LAYOUT_DEFAULT: {
+	switch (gBallLayout)
+	{
+		case BALL_LAYOUT_DEFAULT:
+		{
 			glColor3f(light, 0.0f, 0.0f);
 			break;
 		}
-		case BALL_LAYOUT_TEXTURE: {
+		case BALL_LAYOUT_TEXTURE:
+		{
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, gTextureBall);
 
@@ -524,14 +563,18 @@ void activateBallShader(void) {
 			break;
 	}
 
-	if (useBallReflection()) {
+	if (useBallReflection())
+	{
 		int x;
 		int y;
 		Matrix m;
 
-		for (x = 0; x < 4; x++) {
-			for (y = 0; y < 4; y++) {
-				if (x < 3 && y < 3) {
+		for (x = 0; x < 4; x++)
+		{
+			for (y = 0; y < 4; y++)
+			{
+				if (x < 3 && y < 3)
+				{
 					m[x][y] = sgWindowViewport.view[y][x];
 				} else {
 					m[x][y] = (x == y);
@@ -549,12 +592,16 @@ void activateBallShader(void) {
 		glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, gCubeMapBall);
 	}
 
-	if (useBallShader()) {
+	if (useBallShader())
+	{
 		float reflection;
 
-		if (useBallReflection()) {
+		if (useBallReflection())
+		{
 			reflection = 0.7f;
-		} else {
+		}
+		else
+		{
 			reflection = 0.0f;
 
 			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
@@ -568,10 +615,12 @@ void activateBallShader(void) {
 	}
 }
 
-void deactivateBallShader(void) {
+void deactivateBallShader(void)
+{
 	glDisable(GL_COLOR_MATERIAL);
 
-	switch (gBallLayout) {
+	switch (gBallLayout)
+	{
 		case BALL_LAYOUT_DEFAULT:
 			break;
 		case BALL_LAYOUT_TEXTURE:
@@ -588,7 +637,8 @@ void deactivateBallShader(void) {
 			break;
 	}
 
-	if (useBallReflection()) {
+	if (useBallReflection())
+	{
 		glDisable(GL_TEXTURE_CUBE_MAP_EXT);
 
 		glMatrixMode(GL_TEXTURE);
@@ -597,16 +647,19 @@ void deactivateBallShader(void) {
 		glMatrixMode(GL_MODELVIEW);
 	}
 
-	if (useBallShader()) {
+	if (useBallShader())
+	{
 		glUseProgram(0);
 
-		if (!useBallReflection()) {
+		if (!useBallReflection())
+		{
 			glDisable(GL_TEXTURE_CUBE_MAP_EXT);
 		}
 	}
 }
 
-void drawMenuBall(void) {
+void drawMenuBall(void)
+{
 	activateBallShader();
 
 		drawBallObject(useBallShader());
@@ -614,12 +667,14 @@ void drawMenuBall(void) {
 	deactivateBallShader();
 }
 
-void drawGameBall(void) {
+void drawGameBall(void)
+{
 	int shader = useBallShader();
 
 	activateBallShader();
 
-		if (gBallLayout == BALL_LAYOUT_DEFAULT) {
+		if (gBallLayout == BALL_LAYOUT_DEFAULT)
+		{
 			float pos[4]  = { 0.0f, 0.0f, 1.0f, 0.0f };
 			float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
 			float diffuse[4]  = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -641,15 +696,19 @@ void drawGameBall(void) {
 			quaternionTransform(sgoBall.orientation);
 
 			/* explosion? */
-			if (gIsBallInPieces) {
+			if (gIsBallInPieces)
+			{
 				drawExplosion(shader);
-			} else {
+			}
+			else
+			{
 				drawBallObject(shader);
 			}
 
 		glPopMatrix();
 
-		if (gBallLayout == BALL_LAYOUT_DEFAULT) {
+		if (gBallLayout == BALL_LAYOUT_DEFAULT)
+		{
 			glDisable(GL_LIGHTING);
 		}
 
