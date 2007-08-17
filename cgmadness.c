@@ -35,8 +35,11 @@
 
 #define FRAMES_PER_SECOND 60
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 	message();
+
+	assurePath(argv[0]);
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
