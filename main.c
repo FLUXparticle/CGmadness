@@ -58,7 +58,7 @@ void assurePath(const char* progname)
 			memcpy(path, progname, length);
 			path[length] = 0;
 
-			printf("change dir: '%s' ...\n", path);
+			printf("change dir: '%s'\n", path);
 
 			chdir(path);
 
