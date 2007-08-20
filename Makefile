@@ -33,6 +33,7 @@ ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
+	BUILD = mingw
 	EXECSUFFIX := .exe
 else
 	LIBS += -lglut -lGLU -lGL -lGLEW
