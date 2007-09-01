@@ -74,6 +74,8 @@ typedef struct
 	unsigned int borderTexture;
 	unsigned int colorMap;
 	unsigned int lightMap;
+
+	int waiting;
 } Level;
 
 extern Level sgLevel;

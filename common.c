@@ -30,7 +30,7 @@
 
 #include "debug.h"
 
-#include <GL/glu.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +52,14 @@ typedef struct
 	SubAtlas sides[4];
 } CellLightMap;
 
+typedef struct {
+	int x;
+	int y;
+	int side;
+} IdleData;
+
+static IdleData gIdleData;
+
 int sgCntVertices;
 
 int sgMaxPlates;
@@ -72,8 +80,8 @@ static const int gEdgeY[4] = { 0, 0, 1, 1 };
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
 
-#define SUB_ATLAS_FLOOR(x, y) (gSubAtlasFloor[(y) * sgLevel.size.x + (x)])
-#define SUB_ATLAS_SIDES(x, y) (gSubAtlasSides[(y) * sgLevel.size.x + (x)])
+#define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasFloor[(_y) * sgLevel.size.x + (_x)])
+#define SUB_ATLAS_SIDES(_x, _y) (gSubAtlasSides[(_y) * sgLevel.size.x + (_x)])
 
 float getMinZValue(const Square* square) {
 	int i;
@@ -430,38 +438,68 @@ void updateLightMap(void)
 	}
 }
 
+void stopIdle(void)
+{
+	sgLevel.waiting = 0;
+
+	glutIdleFunc(NULL);
+}
+
+void doIdle(void)
+{
+	if (gIdleData.side < 4)
+	{
+		Orientation orientation = orientationSide(gIdleData.x, gIdleData.y, gIdleData.side);
+		genNoiseTexture(&SUB_ATLAS_SIDES(gIdleData.x, gIdleData.y).sides[gIdleData.side], orientation.origin, orientation.vx, orientation.vy);
+	}
+	else
+	{
+		Orientation floor = orientationFloor(gIdleData.x, gIdleData.y);
+		genNoiseTexture(&SUB_ATLAS_FLOOR(gIdleData.x, gIdleData.y), floor.origin, floor.vx, floor.vy);
+	}
+
+	gIdleData.side++;
+
+	if (gIdleData.side < 5)
+	{
+		return;
+	}
+
+	gIdleData.side = 0;
+	gIdleData.y++;
+
+	if (gIdleData.y < sgLevel.size.y)
+	{
+		return;
+	}
+
+	gIdleData.y = 0;
+	gIdleData.x++;
+
+	if (gIdleData.x < sgLevel.size.x)
+	{
+		return;
+	}
+
+	stopIdle();
+}
+
+void startIdle(void)
+{
+	gIdleData.x = 0;
+	gIdleData.y = 0;
+	gIdleData.side = 0;
+
+	sgLevel.waiting = 1;
+
+	glutIdleFunc(doIdle);
+}
+
 void updateColorMap(void)
 {
-	int x;
-	int y;
-	int side;
-
 	initNoise();
 
-	/*****/
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			Orientation floor = orientationFloor(x, y);
-
-			genNoiseTexture(&SUB_ATLAS_FLOOR(x, y), floor.origin, floor.vx, floor.vy);
-		}
-	}
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			for (side = 0; side < 4; side++)
-			{
-				Orientation orientation = orientationSide(x, y, side);
-
-				genNoiseTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation.origin, orientation.vx, orientation.vy);
-			}
-		}
-	}
+	startIdle();
 }
 
 void updateTexCoords(void)

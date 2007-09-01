@@ -178,6 +178,13 @@ void updateGame(float interval) {
 
 	}
 
+	if (sgLevel.colorMap == 0 && !sgLevel.waiting)
+	{
+		sgLevel.colorMap = genTexture();
+		colorMapToTexture(sgLevel.colorMap);
+	}
+
+
 	updateGameField();
 
 	updateEnvironment(interval);
@@ -255,10 +262,11 @@ int initLevel(const char* filename) {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
+#if 1
 	updateColorMap();
+#endif
 
-	sgLevel.colorMap = genTexture();
-	colorMapToTexture(sgLevel.colorMap);
+	sgLevel.colorMap = 0;
 
 	initGameField();
 

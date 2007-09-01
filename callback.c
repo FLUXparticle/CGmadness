@@ -224,6 +224,7 @@ void timer(int lastCallTime) {
 	if (diff < 0) {
 		diff = 0;
 	}
+
 	glutTimerFunc(diff, timer, lastUpdateTime);
 
 	if (!gSceneDirty) {
