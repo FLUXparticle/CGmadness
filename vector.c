@@ -137,6 +137,7 @@ void initProjectMat(Matrix m, float fov) {
 	int x;
 	int y;
 	float f = 1.0f / tan(fov / 2.0f * PI / 180.0f);
+	static float near = 0.01f;
 
 	for (x = 0; x < 4; x++) {
 		for (y = 0; y < 4; y++) {
@@ -151,5 +152,5 @@ void initProjectMat(Matrix m, float fov) {
 	m[2][2] = -1;
 	m[2][3] = -1;
 
-	m[3][2] = -2 * 0.01f;
+	m[3][2] = -2 * near;
 }

@@ -21,36 +21,61 @@
 #define _gui_h_
 
 #include "graph.h"
-#include "pick.h"
+#include "vector.h"
+#include "mouse.h"
+#include "types.h"
 
 typedef void (*funcClick)(void);
 
 typedef void (*funcChange)(void* self);
 
 typedef struct {
-	Object oButton;
-	Pick pButton;
+	int value;
+	int minValue;
+	int maxValue;
+	funcChange change;
+} SpinEdit;
+
+/***/
+
+typedef enum {
+	MI_UNDEFINED = -1,
+	MI_BUTTON,
+	MI_CHECK
+} MenuItemType;
+
+typedef struct {
+	MenuItemType type;
+
+	Vector2 position;
+	float width;
+	float height;
+
+	int hover;
+	float emphasize;
+} MenuItem;
+
+typedef struct {
+	int cntItems;
+	MenuItem** items;
+} Menu;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
+
 	funcClick click;
 } Button;
 
 typedef struct {
+	MenuItem item;
+
+	char* text;
 	int value;
-	Object oCheck;
-	Pick pCheck;
+
 	funcChange change;
 } Check;
-
-typedef struct {
-	int value;
-	int minValue;
-	int maxValue;
-	Object oSpinEdit;
-	Object oLeft;
-	Object oRight;
-	Pick pLeft;
-	Pick pRight;
-	funcChange change;
-} SpinEdit;
 
 void initGUI(void);
 
@@ -58,15 +83,25 @@ void setSomeLight(void);
 
 /* Button */
 
-void init3dButton(Button* button, float z, funcClick click, char* text);
+void initButton(Button* button, float z, funcClick click, char* text);
 
 /* Check */
 
 void setCheck(Check* check, int value);
-void init3dCheck(Check* check, float z, funcChange change, char* text);
+void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+
+/* Menu */
+
+#define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
+
+void initMenu(Menu* menu, int cntItems, MenuItem** items);
+void showMenu(Menu* menu);
+void updateMenu(Menu* menu, float interval);
+void drawMenu(const Menu* menu);
+void clickMenu(Menu* menu, float x, float y, MouseEvent event);
 
 #endif

@@ -55,7 +55,7 @@
 RenderTarget gTargetCube[6];
 static Viewport gViewportCube[6];
 
-static int gIsBallInPieces;
+int sgIsBallInPieces;
 
 static int gBallLayout = 0;
 
@@ -89,16 +89,7 @@ int useBallReflection(void) {
 }
 
 void changeBall(int layout) {
-	int i;
-	int reflection;
-
   gBallLayout = layout;
-
-	reflection = useBallReflection();
-
-	for (i = 0; i < 6; i++) {
-		gTargetCube[i].enabled = reflection;
-	}
 }
 
 void updateReflection(void)
@@ -181,7 +172,7 @@ void resetBall(void) {
 	sgoBall.angularRate.y = 0.0f;
 	sgoBall.angularRate.z = 0.0f;
 
-	gIsBallInPieces = 0;
+	sgIsBallInPieces = 0;
 	gDirtyReflection = 1;
 }
 
@@ -198,7 +189,7 @@ void explodeBall(void) {
 	sgoBall.pos = pos;
 	sgoBall.velocity = speed;
 
-	gIsBallInPieces = 1;
+	sgIsBallInPieces = 1;
 	gDirtyReflection = 1;
 }
 
@@ -417,7 +408,7 @@ void animateBall(float interval) {
 	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation);
 
 	/* falling to infinity */
-	if (sgoBall.pos.z < -10.0f) {
+	if (sgoBall.pos.z < -1.0f) {
 		explodeBall();
 	}
 
@@ -430,10 +421,11 @@ void animateBall(float interval) {
 }
 
 void updateBall(float interval) {
-	if (!gIsBallInPieces) {
+	if (!sgIsBallInPieces) {
 		animateBall(interval);
 	} else if (updateExplosion(interval, &sgoBall.velocity, &sgoBall.pos)) {
 		resetBall();
+		resetGameTime();
 	}
 
 	gDirtyReflection = 1;
@@ -591,7 +583,7 @@ void drawGameBall(void) {
 			quaternionTransform(sgoBall.orientation);
 
 			/* explosion? */
-			if (gIsBallInPieces) {
+			if (sgIsBallInPieces) {
 				drawExplosion(shader);
 			} else {
 				drawBallObject(shader);

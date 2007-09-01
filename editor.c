@@ -428,8 +428,10 @@ void drawEditor(void) {
 	}
 }
 
-void pickEditor(void) {
-	if (!gIsEditorRunning)	{
+void pickEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
+{
+	if (!gIsEditorRunning)
+	{
 		pickEditorMenu();
 	}
 }
@@ -459,7 +461,8 @@ int initEditor(char* filename)
 	gDirtyLightmaps = 0;
 
 	sgWindowViewport.draw = drawEditor;
-	sgWindowViewport.pick = pickEditor;
+	sgWindowViewport.drawHUD = NULL;
+	sgWindowViewport.mouseEvent = pickEditor;
 	setUpdateFunc(updateEditor);
 
 	gCurStart.x = 0;

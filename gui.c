@@ -20,17 +20,20 @@
 #include "gui.h"
 
 #include "text.h"
-#include "pick.h"
 #include "objects.h"
 #include "texture.h"
+#include "debug.h"
 
 #include <GL/glut.h>
 
+#include <stdio.h>
 #include <string.h>
 
 #define SCALE_FONT 0.5f
 
 /*** common ***/
+
+static float scaleText = 0.1f * SCALE_FONT;
 
 static Object goLeft;
 static Object goRight;
@@ -76,50 +79,88 @@ void setSomeLight(void) {
 
 /*** Button ***/
 
-void pickButton(void* data) {
-	Button* button = data;
-	button->click();
+void initButton(Button* button, float z, funcClick click, char* text)
+{
+	button->click = click;
+	button->text = text;
+
+	button->item.type = MI_BUTTON;
+
+	button->item.width = widthFont3DText(button->text) * scaleText;
+	button->item.height = 0.9f;
+
+	button->item.position = vector2(-button->item.width / 2.0f, z);
 }
 
-void init3dButton(Button* button, float z, funcClick click, char* text) {
-	initTextObject(&button->oButton, text, z);
-
-	button->click = click;
-
-	if (click) {
-		initPick(&button->pButton, pickButton, button);
-		setObjectPick(&button->oButton, &button->pButton);
+void clickButton(Button* button)
+{
+	if (button->click)
+	{
+		button->click();
 	}
+}
+
+void drawButton(const Button* button)
+{
+	float scale = scaleText * (1.0f + 0.1f * button->item.emphasize);
+
+	glPushMatrix();
+
+		glTranslatef(-0.5f * button->item.width * 0.1f * button->item.emphasize, 0.0f, 0.0f);
+		glScalef(scale, scale, scale);
+
+		drawFont3DText(button->text);
+
+	glPopMatrix();
 }
 
 /*** Check ***/
 
-void setCheck(Check* check, int value) {
+void setCheck(Check* check, int value)
+{
 	check->value = value;
-
-	if (check->value) {
-		setObjectGroupColor(&check->oCheck, 1.0f, 1.0f, 1.0f);
-	} else {
-		setObjectGroupColor(&check->oCheck, 0.5f, 0.5f, 0.5f);
-	}
-
 	check->change(check);
 }
 
-void pickCheck(void* data) {
-	Check* check = data;
-	setCheck(check, !check->value);
-}
-
-void init3dCheck(Check* check, float z, funcChange change, char* text) {
-	initTextObject(&check->oCheck, text, z);
-
+void initCheck(Check* check, float z, funcChange change, char* text)
+{
+	check->text = text;
 	check->change = change;
 
-	setCheck(check, 1);
+	check->item.type = MI_CHECK;
 
-	initPick(&check->pCheck, pickCheck, check);
-	setObjectPick(&check->oCheck, &check->pCheck);
+	check->item.width = widthFont3DText(check->text) * scaleText;
+	check->item.height = 0.9f;
+
+	check->item.position = vector2(-check->item.width / 2.0f, z);
+
+	setCheck(check, 1);
+}
+
+void drawCheck(const Check* check)
+{
+	float scale = scaleText * (1.0f + 0.1f * check->item.emphasize);
+
+	glPushMatrix();
+
+		glTranslatef(-0.5f * check->item.width * 0.1f * check->item.emphasize, 0.0f, 0.0f);
+		glScalef(scale, scale, scale);
+
+		if (check->value) {
+			glColor3f(1.0f, 1.0f, 1.0f);
+		} else {
+			glColor3f(0.5f, 0.5f, 0.5f);
+		}
+
+			drawFont3DText(check->text);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+	glPopMatrix();
+}
+
+void clickCheck(Check* check) {
+	setCheck(check, !check->value);
 }
 
 /*** SpinEdit ***/
@@ -147,6 +188,7 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 	spinedit->minValue = min;
 	spinedit->maxValue = max;
 
+#if 0
 	initObjectGroup(&spinedit->oSpinEdit);
 
 	setObjectPosition3f(&spinedit->oSpinEdit, 0.0f, 0.0f, z);
@@ -167,16 +209,131 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 
 	/* object between arrows */
 	addSubObject(&spinedit->oSpinEdit, obj);
+#endif
 
 	spinedit->change = change;
 
 	change(spinedit);
 
+#if 0
 	/* register callbacks for arrows */
 	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
 	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
 
 	initPick(&spinedit->pRight, pickSpinEditRight, spinedit);
 	setObjectPick(&spinedit->oRight, &spinedit->pRight);
+#endif
+}
+/*** MenuItem ***/
 
+#define EMPHASIZE_SPEED 10.0f
+
+void updateMenuItem(MenuItem* item, float interval)
+{
+	if (item->hover)
+	{
+		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
+	}
+	else
+	{
+		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
+	}
+}
+
+void drawMenuItem(const MenuItem* item)
+{
+	glPushMatrix();
+
+		glTranslatef(item->position.x, item->position.y, 0.0f);
+
+		switch(item->type)
+		{
+			case MI_BUTTON:
+				drawButton((const Button*) item);
+				break;
+			case MI_CHECK:
+				drawCheck((const Check*) item);
+				break;
+			default:
+				break;
+		}
+
+	glPopMatrix();
+}
+
+void clickMenuItem(MenuItem* item, float x, float y, MouseEvent event)
+{
+	item->hover = 0;
+
+	if (x >= item->position.x               && y >= item->position.y &&
+	    x <= item->position.x + item->width && y <= item->position.y + item->height)
+	{
+		switch (event)
+		{
+			case MOUSE_CLICK:
+				switch(item->type)
+				{
+					case MI_BUTTON:
+						clickButton((Button*) item);
+						break;
+					case MI_CHECK:
+						clickCheck((Check*) item);
+						break;
+					default:
+						break;
+				}
+				break;
+			case MOUSE_MOTION:
+				item->hover = 1;
+				break;
+		}
+	}
+}
+
+/*** Menu ***/
+
+void initMenu(Menu* menu, int cntItems, MenuItem** items)
+{
+	menu->cntItems = cntItems;
+	menu->items = items;
+}
+
+void showMenu(Menu* menu)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		menu->items[i]->emphasize = 0.0f;
+	}
+}
+
+void updateMenu(Menu* menu, float interval)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		updateMenuItem(menu->items[i], interval);
+	}
+}
+
+void drawMenu(const Menu* menu)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		drawMenuItem(menu->items[i]);
+	}
+}
+
+void clickMenu(Menu* menu, float x, float y, MouseEvent event)
+{
+	int i;
+
+	for (i = 0; i < menu->cntItems; i++)
+	{
+		clickMenuItem(menu->items[i], x, y, event);
+	}
 }
