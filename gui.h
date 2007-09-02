@@ -23,7 +23,6 @@
 #ifndef _gui_h_
 #define _gui_h_
 
-#include "graph.h"
 #include "vector.h"
 #include "mouse.h"
 #include "types.h"
@@ -106,7 +105,9 @@ void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
+#if 0
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+#endif
 
 /* Menu */
 

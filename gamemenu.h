@@ -36,6 +36,6 @@ void setGameMenuPosistion(Vector3 pos);
 
 void drawGameMenu(void);
 
-void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event);
+void eventGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event);
 
 #endif

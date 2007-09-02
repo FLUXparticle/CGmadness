@@ -23,14 +23,11 @@
 #ifndef _text_h_
 #define _text_h_
 
-#include "graph.h"
-
 void drawBitmapText(const char* str);
 
 float widthStrokeText(const char* str);
 void drawStrokeText(const char* str);
 
-float makeTextObject(Object* obj, const char* text);
 float widthFont3DText(const char* str);
 void drawFont3DText(const char* str);
 

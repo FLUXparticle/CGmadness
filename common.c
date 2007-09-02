@@ -30,8 +30,6 @@
 
 #include "debug.h"
 
-#include <GL/glu.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -728,7 +726,7 @@ int loadFieldFromFile(const char* filename) {
 
 			for (i = 0; i < cntSubLightMaps; i++)
 			{
-				GLfloat data[SIZEOF_LIGHT_MAP];
+				float data[SIZEOF_LIGHT_MAP];
 
 				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
 				{
@@ -813,7 +811,7 @@ int saveFieldToFile(const char* filename) {
 
 		for (i = 0; i < cntSubLightMaps; i++)
 		{
-			GLfloat data[SIZEOF_LIGHT_MAP];
+			float data[SIZEOF_LIGHT_MAP];
 
 			getSubLightMap(i, data);
 

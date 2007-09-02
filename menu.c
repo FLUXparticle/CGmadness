@@ -20,15 +20,42 @@
  *
  */
 
-#ifndef _dataDigits_h_
-#define _dataDigits_h_
+#include "menu.h"
 
-#include "types.h"
+#include "texture.h"
+#include "objects.h"
 
 #include <GL/gl.h>
 
-extern float widthDigits[];
+static GLuint gTexLogo = 0;
 
-extern funcDraw drawDigits[];
+void initLogo(void)
+{
+	if (gTexLogo == 0)
+	{
+		gTexLogo = loadTexture("data/logo.tga", 0);
+	}
+}
 
-#endif
+void drawLogo(void)
+{
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLogo);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glPushMatrix();
+
+				glTranslatef(0.0f, 8.0f, 0.0f);
+				glScalef(4.0f, 1.0f, 1.0f);
+
+				drawSquare();
+
+			glPopMatrix();
+
+		glDisable(GL_BLEND);
+
+	glDisable(GL_TEXTURE_2D);
+}

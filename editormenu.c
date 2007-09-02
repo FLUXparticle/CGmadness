@@ -25,7 +25,6 @@
 #include "editor.h"
 
 #include "text.h"
-#include "graph.h"
 #include "objects.h"
 #include "texture.h"
 #include "keyboard.h"
@@ -37,6 +36,7 @@
 
 #define SCALE_FONT 0.5f
 
+#if 0
 typedef struct {
 	char* left;
 	char* right;
@@ -87,8 +87,10 @@ static void clickButtonQuit(void) {
 static void clickButtonBack(void) {
 	gCurMenu = &goMainMenu;
 }
+#endif
 
 void updateEditorMenu(float interval) {
+#if 0
 	if (gCurMenu == &goMainMenu) {
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
 			clickButtonEdit();
@@ -110,11 +112,13 @@ void updateEditorMenu(float interval) {
 			clickButtonBack();
 		}
 	}
+#endif
 }
 
 void showEditorMenu(int menu) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 
+#if 0
 	switch (menu) {
 	case 0:
 		gCurMenu = &goMainMenu;
@@ -126,13 +130,17 @@ void showEditorMenu(int menu) {
 		gCurMenu = &goFailedText;
 		break;
 	}
+#endif
 }
 
 void setEditorMenuPosition(Vector3 pos) {
+#if 0
 	gEditorMenuPosition = pos;
+#endif
 }
 
 void drawEditorMenu(void) {
+#if 0
 	glEnable(GL_LIGHTING);
 
 		setSomeLight();
@@ -146,18 +154,11 @@ void drawEditorMenu(void) {
 		glPopMatrix();
 
 	glDisable(GL_LIGHTING);
-}
-
-void pickEditorMenu(void) {
-	glPushMatrix();
-		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
-
-		pickObject(gCurMenu);
-
-	glPopMatrix();
+#endif
 }
 
 void initEditorMenu() {
+#if 0
 	static Button bEdit;
 	static Button bSave;
 	static Button bHelp;
@@ -231,4 +232,5 @@ void initEditorMenu() {
 
 	initObjectGroup(&goFailedText);
 	initButton(&bFailed, 5.0, clickButtonBack, "operation failed");
+#endif
 }

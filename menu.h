@@ -20,15 +20,11 @@
  *
  */
 
-#ifndef _dataDigits_h_
-#define _dataDigits_h_
+#ifndef _menu_h_
+#define _menu_h_
 
-#include "types.h"
+void initLogo(void);
 
-#include <GL/gl.h>
-
-extern float widthDigits[];
-
-extern funcDraw drawDigits[];
+void drawLogo(void);
 
 #endif
