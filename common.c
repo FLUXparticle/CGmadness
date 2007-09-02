@@ -52,13 +52,7 @@ typedef struct
 	SubAtlas sides[4];
 } CellLightMap;
 
-typedef struct {
-	int x;
-	int y;
-	int side;
-} IdleData;
-
-static IdleData gIdleData;
+static int gIdleStep;
 
 int sgCntVertices;
 
@@ -73,6 +67,8 @@ Level sgLevel;
 
 Vector3 sgForward;
 Vector3 sgRight;
+
+float sgIdleProgress;
 
 static const int gEdgeX[4] = { 0, 1, 1, 0 };
 static const int gEdgeY[4] = { 0, 0, 1, 1 };
@@ -441,56 +437,45 @@ void updateLightMap(void)
 void stopIdle(void)
 {
 	sgLevel.waiting = 0;
+	sgIdleProgress = 1.0f;
 
 	glutIdleFunc(NULL);
 }
 
 void doIdle(void)
 {
-	if (gIdleData.side < 4)
+	int maxIdleSteps = sgLevel.size.x * sgLevel.size.y * 5;
+
+	int side = gIdleStep % 5;
+	int y = gIdleStep / 5 % sgLevel.size.y;
+	int x = gIdleStep / 5 / sgLevel.size.y;
+
+	if (side < 4)
 	{
-		Orientation orientation = orientationSide(gIdleData.x, gIdleData.y, gIdleData.side);
-		genNoiseTexture(&SUB_ATLAS_SIDES(gIdleData.x, gIdleData.y).sides[gIdleData.side], orientation.origin, orientation.vx, orientation.vy);
+		Orientation orientation = orientationSide(x, y, side);
+		genNoiseTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation.origin, orientation.vx, orientation.vy);
 	}
 	else
 	{
-		Orientation floor = orientationFloor(gIdleData.x, gIdleData.y);
-		genNoiseTexture(&SUB_ATLAS_FLOOR(gIdleData.x, gIdleData.y), floor.origin, floor.vx, floor.vy);
+		Orientation floor = orientationFloor(x, y);
+		genNoiseTexture(&SUB_ATLAS_FLOOR(x, y), floor.origin, floor.vx, floor.vy);
 	}
 
-	gIdleData.side++;
+	gIdleStep++;
+	sgIdleProgress = (float) gIdleStep / maxIdleSteps;
 
-	if (gIdleData.side < 5)
+	if (gIdleStep >= maxIdleSteps)
 	{
-		return;
+		stopIdle();
 	}
-
-	gIdleData.side = 0;
-	gIdleData.y++;
-
-	if (gIdleData.y < sgLevel.size.y)
-	{
-		return;
-	}
-
-	gIdleData.y = 0;
-	gIdleData.x++;
-
-	if (gIdleData.x < sgLevel.size.x)
-	{
-		return;
-	}
-
-	stopIdle();
 }
 
 void startIdle(void)
 {
-	gIdleData.x = 0;
-	gIdleData.y = 0;
-	gIdleData.side = 0;
+	gIdleStep = 0;
 
 	sgLevel.waiting = 1;
+	sgIdleProgress = 0.0f;
 
 	glutIdleFunc(doIdle);
 }

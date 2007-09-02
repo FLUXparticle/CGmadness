@@ -117,6 +117,40 @@ void drawLabel(const Label* label)
 	glPopMatrix();
 }
 
+/*** ProgressBar ***/
+
+void initProgressBar(ProgressBar* progressBar, float z, float* progress)
+{
+	progressBar->progress = progress;
+
+	progressBar->item.type = MI_PROGRESS_BAR;
+
+	progressBar->item.width = 8.0f;
+	progressBar->item.height = 0.9f;
+
+	progressBar->item.position = vector2(0.0f, z);
+}
+
+void drawProgressBar(const ProgressBar* progressBar)
+{
+	glPushMatrix();
+
+		glScalef(progressBar->item.width / 2.0f, progressBar->item.height / 2.0f, 1.0f);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			drawSquare();
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+		glScalef(*progressBar->progress, 1.0f, 1.0f);
+
+		drawSquare();
+
+	glPopMatrix();
+}
+
 /*** Button ***/
 
 void initButton(Button* button, float z, funcClick click, char* text)
@@ -288,13 +322,14 @@ void drawMenuItem(const MenuItem* item)
 			case MI_LABEL:
 				drawLabel((const Label*) item);
 				break;
+			case MI_PROGRESS_BAR:
+				drawProgressBar((const ProgressBar*) item);
+				break;
 			case MI_BUTTON:
 				drawButton((const Button*) item);
 				break;
 			case MI_CHECK:
 				drawCheck((const Check*) item);
-				break;
-			default:
 				break;
 		}
 
@@ -305,27 +340,30 @@ void eventMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 {
 	item->hover = 0;
 
-	if (x >= item->position.x               && y >= item->position.y &&
-	    x <= item->position.x + item->width && y <= item->position.y + item->height)
+	if (item->type == MI_BUTTON || MI_CHECK)
 	{
-		switch (event)
+		if (x >= item->position.x               && y >= item->position.y &&
+				x <= item->position.x + item->width && y <= item->position.y + item->height)
 		{
-			case MOUSE_CLICK:
-				switch(item->type)
-				{
-					case MI_BUTTON:
-						eventButton((Button*) item);
-						break;
-					case MI_CHECK:
-						eventCheck((Check*) item);
-						break;
-					default:
-						break;
-				}
-				break;
-			case MOUSE_MOTION:
-				item->hover = 1;
-				break;
+			switch (event)
+			{
+				case MOUSE_CLICK:
+					switch(item->type)
+					{
+						case MI_BUTTON:
+							eventButton((Button*) item);
+							break;
+						case MI_CHECK:
+							eventCheck((Check*) item);
+							break;
+						default:
+							break;
+					}
+					break;
+				case MOUSE_MOTION:
+					item->hover = 1;
+					break;
+			}
 		}
 	}
 }

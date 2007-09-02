@@ -91,6 +91,8 @@ extern Vector3* sgNormals;
 extern Vector3 sgForward;
 extern Vector3 sgRight;
 
+extern float sgIdleProgress;
+
 void initAtlas(void);
 void updateLightMap(void);
 void updateColorMap(void);

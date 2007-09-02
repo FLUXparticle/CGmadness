@@ -261,9 +261,9 @@ int initLevel(const char* filename) {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
-#if 1
 	updateColorMap();
-#endif
+
+	showGameMenu(5);
 
 	sgLevel.colorMap = 0;
 

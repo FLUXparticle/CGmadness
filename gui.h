@@ -38,8 +38,8 @@ typedef struct {
 /***/
 
 typedef enum {
-	MI_UNDEFINED = -1,
 	MI_LABEL,
+	MI_PROGRESS_BAR,
 	MI_BUTTON,
 	MI_CHECK
 } MenuItemType;
@@ -55,9 +55,11 @@ typedef struct {
 	float emphasize;
 } MenuItem;
 
-typedef struct {
+typedef struct Menu {
 	int cntItems;
 	MenuItem** items;
+
+	struct Menu* back;
 } Menu;
 
 typedef struct {
@@ -65,6 +67,12 @@ typedef struct {
 
 	char* text;
 } Label;
+
+typedef struct {
+	MenuItem item;
+
+	float* progress;
+} ProgressBar;
 
 typedef struct {
 	MenuItem item;
@@ -90,6 +98,10 @@ void setSomeLight(void);
 /* Label */
 
 void initLabel(Label* label, float x, float z, int alignRight, char* text);
+
+/* ProgressBar */
+
+void initProgressBar(ProgressBar* progressBar, float z, float* progress);
 
 /* Button */
 

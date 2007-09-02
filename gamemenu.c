@@ -30,6 +30,7 @@
 #include "menu.h"
 #include "camera.h"
 #include "debug.h"
+#include "common.h"
 
 #include <GL/glut.h>
 
@@ -66,8 +67,31 @@ Menu gMenuMain2;
 Menu gMenuHelp;
 Menu gMenuNext;
 Menu gMenuEnd;
+Menu gMenuWait;
 
 Menu* gCurMenu;
+
+void pushGameMenu(Menu* menu)
+{
+	menu->back = gCurMenu;
+	gCurMenu = menu;
+
+	showMenu(gCurMenu);
+}
+
+void popGameMenu(void)
+{
+	gCurMenu = gCurMenu->back;
+
+	if (gCurMenu)
+	{
+		showMenu(gCurMenu);
+	}
+	else
+	{
+		resumeGame();
+	}
+}
 
 /* events */
 
@@ -76,6 +100,25 @@ int gBallLayouts[MAX_BALL_LAYOUTS];
 
 static void clickButtonStart(void) {
 	resumeGame();
+}
+
+static void clickButtonHelp(void)
+{
+	pushGameMenu(&gMenuHelp);
+}
+
+static void clickButtonQuit(void)
+{
+	exit(0);
+}
+
+static void clickButtonAgain(void)
+{
+	resetGame();
+}
+
+static void clickButtonBack(void) {
+	popGameMenu();
 }
 
 void changeBallEdit(void* self) {
@@ -90,25 +133,6 @@ static void changeShadows(void* self) {
 static void changeReflection(void* self) {
 	Check* check = self;
 	setReflection(check->value);
-}
-
-static void clickButtonHelp(void) {
-	showGameMenu(4);
-}
-
-static void clickButtonQuit(void) {
-	exit(0);
-}
-
-static void clickButtonAgain(void) {
-	resetGame();
-}
-
-static void clickButtonBack(void) {
-	/*
-	 * TODO save last menu
-	 */
-	showGameMenu(0);
 }
 
 void updateGameMenu(float interval) {
@@ -126,45 +150,66 @@ void updateGameMenu(float interval) {
 
 	if (gCurMenu == &gMenuMain1 || gCurMenu == &gMenuMain2)
 	{
-		if (wasKeyPressed(KEY_ENTER)) {
+		if (wasKeyPressed(KEY_ENTER))
+		{
 			clickButtonStart();
 		}
 
-		if (gCurMenu == &gMenuMain2 && wasKeyPressed(KEY_ESC)) {
+		if (gCurMenu == &gMenuMain2 && wasKeyPressed(KEY_ESC))
+		{
 			clickButtonStart();
 		}
 
-		if (wasKeyPressed('h')) {
+		if (wasKeyPressed('h'))
+		{
 			clickButtonHelp();
 		}
 
-		if (wasKeyPressed('q')) {
+		if (wasKeyPressed('q'))
+		{
 			clickButtonQuit();
 		}
 	}
 	else if (gCurMenu == &gMenuNext)
 	{
-		if (wasKeyPressed(KEY_ENTER)) {
+		if (wasKeyPressed(KEY_ENTER))
+		{
 			clickButtonStart();
 		}
 
-		if (wasKeyPressed(KEY_ESC)) {
+		if (wasKeyPressed(KEY_ESC))
+		{
 			clickButtonBack();
 		}
 	}
 	else if (gCurMenu == &gMenuHelp)
 	{
-		if (wasKeyPressed(KEY_ESC)) {
+		if (wasKeyPressed(KEY_ESC))
+		{
 			clickButtonBack();
 		}
 	}
 	else if (gCurMenu == &gMenuEnd)
 	{
-		if (wasKeyPressed(KEY_ENTER)) {
+		if (wasKeyPressed(KEY_ENTER))
+		{
 			clickButtonAgain();
 		}
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q')) {
+		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
+		{
 			clickButtonQuit();
+		}
+	}
+	else if (gCurMenu == &gMenuWait)
+	{
+		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
+		{
+			clickButtonQuit();
+		}
+
+		if (sgIdleProgress >= 1.0f)
+		{
+			popGameMenu();
 		}
 	}
 }
@@ -209,22 +254,25 @@ void eventGameMenu(const Vector3* position, const Vector3* direction, MouseEvent
 }
 
 void showGameMenu(int menu) {
-	switch (menu) {
-	case 0:
-		gCurMenu = &gMenuMain1;
-		break;
-	case 1:
-		gCurMenu = &gMenuMain2;
-		break;
-	case 2:
-		gCurMenu = &gMenuNext;
-		break;
-	case 3:
-		gCurMenu = &gMenuEnd;
-		break;
-	case 4:
-		gCurMenu = &gMenuHelp;
-		break;
+	static Menu* menues[] = {
+		&gMenuMain1,
+		&gMenuMain2,
+		&gMenuNext,
+		&gMenuEnd,
+		&gMenuHelp,
+		&gMenuWait
+	};
+
+	Menu* newMenu = menues[menu];
+
+	if (gCurMenu == &gMenuWait)
+	{
+		gCurMenu->back = newMenu;
+	}
+	else
+	{
+		gCurMenu = newMenu;
+		gCurMenu->back = NULL;
 	}
 
 	showMenu(gCurMenu);
@@ -245,6 +293,8 @@ void initGameMenu() {
 	static Button bMain;
 	static Button bAgain;
 	static Button bQuit2;
+
+	static ProgressBar pbProgress;
 
 #if 0
 	static SpinEdit spinEditBall;
@@ -280,6 +330,11 @@ void initGameMenu() {
 	{
 		&bAgain.item,
 		&bQuit2.item
+	};
+
+	static MenuItem* itemsWait[] =
+	{
+		&pbProgress.item
 	};
 
 	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
@@ -365,4 +420,9 @@ void initGameMenu() {
 	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
 
 	INIT_MENU(&gMenuEnd, itemsEnd);
+
+	/* wait menu */
+	initProgressBar(&pbProgress, 5.0f, &sgIdleProgress);
+
+	INIT_MENU(&gMenuWait, itemsWait);
 }
