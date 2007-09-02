@@ -208,7 +208,7 @@ void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent 
 		float x = newPosition.x + t * direction->x;
 		float y = newPosition.z + t * direction->z;
 
-		clickMenu(gCurMenu, x, y, event);
+		eventMenu(gCurMenu, x, y, event);
 	}
 }
 
@@ -252,7 +252,7 @@ void initGameMenu() {
 
 	static SpinEdit spinEditBall;
 
-	static Object oTextHelp[2 * LENGTH(gTextHelp)];
+	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 	static Object oBall;
 
 	static MenuItem* itemsMain1[] =
@@ -284,6 +284,8 @@ void initGameMenu() {
 		&bAgain.item,
 		&bQuit2.item
 	};
+
+	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
 
 	int i;
 
@@ -345,31 +347,22 @@ void initGameMenu() {
 	INIT_MENU(&gMenuNext, itemsNext);
 
 	/* help menu */
-	for (i = 0; i < LENGTH(gTextHelp); i++)
+	for (i = 0; i < LENGTH(lTextHelp); i++)
 	{
-		float z = 6.0f - i;
-		float length;
+		int row = i / 2;
+		int col = i % 2;
+		float z = 6.0f - row;
 
-		{
-			Object* o = &oTextHelp[2 * i];
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, col, col ? gTextHelp[row].right : gTextHelp[row].left);
 
-			length = makeTextObject(o, gTextHelp[i].left) * SCALE_FONT;
-			setObjectPosition3f(o, -5.0f, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-		}
-
-		{
-			Object* o = &oTextHelp[2 * i + 1];
-
-			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
-			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-		}
+		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
 	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
+
+	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
+
+	INIT_MENU(&gMenuHelp, itemsHelp);
 
 	/* game complete menu */
 	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");

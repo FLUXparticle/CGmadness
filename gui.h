@@ -43,6 +43,7 @@ typedef struct {
 
 typedef enum {
 	MI_UNDEFINED = -1,
+	MI_LABEL,
 	MI_BUTTON,
 	MI_CHECK
 } MenuItemType;
@@ -67,6 +68,12 @@ typedef struct {
 	MenuItem item;
 
 	char* text;
+} Label;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
 
 	funcClick click;
 } Button;
@@ -83,6 +90,10 @@ typedef struct {
 void initGUI(void);
 
 void setSomeLight(void);
+
+/* Label */
+
+void initLabel(Label* label, float x, float z, int alignRight, char* text);
 
 /* Button */
 
@@ -105,6 +116,6 @@ void initMenu(Menu* menu, int cntItems, MenuItem** items);
 void showMenu(Menu* menu);
 void updateMenu(Menu* menu, float interval);
 void drawMenu(const Menu* menu);
-void clickMenu(Menu* menu, float x, float y, MouseEvent event);
+void eventMenu(Menu* menu, float x, float y, MouseEvent event);
 
 #endif
