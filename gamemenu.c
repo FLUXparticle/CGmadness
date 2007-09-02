@@ -69,7 +69,7 @@ Menu gMenuNext;
 Menu gMenuEnd;
 Menu gMenuWait;
 
-Menu* gCurMenu;
+Menu* gCurMenu = NULL;
 
 void pushGameMenu(Menu* menu)
 {
@@ -98,10 +98,6 @@ void popGameMenu(void)
 int gCntBallLayouts;
 int gBallLayouts[MAX_BALL_LAYOUTS];
 
-static void clickButtonStart(void) {
-	resumeGame();
-}
-
 static void clickButtonHelp(void)
 {
 	pushGameMenu(&gMenuHelp);
@@ -115,6 +111,12 @@ static void clickButtonQuit(void)
 static void clickButtonAgain(void)
 {
 	resetGame();
+}
+
+static void clickButtonContinue(void)
+{
+	gCurMenu->back = NULL;
+	popGameMenu();
 }
 
 static void clickButtonBack(void) {
@@ -152,12 +154,12 @@ void updateGameMenu(float interval) {
 	{
 		if (wasKeyPressed(KEY_ENTER))
 		{
-			clickButtonStart();
+			clickButtonContinue();
 		}
 
 		if (gCurMenu == &gMenuMain2 && wasKeyPressed(KEY_ESC))
 		{
-			clickButtonStart();
+			clickButtonContinue();
 		}
 
 		if (wasKeyPressed('h'))
@@ -174,7 +176,7 @@ void updateGameMenu(float interval) {
 	{
 		if (wasKeyPressed(KEY_ENTER))
 		{
-			clickButtonStart();
+			clickButtonContinue();
 		}
 
 		if (wasKeyPressed(KEY_ESC))
@@ -209,6 +211,7 @@ void updateGameMenu(float interval) {
 
 		if (sgIdleProgress >= 1.0f)
 		{
+			resetBall();
 			popGameMenu();
 		}
 	}
@@ -267,12 +270,13 @@ void showGameMenu(int menu) {
 
 	if (gCurMenu == &gMenuWait)
 	{
+		newMenu->back = gCurMenu->back;
 		gCurMenu->back = newMenu;
 	}
 	else
 	{
+		newMenu->back = gCurMenu;
 		gCurMenu = newMenu;
-		gCurMenu->back = NULL;
 	}
 
 	showMenu(gCurMenu);
@@ -296,15 +300,14 @@ void initGameMenu() {
 
 	static ProgressBar pbProgress;
 
-#if 0
-	static SpinEdit spinEditBall;
-#endif
+	static SpinEdit seBall;
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
 	static MenuItem* itemsMain1[] =
 	{
 		&bStart.item,
+		&seBall.item,
 		&gcShadows.item,
 		&gcReflection.item,
 		&bHelp.item,
@@ -314,6 +317,7 @@ void initGameMenu() {
 	static MenuItem* itemsMain2[] =
 	{
 		&bResume.item,
+		&seBall.item,
 		&gcShadows.item,
 		&gcReflection.item,
 		&bHelp.item,
@@ -373,14 +377,10 @@ void initGameMenu() {
 	 */
 
 	/* main menu */
-	initButton(&bStart, 6.0f, clickButtonStart, "Start");
-	initButton(&bResume, 6.0f, clickButtonStart, "Resume");
+	initButton(&bStart, 6.0f, clickButtonContinue, "Start");
+	initButton(&bResume, 6.0f, clickButtonContinue, "Resume");
 
-#if 0
-	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
-#else
-	changeBall(gCntBallLayouts - 1);
-#endif
+	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, drawMenuBall, changeBallEdit);
 
 	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
 	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
@@ -392,7 +392,7 @@ void initGameMenu() {
 	INIT_MENU(&gMenuMain2, itemsMain2);
 
 	/* next level menu */
-	initButton(&bContinue, 5.5f, clickButtonStart, "Continue");
+	initButton(&bContinue, 5.5f, clickButtonContinue, "Continue");
 	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
 
 	INIT_MENU(&gMenuNext, itemsNext);

@@ -21,31 +21,42 @@
 
 #include <math.h>
 
-float sqr(float x) {
+float sqr(float x)
+{
 	return x * x;
 }
 
-float min(float a, float b) {
+float min(float a, float b)
+{
 	return (a < b) ? a : b;
 }
 
-int mini(int a, int b) {
+int mini(int a, int b)
+{
 	return (a < b) ? a : b;
 }
 
-float max(float a, float b) {
+float max(float a, float b)
+{
 	return (a > b) ? a : b;
 }
 
-int maxi(int a, int b) {
+int maxi(int a, int b)
+{
 	return (a > b) ? a : b;
 }
 
-float clamp(float x, float lo, float up) {
+float clamp(float x, float lo, float up)
+{
 	return min(up, max(lo, x));
 }
 
-int between(int x, int min, int max) {
-	return x >= min && x <= max;
+int clampi(int x, int lo, int up)
+{
+	return mini(up, maxi(lo, x));
 }
 
+int between(int x, int min, int max)
+{
+	return x >= min && x <= max;
+}

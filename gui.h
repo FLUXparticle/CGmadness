@@ -28,20 +28,14 @@ typedef void (*funcClick)(void);
 
 typedef void (*funcChange)(void* self);
 
-typedef struct {
-	int value;
-	int minValue;
-	int maxValue;
-	funcChange change;
-} SpinEdit;
-
 /***/
 
 typedef enum {
 	MI_LABEL,
 	MI_PROGRESS_BAR,
 	MI_BUTTON,
-	MI_CHECK
+	MI_CHECK,
+	MI_SPIN_EDIT
 } MenuItemType;
 
 typedef struct {
@@ -91,6 +85,19 @@ typedef struct {
 	funcChange change;
 } Check;
 
+typedef struct {
+	MenuItem item;
+
+	int value;
+	int minValue;
+	int maxValue;
+
+	int side;
+
+	funcDraw draw;
+	funcChange change;
+} SpinEdit;
+
 void initGUI(void);
 
 void setSomeLight(void);
@@ -114,9 +121,7 @@ void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
-#if 0
-void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
-#endif
+void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, funcDraw draw, funcChange change);
 
 /* Menu */
 

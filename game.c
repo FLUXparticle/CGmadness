@@ -328,6 +328,7 @@ void loadNewLevel(void) {
 		destroyLevel();
 		if (initLevel(nextLevelname)) {
 			pauseGame();
+			showGameMenu(0);
 			showGameMenu(2);
 			resetBall();
 		} else {

@@ -22,6 +22,7 @@
 #include "text.h"
 #include "objects.h"
 #include "texture.h"
+#include "functions.h"
 #include "debug.h"
 
 #include <GL/glut.h>
@@ -45,7 +46,18 @@ void drawArrowLeft(void)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexLeft);
 
-		drawSquare();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glPushMatrix();
+
+				glScalef(0.5f, 0.5f, 1.0f);
+
+				drawSquare();
+
+			glPopMatrix();
+
+		glDisable(GL_BLEND);
 
 	glDisable(GL_TEXTURE_2D);
 }
@@ -55,7 +67,18 @@ void drawArrowRight(void)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexRight);
 
-		drawSquare();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glPushMatrix();
+
+				glScalef(0.5f, 0.5f, 1.0f);
+
+				drawSquare();
+
+			glPopMatrix();
+
+		glDisable(GL_BLEND);
 
 	glDisable(GL_TEXTURE_2D);
 }
@@ -161,14 +184,22 @@ void initButton(Button* button, float z, funcClick click, char* text)
 	button->item.type = MI_BUTTON;
 
 	button->item.width = widthFont3DText(button->text) * scaleText;
-	button->item.height = 0.9f;
+	button->item.height = 0.5f;
 
 	button->item.position = vector2(-button->item.width / 2.0f, z);
 }
 
-void eventButton(Button* button)
+void eventButton(Button* button, MouseEvent event)
 {
-	button->click();
+	switch (event)
+	{
+		case MOUSE_CLICK:
+			button->click();
+			break;
+		default:
+			button->item.hover = 1;
+			break;
+	}
 }
 
 void drawButton(const Button* button)
@@ -201,7 +232,7 @@ void initCheck(Check* check, float z, funcChange change, char* text)
 	check->item.type = MI_CHECK;
 
 	check->item.width = widthFont3DText(check->text) * scaleText;
-	check->item.height = 0.9f;
+	check->item.height = 0.5f;
 
 	check->item.position = vector2(-check->item.width / 2.0f, z);
 
@@ -230,12 +261,24 @@ void drawCheck(const Check* check)
 	glPopMatrix();
 }
 
-void eventCheck(Check* check)
+void eventCheck(Check* check, MouseEvent event)
 {
-	setCheck(check, !check->value);
+	switch (event)
+	{
+		case MOUSE_CLICK:
+			setCheck(check, !check->value);
+			break;
+		default:
+			check->item.hover = 1;
+			break;
+	}
 }
 
 /*** SpinEdit ***/
+
+/*
+ * TODO split SpinEdit into two seperate MenuItems
+ */
 
 void pickSpinEditLeft(void* data) {
 	SpinEdit* spinedit = data;
@@ -255,45 +298,109 @@ void pickSpinEditRight(void* data) {
 	}
 }
 
-#if 0
-void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change) {
-	spinedit->value = value;
-	spinedit->minValue = min;
-	spinedit->maxValue = max;
+void initSpinEdit(SpinEdit* spinEdit, int value, int min, int max, float z, funcDraw draw, funcChange change)
+{
+	spinEdit->item.type = MI_SPIN_EDIT;
 
-	initObjectGroup(&spinedit->oSpinEdit);
+	spinEdit->item.width = 4.3;
+	spinEdit->item.height = 1.0f;
 
-	setObjectPosition3f(&spinedit->oSpinEdit, 0.0f, 0.0f, z);
-	rotateObjectX(&spinedit->oSpinEdit, 90.0f);
-	setObjectScalef(&spinedit->oSpinEdit, SCALE_FONT);
+	spinEdit->item.position = vector2(-spinEdit->item.width / 2.0f, z - 0.5);
 
-	/* arrow left */
-	initObjectGroup(&spinedit->oLeft);
-	setObjectPosition2f(&spinedit->oLeft, -4.3f, 0.0f);
-	addSubObject(&spinedit->oLeft, &goLeft);
-	addSubObject(&spinedit->oSpinEdit, &spinedit->oLeft);
-
-	/* arror right */
-	initObjectGroup(&spinedit->oRight);
-	setObjectPosition2f(&spinedit->oRight, 3.3f, 0.0f);
-	addSubObject(&spinedit->oRight, &goRight);
-	addSubObject(&spinedit->oSpinEdit, &spinedit->oRight);
+	spinEdit->value = value;
+	spinEdit->minValue = min;
+	spinEdit->maxValue = max;
 
 	/* object between arrows */
-	addSubObject(&spinedit->oSpinEdit, obj);
+	spinEdit->draw = draw;
+	spinEdit->change = change;
 
-	spinedit->change = change;
-
-	change(spinedit);
-
-	/* register callbacks for arrows */
-	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
-	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
-
-	initPick(&spinedit->pRight, pickSpinEditRight, spinedit);
-	setObjectPick(&spinedit->oRight, &spinedit->pRight);
+	spinEdit->change(spinEdit);
 }
-#endif
+
+void drawSpinEdit(const SpinEdit* spinEdit)
+{
+	float scale = 1.0f + 0.2f * spinEdit->item.emphasize;
+
+	glPushMatrix();
+
+		glTranslatef(0.5f, 0.5f, 0.0f);
+
+		glPushMatrix();
+
+			if (spinEdit->side == -1)
+			{
+				glScalef(scale, scale, 1.0f);
+			}
+
+			drawArrowLeft();
+
+		glPopMatrix();
+
+		glTranslatef(1.65f, 0.0f, 0.0f);
+
+		glPushMatrix();
+
+			glScalef(0.5f, 0.5f, 0.5f);
+
+			glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
+
+				spinEdit->draw();
+
+			glPopAttrib();
+
+		glPopMatrix();
+
+		glTranslatef(1.65f, 0.0f, 0.0f);
+
+		glPushMatrix();
+
+			if (spinEdit->side == 1)
+			{
+				glScalef(scale, scale, 1.0f);
+			}
+
+			drawArrowRight();
+
+		glPopMatrix();
+
+	glPopMatrix();
+}
+
+void eventSpinEdit(SpinEdit* spinEdit, float x, float y, MouseEvent event)
+{
+	int side;
+	if (x < -1.15f)
+	{
+		side = -1;
+	}
+	else if (x > 1.15f)
+	{
+		side = 1;
+	}
+	else
+	{
+		side = 0;
+	}
+
+	if (side != 0)
+	{
+		spinEdit->side = side;
+	}
+
+
+	switch (event)
+	{
+		case MOUSE_CLICK:
+			spinEdit->value = clampi(spinEdit->value + side, spinEdit->minValue, spinEdit->maxValue);
+			spinEdit->change(spinEdit);
+			break;
+		default:
+			spinEdit->item.hover = (side != 0);
+			break;
+	}
+
+}
 
 /*** MenuItem ***/
 
@@ -331,6 +438,9 @@ void drawMenuItem(const MenuItem* item)
 			case MI_CHECK:
 				drawCheck((const Check*) item);
 				break;
+			case MI_SPIN_EDIT:
+				drawSpinEdit((const SpinEdit*) item);
+				break;
 		}
 
 	glPopMatrix();
@@ -340,30 +450,22 @@ void eventMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 {
 	item->hover = 0;
 
-	if (item->type == MI_BUTTON || MI_CHECK)
+	if (x >= item->position.x               && y >= item->position.y &&
+			x <= item->position.x + item->width && y <= item->position.y + item->height)
 	{
-		if (x >= item->position.x               && y >= item->position.y &&
-				x <= item->position.x + item->width && y <= item->position.y + item->height)
+		switch(item->type)
 		{
-			switch (event)
-			{
-				case MOUSE_CLICK:
-					switch(item->type)
-					{
-						case MI_BUTTON:
-							eventButton((Button*) item);
-							break;
-						case MI_CHECK:
-							eventCheck((Check*) item);
-							break;
-						default:
-							break;
-					}
-					break;
-				case MOUSE_MOTION:
-					item->hover = 1;
-					break;
-			}
+			case MI_BUTTON:
+				eventButton((Button*) item, event);
+				break;
+			case MI_CHECK:
+				eventCheck((Check*) item, event);
+				break;
+			case MI_SPIN_EDIT:
+				eventSpinEdit((SpinEdit*) item, x, y, event);
+				break;
+			default:
+				break;
 		}
 	}
 }

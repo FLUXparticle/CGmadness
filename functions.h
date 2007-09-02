@@ -27,6 +27,7 @@ int mini(int a, int b);
 float max(float a, float b);
 int maxi(int a, int b);
 float clamp(float x, float lo, float up);
+int clampi(int x, int lo, int up);
 
 int between(int x, int min, int max);
 
