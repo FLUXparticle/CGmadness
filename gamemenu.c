@@ -20,7 +20,6 @@
 #include "gamemenu.h"
 
 #include "text.h"
-#include "graph.h"
 #include "objects.h"
 #include "texture.h"
 #include "ball.h"
@@ -28,12 +27,14 @@
 #include "features.h"
 #include "keyboard.h"
 #include "gui.h"
+#include "menu.h"
 #include "camera.h"
 #include "debug.h"
 
 #include <GL/glut.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define SCALE_FONT 0.5f
@@ -42,8 +43,6 @@ typedef struct {
 	char* left;
 	char* right;
 } LeftRight;
-
-static Object goLogo;
 
 static Check gcShadows;
 static Check gcReflection;
@@ -79,7 +78,7 @@ static void clickButtonStart(void) {
 	resumeGame();
 }
 
-static void changeBallEdit(void* self) {
+void changeBallEdit(void* self) {
 	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
 }
 
@@ -188,7 +187,7 @@ void drawGameMenu(void) {
 			glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-			drawObject(&goLogo);
+			drawLogo();
 			drawMenu(gCurMenu);
 		glPopMatrix();
 
@@ -196,7 +195,7 @@ void drawGameMenu(void) {
 	glDisable(GL_COLOR_MATERIAL);
 }
 
-void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event) {
+void eventGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event) {
 	Vector3 newPosition = sub(*position, gGameMenuPosition);
 
 	if (newPosition.y < 0.0f && direction->y > 0.0f)
@@ -205,7 +204,7 @@ void pickGameMenu(const Vector3* position, const Vector3* direction, MouseEvent 
 		float x = newPosition.x + t * direction->x;
 		float y = newPosition.z + t * direction->z;
 
-		clickMenu(gCurMenu, x, y, event);
+		eventMenu(gCurMenu, x, y, event);
 	}
 }
 
@@ -247,10 +246,11 @@ void initGameMenu() {
 	static Button bAgain;
 	static Button bQuit2;
 
+#if 0
 	static SpinEdit spinEditBall;
+#endif
 
-	static Object oTextHelp[2 * LENGTH(gTextHelp)];
-	static Object oBall;
+	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
 	static MenuItem* itemsMain1[] =
 	{
@@ -282,7 +282,11 @@ void initGameMenu() {
 		&bQuit2.item
 	};
 
+	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
+
 	int i;
+
+	initLogo();
 
 	initGUI();
 
@@ -313,19 +317,16 @@ void initGameMenu() {
 	 * put all together
 	 */
 
-	/* menu logo */
-	initObject(&goLogo, drawSquare);
-	goLogo.texture = loadTexture("data/logo.tga", 0);
-	setObjectPosition3f(&goLogo, 0.0f, 8.0f, 0.0f);
-	setObjectScale3f(&goLogo, 4.0f, 1.0f, 1.0f);
-
 	/* main menu */
-	initObject(&oBall, drawMenuBall);
-
 	initButton(&bStart, 6.0f, clickButtonStart, "Start");
 	initButton(&bResume, 6.0f, clickButtonStart, "Resume");
 
+#if 0
 	init3dSpinEdit(&spinEditBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, &oBall, changeBallEdit);
+#else
+	changeBall(gCntBallLayouts - 1);
+#endif
+
 	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
 	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
 
@@ -342,31 +343,22 @@ void initGameMenu() {
 	INIT_MENU(&gMenuNext, itemsNext);
 
 	/* help menu */
-	for (i = 0; i < LENGTH(gTextHelp); i++)
+	for (i = 0; i < LENGTH(lTextHelp); i++)
 	{
-		float z = 6.0f - i;
-		float length;
+		int row = i / 2;
+		int col = i % 2;
+		float z = 6.0f - row;
 
-		{
-			Object* o = &oTextHelp[2 * i];
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, col, col ? gTextHelp[row].right : gTextHelp[row].left);
 
-			length = makeTextObject(o, gTextHelp[i].left) * SCALE_FONT;
-			setObjectPosition3f(o, -5.0f, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-		}
-
-		{
-			Object* o = &oTextHelp[2 * i + 1];
-
-			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
-			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-		}
+		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
 	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
+
+	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
+
+	INIT_MENU(&gMenuHelp, itemsHelp);
 
 	/* game complete menu */
 	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");

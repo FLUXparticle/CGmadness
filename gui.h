@@ -20,7 +20,6 @@
 #ifndef _gui_h_
 #define _gui_h_
 
-#include "graph.h"
 #include "vector.h"
 #include "mouse.h"
 #include "types.h"
@@ -40,6 +39,7 @@ typedef struct {
 
 typedef enum {
 	MI_UNDEFINED = -1,
+	MI_LABEL,
 	MI_BUTTON,
 	MI_CHECK
 } MenuItemType;
@@ -64,6 +64,12 @@ typedef struct {
 	MenuItem item;
 
 	char* text;
+} Label;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
 
 	funcClick click;
 } Button;
@@ -81,6 +87,10 @@ void initGUI(void);
 
 void setSomeLight(void);
 
+/* Label */
+
+void initLabel(Label* label, float x, float z, int alignRight, char* text);
+
 /* Button */
 
 void initButton(Button* button, float z, funcClick click, char* text);
@@ -92,7 +102,9 @@ void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
+#if 0
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+#endif
 
 /* Menu */
 
@@ -102,6 +114,6 @@ void initMenu(Menu* menu, int cntItems, MenuItem** items);
 void showMenu(Menu* menu);
 void updateMenu(Menu* menu, float interval);
 void drawMenu(const Menu* menu);
-void clickMenu(Menu* menu, float x, float y, MouseEvent event);
+void eventMenu(Menu* menu, float x, float y, MouseEvent event);
 
 #endif

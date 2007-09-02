@@ -20,9 +20,9 @@
 #ifndef _callback_h_
 #define _callback_h_
 
-#include "graph.h"
 #include "mouse.h"
 
+#include "vector.h"
 #include "types.h"
 
 typedef void (*funcUpdate)(float interval);

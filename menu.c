@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
- * 
+ * Copyright (C) 2007  Sven Reinck
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -15,21 +15,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * $Id$
+ *
  */
 
-#ifndef _editormenu_h_
-#define _editormenu_h_
+#include "menu.h"
 
-#include "vector.h"
+#include "texture.h"
+#include "objects.h"
 
-void initEditorMenu(void);
+#include <GL/gl.h>
 
-void showEditorMenu(int menu);
+static GLuint gTexLogo = 0;
 
-void updateEditorMenu(float interval);
+void initLogo(void)
+{
+	if (gTexLogo == 0)
+	{
+		gTexLogo = loadTexture("data/logo.tga", 0);
+	}
+}
 
-void setEditorMenuPosition(Vector3 pos);
+void drawLogo(void)
+{
 
-void drawEditorMenu(void);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLogo);
 
-#endif
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glPushMatrix();
+
+				glTranslatef(0.0f, 8.0f, 0.0f);
+				glScalef(4.0f, 1.0f, 1.0f);
+
+				drawSquare();
+
+			glPopMatrix();
+
+		glDisable(GL_BLEND);
+
+	glDisable(GL_TEXTURE_2D);
+}

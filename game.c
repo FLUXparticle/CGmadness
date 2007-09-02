@@ -21,7 +21,6 @@
 
 #include "common.h"
 
-#include "graph.h"
 #include "objects.h"
 #include "ball.h"
 #include "field.h"
@@ -235,11 +234,11 @@ void drawGameReflection(void) {
 	drawGameField(1);
 }
 
-void pickGame(const Vector3* position, const Vector3* direction, MouseEvent event)
+void eventGame(const Vector3* position, const Vector3* direction, MouseEvent event)
 {
 	if (!gIsGameRunning)
 	{
-		pickGameMenu(position, direction, event);
+		eventGameMenu(position, direction, event);
 	}
 }
 
@@ -385,7 +384,7 @@ int initGame(void) {
 
 	sgWindowViewport.draw = drawGame;
 	sgWindowViewport.drawHUD = drawGameHUD;
-	sgWindowViewport.mouseEvent = pickGame;
+	sgWindowViewport.mouseEvent = eventGame;
 	setUpdateFunc(updateGame);
 
 	return 1;

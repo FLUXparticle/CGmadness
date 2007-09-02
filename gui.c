@@ -35,30 +35,36 @@
 
 static float scaleText = 0.1f * SCALE_FONT;
 
-static Object goLeft;
-static Object goRight;
+static unsigned int gTexLeft;
+static unsigned int gTexRight;
 
 static int gInitialize = 0;
 
-void initMenuObject(Object* obj, int texture) {
-	initObject(obj, drawSquare);
-	obj->texture = texture;
-	obj->ambient = 1.0f;
-	obj->diffuse = 0.0f;
+void drawArrowLeft(void)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLeft);
+
+		drawSquare();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
-void initTextObject(Object* obj, char* text, float z) {
-	float length = makeTextObject(obj, text) * SCALE_FONT;
-	setObjectPosition3f(obj, -length / 2, 0.0f, z);
-	setObjectScalef(obj, SCALE_FONT);
-	rotateObjectX(obj, 90.0f);
+void drawArrowRight(void)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexRight);
+
+		drawSquare();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void initGUI() {
 	if (!gInitialize) {
 		/* loading arrow textures */
-		initMenuObject(&goLeft, loadTexture("data/left.tga", 0));
-		initMenuObject(&goRight, loadTexture("data/right.tga", 0));
+		gTexLeft = loadTexture("data/left.tga", 0);
+		gTexRight = loadTexture("data/right.tga", 0);
 
 		gInitialize = 1;
 	}
@@ -77,6 +83,40 @@ void setSomeLight(void) {
 	glEnable(GL_LIGHT0);
 }
 
+/*** Label ***/
+
+void initLabel(Label* label, float x, float z, int alignRight, char* text)
+{
+	label->text = text;
+
+	label->item.type = MI_LABEL;
+
+	label->item.width = widthFont3DText(label->text) * scaleText;
+	label->item.height = 0.9f;
+
+	if (alignRight)
+	{
+		label->item.position = vector2(x - label->item.width, z);
+	}
+	else
+	{
+		label->item.position = vector2(x, z);
+	}
+}
+
+void drawLabel(const Label* label)
+{
+	float scale = scaleText;
+
+	glPushMatrix();
+
+		glScalef(scale, scale, scale);
+
+		drawFont3DText(label->text);
+
+	glPopMatrix();
+}
+
 /*** Button ***/
 
 void initButton(Button* button, float z, funcClick click, char* text)
@@ -92,12 +132,9 @@ void initButton(Button* button, float z, funcClick click, char* text)
 	button->item.position = vector2(-button->item.width / 2.0f, z);
 }
 
-void clickButton(Button* button)
+void eventButton(Button* button)
 {
-	if (button->click)
-	{
-		button->click();
-	}
+	button->click();
 }
 
 void drawButton(const Button* button)
@@ -159,7 +196,8 @@ void drawCheck(const Check* check)
 	glPopMatrix();
 }
 
-void clickCheck(Check* check) {
+void eventCheck(Check* check)
+{
 	setCheck(check, !check->value);
 }
 
@@ -183,12 +221,12 @@ void pickSpinEditRight(void* data) {
 	}
 }
 
+#if 0
 void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change) {
 	spinedit->value = value;
 	spinedit->minValue = min;
 	spinedit->maxValue = max;
 
-#if 0
 	initObjectGroup(&spinedit->oSpinEdit);
 
 	setObjectPosition3f(&spinedit->oSpinEdit, 0.0f, 0.0f, z);
@@ -209,21 +247,20 @@ void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Ob
 
 	/* object between arrows */
 	addSubObject(&spinedit->oSpinEdit, obj);
-#endif
 
 	spinedit->change = change;
 
 	change(spinedit);
 
-#if 0
 	/* register callbacks for arrows */
 	initPick(&spinedit->pLeft, pickSpinEditLeft, spinedit);
 	setObjectPick(&spinedit->oLeft, &spinedit->pLeft);
 
 	initPick(&spinedit->pRight, pickSpinEditRight, spinedit);
 	setObjectPick(&spinedit->oRight, &spinedit->pRight);
-#endif
 }
+#endif
+
 /*** MenuItem ***/
 
 #define EMPHASIZE_SPEED 10.0f
@@ -248,6 +285,9 @@ void drawMenuItem(const MenuItem* item)
 
 		switch(item->type)
 		{
+			case MI_LABEL:
+				drawLabel((const Label*) item);
+				break;
 			case MI_BUTTON:
 				drawButton((const Button*) item);
 				break;
@@ -261,7 +301,7 @@ void drawMenuItem(const MenuItem* item)
 	glPopMatrix();
 }
 
-void clickMenuItem(MenuItem* item, float x, float y, MouseEvent event)
+void eventMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 {
 	item->hover = 0;
 
@@ -274,10 +314,10 @@ void clickMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 				switch(item->type)
 				{
 					case MI_BUTTON:
-						clickButton((Button*) item);
+						eventButton((Button*) item);
 						break;
 					case MI_CHECK:
-						clickCheck((Check*) item);
+						eventCheck((Check*) item);
 						break;
 					default:
 						break;
@@ -328,12 +368,12 @@ void drawMenu(const Menu* menu)
 	}
 }
 
-void clickMenu(Menu* menu, float x, float y, MouseEvent event)
+void eventMenu(Menu* menu, float x, float y, MouseEvent event)
 {
 	int i;
 
 	for (i = 0; i < menu->cntItems; i++)
 	{
-		clickMenuItem(menu->items[i], x, y, event);
+		eventMenuItem(menu->items[i], x, y, event);
 	}
 }

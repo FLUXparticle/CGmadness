@@ -29,6 +29,7 @@
 #include <GL/glut.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define FRAMES_PER_SECOND 60

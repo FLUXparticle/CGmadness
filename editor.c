@@ -22,7 +22,6 @@
 #include "common.h"
 #include "editormenu.h"
 
-#include "graph.h"
 #include "callback.h"
 #include "camera.h"
 #include "keyboard.h"
@@ -428,11 +427,13 @@ void drawEditor(void) {
 	}
 }
 
-void pickEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
+void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
 {
 	if (!gIsEditorRunning)
 	{
-		pickEditorMenu();
+		/*
+		 * TODO pass event to menu
+		 */
 	}
 }
 
@@ -462,7 +463,7 @@ int initEditor(char* filename)
 
 	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.drawHUD = NULL;
-	sgWindowViewport.mouseEvent = pickEditor;
+	sgWindowViewport.mouseEvent = eventEditor;
 	setUpdateFunc(updateEditor);
 
 	gCurStart.x = 0;

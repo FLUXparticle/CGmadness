@@ -23,7 +23,6 @@
 #include "dataSmallAlpha.h"
 #include "dataDigits.h"
 
-#include "graph.h"
 
 #include "debug.h"
 
@@ -79,50 +78,6 @@ void drawStrokeText(const char* str)
 		glDisable(GL_LINE_SMOOTH);
 
 	glPopMatrix();
-}
-
-void addChar(Object* obj, float* x, funcDraw draw, float width)
-{
-	Object* oChar;
-
-	MALLOC(oChar, sizeof(Object));
-
-	initObject(oChar, draw);
-
-	setObjectScalef(oChar, SCALE);
-
-	oChar->pos.x = *x;
-	*x += width * SCALE;
-
-	addSubObject(obj, oChar);
-}
-
-float makeTextObject(Object* obj, const char* text)
-{
-	const char* s;
-	float x = 0;
-
-	initObjectGroup(obj);
-
-	for (s = text; *s; s++) {
-		if (*s >= 'A' && *s <= 'Z') {
-			int i = *s - 'A';
-			addChar(obj, &x, drawBigAlpha[i], widthBigAlpha[i]);
-		}
-		if (*s >= 'a' && *s <= 'z') {
-			int i = *s - 'a';
-			addChar(obj, &x, drawSmallAlpha[i], widthSmallAlpha[i]);
-		}
-		if (*s >= '0' && *s <= '9') {
-			int i = *s - '0';
-			addChar(obj, &x, drawDigits[i], widthDigits[i]);
-		}
-		if (*s == ' ') {
-			x += 0.5f;
-		}
-	}
-
-	return x;
 }
 
 float widthFont3DText(const char* str)
