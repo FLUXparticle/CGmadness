@@ -21,6 +21,8 @@
 
 #include "common.h"
 
+#include "functions.h"
+
 #include <math.h>
 
 float approximationSquare(const Vector3 position, const Vector3 normal, const Square square)

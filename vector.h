@@ -45,8 +45,6 @@ Vector2 vector2(float x, float y);
 
 Vector3 vector3(float x, float y, float z);
 
-float sqr(float x);
-
 float len(const Vector3 v);
 
 Vector3 norm(const Vector3 v);
