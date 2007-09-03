@@ -424,7 +424,19 @@ void drawGameField(int ballReflection)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
+	if (useSpotlight())
+	{
+		glUseProgram(sgSpotlightShader);
+
+		glUniform3fv(glGetUniformLocation(sgSpotlightShader, "ball"), 1, &sgoBall.pos.x);
+	}
+
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
+
+	if (useSpotlight())
+	{
+		glUseProgram(0);
+	}
 
   glActiveTexture(GL_TEXTURE2);
 	glDisable(GL_TEXTURE_2D);
