@@ -33,7 +33,7 @@ void main()
 
 	float d1 = dot(normal, normalize(d));
 
-	float light = 1.0 - (d1 / (1.0 + ((r * r) / (0.2 * 0.2))));
+	float light = 1.0 - max(0.0, (d1 / (1.0 + ((r * r) / (0.2 * 0.2)))));
 
 	vec4 shadow = vec4(light);
 
