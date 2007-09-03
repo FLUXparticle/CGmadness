@@ -477,21 +477,24 @@ void activateBallShader(void) {
 	if (useBallReflection()) {
 		int x;
 		int y;
-		Matrix m;
+		Matrix modelview;
+		Matrix texture;
+
+		glGetFloatv(GL_MODELVIEW_MATRIX, &modelview[0][0]);
 
 		for (x = 0; x < 4; x++) {
 			for (y = 0; y < 4; y++) {
 				if (x < 3 && y < 3) {
-					m[x][y] = sgWindowViewport.view[y][x];
+					texture[x][y] = modelview[y][x];
 				} else {
-					m[x][y] = (x == y);
+					texture[x][y] = (x == y);
 				}
 			}
 		}
 
 		glMatrixMode(GL_TEXTURE);
 		glPushMatrix();
-		glMultMatrixf(&m[0][0]);
+		glMultMatrixf(&texture[0][0]);
 
 		glMatrixMode(GL_MODELVIEW);
 
