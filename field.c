@@ -429,6 +429,9 @@ void drawGameField(int ballReflection)
 		glUseProgram(sgSpotlightShader);
 
 		glUniform3fv(glGetUniformLocation(sgSpotlightShader, "ball"), 1, &sgoBall.pos.x);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex0"), 0);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex1"), 1);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex2"), 2);
 	}
 
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);

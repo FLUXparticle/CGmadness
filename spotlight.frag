@@ -21,6 +21,9 @@ varying vec3 normal;
 varying vec3 vertex;
 
 uniform vec3 ball;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
 
 void main()
 {
@@ -32,7 +35,11 @@ void main()
 
 	float light = 1.0 - (d1 / (1.0 + ((r * r) / (0.2 * 0.2))));
 
-	vec4 color = vec4(light);
+	vec4 shadow = vec4(light);
 
-	gl_FragColor = color;
+	vec4 texColor0 = texture2D(tex0, vec2(gl_TexCoord[0]));
+	vec4 texColor1 = texture2D(tex1, vec2(gl_TexCoord[1]));
+	vec4 texColor2 = texture2D(tex2, vec2(gl_TexCoord[2]));
+
+	gl_FragColor = gl_Color * texColor0 * texColor1 * texColor2 * shadow;
 }
