@@ -657,13 +657,18 @@ void deactivateBallShader(void)
 	}
 }
 
-void drawMenuBall(void)
-{
-	activateBallShader();
+void drawMenuBall(void) {
+	glPushMatrix();
 
-		drawBallObject(useBallShader());
+		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 
-	deactivateBallShader();
+		activateBallShader();
+
+			drawBallObject(useBallShader());
+
+		deactivateBallShader();
+
+	glPopMatrix();
 }
 
 void drawGameBall(void)
