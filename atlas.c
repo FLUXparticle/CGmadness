@@ -57,7 +57,7 @@ int getCntAllocatedSubLightMaps(void)
 	return gAllocatedSubTextures;
 }
 
-void allocAtlas(int cntSubTextures)
+void initAtlas(int cntSubTextures)
 {
 	gRows = 1;
 	do
@@ -98,7 +98,7 @@ void allocAtlas(int cntSubTextures)
 	PRINT_INT(cntSubTextures);
 }
 
-void freeAtlas(void)
+void destroyAtlas(void)
 {
 	FREE(gLightMapData);
 	FREE(gColorMapData);

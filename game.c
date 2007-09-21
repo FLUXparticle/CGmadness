@@ -293,16 +293,6 @@ static int startLevel(const char* filename) {
 	return 1;
 }
 
-void destroyLevel(void) {
-	glDeleteTextures(1, &sgLevel.lightMap);
-#if (NOISE_TEXTURE)
-	glDeleteTextures(1, &sgLevel.colorMap);
-#endif
-
-	destroyGameField();
-	destroyCommon();
-}
-
 char* getNextLevelName(void) {
 	static char* allLevels = NULL;
 	static char* nextLevel = NULL;
@@ -336,7 +326,14 @@ void loadNewLevel(void) {
 		pauseGame();
 		showGameMenu(3);
 	} else {
+		glDeleteTextures(1, &sgLevel.lightMap);
+#if (NOISE_TEXTURE)
+		glDeleteTextures(1, &sgLevel.colorMap);
+#endif
+	
+		destroyGameField();
 		destroyLevel();
+
 		if (startLevel(nextLevelname)) {
 			pauseGame();
 			showGameMenu(0);

@@ -18,7 +18,6 @@
  */
 
 #include "main.h"
-#include "common.h"
 #include "level.h"
 
 #include <stdio.h>

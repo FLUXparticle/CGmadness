@@ -20,26 +20,13 @@
 #ifndef _common_h_
 #define _common_h_
 
-#include "vector.h"
-
-#define NOISE_TEXTURE 0
-
-#define MAX_LEVEL_SIZE 100
-
 extern float sgIdleProgress;
-
-void createAtlas(void);
-void destroyAtlas(void);
-
-void updateLightMap(void);
-void updateColorMap(void);
-void updateTexCoords(void);
 
 void initCommon(void);
 void destroyCommon(void);
 
-void newLevel(void);
-int loadFieldFromFile(const char* filename);
-int saveFieldToFile(const char* filename);
+void updateLightMap(void);
+void updateColorMap(void);
+void updateTexCoords(void);
 
 #endif

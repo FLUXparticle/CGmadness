@@ -50,9 +50,9 @@ typedef struct
 	SubAtlas sides[4];
 } CellLightMap;
 
-static int gIdleStep;
-
 float sgIdleProgress;
+
+static int gIdleStep;
 
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
@@ -60,18 +60,7 @@ static CellLightMap* gSubAtlasSides;
 #define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasFloor[(_y) * sgLevel.size.x + (_x)])
 #define SUB_ATLAS_SIDES(_x, _y) (gSubAtlasSides[(_y) * sgLevel.size.x + (_x)])
 
-float getMinZValue(const Square* square) {
-	int i;
-	float res = square->vertices[0].z;
-	for (i = 1 ; i < 4; i++) {
-		if (square->vertices[i].z < res) {
-			res = square->vertices[i].z;
-		}
-	}
-	return res;
-}
-
-int quadsNeeded(int fx, int fy, int side)
+static int quadsNeeded(int fx, int fy, int side)
 {
 	SideFace face;
 
@@ -87,7 +76,7 @@ int quadsNeeded(int fx, int fy, int side)
 	}
 }
 
-void createAtlas(void)
+void initCommon(void)
 {
 	int countSubLightMaps = 0;
 
@@ -112,7 +101,7 @@ void createAtlas(void)
 	}
 
 
-	allocAtlas(countSubLightMaps);
+	initAtlas(countSubLightMaps);
 
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
@@ -126,6 +115,14 @@ void createAtlas(void)
 			}
 		}
 	}
+}
+
+void destroyCommon(void)
+{
+	FREE(gSubAtlasFloor);
+	FREE(gSubAtlasSides);
+
+	destroyAtlas();
 }
 
 Orientation orientationFloor(int fx, int fy)
@@ -355,23 +352,4 @@ void updateTexCoords(void)
 			}
 		}
 	}
-}
-
-void destroyAtlas(void)
-{
-	FREE(gSubAtlasFloor);
-	FREE(gSubAtlasSides);
-
-	freeAtlas();
-}
-
-void destroyCommon(void)
-{
-	destroyAtlas();
-
-	FREE(sgLevel.field[0]);
-	FREE(sgLevel.field);
-
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
 }

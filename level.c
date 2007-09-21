@@ -29,6 +29,7 @@
 #include <GL/gl.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define THIS_CGM_VERSION 3
 
@@ -243,6 +244,16 @@ void initLevel(void)
 	}
 }
 
+void destroyLevel(void) {
+	FREE(sgLevel.field[0]);
+	FREE(sgLevel.field);
+	
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
+
+	destroyCommon();
+}
+
 void getRoofSquare(int x, int y, Square* square)
 {
 	Plate* p = &sgLevel.field[x][y];
@@ -258,11 +269,6 @@ void getSideFace(int x, int y, int side, SideFace* face)
 	*face = p->sideFaces[side];
 }
 
-void allocLevelDataMemory(void)
-{
-	initLevel();
-}
-
 void newLevel(void)
 {
 	int x, y;
@@ -275,7 +281,7 @@ void newLevel(void)
 	sgLevel.finish.x = sgLevel.size.x - 1;
 	sgLevel.finish.y = sgLevel.size.y - 1;
 
-	allocLevelDataMemory();
+	initLevel();
 
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
@@ -386,7 +392,7 @@ int loadFieldFromFile(const char* filename)
 		sgLevel.size = fileCoords;
 	}
 
-	allocLevelDataMemory();
+	initLevel();
 
 	/* reading data */
 	for (x = 0; x < sgLevel.size.x; x++)
@@ -420,7 +426,7 @@ int loadFieldFromFile(const char* filename)
 		}
 	}
 
-	createAtlas();
+	initCommon();
 
 	if (version >= 2)
 	{

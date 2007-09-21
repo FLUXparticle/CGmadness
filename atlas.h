@@ -34,11 +34,11 @@ typedef struct {
 	int idxSubLightMap;
 } SubAtlas;
 
-void allocAtlas(int cntSubTextures);
+void initAtlas(int cntSubTextures);
 
 int getCntAllocatedSubLightMaps(void);
 
-void freeAtlas(void);
+void destroyAtlas(void);
 
 void lightMapToTexture(unsigned int texID);
 void colorMapToTexture(unsigned int texID);

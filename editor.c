@@ -22,12 +22,12 @@
 #include "editormenu.h"
 
 #include "level.h"
-#include "common.h"
 #include "callback.h"
 #include "camera.h"
 #include "keyboard.h"
 #include "texture.h"
 #include "atlas.h"
+#include "common.h"
 
 #include "functions.h"
 
@@ -42,6 +42,8 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+
+#define MAX_LEVEL_SIZE 100
 
 #define DRAW_DEBUG_LINES 0
 
@@ -84,9 +86,9 @@ void resumeEditor(void) {
 void saveLevel(void) {
 	if (gDirtyLightmaps)
 	{
-		destroyAtlas();
+		destroyCommon();
 
-		createAtlas();
+		initCommon();
 		updateLightMap();
 		gDirtyLightmaps = 0;
 	}
