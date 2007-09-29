@@ -470,50 +470,50 @@ void eventMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 	}
 }
 
-/*** Menu ***/
+/*** Screen ***/
 
-void initMenu(Menu* menu, int cntItems, MenuItem** items)
+void initScreen(Screen* screen, int cntItems, MenuItem** items)
 {
-	menu->cntItems = cntItems;
-	menu->items = items;
+	screen->cntItems = cntItems;
+	screen->items = items;
 }
 
-void showMenu(Menu* menu)
+void prepareScreen(Screen* screen)
 {
 	int i;
 
-	for (i = 0; i < menu->cntItems; i++)
+	for (i = 0; i < screen->cntItems; i++)
 	{
-		menu->items[i]->emphasize = 0.0f;
+		screen->items[i]->emphasize = 0.0f;
 	}
 }
 
-void updateMenu(Menu* menu, float interval)
+void updateScreen(Screen* screen, float interval)
 {
 	int i;
 
-	for (i = 0; i < menu->cntItems; i++)
+	for (i = 0; i < screen->cntItems; i++)
 	{
-		updateMenuItem(menu->items[i], interval);
+		updateMenuItem(screen->items[i], interval);
 	}
 }
 
-void drawMenu(const Menu* menu)
+void drawScreen(const Screen* screen)
 {
 	int i;
 
-	for (i = 0; i < menu->cntItems; i++)
+	for (i = 0; i < screen->cntItems; i++)
 	{
-		drawMenuItem(menu->items[i]);
+		drawMenuItem(screen->items[i]);
 	}
 }
 
-void eventMenu(Menu* menu, float x, float y, MouseEvent event)
+void eventScreen(Screen* screen, float x, float y, MouseEvent event)
 {
 	int i;
 
-	for (i = 0; i < menu->cntItems; i++)
+	for (i = 0; i < screen->cntItems; i++)
 	{
-		eventMenuItem(menu->items[i], x, y, event);
+		eventMenuItem(screen->items[i], x, y, event);
 	}
 }

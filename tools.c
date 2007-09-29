@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,16 +15,54 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
-#ifndef _menu_h_
-#define _menu_h_
+#include "tools.h"
 
-void initLogo(void);
+#include "debug.h"
 
-void drawLogo(void);
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-#endif
+void message(void)
+{
+	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>\n");
+	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
+}
+
+void assurePath(const char* progname)
+{
+	const char* lastSlash = NULL;
+
+	const char* s;
+
+	for (s = progname; *s; s++)
+	{
+		if (*s == '/')
+		{
+			lastSlash = s;
+		}
+	}
+
+	if (lastSlash)
+	{
+		int length = lastSlash - progname;
+		char* path;
+
+		MALLOC(path, length + 1);
+
+		if (path)
+		{
+			memcpy(path, progname, length);
+			path[length] = 0;
+
+			printf("change dir: '%s'\n", path);
+
+			chdir(path);
+
+			FREE(path);
+		}
+	}
+}

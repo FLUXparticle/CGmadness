@@ -19,7 +19,7 @@
 
 #include "callback.h"
 
-#include "main.h"
+#include "tools.h"
 #include "editor.h"
 #include "level.h"
 

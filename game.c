@@ -25,6 +25,7 @@
 #include "objects.h"
 #include "ball.h"
 #include "field.h"
+#include "menumanager.h"
 #include "gamemenu.h"
 #include "files.h"
 #include "features.h"
@@ -174,8 +175,10 @@ void updateGame(float interval) {
 			gGameTime += interval;
 		}
 	} else {
-		updateGameMenu(interval);
-
+		if (updateMenuManager(interval))
+		{
+			gIsGameRunning = 1;
+		}
 	}
 
 	if (sgLevel.colorMap == 0 && !sgLevel.waiting)
@@ -226,7 +229,7 @@ void drawGame(void) {
 	drawGameBall();
 
 	if (!gIsGameRunning)	{
-		drawGameMenu();
+		drawMenuManager();
 	}
 }
 
@@ -239,7 +242,7 @@ void eventGame(const Vector3* position, const Vector3* direction, MouseEvent eve
 {
 	if (!gIsGameRunning)
 	{
-		eventGameMenu(position, direction, event);
+		eventMenuManager(position, direction, event);
 	}
 }
 
@@ -286,14 +289,14 @@ static int startLevel(const char* filename) {
 	gameMenuPosition.y = -10.0f;
 	gameMenuPosition.z =   0.0f;
 
-	setGameMenuPosistion(gameMenuPosition);
+	setMenuPosistion(gameMenuPosition);
 
 	resetGameTime();
 
 	return 1;
 }
 
-char* getNextLevelName(void) {
+static char* getNextLevelName(void) {
 	static char* allLevels = NULL;
 	static char* nextLevel = NULL;
 	static char* curLevel = NULL;

@@ -49,12 +49,12 @@ typedef struct {
 	float emphasize;
 } MenuItem;
 
-typedef struct Menu {
+typedef struct Screen {
 	int cntItems;
 	MenuItem** items;
 
-	struct Menu* back;
-} Menu;
+	struct Screen* back;
+} Screen;
 
 typedef struct {
 	MenuItem item;
@@ -123,14 +123,14 @@ void initCheck(Check* check, float z, funcChange change, char* text);
 
 void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, funcDraw draw, funcChange change);
 
-/* Menu */
+/* Screen */
 
-#define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
+#define INIT_SCREEN(screen, items) initScreen((screen), LENGTH(items), (items))
 
-void initMenu(Menu* menu, int cntItems, MenuItem** items);
-void showMenu(Menu* menu);
-void updateMenu(Menu* menu, float interval);
-void drawMenu(const Menu* menu);
-void eventMenu(Menu* menu, float x, float y, MouseEvent event);
+void initScreen(Screen* screen, int cntItems, MenuItem** items);
+void prepareScreen(Screen* screen);
+void updateScreen(Screen* screen, float interval);
+void drawScreen(const Screen* screen);
+void eventScreen(Screen* screen, float x, float y, MouseEvent event);
 
 #endif

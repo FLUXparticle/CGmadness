@@ -203,7 +203,7 @@ void updateLightMap(void)
 	}
 }
 
-void stopIdle(void)
+static void stopIdle(void)
 {
 	sgLevel.waiting = 0;
 	sgIdleProgress = 1.0f;
@@ -211,7 +211,7 @@ void stopIdle(void)
 	glutIdleFunc(NULL);
 }
 
-void doIdle(void)
+static void doIdle(void)
 {
 	int maxIdleSteps = sgLevel.size.x * sgLevel.size.y * 5;
 
@@ -239,7 +239,7 @@ void doIdle(void)
 	}
 }
 
-void startIdle(void)
+static void startIdle(void)
 {
 	gIdleStep = 0;
 

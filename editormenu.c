@@ -52,7 +52,7 @@ static LeftRight gTextHelp[] = {
 	{ "Esc", "Menu" },
 };
 
-static Vector3 gEditorMenuPosition;
+static Vector3 gEditorScreenPosition;
 
 static Object goLogo;
 static Object goMainMenu;
@@ -61,7 +61,7 @@ static Object goHelpMenu;
 static Object goSuccessfulText;
 static Object goFailedText;
 
-static Object* gCurMenu;
+static Object* gCurScreen;
 
 /* events */
 
@@ -74,7 +74,7 @@ static void clickButtonSave(void) {
 }
 
 static void clickButtonHelp(void) {
-	gCurMenu = &goHelpMenu;
+	gCurScreen = &goHelpMenu;
 }
 
 static void clickButtonQuit(void) {
@@ -82,13 +82,13 @@ static void clickButtonQuit(void) {
 }
 
 static void clickButtonBack(void) {
-	gCurMenu = &goMainMenu;
+	gCurScreen = &goMainMenu;
 }
 #endif
 
-void updateEditorMenu(float interval) {
+void updateEditorScreen(float interval) {
 #if 0
-	if (gCurMenu == &goMainMenu) {
+	if (gCurScreen == &goMainMenu) {
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
 			clickButtonEdit();
 		}
@@ -112,41 +112,41 @@ void updateEditorMenu(float interval) {
 #endif
 }
 
-void showEditorMenu(int menu) {
+void showEditorScreen(int menu) {
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 
 #if 0
 	switch (menu) {
 	case 0:
-		gCurMenu = &goMainMenu;
+		gCurScreen = &goMainMenu;
 		break;
 	case 1:
-		gCurMenu = &goSuccessfulText;
+		gCurScreen = &goSuccessfulText;
 		break;
 	case 2:
-		gCurMenu = &goFailedText;
+		gCurScreen = &goFailedText;
 		break;
 	}
 #endif
 }
 
-void setEditorMenuPosition(Vector3 pos) {
+void setEditorScreenPosition(Vector3 pos) {
 #if 0
-	gEditorMenuPosition = pos;
+	gEditorScreenPosition = pos;
 #endif
 }
 
-void drawEditorMenu(void) {
+void drawEditorScreen(void) {
 #if 0
 	glEnable(GL_LIGHTING);
 
 		setSomeLight();
 
 		glPushMatrix();
-			glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
+			glTranslatef(gEditorScreenPosition.x, gEditorScreenPosition.y, gEditorScreenPosition.z);
 
 			drawObject(&goLogo);
-			drawObject(gCurMenu);
+			drawObject(gCurScreen);
 
 		glPopMatrix();
 
@@ -154,7 +154,7 @@ void drawEditorMenu(void) {
 #endif
 }
 
-void initEditorMenu() {
+void initEditorScreen() {
 #if 0
 	static Button bEdit;
 	static Button bSave;

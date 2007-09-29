@@ -27,7 +27,7 @@
 #include "features.h"
 #include "keyboard.h"
 #include "gui.h"
-#include "menu.h"
+#include "menumanager.h"
 #include "camera.h"
 #include "debug.h"
 #include "common.h"
@@ -37,8 +37,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define SCALE_FONT 0.5f
 
 typedef struct {
 	char* left;
@@ -60,38 +58,11 @@ static LeftRight gTextHelp[] = {
 	{ "Esc", "Menu" },
 };
 
-static Vector3 gGameMenuPosition;
-
-Menu gMenuMain1;
-Menu gMenuMain2;
-Menu gMenuHelp;
-Menu gMenuNext;
-Menu gMenuEnd;
-Menu gMenuWait;
-
-Menu* gCurMenu = NULL;
-
-void pushGameMenu(Menu* menu)
-{
-	menu->back = gCurMenu;
-	gCurMenu = menu;
-
-	showMenu(gCurMenu);
-}
-
-void popGameMenu(void)
-{
-	gCurMenu = gCurMenu->back;
-
-	if (gCurMenu)
-	{
-		showMenu(gCurMenu);
-	}
-	else
-	{
-		resumeGame();
-	}
-}
+static Screen gScreenMain1;
+static Screen gScreenMain2;
+static Screen gScreenHelp;
+static Screen gScreenNext;
+static Screen gScreenEnd;
 
 /* events */
 
@@ -100,7 +71,7 @@ int gBallLayouts[MAX_BALL_LAYOUTS];
 
 static void clickButtonHelp(void)
 {
-	pushGameMenu(&gMenuHelp);
+	pushScreen(&gScreenHelp);
 }
 
 static void clickButtonQuit(void)
@@ -115,15 +86,15 @@ static void clickButtonAgain(void)
 
 static void clickButtonContinue(void)
 {
-	gCurMenu->back = NULL;
-	popGameMenu();
+	/* TODO make sure this always removes the last screen */
+	popScreen();
 }
 
 static void clickButtonBack(void) {
-	popGameMenu();
+	popScreen();
 }
 
-void changeBallEdit(void* self) {
+static void changeBallEdit(void* self) {
 	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
 }
 
@@ -137,27 +108,18 @@ static void changeReflection(void* self) {
 	setReflection(check->value);
 }
 
-void updateGameMenu(float interval) {
-	Vector3 camera = gGameMenuPosition;
-	Vector3 lookat = gGameMenuPosition;
+/* TODO Hotkeys */
 
-	camera.y -= 10.0f;
-	camera.z += 7.0f;
-
-	lookat.z += 5.0f;
-
-	moveCamera(interval, camera, lookat);
-
-	updateMenu(gCurMenu, interval);
-
-	if (gCurMenu == &gMenuMain1 || gCurMenu == &gMenuMain2)
+#if 0
+void updateGameMenu(const Screen* curScreen, float interval) {
+	if (curScreen == &gScreenMain1 || curScreen == &gScreenMain2)
 	{
 		if (wasKeyPressed(KEY_ENTER))
 		{
 			clickButtonContinue();
 		}
 
-		if (gCurMenu == &gMenuMain2 && wasKeyPressed(KEY_ESC))
+		if (curScreen == &gScreenMain2 && wasKeyPressed(KEY_ESC))
 		{
 			clickButtonContinue();
 		}
@@ -172,7 +134,7 @@ void updateGameMenu(float interval) {
 			clickButtonQuit();
 		}
 	}
-	else if (gCurMenu == &gMenuNext)
+	else if (curScreen == &gScreenNext)
 	{
 		if (wasKeyPressed(KEY_ENTER))
 		{
@@ -184,14 +146,14 @@ void updateGameMenu(float interval) {
 			clickButtonBack();
 		}
 	}
-	else if (gCurMenu == &gMenuHelp)
+	else if (curScreen == &gScreenHelp)
 	{
 		if (wasKeyPressed(KEY_ESC))
 		{
 			clickButtonBack();
 		}
 	}
-	else if (gCurMenu == &gMenuEnd)
+	else if (curScreen == &gScreenEnd)
 	{
 		if (wasKeyPressed(KEY_ENTER))
 		{
@@ -202,89 +164,22 @@ void updateGameMenu(float interval) {
 			clickButtonQuit();
 		}
 	}
-	else if (gCurMenu == &gMenuWait)
-	{
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
-		{
-			clickButtonQuit();
-		}
-
-		if (sgIdleProgress >= 1.0f)
-		{
-			resetBall();
-			popGameMenu();
-		}
-	}
 }
-
-void setGameMenuPosistion(Vector3 pos) {
-	gGameMenuPosition = pos;
-}
-
-void drawGameMenu(void) {
-	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
-
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		setSomeLight();
-
-		glPushMatrix();
-			glTranslatef(gGameMenuPosition.x, gGameMenuPosition.y, gGameMenuPosition.z);
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-
-			drawLogo();
-			drawMenu(gCurMenu);
-		glPopMatrix();
-
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-}
-
-void eventGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event) {
-	Vector3 newPosition = sub(*position, gGameMenuPosition);
-
-	if (newPosition.y < 0.0f && direction->y > 0.0f)
-	{
-		float t = -newPosition.y / direction->y;
-		float x = newPosition.x + t * direction->x;
-		float y = newPosition.z + t * direction->z;
-
-		eventMenu(gCurMenu, x, y, event);
-	}
-}
+#endif
 
 void showGameMenu(int menu) {
-	static Menu* menues[] = {
-		&gMenuMain1,
-		&gMenuMain2,
-		&gMenuNext,
-		&gMenuEnd,
-		&gMenuHelp,
-		&gMenuWait
+	static Screen* screens[] = {
+		&gScreenMain1,
+		&gScreenMain2,
+		&gScreenNext,
+		&gScreenEnd,
+		&gScreenHelp
 	};
-
-	Menu* newMenu = menues[menu];
-
-	if (gCurMenu == &gMenuWait)
-	{
-		newMenu->back = gCurMenu->back;
-		gCurMenu->back = newMenu;
-	}
-	else
-	{
-		newMenu->back = gCurMenu;
-		gCurMenu = newMenu;
-	}
-
-	showMenu(gCurMenu);
+	
+	showScreen(screens[menu]);
 
 	setCheck(&gcShadows, useShadows());
 	setCheck(&gcReflection, useReflection());
-
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
 void initGameMenu() {
@@ -297,8 +192,6 @@ void initGameMenu() {
 	static Button bMain;
 	static Button bAgain;
 	static Button bQuit2;
-
-	static ProgressBar pbProgress;
 
 	static SpinEdit seBall;
 
@@ -336,18 +229,9 @@ void initGameMenu() {
 		&bQuit2.item
 	};
 
-	static MenuItem* itemsWait[] =
-	{
-		&pbProgress.item
-	};
-
 	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
 
 	int i;
-
-	initLogo();
-
-	initGUI();
 
 	/*
 	 * which ball layouts are available?
@@ -388,14 +272,14 @@ void initGameMenu() {
 	initButton(&bHelp, 2.0f, clickButtonHelp, "Help");
 	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
 
-	INIT_MENU(&gMenuMain1, itemsMain1);
-	INIT_MENU(&gMenuMain2, itemsMain2);
+	INIT_SCREEN(&gScreenMain1, itemsMain1);
+	INIT_SCREEN(&gScreenMain2, itemsMain2);
 
 	/* next level menu */
 	initButton(&bContinue, 5.5f, clickButtonContinue, "Continue");
 	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
 
-	INIT_MENU(&gMenuNext, itemsNext);
+	INIT_SCREEN(&gScreenNext, itemsNext);
 
 	/* help menu */
 	for (i = 0; i < LENGTH(lTextHelp); i++)
@@ -413,16 +297,11 @@ void initGameMenu() {
 
 	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 
-	INIT_MENU(&gMenuHelp, itemsHelp);
+	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
 	/* game complete menu */
 	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
 	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
 
-	INIT_MENU(&gMenuEnd, itemsEnd);
-
-	/* wait menu */
-	initProgressBar(&pbProgress, 5.0f, &sgIdleProgress);
-
-	INIT_MENU(&gMenuWait, itemsWait);
+	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

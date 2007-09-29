@@ -22,14 +22,14 @@
 
 #include "vector.h"
 
-void initEditorMenu(void);
+void initEditorScreen(void);
 
-void showEditorMenu(int menu);
+void showEditorScreen(int menu);
 
-void updateEditorMenu(float interval);
+void updateEditorScreen(float interval);
 
-void setEditorMenuPosition(Vector3 pos);
+void setEditorScreenPosition(Vector3 pos);
 
-void drawEditorMenu(void);
+void drawEditorScreen(void);
 
 #endif

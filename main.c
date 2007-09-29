@@ -19,50 +19,37 @@
 
 #include "main.h"
 
-#include "debug.h"
+#include "mainmenu.h"
+#include "game.h"
+#include "editor.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-void message(void)
+typedef enum
 {
-	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>\n");
-	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
+	STATE_MAIN,
+	STATE_GAME,
+	STATE_EDITOR
+} State;
+
+State gCurState = STATE_MAIN; 
+
+void initMain(void)
+{
+	// TODO
 }
 
-void assurePath(const char* progname)
+void updateMain(float interval)
 {
-	const char* lastSlash = NULL;
-
-	const char* s;
-
-	for (s = progname; *s; s++)
+	switch (gCurState)
 	{
-		if (*s == '/')
-		{
-			lastSlash = s;
-		}
-	}
-
-	if (lastSlash)
-	{
-		int length = lastSlash - progname;
-		char* path;
-
-		MALLOC(path, length + 1);
-
-		if (path)
-		{
-			memcpy(path, progname, length);
-			path[length] = 0;
-
-			printf("change dir: '%s'\n", path);
-
-			chdir(path);
-
-			FREE(path);
-		}
+	case STATE_MAIN:
+		updateMainMenu(interval);
+		break;
+	case STATE_GAME:
+		updateGame(interval);
+		break;
+	case STATE_EDITOR:
+		updateEditor(interval);
+		break;
 	}
 }
+

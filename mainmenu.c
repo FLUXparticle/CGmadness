@@ -16,46 +16,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * $Id$
- *
  */
 
-#include "menu.h"
+#include "mainmenu.h"
 
+#include "gamemenu.h"
+
+#include "camera.h"
 #include "texture.h"
 #include "objects.h"
 
-#include <GL/gl.h>
+#include <GL/glut.h>
 
-static GLuint gTexLogo = 0;
-
-void initLogo(void)
+void initMainMenu(void)
 {
-	if (gTexLogo == 0)
-	{
-		gTexLogo = loadTexture("data/logo.tga", 0);
-	}
+	/* TODO empty */
 }
 
-void drawLogo(void)
+void updateMainMenu(float interval)
 {
+	/* TODO empty */
+}
 
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, gTexLogo);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glPushMatrix();
-
-				glTranslatef(0.0f, 8.0f, 0.0f);
-				glScalef(4.0f, 1.0f, 1.0f);
-
-				drawSquare();
-
-			glPopMatrix();
-
-		glDisable(GL_BLEND);
-
-	glDisable(GL_TEXTURE_2D);
+void drawMainMenu(void)
+{
+	/* TODO empty */
 }

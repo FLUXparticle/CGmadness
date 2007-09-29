@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
+ * Copyright (C) 2007  Sven Reinck
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,13 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
 
-#ifndef _main_h_
-#define _main_h_
+#ifndef _menumanager_h_
+#define _menumanager_h_
 
-void initMain(void);
+#include "gui.h"
 
-void updateMain(float interval);
+void initMenuManager(void);
+
+int updateMenuManager(float interval);
+
+void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event);
+
+void drawMenuManager(void);
+
+void setMenuPosistion(Vector3 pos);
+
+void showScreen(Screen* newScreen);
+
+void pushScreen(Screen* menu);
+void popScreen(void);
 
 #endif

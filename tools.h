@@ -17,11 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _main_h_
-#define _main_h_
+#ifndef _tools_h_
+#define _tools_h_
 
-void initMain(void);
-
-void updateMain(float interval);
+void message(void);
+void assurePath(const char* progname);
 
 #endif

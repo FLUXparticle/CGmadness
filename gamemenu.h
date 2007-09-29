@@ -20,6 +20,8 @@
 #ifndef _gamemenu_h_
 #define _gamemenu_h_
 
+#include "gui.h"
+
 #include "vector.h"
 #include "mouse.h"
 
@@ -27,12 +29,6 @@ void initGameMenu(void);
 
 void showGameMenu(int menu);
 
-void updateGameMenu(float interval);
-
-void setGameMenuPosistion(Vector3 pos);
-
-void drawGameMenu(void);
-
-void eventGameMenu(const Vector3* position, const Vector3* direction, MouseEvent event);
+void updateGameMenu(const Screen* curScreen, float interval);
 
 #endif

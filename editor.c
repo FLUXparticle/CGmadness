@@ -68,13 +68,13 @@ static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
 
-static Vector3 gEditorMenuPosition;
+static Vector3 gEditorScreenPosition;
 
 static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
 void pauseEditor(void) {
-	showEditorMenu(0);
+	showEditorScreen(0);
 	gIsEditorRunning = 0;
 }
 
@@ -94,9 +94,9 @@ void saveLevel(void) {
 	}
 
 	if (saveFieldToFile(gFilename)) {
-		showEditorMenu(1);
+		showEditorScreen(1);
 	} else {
-		showEditorMenu(2);
+		showEditorScreen(2);
 	}
 }
 
@@ -337,15 +337,15 @@ void updateEditor(float interval) {
 	else
 	{
 		/* show menu */
-		Vector3 camera = gEditorMenuPosition;
-		Vector3 lookat = gEditorMenuPosition;
+		Vector3 camera = gEditorScreenPosition;
+		Vector3 lookat = gEditorScreenPosition;
 
 		camera.y -= 10.0f;
 		camera.z += 7.0f;
 
 		lookat.z += 5.0f;
 
-		updateEditorMenu(interval);
+		updateEditorScreen(interval);
 
 		moveCamera(interval, camera, lookat);
 	}
@@ -436,7 +436,7 @@ void drawEditor(void) {
 	drawEditorField();
 
 	if (!gIsEditorRunning)	{
-		drawEditorMenu();
+		drawEditorScreen();
 	}
 }
 
@@ -486,13 +486,13 @@ int initEditor(char* filename)
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	initEditorMenu();
+	initEditorScreen();
 
-	gEditorMenuPosition.x = sgLevel.size.x / 2.0f;
-	gEditorMenuPosition.y = -10.0f;
-	gEditorMenuPosition.z =   0.0f;
+	gEditorScreenPosition.x = sgLevel.size.x / 2.0f;
+	gEditorScreenPosition.y = -10.0f;
+	gEditorScreenPosition.z =   0.0f;
 
-	setEditorMenuPosition(gEditorMenuPosition);
+	setEditorScreenPosition(gEditorScreenPosition);
 
 	pauseEditor();
 

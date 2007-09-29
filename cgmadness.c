@@ -24,7 +24,7 @@
 #include "keyboard.h"
 #include "mouse.h"
 
-#include "main.h"
+#include "tools.h"
 
 #include "features.h"
 
