@@ -19,8 +19,8 @@
 
 #include "callback.h"
 
-#include "game.h"
-#include "level.h"
+#include "main.h"
+
 #include "keyboard.h"
 #include "mouse.h"
 
@@ -40,9 +40,6 @@ int main(int argc, char* argv[])
 	message();
 
 	assurePath(argv[0]);
-
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
 
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 
@@ -78,7 +75,7 @@ int main(int argc, char* argv[])
 
 	/* ---- */
 
-	if (!initGame()) {
+	if (!initMain()) {
 		return 1;
 	}
 

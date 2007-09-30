@@ -274,7 +274,7 @@ static int startLevel(const char* filename) {
 #if (NOISE_TEXTURE)
 	updateColorMap();
 
-	showGameMenu(5);
+	showWaitScreen();
 
 	sgLevel.colorMap = 0;
 #endif

@@ -175,6 +175,11 @@ void showScreen(Screen* newScreen)
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
+void showWaitScreen(void)
+{
+	showScreen(&gScreenWait);
+}
+
 void pushScreen(Screen* menu)
 {
 	menu->back = gCurScreen;

@@ -24,6 +24,8 @@ int initEditor(char* filename);
 
 void resumeEditor(void);
 
+void updateEditor(float interval);
+
 void saveLevel(void);
 
 #endif

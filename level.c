@@ -360,7 +360,6 @@ int loadFieldFromFile(const char* filename)
 	int result = 1;
 
 	int x, y;
-	FieldCoord fileCoords;
 	unsigned int version;
 	unsigned int crc32;
 
@@ -384,13 +383,7 @@ int loadFieldFromFile(const char* filename)
 	/* read attributes */
 	readFieldCoord(file, &sgLevel.start);
 	readFieldCoord(file, &sgLevel.finish);
-	readFieldCoord(file, &fileCoords);
-
-	/* read size from file, if not given through program parameters */
-	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
-	{
-		sgLevel.size = fileCoords;
-	}
+	readFieldCoord(file, &sgLevel.size);
 
 	initLevel();
 
@@ -400,29 +393,9 @@ int loadFieldFromFile(const char* filename)
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
 			Plate* p = &sgLevel.field[x][y];
-			if (x < fileCoords.x && y < fileCoords.y)
-			{
-				readFieldPlate(file, p);
-			}
-			else
-			{ /* growing */
-				p->z = 0;
-				p->dzx = 0;
-				p->dzy = 0;
-			}
+			readFieldPlate(file, p);
 
 			p->dirty = 1;
-		}
-
-		/* shrinking */
-		if (fileCoords.y > sgLevel.size.y)
-		{
-			Plate dummyPlate;
-
-			for (y = sgLevel.size.y; y < fileCoords.y; y++)
-			{
-				readFieldPlate(file, &dummyPlate);
-			}
 		}
 	}
 

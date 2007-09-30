@@ -34,6 +34,7 @@ void drawMenuManager(void);
 void setMenuPosistion(Vector3 pos);
 
 void showScreen(Screen* newScreen);
+void showWaitScreen(void);
 
 void pushScreen(Screen* menu);
 void popScreen(void);

@@ -23,6 +23,8 @@
 #include "game.h"
 #include "editor.h"
 
+#include "menumanager.h"
+
 typedef enum
 {
 	STATE_MAIN,
@@ -30,11 +32,15 @@ typedef enum
 	STATE_EDITOR
 } State;
 
-State gCurState = STATE_MAIN; 
+State gCurState; 
 
-void initMain(void)
+int initMain(void)
 {
-	// TODO
+	gCurState = STATE_GAME;
+	
+	initMenuManager();
+	
+	return initGame();
 }
 
 void updateMain(float interval)

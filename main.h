@@ -20,7 +20,7 @@
 #ifndef _main_h_
 #define _main_h_
 
-void initMain(void);
+int initMain(void);
 
 void updateMain(float interval);
 
