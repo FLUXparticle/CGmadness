@@ -19,6 +19,8 @@
 
 #include "main.h"
 
+#include "ball.h"
+
 #include "mainmenu.h"
 #include "game.h"
 #include "editor.h"
@@ -59,3 +61,16 @@ void updateMain(float interval)
 	}
 }
 
+void drawMain(void)
+{
+	switch (gCurState)
+	{
+	case STATE_MAIN:
+		break;
+	case STATE_GAME:
+		drawGame();
+		break;
+	case STATE_EDITOR:
+		break;
+	}
+}

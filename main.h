@@ -24,4 +24,6 @@ int initMain(void);
 
 void updateMain(float interval);
 
+void drawMain(void);
+
 #endif

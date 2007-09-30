@@ -218,7 +218,6 @@ void initCubeMap(void)
 	for (i = 0; i < 6; i++)
 	{
 		memcpy(&gViewportCube[i].projection[0][0], &m, sizeof(Matrix));
-		gViewportCube[i].draw = drawGameReflection;
 
 		gTargetCube[i].viewport = &gViewportCube[i];
 	}

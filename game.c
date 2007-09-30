@@ -185,8 +185,9 @@ void updateGame(float interval) {
 	{
 		sgLevel.colorMap = genTexture();
 		colorMapToTexture(sgLevel.colorMap);
+		resetBall();
+		popScreen();
 	}
-
 
 	updateGameField();
 
@@ -221,14 +222,12 @@ void drawGameHUD(float widthWindow, float heightWindow)
 }
 
 void drawGame(void) {
-	/*
-	 * WARNING: alpha blending does not seem to work in texture-buffer
-	 */
 	drawEnvironment();
 	drawGameField(0);
 	drawGameBall();
 
-	if (!gIsGameRunning)	{
+	if (!gIsGameRunning)
+	{
 		drawMenuManager();
 	}
 }
@@ -394,10 +393,8 @@ int initGame(void) {
 
 	updateGameField();
 
-	sgWindowViewport.draw = drawGame;
 	sgWindowViewport.drawHUD = drawGameHUD;
 	sgWindowViewport.mouseEvent = eventGame;
-	setUpdateFunc(updateGame);
 
 	return 1;
 }

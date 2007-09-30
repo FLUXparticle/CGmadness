@@ -476,10 +476,8 @@ int initEditor(char* filename)
 	updateTexCoords();
 	gDirtyTexCoords = 0;
 
-	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.drawHUD = NULL;
 	sgWindowViewport.mouseEvent = eventEditor;
-	setUpdateFunc(updateEditor);
 
 	gCurStart.x = 0;
 	gCurStart.y = 0;

@@ -25,7 +25,6 @@
 #include "vector.h"
 #include "types.h"
 
-typedef void (*funcUpdate)(float interval);
 typedef void (*funcDrawHUD)(float width, float height);
 
 typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* direction, MouseEvent event);
@@ -33,7 +32,6 @@ typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* directi
 typedef struct {
 	Matrix projection;
 	Matrix view;
-	funcDraw draw;
 	funcDrawHUD drawHUD;
 	funcDoMouseEvent mouseEvent;
 } Viewport;
@@ -48,7 +46,6 @@ typedef struct {
 
 extern Viewport sgWindowViewport;
 
-void setUpdateFunc(funcUpdate update);
 void setPreDisplayFunc(funcDraw preDisplay);
 
 void centerMouse(int* x, int* y);

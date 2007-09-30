@@ -31,6 +31,7 @@ void resetGameTime(void);
 
 void updateGame(float interval);
 
+void drawGame(void);
 void drawGameReflection(void);
 
 extern int sgGameMainLight;

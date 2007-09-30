@@ -19,6 +19,8 @@
 
 #include "callback.h"
 
+#include "main.h"
+
 #include "text.h"
 #include "camera.h"
 
@@ -39,14 +41,9 @@ static RenderTarget gTargetWindow;
 
 /*** Scene ***/
 
-static funcUpdate gUpdate     = NULL;
 static funcDraw   gPreDisplay = NULL;
 
 static int gSceneDirty = 1;
-
-void setUpdateFunc(funcUpdate update) {
-	gUpdate = update;
-}
 
 void setPreDisplayFunc(funcDraw preDisplay) {
 	gPreDisplay = preDisplay;
@@ -110,7 +107,7 @@ void display(void) {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(&v->view[0][0]);
 
-		v->draw();
+		drawMain();
 	}
 
 	/* draw framerate */
@@ -215,7 +212,7 @@ void timer(int lastCallTime) {
 	while (nextUpdateTime < thisCallTime) {
 		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
 		gTargetWindow.viewport->mouseEvent(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
-		gUpdate(interval);
+		updateMain(interval);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
 	}
