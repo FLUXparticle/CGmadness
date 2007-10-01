@@ -84,6 +84,7 @@ void resumeEditor(void) {
 }
 
 void saveLevel(void) {
+	updateTextures(1);
 	if (saveFieldToFile(gFilename)) {
 		showEditorMenu(1);
 	} else {
@@ -165,14 +166,19 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 				p->dzy = dzy;
 			}
 
-			p->dirty = 1;
-
 			incy += 2 * incdzy;
 		}
 
 		incx += 2 * incdzx;
 	}
 
+	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	{
+		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		{
+			sgLevel.field[x][y].dirty = 1;
+		}
+	}
 	gDirtyLightmaps = 1;
 }
 
