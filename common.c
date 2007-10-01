@@ -645,6 +645,42 @@ void readFieldPlate(FILE* file, Plate* plate)
 	plate->dzy = readInt(file);
 }
 
+void readRLEInt(FILE* file, int* repeat, int* value) {
+	int i;
+	
+	if (fscanf(file, "%ix%i", repeat, value) < 2)
+	{
+		*value = *repeat;
+		*repeat = 1;
+	}
+
+	for (i = 0; i < *repeat; i++)
+	{
+		nextByte(*value);
+	}
+}
+
+void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
+{
+	int s = 0;
+	int i;
+	
+	while (s < SIZEOF_LIGHT_MAP)
+	{
+		int repeat;
+		int value;
+		
+		readRLEInt(file, &repeat, &value);
+		
+		for (i = 0; i < repeat; i++)
+		{
+			data[s + i] = value;
+		}
+		
+		s += repeat;
+	}
+}
+
 int loadFieldFromFile(const char* filename)
 {
 	FILE* file = fopen(filename, "rt");
@@ -737,15 +773,17 @@ int loadFieldFromFile(const char* filename)
 
 			for (i = 0; i < cntSubLightMaps; i++)
 			{
-				GLfloat data[SIZEOF_LIGHT_MAP];
+				int dataInt[SIZEOF_LIGHT_MAP];
+				GLfloat dataFloat[SIZEOF_LIGHT_MAP];
+				
+				readRLE(file, dataInt);
 
 				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
 				{
-					int value = readInt(file);
-					data[j] = (float) value / 255;
+					dataFloat[j] = (float) dataInt[j] / 255;
 				}
 
-				setSubLightMap(i, data);
+				setSubLightMap(i, dataFloat);
 			}
 
 			fscanf(file, "%x\n", &crc32);
@@ -790,6 +828,47 @@ void writeFieldPlate(FILE* file, const Plate* plate) {
 	fputc('\n', file);
 }
 
+void writeRLEInt(FILE* file, int repeat, int value) {
+	int i;
+	
+	if (repeat > 1)
+	{
+		fprintf(file, "%ix%i", repeat, value);
+	}
+	else
+	{
+		fprintf(file, "%i", value);
+	}
+	
+	for (i = 0; i < repeat; i++)
+	{
+		nextByte(value);
+	}
+}
+
+void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
+{
+	int s = 0;
+	int l = 1;
+	
+	while (s < SIZEOF_LIGHT_MAP)
+	{
+		if (s + l < SIZEOF_LIGHT_MAP && data[s] == data[s + l])
+		{
+			l++;
+		}
+		else
+		{
+			writeRLEInt(file, l, data[s]);
+			
+			fputc(' ', file);
+			s += l;
+			l = 1;
+		}
+	}
+	fputc('\n', file);
+}
+
 int saveFieldToFile(const char* filename) {
 	FILE* file = fopen(filename, "wt");
 	int x, y;
@@ -824,16 +903,17 @@ int saveFieldToFile(const char* filename) {
 
 		for (i = 0; i < cntSubLightMaps; i++)
 		{
-			GLfloat data[SIZEOF_LIGHT_MAP];
+			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
+			int dataInt[SIZEOF_LIGHT_MAP];
 
-			getSubLightMap(i, data);
+			getSubLightMap(i, dataFloat);
 
 			for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
 			{
-				writeInt(file, (int) (clamp(data[j], 0.0f, 1.0f) * 255));
-				fputc(' ', file);
+				dataInt[j] = (int) (clamp(dataFloat[j], 0.0f, 1.0f) * 255);
 			}
-			fputc('\n', file);
+			
+			writeRLE(file, dataInt);
 		}
 
 		fprintf(file, "%08X\n", getCRC32());
