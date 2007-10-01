@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,14 @@ typedef struct {
 	float b;
 	float a;
 } Color4;
+
+typedef struct
+{
+	Vector3 origin;
+	Vector3 vx;
+	Vector3 vy;
+	Vector3 normal;
+} Orientation;
 
 Vector2 vector2(float x, float y);
 

@@ -1,5 +1,6 @@
 *.tar.bz2
 *.zip
+*.dll
 
 .deps
 build
