@@ -28,7 +28,7 @@
 
 void usage(void)
 {
-	printf("usage: upgrade-cgm <cgm-file>\n");
+	printf("usage: upgrade-cgm <cgm-files...>\n");
 }
 
 int main(int argc, char* argv[])
@@ -38,26 +38,26 @@ int main(int argc, char* argv[])
 
 	message();
 
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-
 	/* read parameters */
-	for (i = 1; i < argc; )
+	for (i = 1; i < argc; i++)
 	{
-		file = argv[i++];
+		sgLevel.size.x = -1;
+		sgLevel.size.y = -1;
+
+		file = argv[i];
+
+		if (loadFieldFromFile(file) && saveFieldToFile(file))
+		{
+			printf("'%s' upgraded successfully.\n", file);
+		} else {
+			printf("'%s' not upgraded!\n", file);
+		}
 	}
 
 	if (!file)
 	{
 		usage();
 		return 1;
-	}
-
-	if (loadFieldFromFile(file) && saveFieldToFile(file))
-	{
-		printf("'%s' upgraded successfully.\n", file);
-	} else {
-		printf("'%s' not upgraded!\n", file);
 	}
 
   return 0;
