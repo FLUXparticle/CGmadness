@@ -247,12 +247,6 @@ void animateEditor(float interval) {
 		changeMarkerArea(1, 0, 0)	;
 	}
 
-	if (gDirtyLightmaps) {
-		updateTextures(0);
-		lightMapToTexture(sgLevel.lightMap);
-		gDirtyLightmaps = 0;
-	}
-
 	/* editor controls for current field */
 	if (wasKeyPressed('1')) {
 		if (gCurStart.x != sgLevel.finish.x || gCurStart.y != sgLevel.finish.y) {
@@ -324,13 +318,11 @@ void drawEditorField(void) {
 	FieldCoord cur;
 	Square square;
 
-	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
 
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
 
@@ -350,7 +342,6 @@ void drawEditorField(void) {
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
 						glMultiTexCoord2fv(GL_TEXTURE0, &square.texcoords[i].x);
-						glMultiTexCoord2fv(GL_TEXTURE1, &square.lightmap[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
 				glEnd();
@@ -366,7 +357,6 @@ void drawEditorField(void) {
 							glNormal3fv(&squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
 								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].texcoords[i].x);
-								glMultiTexCoord2fv(GL_TEXTURE1, &squares[k].lightmap[i].x);
 								glVertex3fv(&squares[k].vertices[i].x);
 							}
 						}
@@ -375,10 +365,9 @@ void drawEditorField(void) {
 			}
 		}
 
-		glDisable(GL_TEXTURE_2D);
-
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_LIGHTING);
 
 #if (DRAW_DEBUG_LINES)
 	glBegin(GL_LINES);
