@@ -84,7 +84,6 @@ void saveLevel(void) {
 	if (gDirtyLightmaps)
 	{
 		updateLightMap();
-		lightMapToTexture(sgLevel.lightMap);
 		gDirtyLightmaps = 0;
 	}
 
@@ -169,14 +168,19 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 				p->dzy = dzy;
 			}
 
-			p->dirty = 1;
-
 			incy += 2 * incdzy;
 		}
 
 		incx += 2 * incdzx;
 	}
 
+	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	{
+		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		{
+			sgLevel.field[x][y].dirty = 1;
+		}
+	}
 	gDirtyLightmaps = 1;
 }
 
@@ -340,7 +344,8 @@ void drawEditorField(void) {
 	FieldCoord cur;
 	Square square;
 
-	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
 
@@ -402,10 +407,9 @@ void drawEditorField(void) {
 			}
 		}
 
-		glDisable(GL_TEXTURE_2D);
-
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_LIGHTING);
 
 #if (DRAW_DEBUG_LINES)
 	glBegin(GL_LINES);
