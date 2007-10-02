@@ -31,6 +31,8 @@
 #include "texture.h"
 #include "field.h"
 
+#include "functions.h"
+
 #include "debug.h"
 
 #include <GL/glew.h>

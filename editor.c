@@ -349,9 +349,6 @@ void drawEditorField(void) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
 
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
 		{
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
@@ -379,8 +376,7 @@ void drawEditorField(void) {
 				glBegin(GL_QUADS);
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
-						glMultiTexCoord2fv(GL_TEXTURE0, &square.colormap[i].x);
-						glMultiTexCoord2fv(GL_TEXTURE1, &square.lightmap[i].x);
+						glTexCoord2fv(&square.texcoord[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
 				glEnd();
@@ -397,8 +393,7 @@ void drawEditorField(void) {
 						for (k = 0; k < face.cntSquares; k++) {
 							glNormal3fv(&face.squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fv(GL_TEXTURE0, &face.squares[k].colormap[i].x);
-								glMultiTexCoord2fv(GL_TEXTURE1, &face.squares[k].lightmap[i].x);
+								glTexCoord2fv(&face.squares[k].texcoord[i].x);
 								glVertex3fv(&face.squares[k].vertices[i].x);
 							}
 						}
