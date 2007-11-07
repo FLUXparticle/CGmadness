@@ -72,6 +72,7 @@ typedef struct {
 	MenuItem item;
 
 	char* text;
+	int shortcut;
 
 	funcClick click;
 } Button;
@@ -112,7 +113,7 @@ void initProgressBar(ProgressBar* progressBar, float z, float* progress);
 
 /* Button */
 
-void initButton(Button* button, float z, funcClick click, char* text);
+void initButton(Button* button, float z, funcClick click, char* text, int shortcut);
 
 /* Check */
 

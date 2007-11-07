@@ -26,6 +26,8 @@ void resumeEditor(void);
 
 void updateEditor(float interval);
 
+void drawEditor(void);
+
 void saveLevel(void);
 
 #endif

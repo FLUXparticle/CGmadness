@@ -22,6 +22,8 @@
 #include "text.h"
 #include "objects.h"
 #include "texture.h"
+#include "keyboard.h"
+
 #include "functions.h"
 #include "debug.h"
 
@@ -176,10 +178,11 @@ void drawProgressBar(const ProgressBar* progressBar)
 
 /*** Button ***/
 
-void initButton(Button* button, float z, funcClick click, char* text)
+void initButton(Button* button, float z, funcClick click, char* text, int shortcut)
 {
 	button->click = click;
 	button->text = text;
+	button->shortcut = shortcut;
 
 	button->item.type = MI_BUTTON;
 
@@ -415,6 +418,18 @@ void updateMenuItem(MenuItem* item, float interval)
 	else
 	{
 		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
+	}
+	
+	/*
+	 * TODO  needs rewrite of event-system
+	 */
+	if (item->type == MI_BUTTON)
+	{
+		Button* button = (Button*) item;
+		if (wasKeyPressed(button->shortcut))
+		{
+			button->click();
+		}
 	}
 }
 

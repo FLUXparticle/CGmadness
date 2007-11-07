@@ -32,7 +32,6 @@ typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* directi
 typedef struct {
 	Matrix projection;
 	Matrix view;
-	funcDrawHUD drawHUD;
 	funcDoMouseEvent mouseEvent;
 } Viewport;
 

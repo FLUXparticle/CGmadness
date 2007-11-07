@@ -25,7 +25,7 @@
 
 void initMenuManager(void);
 
-int updateMenuManager(float interval);
+void updateMenuManager(float interval);
 
 void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event);
 
@@ -33,10 +33,10 @@ void drawMenuManager(void);
 
 void setMenuPosistion(Vector3 pos);
 
-void showScreen(Screen* newScreen);
-void showWaitScreen(void);
+void pushWaitScreen(void);
 
 void pushScreen(Screen* menu);
 void popScreen(void);
+void popAllScreens(void);
 
 #endif

@@ -58,9 +58,11 @@ void initMenuManager(void)
 	initProgressBar(&pbProgress, 5.0f, &sgIdleProgress);
 
 	INIT_SCREEN(&gScreenWait, itemsWait);
+	
+	gCurScreen = NULL;
 }
 
-int updateMenuManager(float interval)
+void updateMenuManager(float interval)
 {
 	Vector3 camera = gScreenPosition;
 	Vector3 lookat = gScreenPosition;
@@ -71,26 +73,23 @@ int updateMenuManager(float interval)
 	lookat.z += 5.0f;
 
 	moveCamera(interval, camera, lookat);
-
+	
 	updateScreen(gCurScreen, interval);
 
-#if 0
 	if (gCurScreen == &gScreenWait)
 	{
+#if 0
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
 		{
 			clickButtonQuit();
 		}
+#endif
 
 		if (sgIdleProgress >= 1.0f)
 		{
 			popScreen();
-			resetBall();
 		}
 	}
-#endif
-	
-	return 0;
 }
 
 void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event)
@@ -159,6 +158,18 @@ void setMenuPosistion(Vector3 pos)
 
 void showScreen(Screen* newScreen)
 {
+	prepareScreen(gCurScreen);
+
+	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+}
+
+void pushWaitScreen(void)
+{
+	pushScreen(&gScreenWait);
+}
+
+void pushScreen(Screen* newScreen)
+{
 	if (gCurScreen == &gScreenWait)
 	{
 		newScreen->back = gCurScreen->back;
@@ -169,21 +180,6 @@ void showScreen(Screen* newScreen)
 		newScreen->back = gCurScreen;
 		gCurScreen = newScreen;
 	}
-
-	prepareScreen(gCurScreen);
-
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-}
-
-void showWaitScreen(void)
-{
-	showScreen(&gScreenWait);
-}
-
-void pushScreen(Screen* menu)
-{
-	menu->back = gCurScreen;
-	gCurScreen = menu;
 
 	showScreen(gCurScreen);
 }
@@ -197,3 +193,12 @@ void popScreen(void)
 		showScreen(gCurScreen);
 	}
 }
+
+void popAllScreens(void)
+{
+	while (gCurScreen)
+	{
+		gCurScreen = gCurScreen->back;
+	}
+}
+

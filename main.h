@@ -20,10 +20,20 @@
 #ifndef _main_h_
 #define _main_h_
 
+typedef enum
+{
+	STATE_MAIN,
+	STATE_GAME,
+	STATE_EDITOR
+} MainState;
+
 int initMain(void);
+
+void setMainState(MainState newState);
 
 void updateMain(float interval);
 
 void drawMain(void);
+void drawMainHUD(float width, float height);
 
 #endif

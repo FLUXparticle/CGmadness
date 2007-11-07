@@ -33,6 +33,7 @@ void updateGame(float interval);
 
 void drawGame(void);
 void drawGameReflection(void);
+void drawGameHUD(float widthWindow, float heightWindow);
 
 extern int sgGameMainLight;
 extern int sgGameSpotLight;

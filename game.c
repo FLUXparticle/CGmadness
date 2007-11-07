@@ -175,18 +175,14 @@ void updateGame(float interval) {
 			gGameTime += interval;
 		}
 	} else {
-		if (updateMenuManager(interval))
+		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
 		{
-			gIsGameRunning = 1;
+			sgLevel.colorMap = genTexture();
+			colorMapToTexture(sgLevel.colorMap);
+			resetBall();
 		}
-	}
 
-	if (sgLevel.colorMap == 0 && !sgLevel.waiting)
-	{
-		sgLevel.colorMap = genTexture();
-		colorMapToTexture(sgLevel.colorMap);
-		resetBall();
-		popScreen();
+		updateMenuManager(interval);
 	}
 
 	updateGameField();
@@ -273,7 +269,7 @@ static int startLevel(const char* filename) {
 #if (NOISE_TEXTURE)
 	updateColorMap();
 
-	showWaitScreen();
+	pushWaitScreen();
 
 	sgLevel.colorMap = 0;
 #endif
@@ -385,15 +381,12 @@ int initGame(void) {
 
 	initEnvironment();
 
-	gIsGameRunning = 1;
-
-	pauseGame();
+	gIsGameRunning = 0;
 	showGameMenu(0);
 	resetBall();
 
 	updateGameField();
 
-	sgWindowViewport.drawHUD = drawGameHUD;
 	sgWindowViewport.mouseEvent = eventGame;
 
 	return 1;

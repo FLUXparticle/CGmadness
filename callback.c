@@ -119,20 +119,17 @@ void display(void) {
 
 	glDisable(GL_DEPTH_TEST);
 
-		if (v->drawHUD)
-		{
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-
-					glScalef(aspect, 1.0f, 1.0f);
-
-					glMatrixMode(GL_MODELVIEW);
-
-					v->drawHUD(1.0f / aspect, 1.0f);
-
-			glMatrixMode(GL_PROJECTION);
-			glPopMatrix();
-		}
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+	
+				glScalef(aspect, 1.0f, 1.0f);
+	
+				glMatrixMode(GL_MODELVIEW);
+	
+				drawMainHUD(1.0f / aspect, 1.0f);
+	
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
 
 		{
 #if(DEBUG_PREDISPLAY)
@@ -211,8 +208,8 @@ void timer(int lastCallTime) {
 
 	while (nextUpdateTime < thisCallTime) {
 		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
-		gTargetWindow.viewport->mouseEvent(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
 		updateMain(interval);
+		gTargetWindow.viewport->mouseEvent(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
 	}

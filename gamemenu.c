@@ -81,13 +81,14 @@ static void clickButtonQuit(void)
 
 static void clickButtonAgain(void)
 {
+	popAllScreens();
 	resetGame();
 }
 
 static void clickButtonContinue(void)
 {
-	/* TODO make sure this always removes the last screen */
-	popScreen();
+	popAllScreens();
+	resumeGame();
 }
 
 static void clickButtonBack(void) {
@@ -176,7 +177,7 @@ void showGameMenu(int menu) {
 		&gScreenHelp
 	};
 	
-	showScreen(screens[menu]);
+	pushScreen(screens[menu]);
 
 	setCheck(&gcShadows, useShadows());
 	setCheck(&gcReflection, useReflection());
@@ -261,23 +262,23 @@ void initGameMenu() {
 	 */
 
 	/* main menu */
-	initButton(&bStart, 6.0f, clickButtonContinue, "Start");
-	initButton(&bResume, 6.0f, clickButtonContinue, "Resume");
+	initButton(&bStart, 6.0f, clickButtonContinue, "Start", KEY_ENTER);
+	initButton(&bResume, 6.0f, clickButtonContinue, "Resume", KEY_ENTER);
 
 	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, drawMenuBall, changeBallEdit);
 
 	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
 	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
 
-	initButton(&bHelp, 2.0f, clickButtonHelp, "Help");
-	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit");
+	initButton(&bHelp, 2.0f, clickButtonHelp, "Help", 'h');
+	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit", 'q');
 
 	INIT_SCREEN(&gScreenMain1, itemsMain1);
 	INIT_SCREEN(&gScreenMain2, itemsMain2);
 
 	/* next level menu */
-	initButton(&bContinue, 5.5f, clickButtonContinue, "Continue");
-	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu");
+	initButton(&bContinue, 5.5f, clickButtonContinue, "Continue", KEY_ENTER);
+	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu", KEY_ESC);
 
 	INIT_SCREEN(&gScreenNext, itemsNext);
 
@@ -293,15 +294,15 @@ void initGameMenu() {
 		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
 
 	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
 	/* game complete menu */
-	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again");
-	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit");
+	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again", KEY_ENTER);
+	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit", 'q');
 
 	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

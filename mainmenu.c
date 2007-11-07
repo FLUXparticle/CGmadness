@@ -20,7 +20,7 @@
 
 #include "mainmenu.h"
 
-#include "gamemenu.h"
+#include "main.h"
 
 #include "camera.h"
 #include "texture.h"
@@ -35,7 +35,7 @@ void initMainMenu(void)
 
 void updateMainMenu(float interval)
 {
-	/* TODO empty */
+	setMainState(STATE_GAME);
 }
 
 void drawMainMenu(void)

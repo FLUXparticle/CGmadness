@@ -27,22 +27,22 @@
 
 #include "menumanager.h"
 
-typedef enum
-{
-	STATE_MAIN,
-	STATE_GAME,
-	STATE_EDITOR
-} State;
-
-State gCurState; 
+static MainState gCurState; 
 
 int initMain(void)
 {
-	gCurState = STATE_GAME;
+	gCurState = STATE_MAIN;
 	
 	initMenuManager();
 	
+	initMainMenu();
+	
 	return initGame();
+}
+
+void setMainState(MainState newState)
+{
+	gCurState = newState;
 }
 
 void updateMain(float interval)
@@ -66,9 +66,25 @@ void drawMain(void)
 	switch (gCurState)
 	{
 	case STATE_MAIN:
+		drawMainMenu();
 		break;
 	case STATE_GAME:
 		drawGame();
+		break;
+	case STATE_EDITOR:
+		drawEditor();
+		break;
+	}
+}
+
+void drawMainHUD(float width, float height)
+{
+	switch (gCurState)
+	{
+	case STATE_MAIN:
+		break;
+	case STATE_GAME:
+		drawGameHUD(width, height);
 		break;
 	case STATE_EDITOR:
 		break;
