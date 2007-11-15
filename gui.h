@@ -20,35 +20,81 @@
 #ifndef _gui_h_
 #define _gui_h_
 
-#include "graph.h"
-#include "pick.h"
+#include "vector.h"
+#include "mouse.h"
+#include "types.h"
 
 typedef void (*funcClick)(void);
 
 typedef void (*funcChange)(void* self);
 
+/***/
+
+typedef enum {
+	MI_LABEL,
+	MI_PROGRESS_BAR,
+	MI_BUTTON,
+	MI_CHECK,
+	MI_SPIN_EDIT
+} MenuItemType;
+
 typedef struct {
-	Object oButton;
-	Pick pButton;
+	MenuItemType type;
+
+	Vector2 position;
+	float width;
+	float height;
+
+	int hover;
+	float emphasize;
+} MenuItem;
+
+typedef struct Menu {
+	int cntItems;
+	MenuItem** items;
+
+	struct Menu* back;
+} Menu;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
+} Label;
+
+typedef struct {
+	MenuItem item;
+
+	float* progress;
+} ProgressBar;
+
+typedef struct {
+	MenuItem item;
+
+	char* text;
+
 	funcClick click;
 } Button;
 
 typedef struct {
+	MenuItem item;
+
+	char* text;
 	int value;
-	Object oCheck;
-	Pick pCheck;
+
 	funcChange change;
 } Check;
 
 typedef struct {
+	MenuItem item;
+
 	int value;
 	int minValue;
 	int maxValue;
-	Object oSpinEdit;
-	Object oLeft;
-	Object oRight;
-	Pick pLeft;
-	Pick pRight;
+
+	int side;
+
+	funcDraw draw;
 	funcChange change;
 } SpinEdit;
 
@@ -56,17 +102,35 @@ void initGUI(void);
 
 void setSomeLight(void);
 
+/* Label */
+
+void initLabel(Label* label, float x, float z, int alignRight, char* text);
+
+/* ProgressBar */
+
+void initProgressBar(ProgressBar* progressBar, float z, float* progress);
+
 /* Button */
 
-void init3dButton(Button* button, float z, funcClick click, char* text);
+void initButton(Button* button, float z, funcClick click, char* text);
 
 /* Check */
 
 void setCheck(Check* check, int value);
-void init3dCheck(Check* check, float z, funcChange change, char* text);
+void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
-void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, funcDraw draw, funcChange change);
+
+/* Menu */
+
+#define INIT_MENU(menu, items) initMenu((menu), LENGTH(items), (items))
+
+void initMenu(Menu* menu, int cntItems, MenuItem** items);
+void showMenu(Menu* menu);
+void updateMenu(Menu* menu, float interval);
+void drawMenu(const Menu* menu);
+void eventMenu(Menu* menu, float x, float y, MouseEvent event);
 
 #endif

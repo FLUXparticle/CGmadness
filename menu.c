@@ -1,55 +1,61 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
- * 
+ * Copyright (C) 2007  Sven Reinck
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * $Id$
+ *
  */
 
-#include "pick.h"
+#include "menu.h"
 
-#include "list.h"
-
-#include "debug.h"
+#include "texture.h"
+#include "objects.h"
 
 #include <GL/gl.h>
 
-#include <stdio.h>
+static GLuint gTexLogo = 0;
 
-int gCntPickFuncs = 0;
-
-List gPickList = NULL;
-
-void initPick(Pick* pick, funcPick f, void* data) {
-	pick->pickName = -1;
-	pick->pick = f;
-	pick->data = data;
-}
-
-void setObjectPick(Object* obj, Pick* pick) {
-	obj->pickName = gCntPickFuncs;
-	pick->pickName = gCntPickFuncs;
-	gPickList = appendElement(gPickList, pick);
-	gCntPickFuncs++;
-}
-
-void doPick(int name) {
-	List run;
-	for (run = gPickList; run; run = run->next) {
-		Pick* pick = run->info;
-		if (pick->pickName == name) {
-			pick->pick(pick->data);
-		}
+void initLogo(void)
+{
+	if (gTexLogo == 0)
+	{
+		gTexLogo = loadTexture("data/logo.tga", 0);
 	}
+}
+
+void drawLogo(void)
+{
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLogo);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glPushMatrix();
+
+				glTranslatef(0.0f, 8.0f, 0.0f);
+				glScalef(4.0f, 1.0f, 1.0f);
+
+				drawSquare();
+
+			glPopMatrix();
+
+		glDisable(GL_BLEND);
+
+	glDisable(GL_TEXTURE_2D);
 }

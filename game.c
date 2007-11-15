@@ -21,7 +21,6 @@
 
 #include "common.h"
 
-#include "graph.h"
 #include "objects.h"
 #include "ball.h"
 #include "field.h"
@@ -33,6 +32,7 @@
 #include "camera.h"
 #include "callback.h"
 #include "environment.h"
+#include "text.h"
 #include "texture.h"
 #include "noise.h"
 #include "atlas.h"
@@ -58,6 +58,8 @@ int sgRenderPass = 8;
 
 static int gIsGameRunning;
 
+static float gGameTime;
+
 #if (MOUSE_CONTROL)
 static int gDragX = 0;
 static int gDragY = 0;
@@ -66,8 +68,6 @@ static int gDragY = 0;
 static float gDistance;
 static float gLatitude;
 static float gLongitude;
-
-static Vector3 gGameMenuPosistion;
 
 #if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
@@ -167,24 +167,53 @@ void updateGame(float interval) {
 		updateBall(interval);
 
 		updateGameCamera(interval, sgoBall.pos);
+
+		if (!sgIsBallInPieces)
+		{
+			gGameTime += interval;
+		}
 	} else {
-		/* show menu */
-		Vector3 camera = gGameMenuPosistion;
-		Vector3 lookat = gGameMenuPosistion;
-
-		camera.y -= 10.0f;
-		camera.z += 7.0f;
-
-		lookat.z += 5.0f;
-
 		updateGameMenu(interval);
 
-		moveCamera(interval, camera, lookat);
 	}
+
+	if (sgLevel.colorMap == 0 && !sgLevel.waiting)
+	{
+		sgLevel.colorMap = genTexture();
+		colorMapToTexture(sgLevel.colorMap);
+	}
+
 
 	updateGameField();
 
 	updateEnvironment(interval);
+}
+
+void drawGameHUD(float widthWindow, float heightWindow)
+{
+	int seconds = (int) gGameTime;
+	float scale = 0.06f;
+	float widthDefault = widthStrokeText("x:xx.x") * scale;
+
+	char strTime[10];
+	float width;
+	float height;
+
+	sprintf(strTime, "%d:%02d.%01d",  seconds / 60, seconds % 60, (int) ((gGameTime - seconds) * 10.0f));
+
+	width = widthStrokeText(strTime) * scale;
+	height = scale;
+
+	glColor3f(1.0f, 1.0f, 0.0f);
+
+	glPushMatrix();
+
+		glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height), 0.0f);
+		glScalef(scale, scale, scale);
+
+		drawStrokeText(strTime);
+
+	glPopMatrix();
 }
 
 void drawGame(void) {
@@ -205,13 +234,22 @@ void drawGameReflection(void) {
 	drawGameField(1);
 }
 
-void pickGame(void) {
-	if (!gIsGameRunning)	{
-		pickGameMenu();
+void eventGame(const Vector3* position, const Vector3* direction, MouseEvent event)
+{
+	if (!gIsGameRunning)
+	{
+		eventGameMenu(position, direction, event);
 	}
 }
 
+void resetGameTime(void)
+{
+	gGameTime = 0.0f;
+}
+
 int initLevel(const char* filename) {
+	static Vector3 gameMenuPosition;
+
 	if (!loadFieldFromFile(filename)) {
 		return 0;
 	}
@@ -232,8 +270,9 @@ int initLevel(const char* filename) {
 #if (NOISE_TEXTURE)
 	updateColorMap();
 
-	sgLevel.colorMap = genTexture();
-	colorMapToTexture(sgLevel.colorMap);
+	showGameMenu(5);
+
+	sgLevel.colorMap = 0;
 #endif
 
 	initGameField();
@@ -242,13 +281,13 @@ int initLevel(const char* filename) {
 	gLatitude  = 20.0f;
 	gLongitude =  0.0f;
 
-	gGameMenuPosistion.x = sgLevel.size.x / 2.0f;
-	gGameMenuPosistion.y = -10.0f;
-	gGameMenuPosistion.z =   0.0f;
+	gameMenuPosition.x = sgLevel.size.x / 2.0f;
+	gameMenuPosition.y = -10.0f;
+	gameMenuPosition.z =   0.0f;
 
-	setGameMenuPosistion(gGameMenuPosistion);
+	setGameMenuPosistion(gameMenuPosition);
 
-	updateGameCamera(0.0, gGameMenuPosistion);
+	resetGameTime();
 
 	return 1;
 }
@@ -299,6 +338,7 @@ void loadNewLevel(void) {
 		destroyLevel();
 		if (initLevel(nextLevelname)) {
 			pauseGame();
+			showGameMenu(0);
 			showGameMenu(2);
 			resetBall();
 		} else {
@@ -354,7 +394,8 @@ int initGame(void) {
 	updateGameField();
 
 	sgWindowViewport.draw = drawGame;
-	sgWindowViewport.pick = pickGame;
+	sgWindowViewport.drawHUD = drawGameHUD;
+	sgWindowViewport.mouseEvent = eventGame;
 	setUpdateFunc(updateGame);
 
 	return 1;
