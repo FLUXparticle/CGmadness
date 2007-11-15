@@ -30,7 +30,7 @@
 #include "camera.h"
 #include "keyboard.h"
 #include "texture.h"
-#include "lightmap.h"
+#include "atlas.h"
 
 #include "functions.h"
 
@@ -84,7 +84,13 @@ void resumeEditor(void) {
 }
 
 void saveLevel(void) {
-	updateTextures(1);
+	if (gDirtyLightmaps)
+	{
+		updateLightMap();
+		lightMapToTexture(sgLevel.lightMap);
+		gDirtyLightmaps = 0;
+	}
+
 	if (saveFieldToFile(gFilename)) {
 		showEditorMenu(1);
 	} else {
@@ -220,49 +226,61 @@ void moveMarkerUp(int markermode) {
 	moveMarker(markermode, -gSin[gCamAngle], gCos[gCamAngle]);
 }
 
-void moveMarkerDown(int markermode) {
+void moveMarkerDown(int markermode)
+{
 	moveMarker(markermode,  gSin[gCamAngle], -gCos[gCamAngle]);
 }
 
-void animateEditor(float interval) {
+void animateEditor(float interval)
+{
 	int markermode = 0;
 
 	/* editor controls for changing environment */
-	if (wasKeyPressed('a')) {
+	if (wasKeyPressed('a'))
+	{
 		changeMarkerArea(0, gCos[gCamAngle], gSin[gCamAngle]);
 	}
 
-	if (wasKeyPressed('d')) {
+	if (wasKeyPressed('d'))
+	{
 		changeMarkerArea(0, -gCos[gCamAngle], -gSin[gCamAngle]);
 	}
 
 
-	if (wasKeyPressed('s')) {
+	if (wasKeyPressed('s'))
+	{
 		changeMarkerArea(0, -gSin[gCamAngle], gCos[gCamAngle]);
 	}
 
-	if (wasKeyPressed('w')) {
+	if (wasKeyPressed('w'))
+	{
 		changeMarkerArea(0, gSin[gCamAngle], -gCos[gCamAngle]);
   }
 
-	if (wasKeyPressed('f'))  {
+	if (wasKeyPressed('f'))
+	{
 		changeMarkerArea(-1, 0, 0);
 	}
 
-	if (wasKeyPressed('r')) {
+	if (wasKeyPressed('r'))
+	{
 		changeMarkerArea(1, 0, 0)	;
 	}
 
 	/* editor controls for current field */
-	if (wasKeyPressed('1')) {
-		if (gCurStart.x != sgLevel.finish.x || gCurStart.y != sgLevel.finish.y) {
+	if (wasKeyPressed('1'))
+	{
+		if (gCurStart.x != sgLevel.finish.x || gCurStart.y != sgLevel.finish.y)
+		{
 			sgLevel.start.x = gCurStart.x;
 			sgLevel.start.y = gCurStart.y;
 		}
 	}
 
-	if (wasKeyPressed('2')) {
-		if (gCurStart.x != sgLevel.start.x || gCurStart.y != sgLevel.start.y) {
+	if (wasKeyPressed('2'))
+	{
+		if (gCurStart.x != sgLevel.start.x || gCurStart.y != sgLevel.start.y)
+		{
 			sgLevel.finish.x = gCurStart.x;
 			sgLevel.finish.y = gCurStart.y;
 	  }
@@ -271,19 +289,23 @@ void animateEditor(float interval) {
 	markermode = getModifiers() == GLUT_ACTIVE_SHIFT;
 
 	/*  editor controls for moving selection */
-	if (wasCursorPressed(CURSOR_LEFT)) {
+	if (wasCursorPressed(CURSOR_LEFT))
+	{
 		moveMarkerLeft(markermode);
 	}
 
-	if (wasCursorPressed(CURSOR_RIGHT)) {
+	if (wasCursorPressed(CURSOR_RIGHT))
+	{
 		moveMarkerRight(markermode);
 	}
 
-	if (wasCursorPressed(CURSOR_DOWN)) {
+	if (wasCursorPressed(CURSOR_DOWN))
+	{
 		moveMarkerDown(markermode);
 	}
 
-	if (wasCursorPressed(CURSOR_UP)) {
+	if (wasCursorPressed(CURSOR_UP))
+	{
 		moveMarkerUp(markermode);
 	}
 }
@@ -302,7 +324,9 @@ void updateEditor(float interval) {
 
 		updateEditorCamera(interval, markerPos);
 		animateEditor(interval);
-	} else {
+	}
+	else
+	{
 		/* show menu */
 		Vector3 camera = gEditorMenuPosition;
 		Vector3 lookat = gEditorMenuPosition;
@@ -327,18 +351,24 @@ void drawEditorField(void) {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++) {
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++) {
 
 				if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y) {
 					glColor3f(1.0f, 0.0f, 0.0f);
-				} else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y) {
+				}
+				else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
+				{
 					glColor3f(0.0f, 1.0f, 0.0f);
-				} else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y) {
+				}
+				else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
+				{
 					glColor3f(0.0f, 0.0f, 1.0f);
-				} else {
+				}
+				else
+				{
 					glColor3f(1.0f, 1.0f, 1.0f);
 				}
 
@@ -347,7 +377,7 @@ void drawEditorField(void) {
 				glBegin(GL_QUADS);
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
-						glMultiTexCoord2fv(GL_TEXTURE0, &square.texcoords[i].x);
+						glTexCoord2fv(&square.texcoord[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
 				glEnd();
@@ -356,14 +386,16 @@ void drawEditorField(void) {
 
 				glBegin(GL_QUADS);
 					for (j = 0; j < 4; j++) {
-						Square* squares;
-						int cnt = getSideSquares(cur.x, cur.y, j, &squares);
+						SideFace face;
 						int k;
-						for (k = 0; k < cnt; k++) {
-							glNormal3fv(&squares[k].normal.x);
+
+						getSideFace(cur.x, cur.y, j, &face);
+
+						for (k = 0; k < face.cntSquares; k++) {
+							glNormal3fv(&face.squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fv(GL_TEXTURE0, &squares[k].texcoords[i].x);
-								glVertex3fv(&squares[k].vertices[i].x);
+								glTexCoord2fv(&face.squares[k].texcoord[i].x);
+								glVertex3fv(&face.squares[k].vertices[i].x);
 							}
 						}
 					}
@@ -377,7 +409,8 @@ void drawEditorField(void) {
 
 #if (DRAW_DEBUG_LINES)
 	glBegin(GL_LINES);
-	for (i = 0; i < gCntLines; i++) {
+	for (i = 0; i < gCntLines; i++)
+	{
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glVertex3f(gLines[i].v1.x, gLines[i].v1.y, gLines[i].v1.z);
 		glColor3f(0.0f, 1.0f, 0.0f);
@@ -401,18 +434,24 @@ void pickEditor(void) {
 	}
 }
 
-int initEditor(char* filename) {
+int initEditor(char* filename)
+{
 	gFilename = filename;
-	if (!loadFieldFromFile(gFilename)) {
-		if (between(sgLevel.size.x, 0, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 0, MAX_LEVEL_SIZE)) {
+	if (!loadFieldFromFile(gFilename))
+	{
+		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
+		{
 			newLevel();
-		} else {
+		}
+		else
+		{
 			return 0;
 		}
 	}
 
-	if (sgLevel.plateTexture == 0) {
-		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+	if (sgLevel.colorMap == 0)
+	{
+		sgLevel.colorMap = loadTexture("data/plate.tga", 1);
 	}
 
 	sgLevel.lightMap = genTexture();

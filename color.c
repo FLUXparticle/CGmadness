@@ -20,13 +20,39 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#include "color.h"
 
-#include "atlas.h"
+Color4 color4(float r, float g, float b, float a)
+{
+	Color4 col;
 
-#include "vector.h"
+	col.r = r;
+	col.g = g;
+	col.b = b;
+	col.a = a;
 
-void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation);
+	return col;
+}
 
-#endif
+Color3 color3(float r, float g, float b)
+{
+	Color3 col;
+
+	col.r = r;
+	col.g = g;
+	col.b = b;
+
+	return col;
+}
+
+Color3 color3i(int r, int g, int b)
+{
+	return color3((float) r / 255, (float) g / 255, (float) b / 255);
+}
+
+Color3 interpolateColor(Color3 col1, Color3 col2, float t)
+{
+	float invT = 1.0f - t;
+
+	return color3(col1.r * invT + col2.r * t, col1.g * invT + col2.g * t, col1.b * invT + col2.b * t);
+}

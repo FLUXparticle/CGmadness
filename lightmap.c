@@ -22,149 +22,110 @@
 
 #include "lightmap.h"
 
-#include "debug.h"
+#include "common.h"
 
-#include <GL/gl.h>
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
-#include <assert.h>
+float approximationSquare(const Vector3 position, const Vector3 normal, const Square square)
+{
+	Vector3 d;
+	float r;
+	float d1;
+	float d2;
 
-static int gCols;
-static int gRows;
-static int gSizeX;
-static int gSizeY;
-static float* gData;
-static int gAllocatedSubLightMaps;
+	d = sub(square.mid, position);
 
-int nextPowerOfTwo(int i) {
-	int j = 1;
+	r = len(d);
 
-	while (j < i) {
-		j <<= 1;
+	d = scale(1.0f / r, d);
+
+	d1 = dot(d, normal);
+	d2 = dot(d, square.normal);
+
+	if (d1 <= 0.0f || d2 <= 0.0f)
+	{
+		return 1.0f;
 	}
 
-	return j;
+	return 1.0f - ((d1 * d2) / (1.0f + PI * sqr(r) / square.area));
 }
 
-int getCntAllocatedSubLightMaps(void)
+float approximation(const Vector3 position, const Vector3 normal)
 {
-	return gAllocatedSubLightMaps;
-}
-
-void allocLightMap(int cntSubLightMaps) {
-	gRows = 1;
-	do {
-		gRows <<= 1;
-		gCols = ((cntSubLightMaps - 1) / gRows) + 1;
-	} while (gCols > gRows);
-
-	gCols = nextPowerOfTwo(gCols);
-
-	gSizeX = gCols * LIGHT_MAP_SIZE;
-	gSizeY = gRows * LIGHT_MAP_SIZE;
-
-	MALLOC(gData, gSizeX * gSizeY * sizeof(*gData));
-	gAllocatedSubLightMaps = 0;
-
-	PRINT_INT(gSizeX);
-	PRINT_INT(gSizeY);
-	PRINT_INT(cntSubLightMaps);
-}
-
-void freeLightMap(void) {
-	FREE(gData);
-	gAllocatedSubLightMaps = 0;
-}
-
-float* getSubLightMapPixelPointer(int index, int sx, int sy) {
-	int x = (index % gCols) * LIGHT_MAP_SIZE + sx;
-	int y = (index / gCols) * LIGHT_MAP_SIZE + sy;
-	return &gData[y * gSizeX + x];
-}
-
-void setSubLightMapPixel(int index, int sx, int sy, float value) {
-	float* p = getSubLightMapPixelPointer(index, sx, sy);
-	*p = value;
-}
-
-float getSubLightMapPixel(int index, int sx, int sy) {
-	float* p = getSubLightMapPixelPointer(index, sx, sy);
-	return *p;
-}
-
-Vector2 transformSubCoords(int index, const Vector2 coords) {
-	return vector2(((index % gCols) + coords.x) / gCols, ((index / gCols) + coords.y) / gRows);
-}
-
-void lightMapToTexture(unsigned int texID) {
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, gSizeX, gSizeY, 0, GL_LUMINANCE, GL_FLOAT, gData);
-}
-
-void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
-{
-	int i = 0;
+	Vector3 z = vector3(0.0f, 0.0f, 1.0f);
+	float light = 1.0f - acos(dot(normal, z)) / PI;
 
 	int x;
 	int y;
 
-	for (y = 0; y < LIGHT_MAP_SIZE; y++)
+	for (x = 0; x < sgLevel.size.x; x++)
 	{
-		for (x = 0; x < LIGHT_MAP_SIZE; x++)
+		for (y = 0; y < sgLevel.size.y; y++)
 		{
-			data[i++] = getSubLightMapPixel(index, x, y);
+			int check = 0;
+
+			Square square;
+			int j;
+
+			if (len(sub(position, vector3(x + 0.5f, y + 0.5f, position.z))) > 6.0f)
+			{
+				continue;
+			}
+
+
+			getRoofSquare(x, y, &square);
+
+			for (j = 0; j < 4 && !check; j++)
+			{
+				if (dot(sub(square.vertices[j], position), normal) > 0.0f)
+				{
+					check = 1;
+				}
+			}
+
+			if (!check)
+			{
+				continue;
+			}
+
+			light *= approximationSquare(position, normal, square);
+
+			for (j = 0; j < 4; j++)
+			{
+				SideFace face;
+				int k;
+
+				getSideFace(x, y, j, &face);
+
+				for (k = 0; k < face.cntSquares; k++)
+				{
+					light *= approximationSquare(position, normal, face.squares[k]);
+				}
+			}
 		}
 	}
+
+	return light;
 }
 
-void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
+void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation)
 {
-	int i = 0;
-
 	int x;
 	int y;
 
-	for (y = 0; y < LIGHT_MAP_SIZE; y++)
+	for (x = 0; x < lightMap->sizeX * LIGHT_MAP_SIZE; x++)
 	{
-		for (x = 0; x < LIGHT_MAP_SIZE; x++)
+		for (y = 0; y < lightMap->sizeY * LIGHT_MAP_SIZE; y++)
 		{
-			setSubLightMapPixel(index, x, y, data[i++]);
+			float sx = (x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
+			float sy = (y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
+
+			Vector3 off = add(scale(sx, orientation.vx), scale(sy, orientation.vy));
+			Vector3 rayPosition = add(orientation.origin, off);
+
+			float light = approximation(rayPosition, orientation.normal);
+
+			setLightMap(lightMap, x, y, light);
 		}
 	}
-}
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY) {
-	lightMap->sizeX = sizeX;
-	lightMap->sizeY = sizeY;
-	lightMap->idxSubLightMap = gAllocatedSubLightMaps;
-	gAllocatedSubLightMaps += sizeX * sizeY;
-}
-
-void setLightMap(LightMap* lightMap, int x, int y, float value) {
-	int index;
-
-	assert(x >= 0 && x < lightMap->sizeX * LIGHT_MAP_SIZE);
-	assert(y >= 0 && y < lightMap->sizeY * LIGHT_MAP_SIZE);
-
-	index = lightMap->idxSubLightMap + (y / LIGHT_MAP_SIZE) * lightMap->sizeX + (x / LIGHT_MAP_SIZE);
-	setSubLightMapPixel(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
-}
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords) {
-	float fx = coords.x * lightMap->sizeX;
-	float fy = coords.y * lightMap->sizeY;
-	int x = (int) floor(fx);
-	int y = (int) floor(fy);
-	int index = lightMap->idxSubLightMap + y * lightMap->sizeX + x;
-	Vector2 v = vector2(fx - x, fy - y);
-
-	assert(coords.x >= 0.0f && coords.x <= 1.0f);
-	assert(coords.y >= 0.0f && coords.y <= 1.0f);
-
-	return transformSubCoords(index, v);
 }

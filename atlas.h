@@ -20,13 +20,42 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
-
-#include "atlas.h"
+#ifndef _atlas_h_
+#define _atlas_h_
 
 #include "vector.h"
+#include "color.h"
 
-void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation);
+#define LIGHT_MAP_SIZE 8
+#define COLOR_MAP_SIZE 32
+
+#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
+
+typedef struct {
+	int sizeX;
+	int sizeY;
+	int idxSubLightMap;
+} SubAtlas;
+
+void allocAtlas(int cntSubTextures);
+
+int getCntAllocatedSubLightMaps(void);
+
+void freeAtlas(void);
+
+void lightMapToTexture(unsigned int texID);
+void colorMapToTexture(unsigned int texID);
+
+void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
+void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
+
+/*****/
+
+void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY);
+
+void setLightMap(SubAtlas* subAtlas, int x, int y, float value);
+void setColorMap(SubAtlas* subAtlas, int x, int y, Color3 col);
+
+Vector2 transformCoords(const SubAtlas* subAtlas, const Vector2 coords);
 
 #endif

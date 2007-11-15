@@ -20,13 +20,27 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#ifndef _color_h_
+#define _color_h_
 
-#include "atlas.h"
+typedef struct {
+	float r;
+	float g;
+	float b;
+} Color3;
 
-#include "vector.h"
+typedef struct {
+	float r;
+	float g;
+	float b;
+	float a;
+} Color4;
 
-void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation);
+Color4 color4(float r, float g, float b, float a);
+
+Color3 color3(float r, float g, float b);
+Color3 color3i(int r, int g, int b);
+
+Color3 interpolateColor(Color3 col1, Color3 col2, float t);
 
 #endif

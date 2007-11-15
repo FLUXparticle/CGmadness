@@ -23,7 +23,7 @@
 #ifndef _field_h_
 #define _field_h_
 
-#include "vector.h"
+#include "color.h"
 
 void setSquareColor(int q, Color4 col);
 
@@ -33,6 +33,5 @@ void destroyGameField(void);
 void updateGameField(void);
 
 void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
 
 #endif

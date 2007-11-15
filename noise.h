@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#ifndef _noise_h_
+#define _noise_h_
 
 #include "atlas.h"
 
-#include "vector.h"
+#include "color.h"
 
-void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation);
+void initNoise(void);
+void genNoiseTexture(SubAtlas* subAtlas, Vector3 origin, Vector3 vx, Vector3 vy);
 
 #endif

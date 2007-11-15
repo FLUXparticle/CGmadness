@@ -37,7 +37,10 @@
 #include "callback.h"
 #include "environment.h"
 #include "texture.h"
-#include "lightmap.h"
+#include "noise.h"
+#include "atlas.h"
+
+#include "color.h"
 
 #include "functions.h"
 
@@ -201,10 +204,8 @@ void drawGame(void) {
 }
 
 void drawGameReflection(void) {
-#if 1
 	drawEnvironment();
 	drawGameField(1);
-#endif
 }
 
 void pickGame(void) {
@@ -218,12 +219,23 @@ int initLevel(const char* filename) {
 		return 0;
 	}
 
-	if (sgLevel.plateTexture == 0) {
-		sgLevel.plateTexture = loadTexture("data/plate.tga", 1);
+	if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
+		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
 	}
 
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
+
+#if (NOISE_TEXTURE)
+	updateColorMap();
+
+	sgLevel.colorMap = genTexture();
+	colorMapToTexture(sgLevel.colorMap);
+#endif
 
 	initGameField();
 
@@ -244,6 +256,9 @@ int initLevel(const char* filename) {
 
 void destroyLevel(void) {
 	glDeleteTextures(1, &sgLevel.lightMap);
+#if (NOISE_TEXTURE)
+	glDeleteTextures(1, &sgLevel.colorMap);
+#endif
 
 	destroyGameField();
 	destroyCommon();

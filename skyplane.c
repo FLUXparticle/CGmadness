@@ -25,6 +25,7 @@
 #include "features.h"
 #include "functions.h"
 #include "vector.h"
+#include "color.h"
 
 #include "debug.h"
 

@@ -121,18 +121,6 @@ Vector3 vector3(float x, float y, float z) {
 	return v;
 }
 
-Color4 color4(float r, float g, float b, float a)
-{
-	Color4 col;
-
-	col.r = r;
-	col.g = g;
-	col.b = b;
-	col.a = a;
-
-	return col;
-}
-
 Vector3 midpoint(const Vector3* quad) {
 	Vector3 mid = vector3(0.0f, 0.0f, 0.0f);
 
