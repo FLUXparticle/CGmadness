@@ -492,14 +492,17 @@ void updateTexCoords(void)
 			{
 				square->texcoord[i].x = gEdgeX[i] * (int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
 				square->texcoord[i].y = gEdgeY[i] * (int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
-
-				square->lightmap[i].x = a * gEdgeX[i] + b;
-				square->lightmap[i].y = a * gEdgeY[i] + b;
-				square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
-
-				square->colormap[i].x = c * gEdgeX[i] + d;
-				square->colormap[i].y = c * gEdgeY[i] + d;
-				square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
+				
+				if (sgLevel.lightMap)
+				{
+					square->lightmap[i].x = a * gEdgeX[i] + b;
+					square->lightmap[i].y = a * gEdgeY[i] + b;
+					square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
+	
+					square->colormap[i].x = c * gEdgeX[i] + d;
+					square->colormap[i].y = c * gEdgeY[i] + d;
+					square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
+				}
 			}
 		}
 	}
@@ -542,13 +545,16 @@ void updateTexCoords(void)
 						square->texcoord[i].x = txy;
 						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z;
 
-						square->lightmap[i].x = a * txy + b;
-						square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
-						square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
-
-						square->colormap[i].x = c * txy + d;
-						square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
-						square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
+						if (sgLevel.lightMap)
+						{
+							square->lightmap[i].x = a * txy + b;
+							square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
+							square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
+	
+							square->colormap[i].x = c * txy + d;
+							square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
+							square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
+						}
 					}
 				}
 			}
@@ -803,8 +809,6 @@ int loadFieldFromFile(const char* filename)
 	}
 
 	fclose(file);
-
-	updateTexCoords();
 
 	return result;
 }

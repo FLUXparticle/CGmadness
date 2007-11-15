@@ -68,6 +68,7 @@ static char* gFilename;
 
 static Vector3 gEditorMenuPosition;
 
+static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
 void pauseEditor(void) {
@@ -83,6 +84,9 @@ void resumeEditor(void) {
 void saveLevel(void) {
 	if (gDirtyLightmaps)
 	{
+		destroyAtlas();
+
+		initAtlas();
 		updateLightMap();
 		gDirtyLightmaps = 0;
 	}
@@ -182,6 +186,7 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 		}
 	}
 	gDirtyLightmaps = 1;
+	gDirtyTexCoords = 1;
 }
 
 void modBetween(int* value, int mod, int min, int max) {
@@ -320,6 +325,12 @@ void updateEditor(float interval) {
 
 		updateEditorCamera(interval, markerPos);
 		animateEditor(interval);
+		
+		if (gDirtyTexCoords)
+		{
+			updateTexCoords();
+			gDirtyTexCoords = 0;
+		}
 	}
 	else
 	{
@@ -448,14 +459,16 @@ int initEditor(char* filename)
 		}
 	}
 
-	if (sgLevel.colorMap == 0)
+	if (sgLevel.borderTexture == 0)
 	{
-		sgLevel.colorMap = loadTexture("data/plate.tga", 1);
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
 	}
 
-	sgLevel.lightMap = genTexture();
-	lightMapToTexture(sgLevel.lightMap);
+	sgLevel.lightMap = 0;
 	gDirtyLightmaps = 0;
+
+	updateTexCoords();
+	gDirtyTexCoords = 0;
 
 	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.pick = pickEditor;

@@ -92,8 +92,11 @@ extern Vector3 sgForward;
 extern Vector3 sgRight;
 
 void initAtlas(void);
+void destroyAtlas(void);
+
 void updateLightMap(void);
 void updateColorMap(void);
+void updateTexCoords(void);
 
 void initCommon(void);
 void destroyCommon(void);
