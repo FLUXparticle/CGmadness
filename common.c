@@ -488,11 +488,13 @@ void updateTexCoords(void)
 			Square* square = &p->roof;
 
 			int i;
+			
+			updatePlate(x, y);
 
 			for (i = 0; i < 4; i++)
 			{
-				square->texcoord[i].x = gEdgeX[i];
-				square->texcoord[i].y = gEdgeY[i];
+				square->texcoord[i].x = gEdgeX[i] * (int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
+				square->texcoord[i].y = gEdgeY[i] * (int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
 
 				square->lightmap[i].x = a * gEdgeX[i] + b;
 				square->lightmap[i].y = a * gEdgeY[i] + b;
