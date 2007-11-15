@@ -410,8 +410,12 @@ void drawGameField(int ballReflection)
 	}
 
   glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
+#if (NOISE_TEXTURE)
+  glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
+#else
+  glDisable(GL_TEXTURE_2D);
+#endif
 
 	if (useShadows())
 	{

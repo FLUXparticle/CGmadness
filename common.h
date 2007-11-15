@@ -22,6 +22,8 @@
 
 #include "vector.h"
 
+#define NOISE_TEXTURE 0
+
 #define MAX_LEVEL_SIZE 100
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10

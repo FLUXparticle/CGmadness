@@ -347,7 +347,7 @@ void drawEditorField(void) {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
 		{
