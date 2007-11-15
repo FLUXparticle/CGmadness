@@ -230,6 +230,8 @@ int initLevel(const char* filename) {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
+	updateTexCoords();
+
 #if (NOISE_TEXTURE)
 	updateColorMap();
 
