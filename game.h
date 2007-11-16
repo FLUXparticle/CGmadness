@@ -20,7 +20,7 @@
 #ifndef _game_h_
 #define _game_h_
 
-#define MOUSE_CONTROL 0
+extern int sgIsMouseControl;
 
 void setHotSeatLevel(const char* filename);
 

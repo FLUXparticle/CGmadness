@@ -37,12 +37,6 @@
 #include <math.h>
 #include <assert.h>
 
-#if (MOUSE_CONTROL)
-# define CAMERA_MOVE_TIME_CONSTANT 100.0f
-#else
-# define CAMERA_MOVE_TIME_CONSTANT 5.0f
-#endif
-
 #define BOTTOM -0.0f
 
 typedef struct
