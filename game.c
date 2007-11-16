@@ -75,8 +75,7 @@ static float gLongitude;
 
 static StringList gLevelNames;
 static int gNextLevelIndex;
-static const char* gHotSeatLevel;
-static int gInGame;
+static const char* gHotSeatLevel = NULL;
 
 void gameDrag(int dx, int dy) {
 	gDragX += dx;
@@ -354,7 +353,6 @@ void loadNewLevel(void) {
 	if (startLevel(gHotSeatLevel)) {
 		pauseGame();
 		showGameMenu(0);
-		gInGame = 1;
 		resetBall();
 	} else {
 		exit(1);
@@ -365,7 +363,6 @@ void gotoNextLevel(void)
 {
 	pauseGame();
 	showGameMenu(3);
-	gInGame = 0;
 }
 
 void resetGame(void) {
@@ -403,8 +400,6 @@ int initGame(void) {
 	
 	loadStringList(&gLevelNames, "levels/default.lev");
 	gNextLevelIndex = 0;
-	gHotSeatLevel = NULL;
-	gInGame = 0;
 
 #if 0
 	/* level (must be after menu) */
