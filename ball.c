@@ -158,7 +158,7 @@ void updateReflection(void)
 					up[i].x, up[i].y, up[i].z
 					);
 
- 			TIME(drawGameReflection());
+ 			TIME(drawGameBallReflection());
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));

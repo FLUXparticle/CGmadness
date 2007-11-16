@@ -283,24 +283,6 @@ void eventCheck(Check* check, MouseEvent event)
  * TODO split SpinEdit into two seperate MenuItems
  */
 
-void pickSpinEditLeft(void* data) {
-	SpinEdit* spinedit = data;
-	int* value = &spinedit->value;
-	if (*value > spinedit->minValue) {
-		(*value)--;
-		spinedit->change(spinedit);
-	}
-}
-
-void pickSpinEditRight(void* data) {
-	SpinEdit* spinedit = data;
-	int* value = &spinedit->value;
-	if (*value < spinedit->maxValue) {
-		(*value)++;
-		spinedit->change(spinedit);
-	}
-}
-
 void initSpinEdit(SpinEdit* spinEdit, int value, int min, int max, float z, funcDraw draw, funcChange change)
 {
 	spinEdit->item.type = MI_SPIN_EDIT;

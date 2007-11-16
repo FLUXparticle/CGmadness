@@ -19,24 +19,14 @@
 
 #include "gamemenu.h"
 
-#include "text.h"
-#include "objects.h"
-#include "texture.h"
 #include "ball.h"
 #include "game.h"
 #include "features.h"
 #include "keyboard.h"
 #include "gui.h"
 #include "menumanager.h"
-#include "camera.h"
 #include "debug.h"
-#include "common.h"
-
-#include <GL/glut.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "main.h"
 
 typedef struct {
 	char* left;
@@ -76,7 +66,7 @@ static void clickButtonHelp(void)
 
 static void clickButtonQuit(void)
 {
-	exit(0);
+	setMainState(STATE_MAIN);
 }
 
 static void clickButtonAgain(void)
@@ -108,65 +98,6 @@ static void changeReflection(void* self) {
 	Check* check = self;
 	setReflection(check->value);
 }
-
-/* TODO Hotkeys */
-
-#if 0
-void updateGameMenu(const Screen* curScreen, float interval) {
-	if (curScreen == &gScreenMain1 || curScreen == &gScreenMain2)
-	{
-		if (wasKeyPressed(KEY_ENTER))
-		{
-			clickButtonContinue();
-		}
-
-		if (curScreen == &gScreenMain2 && wasKeyPressed(KEY_ESC))
-		{
-			clickButtonContinue();
-		}
-
-		if (wasKeyPressed('h'))
-		{
-			clickButtonHelp();
-		}
-
-		if (wasKeyPressed('q'))
-		{
-			clickButtonQuit();
-		}
-	}
-	else if (curScreen == &gScreenNext)
-	{
-		if (wasKeyPressed(KEY_ENTER))
-		{
-			clickButtonContinue();
-		}
-
-		if (wasKeyPressed(KEY_ESC))
-		{
-			clickButtonBack();
-		}
-	}
-	else if (curScreen == &gScreenHelp)
-	{
-		if (wasKeyPressed(KEY_ESC))
-		{
-			clickButtonBack();
-		}
-	}
-	else if (curScreen == &gScreenEnd)
-	{
-		if (wasKeyPressed(KEY_ENTER))
-		{
-			clickButtonAgain();
-		}
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
-		{
-			clickButtonQuit();
-		}
-	}
-}
-#endif
 
 void showGameMenu(int menu) {
 	static Screen* screens[] = {

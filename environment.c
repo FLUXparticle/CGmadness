@@ -43,7 +43,7 @@ void updateEnvironment(float interval) {
 	updateWater(interval);
 }
 
-void drawEnvironment(void) {
+void drawEnvironment(funcDraw reflection) {
 #if (WATER)
 	if (useReflection())
 	{
@@ -63,9 +63,11 @@ void drawEnvironment(void) {
 					drawSkyplane();
 				glEnable(GL_DEPTH_TEST);
 #  endif
-
-				drawGameField(0);
-				drawGameBall();
+				
+				if (reflection)
+				{
+					reflection();
+				}
 
 			glCullFace(GL_BACK);
 			glDisable(GL_CLIP_PLANE0);

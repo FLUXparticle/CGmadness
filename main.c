@@ -20,6 +20,7 @@
 #include "main.h"
 
 #include "ball.h"
+#include "environment.h"
 
 #include "mainmenu.h"
 #include "game.h"
@@ -31,11 +32,13 @@ static MainState gCurState;
 
 int initMain(void)
 {
-	gCurState = STATE_MAIN;
-	
+	initEnvironment();
+
 	initMenuManager();
 	
 	initMainMenu();
+	
+	setMainState(STATE_MAIN);
 	
 	return initGame();
 }
@@ -43,6 +46,17 @@ int initMain(void)
 void setMainState(MainState newState)
 {
 	gCurState = newState;
+	switch (gCurState)
+	{
+	case STATE_MAIN:
+		showMainMenu();
+		break;
+	case STATE_GAME:
+		resetGame();
+		break;
+	case STATE_EDITOR:
+		break;
+	}
 }
 
 void updateMain(float interval)

@@ -20,10 +20,12 @@
 #ifndef _environment_h_
 #define _environment_h_
 
+#include "types.h"
+
 #define ENVIRONMENT_SIZE 400.0f
 
 void initEnvironment(void);
 void updateEnvironment(float interval);
-void drawEnvironment(void);
+void drawEnvironment(funcDraw reflection);
 
 #endif

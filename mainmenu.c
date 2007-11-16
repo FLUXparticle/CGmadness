@@ -21,24 +21,69 @@
 #include "mainmenu.h"
 
 #include "main.h"
+#include "environment.h"
 
-#include "camera.h"
-#include "texture.h"
-#include "objects.h"
+#include "menumanager.h"
+#include "gui.h"
+
+#include "keyboard.h"
 
 #include <GL/glut.h>
 
+#include <stdlib.h>
+
+static Screen gScreenMain;
+
+static void clickButtonCGMadness(void)
+{
+	popAllScreens();
+	setMainState(STATE_GAME);
+}
+
+static void clickButtonCGMEditor(void)
+{
+	popAllScreens();
+	setMainState(STATE_EDITOR);
+}
+
+static void clickButtonQuit(void)
+{
+	exit(0);
+}
+
 void initMainMenu(void)
 {
-	/* TODO empty */
+	static Button bCGMadness;
+	static Button bCGMEditor;
+	static Button bQuit;
+	
+	static MenuItem* itemsMain[] =
+	{
+		&bCGMadness.item,
+		&bCGMEditor.item,
+		&bQuit.item
+	};
+	
+	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
+	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 0);
+	initButton(&bQuit,      2.0f, clickButtonQuit, "Quit", 'q');
+	
+	INIT_SCREEN(&gScreenMain, itemsMain);
+}
+
+void showMainMenu(void)
+{
+	pushScreen(&gScreenMain);
 }
 
 void updateMainMenu(float interval)
 {
-	setMainState(STATE_GAME);
+	updateEnvironment(interval);
+	updateMenuManager(interval);
 }
 
 void drawMainMenu(void)
 {
-	/* TODO empty */
+	drawEnvironment(NULL);
+	drawMenuManager();
 }

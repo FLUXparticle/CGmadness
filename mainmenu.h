@@ -25,6 +25,8 @@
 
 void initMainMenu(void);
 
+void showMainMenu(void);
+
 void updateMainMenu(float interval);
 
 void drawMainMenu(void);

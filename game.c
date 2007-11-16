@@ -33,11 +33,14 @@
 #include "mouse.h"
 #include "camera.h"
 #include "callback.h"
-#include "environment.h"
 #include "text.h"
 #include "texture.h"
+#include "environment.h"
 #include "noise.h"
 #include "atlas.h"
+#include "main.h"
+
+#include "stringlist.h"
 
 #include "color.h"
 
@@ -71,6 +74,9 @@ static float gDistance;
 static float gLatitude;
 static float gLongitude;
 
+static StringList gLevelNames;
+static int gNextLevelIndex;
+
 #if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
 	gDragX += dx;
@@ -82,7 +88,6 @@ void pauseGame(void) {
 #if (MOUSE_CONTROL)
 	setDragFunc(NULL);
 #endif
-	showGameMenu(1);
 	gIsGameRunning = 0;
 }
 
@@ -140,11 +145,13 @@ void updateGameCamera(float interval, Vector3 ball) {
 }
 
 void updateGame(float interval) {
+	updateEnvironment(interval);
 	if (gIsGameRunning) {
 		int i = 0;
 
 		if (wasKeyPressed(KEY_ESC)) {
 			pauseGame();
+			showGameMenu(1);
 		}
 
 		/* for some debug */
@@ -186,8 +193,6 @@ void updateGame(float interval) {
 	}
 
 	updateGameField();
-
-	updateEnvironment(interval);
 }
 
 void drawGameHUD(float widthWindow, float heightWindow)
@@ -217,8 +222,21 @@ void drawGameHUD(float widthWindow, float heightWindow)
 	glPopMatrix();
 }
 
-void drawGame(void) {
-	drawEnvironment();
+void drawGameWaterReflection(void)
+{
+	drawGameField(0);
+	drawGameBall();
+}
+
+void drawGameBallReflection(void)
+{
+	drawEnvironment(drawGameWaterReflection);
+	drawGameField(1);
+}
+
+void drawGame(void)
+{
+	drawEnvironment(drawGameWaterReflection);
 	drawGameField(0);
 	drawGameBall();
 
@@ -226,11 +244,6 @@ void drawGame(void) {
 	{
 		drawMenuManager();
 	}
-}
-
-void drawGameReflection(void) {
-	drawEnvironment();
-	drawGameField(1);
 }
 
 void eventGame(const Vector3* position, const Vector3* direction, MouseEvent event)
@@ -291,28 +304,17 @@ static int startLevel(const char* filename) {
 	return 1;
 }
 
-static char* getNextLevelName(void) {
-	static char* allLevels = NULL;
-	static char* nextLevel = NULL;
-	static char* curLevel = NULL;
-
-	if (!allLevels) {
-		allLevels = textFileRead("levels/default.lev");
-		nextLevel = allLevels;
-	} else if (nextLevel != allLevels) {
-		*nextLevel = '\n';
-		nextLevel++;
+static char* getNextLevelName(void)
+{
+	if (gNextLevelIndex < gLevelNames.count)
+	{
+		char* name = gLevelNames.strings[gNextLevelIndex];
+		gNextLevelIndex++;
+		return name;
 	}
-
-	curLevel = nextLevel;
-
-	nextLevel = strchr(curLevel, '\n');
-
-	if (nextLevel) {
-		*nextLevel = '\0';
-		return curLevel;
-	} else {
-		nextLevel = allLevels;
+	else
+	{
+		gNextLevelIndex = 0;
 		return NULL;
 	}
 }
@@ -320,10 +322,13 @@ static char* getNextLevelName(void) {
 void loadNewLevel(void) {
 	char* nextLevelname = getNextLevelName();
 
-	if (!nextLevelname) {
-		pauseGame();
-		showGameMenu(3);
-	} else {
+	if (!nextLevelname)
+	{
+		setMainState(STATE_MAIN);
+	}
+	else
+	{
+#if 0
 		glDeleteTextures(1, &sgLevel.lightMap);
 #if (NOISE_TEXTURE)
 		glDeleteTextures(1, &sgLevel.colorMap);
@@ -331,7 +336,7 @@ void loadNewLevel(void) {
 	
 		destroyGameField();
 		destroyLevel();
-
+#endif
 		if (startLevel(nextLevelname)) {
 			pauseGame();
 			showGameMenu(0);
@@ -345,9 +350,10 @@ void loadNewLevel(void) {
 
 void resetGame(void) {
 	loadNewLevel();
-	showGameMenu(0);
 	updateGameField();
+#if 0
 	resetCamera();
+#endif
 }
 
 void initFog(void) {
@@ -374,19 +380,23 @@ int initGame(void) {
 	/* menu (must be after ball) */
 	initGameMenu();
 
+	
+	loadStringList(&gLevelNames, "levels/default.lev");
+	gNextLevelIndex = 0;
+
+#if 0
 	/* level (must be after menu) */
  	if (!startLevel(getNextLevelName())) {
 		return 0;
 	}
-
-	initEnvironment();
 
 	gIsGameRunning = 0;
 	showGameMenu(0);
 	resetBall();
 
 	updateGameField();
-
+#endif
+	
 	sgWindowViewport.mouseEvent = eventGame;
 
 	return 1;
