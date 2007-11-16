@@ -22,9 +22,9 @@
 #include "atlas.h"
 #include "noise.h"
 #include "lightmap.h"
+#include "level.h"
 
 #include "progress.h"
-#include "crc32.h"
 
 #include "functions.h"
 
@@ -43,8 +43,6 @@
 # define CAMERA_MOVE_TIME_CONSTANT 5.0f
 #endif
 
-#define THIS_CGM_VERSION 3
-
 #define BOTTOM -0.0f
 
 typedef struct
@@ -54,24 +52,7 @@ typedef struct
 
 static int gIdleStep;
 
-int sgCntVertices;
-
-int sgMaxPlates;
-int sgMaxQuads;
-int sgMaxVertices;
-
-Vector3* sgVertices;
-Vector3* sgNormals;
-
-Level sgLevel;
-
-Vector3 sgForward;
-Vector3 sgRight;
-
 float sgIdleProgress;
-
-static const int gEdgeX[4] = { 0, 1, 1, 0 };
-static const int gEdgeY[4] = { 0, 0, 1, 1 };
 
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
@@ -90,215 +71,6 @@ float getMinZValue(const Square* square) {
 	return res;
 }
 
-float getMaxZValue(const Square* square) {
-	int i;
-	float res = square->vertices[0].z;
-	for (i = 1 ; i < 4; i++) {
-		if (square->vertices[i].z > res) {
-			res = square->vertices[i].z;
-		}
-	}
-	return res;
-}
-
-int getFieldEdgeHeight(int x, int y, int edge)
-{
-	if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
-	{
-		Plate* p = &sgLevel.field[x][y];
-
-		return 5 + p->z + (gEdgeX[edge] * 2 - 1) * p->dzx + (gEdgeY[edge] * 2 - 1) * p->dzy;
-	}
-
-	/* value out of range */
-	return 0;
-}
-
-void updateSquareAttributes(Square* square)
-{
-	square->mid = midpoint(square->vertices);
-
-	square->area = 0.5f * len(cross(sub(square->vertices[1], square->vertices[0]), sub(square->vertices[3], square->vertices[0]))) +
-				         0.5f * len(cross(sub(square->vertices[1], square->vertices[2]), sub(square->vertices[3], square->vertices[2])));
-}
-
-void updatePlate(int x, int y)
-{
-	Plate* p = &sgLevel.field[x][y];
-
-	if (p->dirty)
-	{
-		Square* square = &p->roof;
-		int i;
-		int side;
-		int dzx = p->dzx;
-		int	dzy = p->dzy;
-
-		Vector3 ex;
-		Vector3 ey;
-
-		ex.x = 0.5f;
-		ex.y = 0.0f;
-		ex.z = (float) dzx / HEIGHT_STEPS;
-
-		ey.x = 0.0f;
-		ey.y = 0.5f;
-		ey.z = (float) dzy / HEIGHT_STEPS;
-
-		square->normal = norm(cross(ex, ey));
-
-		for (i = 0; i < 4; i++)
-		{
-			square->vertices[i].x = x + gEdgeX[i];
-			square->vertices[i].y = y + gEdgeY[i];
-			square->vertices[i].z = (float) getFieldEdgeHeight(x, y, i) / HEIGHT_STEPS;
-		}
-
-		updateSquareAttributes(square);
-
-		for (side = 0; side < 4; side++)
-		{
-			int next = (side + 1) % 4;
-			int prev = (side + 3) % 4;
-
-			int sideOpposite = (side + 3) % 4;
-			int nextOpposite = (side + 2) % 4;
-
-			int dx = gEdgeX[side] - gEdgeX[prev];
-			int dy = gEdgeY[side] - gEdgeY[prev];
-
-			int height1 = getFieldEdgeHeight(x, y, side);
-			int height2 = getFieldEdgeHeight(x, y, next);
-
-			int height3 = getFieldEdgeHeight(x + dx, y + dy, sideOpposite);
-			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
-
-			SideFace* face = &p->sideFaces[side];
-
-			face->cntSquares = 0;
-
-			if (height1 > height3 ||
-					height2 > height4)
-			{
-				int x1 = x + gEdgeX[side];
-				int y1 = y + gEdgeY[side];
-				int x2 = x + gEdgeX[next];
-				int y2 = y + gEdgeY[next];
-
-				int startHeight = min(height3, height4);
-
-				int minHeight;
-				int maxHeight;
-				int x3;
-				int y3;
-
-				int bottom;
-
-				if (height1 > height2)
-				{
-					minHeight = height2;
-					maxHeight = height1;
-					x3 = x1;
-					y3 = y1;
-				}
-				else
-				{
-					minHeight = height1;
-					maxHeight = height2;
-					x3 = x2;
-					y3 = y2;
-				}
-
-				face->bottom = (float) startHeight / HEIGHT_STEPS;
-				face->top    = (float)   maxHeight / HEIGHT_STEPS;
-
-				for (bottom = startHeight; bottom < minHeight; )
-				{
-					int top = min(minHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
-
-					square = &face->squares[face->cntSquares++];
-
-					square->normal.x = dx;
-					square->normal.y = dy;
-					square->normal.z = 0.0f;
-
-					square->vertices[0].x = x1;
-					square->vertices[0].y = y1;
-					square->vertices[0].z = (float) top / HEIGHT_STEPS;
-
-					square->vertices[1].x = x1;
-					square->vertices[1].y = y1;
-					square->vertices[1].z = (float) bottom / HEIGHT_STEPS;
-
-					square->vertices[2].x = x2;
-					square->vertices[2].y = y2;
-					square->vertices[2].z = (float) bottom / HEIGHT_STEPS;
-
-					square->vertices[3].x = x2;
-					square->vertices[3].y = y2;
-					square->vertices[3].z = (float) top / HEIGHT_STEPS;
-
-					updateSquareAttributes(square);
-
-					bottom = top;
-				}
-
-				for (; bottom < maxHeight; )
-				{
-					int top = min(maxHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
-
-					float t1 = (float) (bottom - minHeight) / (maxHeight - minHeight);
-					float t2 = (float) (top - minHeight) / (maxHeight - minHeight);
-
-					square = &face->squares[face->cntSquares++];
-
-					square->normal.x = dx;
-					square->normal.y = dy;
-					square->normal.z = 0.0f;
-
-					square->vertices[0].x = x1 * (1.0f - t2) + x3 * t2;
-					square->vertices[0].y = y1 * (1.0f - t2) + y3 * t2;
-					square->vertices[0].z = (float) top / HEIGHT_STEPS;
-
-					square->vertices[1].x = x1 * (1.0f - t1) + x3 * t1;
-					square->vertices[1].y = y1 * (1.0f - t1) + y3 * t1;
-					square->vertices[1].z = (float) bottom / HEIGHT_STEPS;
-
-					square->vertices[2].x = x2 * (1.0f - t1) + x3 * t1;
-					square->vertices[2].y = y2 * (1.0f - t1) + y3 * t1;
-					square->vertices[2].z = (float) bottom / HEIGHT_STEPS;
-
-					square->vertices[3].x = x2 * (1.0f - t2) + x3 * t2;
-					square->vertices[3].y = y2 * (1.0f - t2) + y3 * t2;
-					square->vertices[3].z = (float) top / HEIGHT_STEPS;
-
-					updateSquareAttributes(square);
-
-					bottom = top;
-				}
-			}
-
-		}
-
-		p->dirty = 0;
-	}
-}
-
-void getRoofSquare(int x, int y, Square* square)
-{
-	Plate* p = &sgLevel.field[x][y];
-	updatePlate(x, y);
-	*square = p->roof;
-}
-
-void getSideFace(int x, int y, int side, SideFace* face)
-{
-	Plate* p = &sgLevel.field[x][y];
-	updatePlate(x, y);
-
-	*face = p->sideFaces[side];
-}
-
 int quadsNeeded(int fx, int fy, int side)
 {
 	SideFace face;
@@ -315,7 +87,7 @@ int quadsNeeded(int fx, int fy, int side)
 	}
 }
 
-void initAtlas(void)
+void createAtlas(void)
 {
 	int countSubLightMaps = 0;
 
@@ -382,10 +154,10 @@ Orientation orientationSide(int fx, int fy, int side)
 
 	getSideFace(fx, fy, side, &face);
 
-	orientation.origin = vector3(fx + gEdgeX[side], fy + gEdgeY[side], floor(face.bottom));
-	orientation.vx = vector3(gEdgeX[next] - gEdgeX[side], gEdgeY[next] - gEdgeY[side], 0.0f);
+	orientation.origin = vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom));
+	orientation.vx = vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
 	orientation.vy = vector3(0.0f, 0.0f, 1.0f);
-	orientation.normal = vector3(gEdgeX[side] - gEdgeX[prev], gEdgeY[side] - gEdgeY[prev], 0.0f);
+	orientation.normal = vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);
 
 	return orientation;
 }
@@ -513,17 +285,17 @@ void updateTexCoords(void)
 
 			for (i = 0; i < 4; i++)
 			{
-				square->texcoord[i].x = gEdgeX[i] * (int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
-				square->texcoord[i].y = gEdgeY[i] * (int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
+				square->texcoord[i].x = sgEdgeX[i] * (int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
+				square->texcoord[i].y = sgEdgeY[i] * (int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
 				
 				if (sgLevel.lightMap)
 				{
-					square->lightmap[i].x = a * gEdgeX[i] + b;
-					square->lightmap[i].y = a * gEdgeY[i] + b;
+					square->lightmap[i].x = a * sgEdgeX[i] + b;
+					square->lightmap[i].y = a * sgEdgeY[i] + b;
 					square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
 	
-					square->colormap[i].x = c * gEdgeX[i] + d;
-					square->colormap[i].y = c * gEdgeY[i] + d;
+					square->colormap[i].x = c * sgEdgeX[i] + d;
+					square->colormap[i].y = c * sgEdgeY[i] + d;
 					square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
 				}
 			}
@@ -540,8 +312,8 @@ void updateTexCoords(void)
 			{
 				int next = (side + 1) % 4;
 
-				int x0 = x + gEdgeX[side];
-				int y0 = y + gEdgeY[side];
+				int x0 = x + sgEdgeX[side];
+				int y0 = y + sgEdgeY[side];
 
 				SideFace* face = &p->sideFaces[side];
 
@@ -559,8 +331,8 @@ void updateTexCoords(void)
 					int i;
 					for (i = 0; i < 4; i++)
 					{
-						float tx = (gEdgeX[next] - gEdgeX[side]) * (square->vertices[i].x - x0);
-						float ty = (gEdgeY[next] - gEdgeY[side]) * (square->vertices[i].y - y0);
+						float tx = (sgEdgeX[next] - sgEdgeX[side]) * (square->vertices[i].x - x0);
+						float ty = (sgEdgeY[next] - sgEdgeY[side]) * (square->vertices[i].y - y0);
 						float tz = square->vertices[i].z - z0;
 
 						float txy = tx + ty;
@@ -599,358 +371,7 @@ void destroyCommon(void)
 
 	FREE(sgLevel.field[0]);
 	FREE(sgLevel.field);
-	FREE(sgVertices);
-	FREE(sgNormals);
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
-}
-
-void allocLevelDataMemory(void)
-{
-	int x;
-
-	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
-	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
-	for (x = 1; x < sgLevel.size.x; x++)
-	{
-		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
-	}
-
-  /* init level stuff */
-	sgMaxPlates = sgLevel.size.x * sgLevel.size.y;
-	sgMaxQuads = (1 + 4 * (MAX_LEVEL_HEIGHT + 1)) * sgMaxPlates;
-	sgMaxVertices = 4 * sgMaxQuads;
-
-	sgCntVertices = 0;
-	MALLOC(sgVertices, sgMaxVertices * sizeof(Vector3));
-	MALLOC(sgNormals, sgMaxVertices * sizeof(Vector3));
-}
-
-void newLevel(void)
-{
-	int x, y;
-
-	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x, sgLevel.size.y);
-
-	sgLevel.start.x = 0;
-	sgLevel.start.y = 0;
-
-	sgLevel.finish.x = sgLevel.size.x - 1;
-	sgLevel.finish.y = sgLevel.size.y - 1;
-
-	allocLevelDataMemory();
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			Plate* p = &sgLevel.field[x][y];
-			p->z = 0;
-			p->dzx = 0;
-			p->dzy = 0;
-		}
-	}
-}
-
-int readInt(FILE* file)
-{
-	int value;
-
-	fscanf(file, "%i", &value);
-	nextByte(value);
-
-	return value;
-}
-
-void readFieldCoord(FILE* file, FieldCoord* coord)
-{
-	coord->x = readInt(file);
-	coord->y = readInt(file);
-}
-
-void readFieldPlate(FILE* file, Plate* plate)
-{
-	plate->z = readInt(file);
-	plate->dzx = readInt(file);
-	plate->dzy = readInt(file);
-}
-
-void readRLEInt(FILE* file, int* repeat, int* value) {
-	int i;
-	
-	if (fscanf(file, "%ix%i", repeat, value) < 2)
-	{
-		*value = *repeat;
-		*repeat = 1;
-	}
-
-	for (i = 0; i < *repeat; i++)
-	{
-		nextByte(*value);
-	}
-}
-
-void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
-{
-	int s = 0;
-	int i;
-	
-	while (s < SIZEOF_LIGHT_MAP)
-	{
-		int repeat;
-		int value;
-		
-		readRLEInt(file, &repeat, &value);
-		
-		for (i = 0; i < repeat; i++)
-		{
-			data[s + i] = value;
-		}
-		
-		s += repeat;
-	}
-}
-
-int loadFieldFromFile(const char* filename)
-{
-	FILE* file = fopen(filename, "rt");
-	int result = 1;
-
-	int x, y;
-	FieldCoord fileCoords;
-	unsigned int version;
-	unsigned int crc32;
-
-	if (!file)
-	{
-		fprintf(stderr, "can not open file: %s\n", filename);
-		return 0;
-	}
-
-	/* version number */
-	fscanf(file, "v%u", &version);
-
-	if (version > THIS_CGM_VERSION)
-	{
-		fprintf(stderr, "incompatible version number: %u\n", version);
-		return 0;
-	}
-
-	resetCRC32();
-
-	/* read attributes */
-	readFieldCoord(file, &sgLevel.start);
-	readFieldCoord(file, &sgLevel.finish);
-	readFieldCoord(file, &fileCoords);
-
-	/* read size from file, if not given through program parameters */
-	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
-	{
-		sgLevel.size = fileCoords;
-	}
-
-	allocLevelDataMemory();
-
-	/* reading data */
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			Plate* p = &sgLevel.field[x][y];
-			if (x < fileCoords.x && y < fileCoords.y)
-			{
-				readFieldPlate(file, p);
-			}
-			else
-			{ /* growing */
-				p->z = 0;
-				p->dzx = 0;
-				p->dzy = 0;
-			}
-
-			p->dirty = 1;
-		}
-
-		/* shrinking */
-		if (fileCoords.y > sgLevel.size.y)
-		{
-			Plate dummyPlate;
-
-			for (y = sgLevel.size.y; y < fileCoords.y; y++)
-			{
-				readFieldPlate(file, &dummyPlate);
-			}
-		}
-	}
-
-	initAtlas();
-
-	if (version >= 2)
-	{
-		fscanf(file, "%x\n", &crc32);
-
-		if (crc32 != getCRC32())
-		{
-			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
-			result = 0;
-		}
-		else
-		{
-			int cntSubLightMaps = getCntAllocatedSubLightMaps();
-
-			int i;
-			int j;
-
-			for (i = 0; i < cntSubLightMaps; i++)
-			{
-				int dataInt[SIZEOF_LIGHT_MAP];
-				GLfloat dataFloat[SIZEOF_LIGHT_MAP];
-				
-				readRLE(file, dataInt);
-
-				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
-				{
-					dataFloat[j] = (float) dataInt[j] / 255;
-				}
-
-				setSubLightMap(i, dataFloat);
-			}
-
-			fscanf(file, "%x\n", &crc32);
-
-			if (crc32 != getCRC32())
-			{
-				fprintf(stderr, "2st checksum mismatch: %s\n", filename);
-				result = 0;
-			}
-		}
-	}
-	else
-	{
-		updateLightMap();
-	}
-
-	fclose(file);
-
-	return result;
-}
-
-void writeInt(FILE* file, int value) {
-	fprintf(file, "%i", value);
-	nextByte(value);
-}
-
-void writeFieldCoord(FILE* file, const FieldCoord coord) {
-	writeInt(file, coord.x);
-	fputc(' ', file);
-	writeInt(file, coord.y);
-	fputc('\n', file);
-}
-
-void writeFieldPlate(FILE* file, const Plate* plate) {
-	writeInt(file, plate->z);
-	fputc(' ', file);
-	writeInt(file, plate->dzx);
-	fputc(' ', file);
-	writeInt(file, plate->dzy);
-	fputc('\n', file);
-}
-
-void writeRLEInt(FILE* file, int repeat, int value) {
-	int i;
-	
-	if (repeat > 1)
-	{
-		fprintf(file, "%ix%i", repeat, value);
-	}
-	else
-	{
-		fprintf(file, "%i", value);
-	}
-	
-	for (i = 0; i < repeat; i++)
-	{
-		nextByte(value);
-	}
-}
-
-void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
-{
-	int s = 0;
-	int l = 1;
-	
-	while (s < SIZEOF_LIGHT_MAP)
-	{
-		if (s + l < SIZEOF_LIGHT_MAP && data[s] == data[s + l])
-		{
-			l++;
-		}
-		else
-		{
-			writeRLEInt(file, l, data[s]);
-			
-			fputc(' ', file);
-			s += l;
-			l = 1;
-		}
-	}
-	fputc('\n', file);
-}
-
-int saveFieldToFile(const char* filename) {
-	FILE* file = fopen(filename, "wt");
-	int x, y;
-
-	if (!file) return 0;
-
-	/* version number */
-	fprintf(file, "v%u\n", THIS_CGM_VERSION);
-
-	resetCRC32();
-
-	/* write atributes */
-	writeFieldCoord(file, sgLevel.start);
-	writeFieldCoord(file, sgLevel.finish);
-	writeFieldCoord(file, sgLevel.size);
-
-	/* write data */
-	for (x = 0; x < sgLevel.size.x; x++) {
-		for (y = 0; y < sgLevel.size.y; y++) {
-			Plate* p = &sgLevel.field[x][y];
-			writeFieldPlate(file, p);
-		}
-	}
-
-	fprintf(file, "%08X\n", getCRC32());
-
-	{
-		int cntSubLightMaps = getCntAllocatedSubLightMaps();
-
-		int i;
-		int j;
-
-		for (i = 0; i < cntSubLightMaps; i++)
-		{
-			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
-			int dataInt[SIZEOF_LIGHT_MAP];
-
-			getSubLightMap(i, dataFloat);
-
-			for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
-			{
-				dataInt[j] = (int) (clamp(dataFloat[j], 0.0f, 1.0f) * 255);
-			}
-			
-			writeRLE(file, dataInt);
-		}
-
-		fprintf(file, "%08X\n", getCRC32());
-	}
-
-	if (fclose(file) != 0) {
-		return 0;
-	}
-
-	return 1;
 }

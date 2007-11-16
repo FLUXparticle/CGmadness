@@ -19,7 +19,7 @@
 
 #include "ball.h"
 
-#include "common.h"
+#include "level.h"
 #include "game.h"
 #include "callback.h"
 #include "objects.h"
@@ -30,6 +30,7 @@
 #include "keyboard.h"
 #include "texture.h"
 #include "field.h"
+#include "lightmap.h"
 
 #include "functions.h"
 
@@ -54,16 +55,18 @@
 
 #define SHOW_COLLISION_QUADS 0
 
-RenderTarget gTargetCube[6];
-static Viewport gViewportCube[6];
-
+Ball sgoBall;
 int sgIsBallInPieces;
+
+Vector3 sgForward;
+Vector3 sgRight;
+
+static RenderTarget gTargetCube[6];
+static Viewport gViewportCube[6];
 
 static int gBallLayout = 0;
 
 static int gDirtyReflection = 1;
-
-Ball sgoBall;
 
 static GLhandleARB gShaderBall;
 static int gCubeMapBall;

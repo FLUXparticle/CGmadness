@@ -20,6 +20,7 @@
 #include "game.h"
 
 #include "common.h"
+#include "level.h"
 
 #include "objects.h"
 #include "ball.h"
@@ -247,7 +248,7 @@ void resetGameTime(void)
 	gGameTime = 0.0f;
 }
 
-int initLevel(const char* filename) {
+static int startLevel(const char* filename) {
 	static Vector3 gameMenuPosition;
 
 	if (!loadFieldFromFile(filename)) {
@@ -336,7 +337,7 @@ void loadNewLevel(void) {
 		showGameMenu(3);
 	} else {
 		destroyLevel();
-		if (initLevel(nextLevelname)) {
+		if (startLevel(nextLevelname)) {
 			pauseGame();
 			showGameMenu(0);
 			showGameMenu(2);
@@ -379,7 +380,7 @@ int initGame(void) {
 	initGameMenu();
 
 	/* level (must be after menu) */
- 	if (!initLevel(getNextLevelName())) {
+ 	if (!startLevel(getNextLevelName())) {
 		return 0;
 	}
 

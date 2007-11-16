@@ -44,6 +44,9 @@ typedef struct {
 extern Ball sgoBall;
 extern int sgIsBallInPieces;
 
+extern Vector3 sgForward;
+extern Vector3 sgRight;
+
 void initBall(void);
 
 void resetBall(void);

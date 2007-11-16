@@ -21,7 +21,7 @@
 
 #include "main.h"
 #include "editor.h"
-#include "common.h"
+#include "level.h"
 
 #include "keyboard.h"
 #include "mouse.h"

@@ -19,7 +19,7 @@
 
 #include "field.h"
 
-#include "common.h"
+#include "level.h"
 #include "camera.h"
 #include "game.h"
 
@@ -42,6 +42,9 @@
 #define WITH_STENCIL_TEST 0
 #define TWO_PASS 0
 
+Vector3* sgVertices;
+Vector3* sgNormals;
+
 static Vector2 gDefaultTexCoord;
 static Vector2 gDefaultColorMapCoord;
 static Vector2 gDefaultLightMapCoord;
@@ -54,6 +57,11 @@ static Vector2* gLightMapCoords;
 static Color4* gColors;
 static unsigned int gVBuffers[6];
 
+static int gCntVertices;
+static int gMaxPlates;
+static int gMaxQuads;
+static int gMaxVertices;
+
 static int gCntIndices = 0;
 static int* gIndices;
 
@@ -65,36 +73,36 @@ static int* gSpotlightIndices;
 
 static int* gIndexVertices;
 
-void setColor(Color4 col) {
+static void setColor(Color4 col) {
 	gDefaultColor = col;
 }
 
-void setTexCoord(Vector2 uv) {
+static void setTexCoord(Vector2 uv) {
 	gDefaultTexCoord = uv;
 }
 
-void setColorMapCoord(Vector2 uv) {
+static void setColorMapCoord(Vector2 uv) {
 	gDefaultColorMapCoord = uv;
 }
 
-void setLightMapCoord(Vector2 uv) {
+static void setLightMapCoord(Vector2 uv) {
 	gDefaultLightMapCoord = uv;
 }
 
-void setNormal(Vector3 n) {
+static void setNormal(Vector3 n) {
 	gDefaultNormal = n;
 }
 
-void addVertex(Vector3 v) {
-	gTexCoords[sgCntVertices] = gDefaultTexCoord;
-	gColorMapCoords[sgCntVertices] = gDefaultColorMapCoord;
-	gLightMapCoords[sgCntVertices] = gDefaultLightMapCoord;
-	sgNormals[sgCntVertices] = gDefaultNormal;
-	gColors[sgCntVertices] = gDefaultColor;
+static void addVertex(Vector3 v) {
+	gTexCoords[gCntVertices] = gDefaultTexCoord;
+	gColorMapCoords[gCntVertices] = gDefaultColorMapCoord;
+	gLightMapCoords[gCntVertices] = gDefaultLightMapCoord;
+	sgNormals[gCntVertices] = gDefaultNormal;
+	gColors[gCntVertices] = gDefaultColor;
 
-	sgVertices[sgCntVertices] = v;
+	sgVertices[gCntVertices] = v;
 
-	sgCntVertices++;
+	gCntVertices++;
 }
 
 void addSquare(const Square* square) {
@@ -114,10 +122,10 @@ void getVertIndex(int x, int y, int* start, int* end) {
 		int index = y * sgLevel.size.x + x;
 		*start = gIndexVertices[index];
 		index++;
-		if (index < sgMaxPlates) {
+		if (index < gMaxPlates) {
 			*end = gIndexVertices[index];
 		} else {
-			*end = sgCntVertices;
+			*end = gCntVertices;
 		}
 	} else {
 		*start = 0;
@@ -144,7 +152,7 @@ void setRoofColor(int x, int y, Color4 col)
 	setSquareColor(start, col);
 }
 
-#define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * sgCntVertices, (x), GL_STATIC_DRAW_ARB);
+#define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * gCntVertices, (x), GL_STATIC_DRAW_ARB);
 
 void initGameField(void)
 {
@@ -157,11 +165,20 @@ void initGameField(void)
 	int i;
 	int index = 0;
 
-	MALLOC(gIndexVertices, sgMaxPlates * sizeof(int));
-  MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
-  MALLOC(gColorMapCoords, sgMaxVertices * sizeof(Vector2));
-  MALLOC(gLightMapCoords, sgMaxVertices * sizeof(Vector2));
-	MALLOC(gColors, sgMaxVertices * sizeof(Color4));
+  /* init level stuff */
+	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	gMaxQuads = (1 + 4 * (MAX_LEVEL_HEIGHT + 1)) * gMaxPlates;
+	gMaxVertices = 4 * gMaxQuads;
+
+	MALLOC(sgVertices, gMaxVertices * sizeof(Vector3));
+	MALLOC(sgNormals, gMaxVertices * sizeof(Vector3));
+	MALLOC(gIndexVertices, gMaxPlates * sizeof(int));
+  MALLOC(gTexCoords, gMaxVertices * sizeof(Vector2));
+  MALLOC(gColorMapCoords, gMaxVertices * sizeof(Vector2));
+  MALLOC(gLightMapCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gColors, gMaxVertices * sizeof(Color4));
+
+	gCntVertices = 0;
 
 	setColor(white);
 
@@ -169,7 +186,7 @@ void initGameField(void)
 		for (x = 0; x < sgLevel.size.x; x++) {
 			Square square;
 
-			gIndexVertices[index++] = sgCntVertices;
+			gIndexVertices[index++] = gCntVertices;
 
 			getRoofSquare(x, y, &square);
 
@@ -215,22 +232,25 @@ void initGameField(void)
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
-	printf("sgMaxVertices: %d\n", sgMaxVertices);
-	printf("sgCntVertices: %d\n", sgCntVertices);
+	printf("gMaxVertices: %d\n", gMaxVertices);
+	printf("gCntVertices: %d\n", gCntVertices);
 
 	gCntIndices = 0;
-	MALLOC(gIndices, sgCntVertices * sizeof(int));
-	MALLOC(gBallReflectionIndices, sgCntVertices * sizeof(int));
+	MALLOC(gIndices, gCntVertices * sizeof(int));
+	MALLOC(gBallReflectionIndices, gCntVertices * sizeof(int));
 
 	if (hasSpotlight())
 	{
 		gCntSpotlightIndices = 0;
-		MALLOC(gSpotlightIndices, sgCntVertices * sizeof(int));
+		MALLOC(gSpotlightIndices, gCntVertices * sizeof(int));
 	}
 }
 
 void destroyGameField(void)
 {
+	FREE(sgVertices);
+	FREE(sgNormals);
+
 	if (hasSpotlight())
 	{
   	FREE(gSpotlightIndices);

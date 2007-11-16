@@ -25,77 +25,10 @@
 #define NOISE_TEXTURE 0
 
 #define MAX_LEVEL_SIZE 100
-#define MAX_LEVEL_HEIGHT 10
-#define HEIGHT_STEPS 10
-
-typedef struct
-{
-	Vector3 normal;
-	Vector2 colormap[4];
-	Vector2 lightmap[4];
-	Vector2 texcoord[4];
-	Vector3 vertices[4];
-
-	float area;
-	Vector3 mid;
-} Square;
-
-typedef struct
-{
-	int cntSquares;
-	Square squares[MAX_LEVEL_HEIGHT + 2];
-
-	float bottom;
-	float top;
-} SideFace;
-
-typedef struct
-{
-	int z;
-	int dzx;
-	int dzy;
-
-	int dirty;
-	Square roof;
-
-	SideFace sideFaces[4];
-} Plate;
-
-typedef struct
-{
-	int x;
-	int y;
-} FieldCoord;
-
-typedef struct
-{
-	Plate** field;
-	FieldCoord start;
-	FieldCoord finish;
-	FieldCoord size;
-	unsigned int borderTexture;
-	unsigned int colorMap;
-	unsigned int lightMap;
-
-	int waiting;
-} Level;
-
-extern Level sgLevel;
-
-extern int sgMaxPlates;
-extern int sgMaxQuads;
-extern int sgMaxVertices;
-
-extern int sgCntVertices;
-extern Vector3* sgVertices;
-extern Vector3* sgNormals;
-
-extern Vector3 sgForward;
-extern Vector3 sgRight;
 
 extern float sgIdleProgress;
 
-void initAtlas(void);
+void createAtlas(void);
 void destroyAtlas(void);
 
 void updateLightMap(void);
@@ -108,14 +41,5 @@ void destroyCommon(void);
 void newLevel(void);
 int loadFieldFromFile(const char* filename);
 int saveFieldToFile(const char* filename);
-
-float approximation(const Vector3 position, const Vector3 normal);
-
-void getRoofSquare(int x, int y, Square* square);
-void getSideFace(int x, int y, int side, SideFace* face);
-
-float getMaxZValue(const Square* square);
-
-void getVertIndex(int x, int y, int* start, int* end);
 
 #endif

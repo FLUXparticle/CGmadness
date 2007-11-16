@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -24,7 +24,6 @@
 
 void loadNewLevel(void);
 int initGame(void);
-int initLevel(const char* filename);
 void resumeGame(void);
 void resetGame(void);
 

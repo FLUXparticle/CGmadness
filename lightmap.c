@@ -19,7 +19,7 @@
 
 #include "lightmap.h"
 
-#include "common.h"
+#include "level.h"
 
 #include "functions.h"
 

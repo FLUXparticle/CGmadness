@@ -22,6 +22,11 @@
 
 #include "color.h"
 
+#include "vector.h"
+
+extern Vector3* sgVertices;
+extern Vector3* sgNormals;
+
 void setSquareColor(int q, Color4 col);
 
 void initGameField(void);
@@ -30,5 +35,7 @@ void destroyGameField(void);
 void updateGameField(void);
 
 void drawGameField(int ballReflection);
+
+void getVertIndex(int x, int y, int* start, int* end);
 
 #endif

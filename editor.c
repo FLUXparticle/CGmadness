@@ -19,9 +19,10 @@
 
 #include "editor.h"
 
-#include "common.h"
 #include "editormenu.h"
 
+#include "level.h"
+#include "common.h"
 #include "callback.h"
 #include "camera.h"
 #include "keyboard.h"
@@ -85,7 +86,7 @@ void saveLevel(void) {
 	{
 		destroyAtlas();
 
-		initAtlas();
+		createAtlas();
 		updateLightMap();
 		gDirtyLightmaps = 0;
 	}
