@@ -45,7 +45,7 @@ MAINS   :=  $(shell $(PERL) mains.pl)
 DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  mains.pl modules.pl
-DOC     :=  license.txt cgm-editor-README.txt AUTHORS
+DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))
