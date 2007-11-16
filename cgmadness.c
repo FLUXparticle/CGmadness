@@ -20,6 +20,7 @@
 #include "callback.h"
 
 #include "main.h"
+#include "game.h"
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -77,6 +78,11 @@ int main(int argc, char* argv[])
 
 	if (!initMain()) {
 		return 1;
+	}
+	
+	if (argc > 1)
+	{
+		setHotSeatLevel(argv[1]);
 	}
 
   startKeyboard();

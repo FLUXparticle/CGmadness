@@ -76,6 +76,8 @@ static float gLongitude;
 
 static StringList gLevelNames;
 static int gNextLevelIndex;
+static const char* gHotSeatLevel;
+static int gInGame;
 
 #if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
@@ -97,6 +99,11 @@ void resumeGame(void) {
 #endif
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsGameRunning = 1;
+}
+
+void setHotSeatLevel(const char* filename)
+{
+	gHotSeatLevel = filename;
 }
 
 void updateGameCamera(float interval, Vector3 ball) {
@@ -304,48 +311,53 @@ static int startLevel(const char* filename) {
 	return 1;
 }
 
-static char* getNextLevelName(void)
+#if 0
+static const char* getNextLevelName(void)
 {
-	if (gNextLevelIndex < gLevelNames.count)
+	if (gHotSeatLevel)
 	{
-		char* name = gLevelNames.strings[gNextLevelIndex];
-		gNextLevelIndex++;
-		return name;
+		if (gInGame)
+		{
+			return NULL;
+		}
+		else
+		{
+			return gHotSeatLevel;
+		}
 	}
 	else
 	{
-		gNextLevelIndex = 0;
-		return NULL;
+		if (gNextLevelIndex < gLevelNames.count)
+		{
+			char* name = gLevelNames.strings[gNextLevelIndex];
+			gNextLevelIndex++;
+			return name;
+		}
+		else
+		{
+			gNextLevelIndex = 0;
+			return NULL;
+		}
+	}
+}
+#endif
+
+void loadNewLevel(void) {
+	if (startLevel(gHotSeatLevel)) {
+		pauseGame();
+		showGameMenu(0);
+		gInGame = 1;
+		resetBall();
+	} else {
+		exit(1);
 	}
 }
 
-void loadNewLevel(void) {
-	char* nextLevelname = getNextLevelName();
-
-	if (!nextLevelname)
-	{
-		setMainState(STATE_MAIN);
-	}
-	else
-	{
-#if 0
-		glDeleteTextures(1, &sgLevel.lightMap);
-#if (NOISE_TEXTURE)
-		glDeleteTextures(1, &sgLevel.colorMap);
-#endif
-	
-		destroyGameField();
-		destroyLevel();
-#endif
-		if (startLevel(nextLevelname)) {
-			pauseGame();
-			showGameMenu(0);
-			showGameMenu(2);
-			resetBall();
-		} else {
-			exit(1);
-		}
-	}
+void gotoNextLevel(void)
+{
+	pauseGame();
+	showGameMenu(3);
+	gInGame = 0;
 }
 
 void resetGame(void) {
@@ -383,6 +395,8 @@ int initGame(void) {
 	
 	loadStringList(&gLevelNames, "levels/default.lev");
 	gNextLevelIndex = 0;
+	gHotSeatLevel = NULL;
+	gInGame = 0;
 
 #if 0
 	/* level (must be after menu) */

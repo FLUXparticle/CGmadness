@@ -22,7 +22,9 @@
 
 #define MOUSE_CONTROL 0
 
-void loadNewLevel(void);
+void setHotSeatLevel(const char* filename);
+
+void gotoNextLevel(void);
 int initGame(void);
 void resumeGame(void);
 void resetGame(void);
