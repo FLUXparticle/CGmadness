@@ -26,6 +26,8 @@
 #include "keyboard.h"
 #include "mouse.h"
 
+#define GLUT_DISABLE_ATEXIT_HACK
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 
