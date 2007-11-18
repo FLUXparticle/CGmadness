@@ -839,14 +839,11 @@ int loadFieldFromFile(const char* filename)
 				{
 					readRLE(file, tmp[i]);
 				}
-#if 1
+
 				for (x = 0; x < sgLevel.size.x; x++)
 				{
 					for (y = 0; y < sgLevel.size.y; y++)
 					{
-/*						static const int order[] = { 1, 3, 0, 2 }; */
-/*						static const int order[] = { 2, 0, 1, 3 }; */
-						
 						toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
 
 						for (side = 0; side < 4; side++)
@@ -883,7 +880,7 @@ int loadFieldFromFile(const char* filename)
 						}
 					}
 				}
-#endif
+
 				FREE(tmp);
 			}
 
