@@ -54,6 +54,8 @@ static Vector2* gLightMapCoords;
 static Color4* gColors;
 static unsigned int gVBuffers[6];
 
+static GLuint gWhiteTexture; 
+
 static int gCntIndices = 0;
 static int* gIndices;
 
@@ -156,6 +158,11 @@ void initGameField(void)
 	int y;
 	int i;
 	int index = 0;
+	
+	glGenTextures(1, &gWhiteTexture);
+	
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 1, 1, 0, GL_LUMINANCE, GL_FLOAT, &white.r);
 
 	MALLOC(gIndexVertices, sgMaxPlates * sizeof(int));
   MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
@@ -410,18 +417,22 @@ void drawGameField(int ballReflection)
 	}
 
   glActiveTexture(GL_TEXTURE0);
-#if (NOISE_TEXTURE)
   glEnable(GL_TEXTURE_2D);
+#if (NOISE_TEXTURE)
 	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
 #else
-  glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
 #endif
 
+  glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
 	if (useShadows())
 	{
-	  glActiveTexture(GL_TEXTURE1);
-		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
 	}
 
   glActiveTexture(GL_TEXTURE2);
