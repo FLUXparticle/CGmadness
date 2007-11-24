@@ -68,6 +68,7 @@ static char* gFilename;
 
 static Vector3 gEditorMenuPosition;
 
+static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
 void pauseEditor(void) {
@@ -83,8 +84,10 @@ void resumeEditor(void) {
 void saveLevel(void) {
 	if (gDirtyLightmaps)
 	{
+		destroyAtlas();
+
+		initAtlas();
 		updateLightMap();
-		lightMapToTexture(sgLevel.lightMap);
 		gDirtyLightmaps = 0;
 	}
 
@@ -169,15 +172,24 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 				p->dzy = dzy;
 			}
 
-			p->dirty = 1;
-
 			incy += 2 * incdzy;
 		}
 
 		incx += 2 * incdzx;
 	}
 
+	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	{
+		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		{
+			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
+			{
+				sgLevel.field[x][y].dirty = 1;
+			}
+		}
+	}
 	gDirtyLightmaps = 1;
+	gDirtyTexCoords = 1;
 }
 
 void modBetween(int* value, int mod, int min, int max) {
@@ -316,6 +328,12 @@ void updateEditor(float interval) {
 
 		updateEditorCamera(interval, markerPos);
 		animateEditor(interval);
+		
+		if (gDirtyTexCoords)
+		{
+			updateTexCoords();
+			gDirtyTexCoords = 0;
+		}
 	}
 	else
 	{
@@ -340,13 +358,11 @@ void drawEditorField(void) {
 	FieldCoord cur;
 	Square square;
 
-	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
 		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
 		{
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
@@ -374,8 +390,7 @@ void drawEditorField(void) {
 				glBegin(GL_QUADS);
 					glNormal3fv(&square.normal.x);
 					for (i = 0; i < 4; i++) {
-						glMultiTexCoord2fv(GL_TEXTURE0, &square.colormap[i].x);
-						glMultiTexCoord2fv(GL_TEXTURE1, &square.lightmap[i].x);
+						glTexCoord2fv(&square.texcoord[i].x);
 						glVertex3fv(&square.vertices[i].x);
 					}
 				glEnd();
@@ -392,8 +407,7 @@ void drawEditorField(void) {
 						for (k = 0; k < face.cntSquares; k++) {
 							glNormal3fv(&face.squares[k].normal.x);
 							for (i = 0; i < 4; i++) {
-								glMultiTexCoord2fv(GL_TEXTURE0, &face.squares[k].colormap[i].x);
-								glMultiTexCoord2fv(GL_TEXTURE1, &face.squares[k].lightmap[i].x);
+								glTexCoord2fv(&face.squares[k].texcoord[i].x);
 								glVertex3fv(&face.squares[k].vertices[i].x);
 							}
 						}
@@ -402,10 +416,9 @@ void drawEditorField(void) {
 			}
 		}
 
-		glDisable(GL_TEXTURE_2D);
-
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_LIGHTING);
 
 #if (DRAW_DEBUG_LINES)
 	glBegin(GL_LINES);
@@ -449,14 +462,16 @@ int initEditor(char* filename)
 		}
 	}
 
-	if (sgLevel.colorMap == 0)
+	if (sgLevel.borderTexture == 0)
 	{
-		sgLevel.colorMap = loadTexture("data/plate.tga", 1);
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
 	}
 
-	sgLevel.lightMap = genTexture();
-	lightMapToTexture(sgLevel.lightMap);
+	sgLevel.lightMap = 0;
 	gDirtyLightmaps = 0;
+
+	updateTexCoords();
+	gDirtyTexCoords = 0;
 
 	sgWindowViewport.draw = drawEditor;
 	sgWindowViewport.pick = pickEditor;

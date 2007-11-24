@@ -22,6 +22,8 @@
 
 #include "vector.h"
 
+#define NOISE_TEXTURE 0
+
 #define MAX_LEVEL_SIZE 100
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
@@ -90,8 +92,11 @@ extern Vector3 sgForward;
 extern Vector3 sgRight;
 
 void initAtlas(void);
+void destroyAtlas(void);
+
 void updateLightMap(void);
 void updateColorMap(void);
+void updateTexCoords(void);
 
 void initCommon(void);
 void destroyCommon(void);

@@ -43,7 +43,7 @@
 # define CAMERA_MOVE_TIME_CONSTANT 5.0f
 #endif
 
-#define THIS_CGM_VERSION 2
+#define THIS_CGM_VERSION 3
 
 #define BOTTOM -0.0f
 
@@ -485,19 +485,24 @@ void updateTexCoords(void)
 			Square* square = &p->roof;
 
 			int i;
+			
+			updatePlate(x, y);
 
 			for (i = 0; i < 4; i++)
 			{
-				square->texcoord[i].x = gEdgeX[i];
-				square->texcoord[i].y = gEdgeY[i];
-
-				square->lightmap[i].x = a * gEdgeX[i] + b;
-				square->lightmap[i].y = a * gEdgeY[i] + b;
-				square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
-
-				square->colormap[i].x = c * gEdgeX[i] + d;
-				square->colormap[i].y = c * gEdgeY[i] + d;
-				square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
+				square->texcoord[i].x = gEdgeX[i] * (int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
+				square->texcoord[i].y = gEdgeY[i] * (int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
+				
+				if (sgLevel.lightMap)
+				{
+					square->lightmap[i].x = a * gEdgeX[i] + b;
+					square->lightmap[i].y = a * gEdgeY[i] + b;
+					square->lightmap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
+	
+					square->colormap[i].x = c * gEdgeX[i] + d;
+					square->colormap[i].y = c * gEdgeY[i] + d;
+					square->colormap[i] = transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
+				}
 			}
 		}
 	}
@@ -540,13 +545,16 @@ void updateTexCoords(void)
 						square->texcoord[i].x = txy;
 						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z;
 
-						square->lightmap[i].x = a * txy + b;
-						square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
-						square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
-
-						square->colormap[i].x = c * txy + d;
-						square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
-						square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
+						if (sgLevel.lightMap)
+						{
+							square->lightmap[i].x = a * txy + b;
+							square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
+							square->lightmap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->lightmap[i]);
+	
+							square->colormap[i].x = c * txy + d;
+							square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
+							square->colormap[i] = transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side], square->colormap[i]);
+						}
 					}
 				}
 			}
@@ -645,6 +653,65 @@ void readFieldPlate(FILE* file, Plate* plate)
 	plate->dzy = readInt(file);
 }
 
+void readRLEInt(FILE* file, int* repeat, int* value) {
+	int i;
+	
+	if (fscanf(file, "%ix%i", repeat, value) < 2)
+	{
+		*value = *repeat;
+		*repeat = 1;
+	}
+
+	for (i = 0; i < *repeat; i++)
+	{
+		nextByte(*value);
+	}
+}
+
+void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
+{
+	int s = 0;
+	int i;
+	
+	while (s < SIZEOF_LIGHT_MAP)
+	{
+		int repeat;
+		int value;
+		
+		readRLEInt(file, &repeat, &value);
+		
+		for (i = 0; i < repeat; i++)
+		{
+			data[s + i] = value;
+		}
+		
+		s += repeat;
+	}
+}
+
+void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
+{
+	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
+	int i;
+
+	if (flip)
+	{
+		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		{
+			dataFloat[i + LIGHT_MAP_SIZE - 1 - 2 * (i % LIGHT_MAP_SIZE)] = (float) dataInt[i] / 255;
+		}
+	}
+	else
+	{
+		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		{
+			dataFloat[i] = (float) dataInt[i] / 255;
+		}
+	}
+
+	setSubLightMap(index, dataFloat);
+}
+
 int loadFieldFromFile(const char* filename)
 {
 	FILE* file = fopen(filename, "rt");
@@ -732,20 +799,89 @@ int loadFieldFromFile(const char* filename)
 		{
 			int cntSubLightMaps = getCntAllocatedSubLightMaps();
 
-			int i;
-			int j;
-
-			for (i = 0; i < cntSubLightMaps; i++)
+			int index = 0;
+			
+			if (version >= 3)
 			{
-				GLfloat data[SIZEOF_LIGHT_MAP];
-
-				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
+				while (index < cntSubLightMaps)
 				{
-					int value = readInt(file);
-					data[j] = (float) value / 255;
+					int dataInt[SIZEOF_LIGHT_MAP];
+					
+					readRLE(file, dataInt);
+					
+					toLightMap(index, 0, dataInt);
+					
+					index++;
+				}
+			}
+			else
+			{
+				const int start = sgLevel.size.x * sgLevel.size.y;
+				const int cntTmpSubMaps = start + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				
+				int index = 0;
+				
+				typedef int LightMap[SIZEOF_LIGHT_MAP];
+				LightMap* tmp;
+				int i;
+				
+				int starts[4];
+				int side;
+				
+				starts[0] = start + 2 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				starts[1] = start;
+				starts[2] = starts[0] + sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1);
+				starts[3] = starts[1] + sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				
+				MALLOC(tmp, cntTmpSubMaps * sizeof(*tmp));
+				
+				for (i = 0; i < cntTmpSubMaps; i++)
+				{
+					readRLE(file, tmp[i]);
 				}
 
-				setSubLightMap(i, data);
+				for (x = 0; x < sgLevel.size.x; x++)
+				{
+					for (y = 0; y < sgLevel.size.y; y++)
+					{
+						toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
+
+						for (side = 0; side < 4; side++)
+						{
+							int bottom = 0;
+							int top = 0;
+
+							SideFace face;
+							
+							getSideFace(x, y, side, &face);
+							
+							if (face.cntSquares > 0)
+							{
+								bottom = (int) floor(face.bottom);
+								top = (int) ceil(face.top);
+							}
+							
+							if (side % 2 == 0)
+							{
+								int j;
+								for (j = bottom; j < top; j++)
+								{									
+									toLightMap(index++, side / 2, tmp[starts[side] + y * 2 * sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.x + x]);
+								}
+							}
+							else
+							{
+								int j;
+								for (j = bottom; j < top; j++)
+								{									
+									toLightMap(index++, side / 2, tmp[starts[side] + x * 2 * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.y + y]);
+								}
+							}
+						}
+					}
+				}
+
+				FREE(tmp);
 			}
 
 			fscanf(file, "%x\n", &crc32);
@@ -763,8 +899,6 @@ int loadFieldFromFile(const char* filename)
 	}
 
 	fclose(file);
-
-	updateTexCoords();
 
 	return result;
 }
@@ -787,6 +921,47 @@ void writeFieldPlate(FILE* file, const Plate* plate) {
 	writeInt(file, plate->dzx);
 	fputc(' ', file);
 	writeInt(file, plate->dzy);
+	fputc('\n', file);
+}
+
+void writeRLEInt(FILE* file, int repeat, int value) {
+	int i;
+	
+	if (repeat > 1)
+	{
+		fprintf(file, "%ix%i", repeat, value);
+	}
+	else
+	{
+		fprintf(file, "%i", value);
+	}
+	
+	for (i = 0; i < repeat; i++)
+	{
+		nextByte(value);
+	}
+}
+
+void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
+{
+	int s = 0;
+	int l = 1;
+	
+	while (s < SIZEOF_LIGHT_MAP)
+	{
+		if (s + l < SIZEOF_LIGHT_MAP && data[s] == data[s + l])
+		{
+			l++;
+		}
+		else
+		{
+			writeRLEInt(file, l, data[s]);
+			
+			fputc(' ', file);
+			s += l;
+			l = 1;
+		}
+	}
 	fputc('\n', file);
 }
 
@@ -824,16 +999,17 @@ int saveFieldToFile(const char* filename) {
 
 		for (i = 0; i < cntSubLightMaps; i++)
 		{
-			GLfloat data[SIZEOF_LIGHT_MAP];
+			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
+			int dataInt[SIZEOF_LIGHT_MAP];
 
-			getSubLightMap(i, data);
+			getSubLightMap(i, dataFloat);
 
 			for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
 			{
-				writeInt(file, (int) (clamp(data[j], 0.0f, 1.0f) * 255));
-				fputc(' ', file);
+				dataInt[j] = (int) (clamp(dataFloat[j], 0.0f, 1.0f) * 255);
 			}
-			fputc('\n', file);
+			
+			writeRLE(file, dataInt);
 		}
 
 		fprintf(file, "%08X\n", getCRC32());

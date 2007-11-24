@@ -26,6 +26,9 @@
 #include "keyboard.h"
 #include "mouse.h"
 
+#define GLUT_DISABLE_ATEXIT_HACK
+
+#include <GL/glew.h>
 #include <GL/glut.h>
 
 #include <stdio.h>
@@ -79,6 +82,10 @@ int main(int argc, char* argv[]) {
 	}
 
   glutFullScreen();
+
+	/* ---- */
+
+	glewInit();
 
 	/* ---- */
 

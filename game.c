@@ -217,16 +217,24 @@ int initLevel(const char* filename) {
 	}
 
 	if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
 		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
 	}
 
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
+	updateTexCoords();
+
+#if (NOISE_TEXTURE)
 	updateColorMap();
 
 	sgLevel.colorMap = genTexture();
 	colorMapToTexture(sgLevel.colorMap);
+#endif
 
 	initGameField();
 
@@ -247,7 +255,9 @@ int initLevel(const char* filename) {
 
 void destroyLevel(void) {
 	glDeleteTextures(1, &sgLevel.lightMap);
+#if (NOISE_TEXTURE)
 	glDeleteTextures(1, &sgLevel.colorMap);
+#endif
 
 	destroyGameField();
 	destroyCommon();

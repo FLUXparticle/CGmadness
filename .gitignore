@@ -1,3 +1,5 @@
+*.tar.bz2
+*.zip
+*.dll
+
 .deps
-glew32.dll
-glut32.dll
