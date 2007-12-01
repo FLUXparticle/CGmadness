@@ -721,6 +721,7 @@ int loadFieldFromFile(const char* filename)
 	FieldCoord fileCoords;
 	unsigned int version;
 	unsigned int crc32;
+	int resize = 1;
 
 	if (!file)
 	{
@@ -748,6 +749,7 @@ int loadFieldFromFile(const char* filename)
 	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
 	{
 		sgLevel.size = fileCoords;
+		resize = 0;
 	}
 
 	allocLevelDataMemory();
@@ -786,7 +788,7 @@ int loadFieldFromFile(const char* filename)
 
 	initAtlas();
 
-	if (version >= 2)
+	if (version >= 2 && !resize)
 	{
 		fscanf(file, "%x\n", &crc32);
 
