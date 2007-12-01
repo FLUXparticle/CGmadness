@@ -65,10 +65,9 @@ static int gIsGameRunning;
 
 static float gGameTime;
 
-#if (MOUSE_CONTROL)
 static int gDragX = 0;
 static int gDragY = 0;
-#endif
+int sgIsMouseControl = 0;
 
 static float gDistance;
 static float gLatitude;
@@ -76,27 +75,31 @@ static float gLongitude;
 
 static StringList gLevelNames;
 static int gNextLevelIndex;
+static const char* gHotSeatLevel = NULL;
 
-#if (MOUSE_CONTROL)
 void gameDrag(int dx, int dy) {
 	gDragX += dx;
 	gDragY += dy;
 }
-#endif
 
 void pauseGame(void) {
-#if (MOUSE_CONTROL)
 	setDragFunc(NULL);
-#endif
 	gIsGameRunning = 0;
 }
 
 void resumeGame(void) {
-#if (MOUSE_CONTROL)
-	setDragFunc(gameDrag);
-#endif
+	if (sgIsMouseControl)
+	{
+		setDragFunc(gameDrag);
+	}
+	
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsGameRunning = 1;
+}
+
+void setHotSeatLevel(const char* filename)
+{
+	gHotSeatLevel = filename;
 }
 
 void updateGameCamera(float interval, Vector3 ball) {
@@ -106,27 +109,30 @@ void updateGameCamera(float interval, Vector3 ball) {
 
   /* game controls for camera */
 
-#if (MOUSE_CONTROL)
-	gLongitude -= 5.0f * interval * gDragX;
-	gLatitude += 5.0f * interval * gDragY;
-
-	gDragX = 0;
-	gDragY = 0;
-#else
-	/* zoom */
-	if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
-	if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
-
-	/* rotation */
-	if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
-	if (isKeyPressed('d')) gLongitude += 120.0f * interval;
-
-	/* height */
-	if (isKeyPressed('w')) gLatitude += 120.0f * interval;
-	if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
-
-	gLatitude = clamp(gLatitude, -89.0f, 89.0f);
-#endif
+	if (sgIsMouseControl)
+	{
+		gLongitude -= 5.0f * interval * gDragX;
+		gLatitude += 5.0f * interval * gDragY;
+	
+		gDragX = 0;
+		gDragY = 0;
+	}
+	else
+	{
+		/* zoom */
+		if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
+		if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
+	
+		/* rotation */
+		if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
+		if (isKeyPressed('d')) gLongitude += 120.0f * interval;
+	
+		/* height */
+		if (isKeyPressed('w')) gLatitude += 120.0f * interval;
+		if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
+	
+		gLatitude = clamp(gLatitude, -89.0f, 89.0f);
+	}
 
 	dest.x = ball.x + gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
 	dest.y = ball.y - gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
@@ -134,9 +140,10 @@ void updateGameCamera(float interval, Vector3 ball) {
 
 	moveCamera(interval, dest, ball);
 
-#if (MOUSE_CONTROL)
-	sgCamera = dest;
-#endif
+	if (sgIsMouseControl)
+	{
+		sgCamera = dest;
+	}
 
 	diff = sub(sgLookat, sgCamera);
 	diff.z = 0.0f;
@@ -171,6 +178,13 @@ void updateGame(float interval) {
 
 		if (wasFunctionPressed(3)) {
 			setReflection(!useReflection());
+		}
+		
+		if (wasFunctionPressed(5))
+		{
+			pauseGame();
+			sgIsMouseControl = !sgIsMouseControl;
+			resumeGame();
 		}
 
 		updateBall(interval);
@@ -304,56 +318,57 @@ static int startLevel(const char* filename) {
 	return 1;
 }
 
-static char* getNextLevelName(void)
+#if 0
+static const char* getNextLevelName(void)
 {
-	if (gNextLevelIndex < gLevelNames.count)
+	if (gHotSeatLevel)
 	{
-		char* name = gLevelNames.strings[gNextLevelIndex];
-		gNextLevelIndex++;
-		return name;
+		if (gInGame)
+		{
+			return NULL;
+		}
+		else
+		{
+			return gHotSeatLevel;
+		}
 	}
 	else
 	{
-		gNextLevelIndex = 0;
-		return NULL;
-	}
-}
-
-void loadNewLevel(void) {
-	char* nextLevelname = getNextLevelName();
-
-	pauseGame();
-	
-	if (!nextLevelname)
-	{
-		setMainState(STATE_MAIN);
-	}
-	else
-	{
-		if (startLevel(nextLevelname)) {
-			showGameMenu(0);
-			showGameMenu(2);
-			resetBall();
-		} else {
-			exit(1);
+		if (gNextLevelIndex < gLevelNames.count)
+		{
+			char* name = gLevelNames.strings[gNextLevelIndex];
+			gNextLevelIndex++;
+			return name;
+		}
+		else
+		{
+			gNextLevelIndex = 0;
+			return NULL;
 		}
 	}
 }
-
-void nextLevel(void)
-{
-	glDeleteTextures(1, &sgLevel.lightMap);
-#if (NOISE_TEXTURE)
-	glDeleteTextures(1, &sgLevel.colorMap);
 #endif
 
-	destroyGameField();
-	destroyLevel();
-	
-	loadNewLevel();
+void loadNewLevel(void) {
+	if (startLevel(gHotSeatLevel)) {
+		pauseGame();
+		showGameMenu(0);
+		resetBall();
+	} else {
+		exit(1);
+	}
+}
+
+void gotoNextLevel(void)
+{
+	pauseGame();
+	showGameMenu(3);
 }
 
 void resetGame(void) {
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
+	
 	loadNewLevel();
 	updateGameField();
 #if 0

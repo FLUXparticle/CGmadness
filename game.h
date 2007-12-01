@@ -20,13 +20,14 @@
 #ifndef _game_h_
 #define _game_h_
 
-#define MOUSE_CONTROL 0
+extern int sgIsMouseControl;
 
 int initGame(void);
 void resumeGame(void);
 void resetGame(void);
 
-void nextLevel(void);
+void setHotSeatLevel(const char* filename);
+void gotoNextLevel(void);
 
 void resetGameTime(void);
 

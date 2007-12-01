@@ -75,7 +75,14 @@ static void clickButtonAgain(void)
 	resetGame();
 }
 
-static void clickButtonContinue(void)
+static void clickButtonStart(void)
+{
+	popAllScreens();
+	resetBall();
+	resumeGame();
+}
+
+static void clickButtonResume(void)
 {
 	popAllScreens();
 	resumeGame();
@@ -193,8 +200,8 @@ void initGameMenu() {
 	 */
 
 	/* main menu */
-	initButton(&bStart, 6.0f, clickButtonContinue, "Start", KEY_ENTER);
-	initButton(&bResume, 6.0f, clickButtonContinue, "Resume", KEY_ENTER);
+	initButton(&bStart, 6.0f, clickButtonStart, "Start", KEY_ENTER);
+	initButton(&bResume, 6.0f, clickButtonResume, "Resume", KEY_ENTER);
 
 	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, drawMenuBall, changeBallEdit);
 
@@ -208,7 +215,7 @@ void initGameMenu() {
 	INIT_SCREEN(&gScreenMain2, itemsMain2);
 
 	/* next level menu */
-	initButton(&bContinue, 5.5f, clickButtonContinue, "Continue", KEY_ENTER);
+	initButton(&bContinue, 5.5f, clickButtonResume, "Continue", KEY_ENTER);
 	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu", KEY_ESC);
 
 	INIT_SCREEN(&gScreenNext, itemsNext);

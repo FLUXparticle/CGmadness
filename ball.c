@@ -343,47 +343,50 @@ void animateBall(float interval)
 	Vector3 step;
 
 	/* ball controls */
-#if (MOUSE_CONTROL)
-	if (isKeyPressed('a'))
+	if (sgIsMouseControl)
 	{
-		force = sub(force, sgRight);
+		if (isKeyPressed('a'))
+		{
+			force = sub(force, sgRight);
+		}
+	
+		if (isKeyPressed('d'))
+		{
+			force = add(force, sgRight);
+		}
+	
+		if (isKeyPressed('s'))
+		{
+			force = sub(force, sgForward);
+		}
+	
+		if (isKeyPressed('w'))
+		{
+			force = add(force, sgForward);
+		}
 	}
-
-	if (isKeyPressed('d'))
+	else
 	{
-		force = add(force, sgRight);
+		if (isCursorPressed(CURSOR_LEFT))
+		{
+			force = sub(force, sgRight);
+		}
+	
+		if (isCursorPressed(CURSOR_RIGHT))
+		{
+			force = add(force, sgRight);
+		}
+	
+		if (isCursorPressed(CURSOR_DOWN))
+		{
+			force = sub(force, sgForward);
+		}
+	
+		if (isCursorPressed(CURSOR_UP))
+		{
+			force = add(force, sgForward);
+		}
 	}
-
-	if (isKeyPressed('s'))
-	{
-		force = sub(force, sgForward);
-	}
-
-	if (isKeyPressed('w'))
-	{
-		force = add(force, sgForward);
-	}
-#else
-	if (isCursorPressed(CURSOR_LEFT))
-	{
-		force = sub(force, sgRight);
-	}
-
-	if (isCursorPressed(CURSOR_RIGHT))
-	{
-		force = add(force, sgRight);
-	}
-
-	if (isCursorPressed(CURSOR_DOWN))
-	{
-		force = sub(force, sgForward);
-	}
-
-	if (isCursorPressed(CURSOR_UP))
-	{
-		force = add(force, sgForward);
-	}
-#endif
 
 	force = norm(force);
 
@@ -467,7 +470,7 @@ void animateBall(float interval)
 		else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y)
 		{
 			/* reached finish quad */
-			nextLevel();
+			gotoNextLevel();
 		}
 		else
 		{

@@ -21,6 +21,7 @@
 
 #include "main.h"
 #include "level.h"
+#include "game.h"
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -35,8 +36,15 @@
 #include <GL/glut.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define FRAMES_PER_SECOND 60
+
+static void usage(void)
+{
+	printf("cgmadness [hotseat-mode]\n");
+	printf("usage: cgmadness <cgm-file>\n");
+}
 
 int main(int argc, char* argv[])
 {
@@ -46,6 +54,16 @@ int main(int argc, char* argv[])
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
+
+	if (argc > 1)
+	{
+		setHotSeatLevel(argv[1]);
+	}
+	else
+	{
+		usage();
+		exit(1);
+	}
 
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 
@@ -84,7 +102,7 @@ int main(int argc, char* argv[])
 	if (!initMain()) {
 		return 1;
 	}
-
+	
   startKeyboard();
   startMouse();
 
