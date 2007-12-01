@@ -322,23 +322,15 @@ static char* getNextLevelName(void)
 void loadNewLevel(void) {
 	char* nextLevelname = getNextLevelName();
 
+	pauseGame();
+	
 	if (!nextLevelname)
 	{
 		setMainState(STATE_MAIN);
 	}
 	else
 	{
-#if 0
-		glDeleteTextures(1, &sgLevel.lightMap);
-#if (NOISE_TEXTURE)
-		glDeleteTextures(1, &sgLevel.colorMap);
-#endif
-	
-		destroyGameField();
-		destroyLevel();
-#endif
 		if (startLevel(nextLevelname)) {
-			pauseGame();
 			showGameMenu(0);
 			showGameMenu(2);
 			resetBall();
@@ -346,6 +338,19 @@ void loadNewLevel(void) {
 			exit(1);
 		}
 	}
+}
+
+void nextLevel(void)
+{
+	glDeleteTextures(1, &sgLevel.lightMap);
+#if (NOISE_TEXTURE)
+	glDeleteTextures(1, &sgLevel.colorMap);
+#endif
+
+	destroyGameField();
+	destroyLevel();
+	
+	loadNewLevel();
 }
 
 void resetGame(void) {

@@ -83,7 +83,7 @@ void initAtlas(int cntSubTextures)
 		int i;
 		for (i = 0; i < gLightMapSizeX * gLightMapSizeY; i++)
 		{
-			gLightMapData[i] = 0.0f;
+			gLightMapData[i] = i & 1;
 		}
 	}
 #endif

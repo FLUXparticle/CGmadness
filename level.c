@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define THIS_CGM_VERSION 3
 
@@ -354,14 +355,39 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 	}
 }
 
+void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
+{
+	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
+	int i;
+
+	if (flip)
+	{
+		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		{
+			dataFloat[i + LIGHT_MAP_SIZE - 1 - 2 * (i % LIGHT_MAP_SIZE)] = (float) dataInt[i] / 255;
+		}
+	}
+	else
+	{
+		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		{
+			dataFloat[i] = (float) dataInt[i] / 255;
+		}
+	}
+
+	setSubLightMap(index, dataFloat);
+}
+
 int loadFieldFromFile(const char* filename)
 {
 	FILE* file = fopen(filename, "rt");
 	int result = 1;
 
 	int x, y;
+	FieldCoord fileCoords;
 	unsigned int version;
 	unsigned int crc32;
+	int resize = 1;
 
 	if (!file)
 	{
@@ -383,7 +409,14 @@ int loadFieldFromFile(const char* filename)
 	/* read attributes */
 	readFieldCoord(file, &sgLevel.start);
 	readFieldCoord(file, &sgLevel.finish);
-	readFieldCoord(file, &sgLevel.size);
+	readFieldCoord(file, &fileCoords);
+
+	/* read size from file, if not given through program parameters */
+	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
+	{
+		sgLevel.size = fileCoords;
+		resize = 0;
+	}
 
 	initLevel();
 
@@ -393,15 +426,35 @@ int loadFieldFromFile(const char* filename)
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
 			Plate* p = &sgLevel.field[x][y];
-			readFieldPlate(file, p);
+			if (x < fileCoords.x && y < fileCoords.y)
+			{
+				readFieldPlate(file, p);
+			}
+			else
+			{ /* growing */
+				p->z = 0;
+				p->dzx = 0;
+				p->dzy = 0;
+			}
 
 			p->dirty = 1;
+		}
+
+		/* shrinking */
+		if (fileCoords.y > sgLevel.size.y)
+		{
+			Plate dummyPlate;
+
+			for (y = sgLevel.size.y; y < fileCoords.y; y++)
+			{
+				readFieldPlate(file, &dummyPlate);
+			}
 		}
 	}
 
 	initCommon();
 
-	if (version >= 2)
+	if (version >= 2 && !resize)
 	{
 		fscanf(file, "%x\n", &crc32);
 
@@ -414,22 +467,89 @@ int loadFieldFromFile(const char* filename)
 		{
 			int cntSubLightMaps = getCntAllocatedSubLightMaps();
 
-			int i;
-			int j;
-
-			for (i = 0; i < cntSubLightMaps; i++)
+			int index = 0;
+			
+			if (version >= 3)
 			{
-				int dataInt[SIZEOF_LIGHT_MAP];
-				GLfloat dataFloat[SIZEOF_LIGHT_MAP];
-				
-				readRLE(file, dataInt);
-
-				for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
+				while (index < cntSubLightMaps)
 				{
-					dataFloat[j] = (float) dataInt[j] / 255;
+					int dataInt[SIZEOF_LIGHT_MAP];
+					
+					readRLE(file, dataInt);
+					
+					toLightMap(index, 0, dataInt);
+					
+					index++;
+				}
+			}
+			else
+			{
+				const int start = sgLevel.size.x * sgLevel.size.y;
+				const int cntTmpSubMaps = start + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				
+				int index = 0;
+				
+				typedef int LightMap[SIZEOF_LIGHT_MAP];
+				LightMap* tmp;
+				int i;
+				
+				int starts[4];
+				int side;
+				
+				starts[0] = start + 2 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				starts[1] = start;
+				starts[2] = starts[0] + sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1);
+				starts[3] = starts[1] + sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+				
+				MALLOC(tmp, cntTmpSubMaps * sizeof(*tmp));
+				
+				for (i = 0; i < cntTmpSubMaps; i++)
+				{
+					readRLE(file, tmp[i]);
 				}
 
-				setSubLightMap(i, dataFloat);
+				for (x = 0; x < sgLevel.size.x; x++)
+				{
+					for (y = 0; y < sgLevel.size.y; y++)
+					{
+						toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
+
+						for (side = 0; side < 4; side++)
+						{
+							int bottom = 0;
+							int top = 0;
+
+							SideFace face;
+							
+							getSideFace(x, y, side, &face);
+							
+							if (face.cntSquares > 0)
+							{
+								bottom = (int) floor(face.bottom);
+								top = (int) ceil(face.top);
+							}
+							
+							if (side % 2 == 0)
+							{
+								int j;
+								for (j = bottom; j < top; j++)
+								{									
+									toLightMap(index++, side / 2, tmp[starts[side] + y * 2 * sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.x + x]);
+								}
+							}
+							else
+							{
+								int j;
+								for (j = bottom; j < top; j++)
+								{									
+									toLightMap(index++, side / 2, tmp[starts[side] + x * 2 * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.y + y]);
+								}
+							}
+						}
+					}
+				}
+
+				FREE(tmp);
 			}
 
 			fscanf(file, "%x\n", &crc32);

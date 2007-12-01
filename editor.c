@@ -184,7 +184,10 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 	{
 		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
 		{
-			sgLevel.field[x][y].dirty = 1;
+			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
+			{
+				sgLevel.field[x][y].dirty = 1;
+			}
 		}
 	}
 	gDirtyLightmaps = 1;

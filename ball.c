@@ -467,7 +467,7 @@ void animateBall(float interval)
 		else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y)
 		{
 			/* reached finish quad */
-			loadNewLevel();
+			nextLevel();
 		}
 		else
 		{

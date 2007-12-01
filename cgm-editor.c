@@ -19,15 +19,12 @@
 
 #include "callback.h"
 
-#include "main.h"
+#include "editor.h"
 #include "level.h"
-
 #include "keyboard.h"
 #include "mouse.h"
 
 #include "tools.h"
-
-#include "features.h"
 
 #define GLUT_DISABLE_ATEXIT_HACK
 
@@ -35,11 +32,19 @@
 #include <GL/glut.h>
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define FRAMES_PER_SECOND 60
 
-int main(int argc, char* argv[])
-{
+void usage(void) {
+	printf("usage: cgm-editor <cgm-file> [--size x y]\n");
+}
+
+int main(int argc, char* argv[]) {
+	char* file = NULL;
+	int i;
+
 	message();
 
 	assurePath(argv[0]);
@@ -47,14 +52,32 @@ int main(int argc, char* argv[])
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
+	/* read parameters */
+	for (i = 1; i < argc; ) {
+		if (strcmp(argv[i], "--size") == 0 && i + 2 < argc) {
+			i++;
+			sgLevel.size.x = atoi(argv[i++]);
+			sgLevel.size.y = atoi(argv[i++]);
+		} else {
+			file = argv[i++];
+		}
+	}
+
+	if (!file) {
+		usage();
+		return 1;
+	}
+
+	/* --- */
+
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_ALPHA | GLUT_DEPTH | GLUT_STENCIL);
 
   glutInitWindowSize(700, 500);
   glutInitWindowPosition(0, 0);
 
   glutInit(&argc, argv);
 
-  if (!glutCreateWindow("CG Madness")) {
+  if (!glutCreateWindow("CGM-Editor")) {
 		printf("Could not create window :(\n");
     return 1;
 	}
@@ -65,12 +88,9 @@ int main(int argc, char* argv[])
 
 	glewInit();
 
-	initFeatures(argc, argv);
-
 	/* ---- */
 
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClearStencil(0);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -81,15 +101,17 @@ int main(int argc, char* argv[])
 
 	/* ---- */
 
-	if (!initMain()) {
+  if (!initEditor(file)) {
 		return 1;
 	}
 
   startKeyboard();
+
   startMouse();
 
-  startTimer(FRAMES_PER_SECOND);
   startDisplay();
+
+  startTimer(FRAMES_PER_SECOND);
 
   glutMainLoop();
 
