@@ -30,6 +30,6 @@ void updateEditorScreen(float interval);
 
 void setEditorScreenPosition(Vector3 pos);
 
-void drawEditorScreen(void);
+void drawEditorMenu(void);
 
 #endif

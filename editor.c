@@ -440,7 +440,7 @@ void drawEditor(void) {
 	drawEditorField();
 
 	if (!gIsEditorRunning)	{
-		drawEditorScreen();
+		drawMenuManager();
 	}
 }
 

@@ -66,6 +66,7 @@ static Vector3 gEditorScreenPosition;
 /* events */
 
 static void clickButtonEdit(void) {
+	popAllScreens();
 	resumeEditor();
 }
 
@@ -131,7 +132,7 @@ void setEditorScreenPosition(Vector3 pos) {
 #endif
 }
 
-void drawEditorScreen(void) {
+void drawEditorMenu(void) {
 #if 0
 	glEnable(GL_LIGHTING);
 
