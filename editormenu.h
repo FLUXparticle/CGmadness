@@ -22,7 +22,7 @@
 
 #include "vector.h"
 
-void initEditorScreen(void);
+void initEditorMenu(void);
 
 void showEditorScreen(int menu);
 

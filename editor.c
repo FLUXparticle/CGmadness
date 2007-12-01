@@ -20,6 +20,7 @@
 #include "editor.h"
 
 #include "editormenu.h"
+#include "menumanager.h"
 
 #include "level.h"
 #include "callback.h"
@@ -447,9 +448,7 @@ void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent e
 {
 	if (!gIsEditorRunning)
 	{
-		/*
-		 * TODO pass event to menu
-		 */
+		eventMenuManager(position, direction, event);
 	}
 }
 
@@ -486,7 +485,7 @@ int initEditor(char* filename)
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	initEditorScreen();
+	initEditorMenu();
 
 	gEditorScreenPosition.x = sgLevel.size.x / 2.0f;
 	gEditorScreenPosition.y = -10.0f;
