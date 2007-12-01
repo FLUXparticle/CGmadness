@@ -626,8 +626,13 @@ void newLevel(void)
 			p->z = 0;
 			p->dzx = 0;
 			p->dzy = 0;
+			p->dirty = 1;
 		}
 	}
+
+	initAtlas();
+
+	updateLightMap();
 }
 
 int readInt(FILE* file)

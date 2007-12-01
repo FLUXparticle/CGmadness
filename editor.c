@@ -357,7 +357,7 @@ void drawEditorField(void) {
 	int j;
 	FieldCoord cur;
 	Square square;
-
+	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
