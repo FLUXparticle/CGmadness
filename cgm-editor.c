@@ -33,6 +33,11 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,6 +46,44 @@
 
 void usage(void) {
 	printf("usage: cgm-editor <cgm-file> [--size x y]\n");
+}
+
+int isCGM(char* filename)
+{
+	return strcmp(filename + strlen(filename) - 4, ".cgm") == 0;
+}
+
+void listFiles(void)
+{
+	struct dirent *fileinfo;
+
+	const char* dirname = "levels";
+	DIR* dirinfo = opendir(dirname);
+
+	if (dirinfo)
+	{
+		while ((fileinfo = readdir(dirinfo)))
+		{
+			struct stat filestat;
+
+			char* newdir = malloc(strlen(dirname) + 1 + strlen(fileinfo->d_name) + 1);
+			
+			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
+			
+			if (isCGM(newdir))
+			{
+				stat(newdir, &filestat);
+				if (S_ISREG(filestat.st_mode))
+				{
+					printf("%s: %d bytes\n", newdir, (int) filestat.st_size);
+				}
+			}
+			
+			free(newdir);
+		}
+		
+		closedir(dirinfo);
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -67,6 +110,9 @@ int main(int argc, char* argv[]) {
 
 	if (!file) {
 		usage();
+		
+		listFiles();
+		
 		return 1;
 	}
 
