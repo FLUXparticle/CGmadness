@@ -386,7 +386,7 @@ int initGame(void) {
 	initGameMenu();
 
 	
-	loadStringList(&gLevelNames, "levels/default.lev");
+	loadStringListFromFile(&gLevelNames, "levels/default.lev");
 	gNextLevelIndex = 0;
 
 #if 0

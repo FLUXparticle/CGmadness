@@ -23,7 +23,94 @@
 
 #include "debug.h"
 
-void loadStringList(StringList* list, const char* filename)
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int isCGM(char* filename)
+{
+	return strcmp(filename + strlen(filename) - 4, ".cgm") == 0;
+}
+
+void createStringListFromDir(StringList* list, const char* dirname)
+{
+	struct dirent *fileinfo;
+	char* p;
+	char** pp;
+
+	int count = 0;
+	int size = 0;
+	DIR* dirinfo = opendir(dirname);
+	int dirnamelen = strlen(dirname);
+
+	if (dirinfo)
+	{
+		while ((fileinfo = readdir(dirinfo)))
+		{
+			struct stat filestat;
+
+			char* newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+			
+			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
+			
+			if (isCGM(newdir))
+			{
+				stat(newdir, &filestat);
+				if (S_ISREG(filestat.st_mode))
+				{
+					count++;
+					size += strlen(newdir) + 1;
+				}
+			}
+			
+			free(newdir);
+		}
+		
+		rewinddir(dirinfo);
+		
+		list->count = count;
+		MALLOC(list->all, sizeof(char*) * size);
+		MALLOC(list->strings, sizeof(char*) * list->count);
+		
+		p = list->all;
+		pp = list->strings;
+		
+		while ((fileinfo = readdir(dirinfo)))
+		{
+			struct stat filestat;
+
+			char* newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+			
+			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
+			
+			if (isCGM(newdir))
+			{
+				stat(newdir, &filestat);
+				if (S_ISREG(filestat.st_mode))
+				{
+					int len = strlen(newdir) + 1;
+					memcpy(p, newdir, len);
+					
+					*pp = p;
+					
+					p += len;
+					pp++;
+				}
+			}
+			
+			free(newdir);
+		}
+		
+		closedir(dirinfo);
+	}
+}
+
+void loadStringListFromFile(StringList* list, const char* filename)
 {
 	char* s;
 	int i;
@@ -52,4 +139,17 @@ void loadStringList(StringList* list, const char* filename)
 		*s = '\0';
 		s++;
 	}
+}
+
+static int compar(const void* a, const void* b)
+{
+	const char** pa = (const char**) a;
+	const char** pb = (const char**) b;
+	
+	return strcmp(*pa, *pb);
+}
+
+void sortStringList(StringList* list)
+{
+	qsort(list->strings, list->count, sizeof(char*), compar);
 }
