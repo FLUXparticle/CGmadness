@@ -59,10 +59,6 @@ static Screen gScreenHelp;
 static Screen gScreenSuccessful;
 static Screen gScreenFailed;
 
-#if 0
-static Vector3 gEditorScreenPosition;
-#endif
-
 /* events */
 
 static void clickButtonEdit(void) {
@@ -86,32 +82,6 @@ static void clickButtonQuit(void) {
 	exit(0);
 }
 
-void updateEditorScreen(float interval) {
-#if 0
-	if (gCurScreen == &goMainMenu) {
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
-			clickButtonEdit();
-		}
-
-		if (wasKeyPressed('s')) {
-			clickButtonSave();
-		}
-
-		if (wasKeyPressed('h')) {
-			clickButtonHelp();
-		}
-
-		if (wasKeyPressed('q')) {
-			clickButtonQuit();
-		}
-	} else {
-		if (wasKeyPressed(KEY_ENTER) || wasKeyPressed(KEY_ESC)) {
-			clickButtonBack();
-		}
-	}
-#endif
-}
-
 void showEditorScreen(int menu) {
 	switch (menu) {
 	case 0:
@@ -124,30 +94,6 @@ void showEditorScreen(int menu) {
 		pushScreen(&gScreenFailed);
 		break;
 	}
-}
-
-void setEditorScreenPosition(Vector3 pos) {
-#if 0
-	gEditorScreenPosition = pos;
-#endif
-}
-
-void drawEditorMenu(void) {
-#if 0
-	glEnable(GL_LIGHTING);
-
-		setSomeLight();
-
-		glPushMatrix();
-			glTranslatef(gEditorScreenPosition.x, gEditorScreenPosition.y, gEditorScreenPosition.z);
-
-			drawObject(&goLogo);
-			drawObject(gCurScreen);
-
-		glPopMatrix();
-
-	glDisable(GL_LIGHTING);
-#endif
 }
 
 void initEditorMenu() {

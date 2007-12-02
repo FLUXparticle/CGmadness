@@ -340,18 +340,7 @@ void updateEditor(float interval) {
 	}
 	else
 	{
-		/* show menu */
-		Vector3 camera = gEditorScreenPosition;
-		Vector3 lookat = gEditorScreenPosition;
-
-		camera.y -= 10.0f;
-		camera.z += 7.0f;
-
-		lookat.z += 5.0f;
-
-		updateEditorScreen(interval);
-
-		moveCamera(interval, camera, lookat);
+		updateMenuManager(interval);
 	}
 }
 
@@ -491,7 +480,7 @@ int initEditor(char* filename)
 	gEditorScreenPosition.y = -10.0f;
 	gEditorScreenPosition.z =   0.0f;
 
-	setEditorScreenPosition(gEditorScreenPosition);
+	setMenuPosistion(gEditorScreenPosition);
 
 	pauseEditor();
 

@@ -26,10 +26,4 @@ void initEditorMenu(void);
 
 void showEditorScreen(int menu);
 
-void updateEditorScreen(float interval);
-
-void setEditorScreenPosition(Vector3 pos);
-
-void drawEditorMenu(void);
-
 #endif
