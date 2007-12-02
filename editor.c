@@ -20,6 +20,7 @@
 #include "editor.h"
 
 #include "editormenu.h"
+#include "menumanager.h"
 
 #include "level.h"
 #include "callback.h"
@@ -339,18 +340,7 @@ void updateEditor(float interval) {
 	}
 	else
 	{
-		/* show menu */
-		Vector3 camera = gEditorScreenPosition;
-		Vector3 lookat = gEditorScreenPosition;
-
-		camera.y -= 10.0f;
-		camera.z += 7.0f;
-
-		lookat.z += 5.0f;
-
-		updateEditorScreen(interval);
-
-		moveCamera(interval, camera, lookat);
+		updateMenuManager(interval);
 	}
 }
 
@@ -439,7 +429,7 @@ void drawEditor(void) {
 	drawEditorField();
 
 	if (!gIsEditorRunning)	{
-		drawEditorScreen();
+		drawMenuManager();
 	}
 }
 
@@ -447,9 +437,7 @@ void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent e
 {
 	if (!gIsEditorRunning)
 	{
-		/*
-		 * TODO pass event to menu
-		 */
+		eventMenuManager(position, direction, event);
 	}
 }
 
@@ -486,13 +474,13 @@ int initEditor(char* filename)
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	initEditorScreen();
+	initEditorMenu();
 
 	gEditorScreenPosition.x = sgLevel.size.x / 2.0f;
 	gEditorScreenPosition.y = -10.0f;
 	gEditorScreenPosition.z =   0.0f;
 
-	setEditorScreenPosition(gEditorScreenPosition);
+	setMenuPosistion(gEditorScreenPosition);
 
 	pauseEditor();
 

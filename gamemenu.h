@@ -29,6 +29,4 @@ void initGameMenu(void);
 
 void showGameMenu(int menu);
 
-void updateGameMenu(const Screen* curScreen, float interval);
-
 #endif

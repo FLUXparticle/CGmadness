@@ -22,14 +22,8 @@
 
 #include "vector.h"
 
-void initEditorScreen(void);
+void initEditorMenu(void);
 
 void showEditorScreen(int menu);
-
-void updateEditorScreen(float interval);
-
-void setEditorScreenPosition(Vector3 pos);
-
-void drawEditorScreen(void);
 
 #endif

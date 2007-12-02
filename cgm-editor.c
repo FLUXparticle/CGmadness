@@ -20,6 +20,8 @@
 #include "callback.h"
 
 #include "editor.h"
+#include "main.h"
+
 #include "level.h"
 #include "keyboard.h"
 #include "mouse.h"
@@ -101,9 +103,15 @@ int main(int argc, char* argv[]) {
 
 	/* ---- */
 
+  if (!initMain()) {
+		return 1;
+	}
+
   if (!initEditor(file)) {
 		return 1;
 	}
+  
+  setMainState(STATE_EDITOR);
 
   startKeyboard();
 
