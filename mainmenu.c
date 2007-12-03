@@ -21,6 +21,8 @@
 #include "mainmenu.h"
 
 #include "main.h"
+#include "field.h"
+#include "level.h"
 #include "environment.h"
 
 #include "menumanager.h"
@@ -33,6 +35,7 @@
 #include <stdlib.h>
 
 static Screen gScreenMain;
+static Screen gScreenChoose;
 
 static void clickButtonCGMadness(void)
 {
@@ -42,8 +45,10 @@ static void clickButtonCGMadness(void)
 
 static void clickButtonCGMEditor(void)
 {
-	popAllScreens();
-	setMainState(STATE_EDITOR);
+	loadFieldFromFile(sgLevels.strings[0]);
+	initGameField();
+	updateGameField();
+	pushScreen(&gScreenChoose);
 }
 
 static void clickButtonQuit(void)
@@ -51,12 +56,37 @@ static void clickButtonQuit(void)
 	exit(0);
 }
 
+static void clickButtonBack(void)
+{
+	popScreen();
+}
+
+static void drawMenuLevel(void)
+{
+	glPushMatrix();
+	
+		glScalef(0.1f, 0.1f, 0.1f);
+		
+		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+		
+		drawGameField(0);
+		
+	glPopMatrix();
+}
+
+static void changeLevelChooser(void* self)
+{
+}
+
 void initMainMenu(void)
 {
 	static Button bCGMadness;
 	static Button bCGMEditor;
 	static Button bQuit;
+	static Button bBack;
 	
+	static SpinEdit seLevel;
+
 	static MenuItem* itemsMain[] =
 	{
 		&bCGMadness.item,
@@ -64,11 +94,23 @@ void initMainMenu(void)
 		&bQuit.item
 	};
 	
+	static MenuItem* itemsChoose[] =
+	{
+		&seLevel.item,
+		&bBack.item
+	};
+	
 	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
 	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 0);
 	initButton(&bQuit,      2.0f, clickButtonQuit, "Quit", 'q');
 	
 	INIT_SCREEN(&gScreenMain, itemsMain);
+
+	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 5.2f, drawMenuLevel, changeLevelChooser);
+
+	initButton(&bBack,      2.0f, clickButtonBack, "back", KEY_ESC);
+	
+	INIT_SCREEN(&gScreenChoose, itemsChoose);
 }
 
 void showMainMenu(void)

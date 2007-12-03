@@ -20,12 +20,16 @@
 #ifndef _main_h_
 #define _main_h_
 
+#include "stringlist.h"
+
 typedef enum
 {
 	STATE_MAIN,
 	STATE_GAME,
 	STATE_EDITOR
 } MainState;
+
+extern StringList sgLevels;
 
 int initMain(void);
 

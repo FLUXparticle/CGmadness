@@ -67,18 +67,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (!file) {
-		StringList levels;
-		
-		
 		usage();
-		
-		createStringListFromDir(&levels, "levels");
-		sortStringList(&levels);
-		
-		for (i = 0; i < levels.count; i++)
-		{
-			printf("%s\n", levels.strings[i]);
-		}
 		
 		return 1;
 	}

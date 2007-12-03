@@ -28,10 +28,14 @@
 
 #include "menumanager.h"
 
+StringList sgLevels;
+
 static MainState gCurState; 
 
 int initMain(void)
 {
+	createStringListFromDir(&sgLevels, "levels");
+	
 	initEnvironment();
 
 	initMenuManager();

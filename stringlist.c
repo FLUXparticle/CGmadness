@@ -108,6 +108,8 @@ void createStringListFromDir(StringList* list, const char* dirname)
 		
 		closedir(dirinfo);
 	}
+	
+	sortStringList(list);
 }
 
 void loadStringListFromFile(StringList* list, const char* filename)
