@@ -25,6 +25,9 @@
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
 
+#define MAX_SCORE_COLS 10
+#define MAX_NAME_LENGTH 20
+
 typedef struct
 {
 	Vector3 normal;
@@ -66,6 +69,12 @@ typedef struct
 
 typedef struct
 {
+	char name[MAX_NAME_LENGTH + 1];
+	float time;
+} ScoreCol;
+
+typedef struct
+{
 	Plate** field;
 	FieldCoord start;
 	FieldCoord finish;
@@ -73,6 +82,11 @@ typedef struct
 	unsigned int borderTexture;
 	unsigned int colorMap;
 	unsigned int lightMap;
+	
+	unsigned int crc32;
+	
+	int cntScoreCols;
+	ScoreCol scores[MAX_SCORE_COLS];
 
 	int waiting;
 } Level;

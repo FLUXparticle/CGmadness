@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define THIS_CGM_VERSION 3
@@ -461,9 +462,9 @@ int loadFieldFromFile(const char* filename)
 
 	if (version >= 2 && !resize)
 	{
-		fscanf(file, "%x\n", &crc32);
+		fscanf(file, "%x\n", &sgLevel.crc32);
 
-		if (crc32 != getCRC32())
+		if (sgLevel.crc32 != getCRC32())
 		{
 			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 			result = 0;
@@ -640,6 +641,7 @@ void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
 
 int saveFieldToFile(const char* filename) {
 	FILE* file = fopen(filename, "wt");
+	
 	int x, y;
 
 	if (!file) return 0;
@@ -691,6 +693,23 @@ int saveFieldToFile(const char* filename) {
 	if (fclose(file) != 0) {
 		return 0;
 	}
-
+	
+#if 0
+	{
+		char* extraFilename;
+		
+		char* extHighScore = ".highscore";
+		
+		MALLOC(extraFilename, strlen(filename) + strlen(extHighScore) + 1);
+		
+		strcpy(extraFilename, filename);
+		strcat(extraFilename, extHighScore);
+		
+		file = fopen(extraFilename, "wt");
+		
+		FREE(extraFilename);
+	}
+#endif
+	
 	return 1;
 }
