@@ -108,6 +108,25 @@ void setSomeLight(void) {
 	glEnable(GL_LIGHT0);
 }
 
+/*** Canvas ***/
+
+void initCanvas(Canvas* canvas, float z, float width, float height, funcDraw customDraw)
+{
+	canvas->customDraw = customDraw;
+
+	canvas->item.type = MI_CANVAS;
+
+	canvas->item.width = width;
+	canvas->item.height = height;
+
+	canvas->item.position = vector2(-canvas->item.width / 2.0f, z);
+}
+
+void drawCanvas(const Canvas* canvas)
+{
+	canvas->customDraw();
+}
+
 /*** Label ***/
 
 void initLabel(Label* label, float x, float z, int alignRight, char* text)
@@ -423,6 +442,9 @@ void drawMenuItem(const MenuItem* item)
 
 		switch(item->type)
 		{
+			case MI_CANVAS:
+				drawCanvas((const Canvas*) item);
+				break;
 			case MI_LABEL:
 				drawLabel((const Label*) item);
 				break;

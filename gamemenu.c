@@ -20,6 +20,8 @@
 #include "gamemenu.h"
 
 #include "ball.h"
+#include "text.h"
+#include "level.h"
 #include "game.h"
 #include "features.h"
 #include "keyboard.h"
@@ -27,6 +29,11 @@
 #include "menumanager.h"
 #include "debug.h"
 #include "main.h"
+
+#include <stdio.h>
+
+#define HIGHSCORE_WIDTH 4.0f
+#define HIGHSCORE_HEIGHT 4.0f
 
 typedef struct {
 	char* left;
@@ -121,7 +128,37 @@ void showGameMenu(int menu) {
 	setCheck(&gcReflection, useReflection());
 }
 
-void initGameMenu() {
+void drawHighScore(void)
+{
+	int i;
+	
+	float scale = 0.5f * HIGHSCORE_HEIGHT / MAX_SCORE_COLS;
+	
+		for (i = 0; i < sgLevel.cntScoreCols; i++)
+		{
+			char strTime[10];
+			
+			int tenthSecond = sgLevel.scores[i].tenthSecond;
+			
+			sprintf(strTime, "%d:%02d.%01d",  tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
+			
+			glPushMatrix();
+			
+				glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i - 1) / MAX_SCORE_COLS * HIGHSCORE_HEIGHT, 0.0f);
+			
+				glScalef(scale, scale, scale);
+	
+				drawStrokeText(sgLevel.scores[i].name);
+			
+				glTranslatef((HIGHSCORE_WIDTH / scale) - widthStrokeText(strTime), 0.0f, 0.0f);
+				
+				drawStrokeText(strTime);
+			
+			glPopMatrix();
+		}
+}
+
+void initGameMenu(void) {
 	static Button bStart;
 	static Button bResume;
 	static Button bQuit;
@@ -133,6 +170,8 @@ void initGameMenu() {
 	static Button bQuit2;
 
 	static SpinEdit seBall;
+
+	static Canvas cHighScore;
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
@@ -164,6 +203,7 @@ void initGameMenu() {
 
 	static MenuItem* itemsEnd[] =
 	{
+		&cHighScore.item,
 		&bAgain.item,
 		&bQuit2.item
 	};
@@ -239,8 +279,11 @@ void initGameMenu() {
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
 	/* game complete menu */
-	initButton(&bAgain, 5.5f, clickButtonAgain, "Play Again", KEY_ENTER);
-	initButton(&bQuit2, 4.5f, clickButtonQuit, "Quit", 'q');
+	
+	initCanvas(&cHighScore, 3.0f, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, drawHighScore);
+	
+	initButton(&bAgain, 2.0f, clickButtonAgain, "Play Again", KEY_ENTER);
+	initButton(&bQuit2, 1.0f, clickButtonQuit, "Quit", 'q');
 
 	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

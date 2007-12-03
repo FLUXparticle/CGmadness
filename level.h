@@ -70,7 +70,7 @@ typedef struct
 typedef struct
 {
 	char name[MAX_NAME_LENGTH + 1];
-	float time;
+	int tenthSecond;
 } ScoreCol;
 
 typedef struct

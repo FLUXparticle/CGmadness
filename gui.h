@@ -31,6 +31,7 @@ typedef void (*funcChange)(void* self);
 /***/
 
 typedef enum {
+	MI_CANVAS,
 	MI_LABEL,
 	MI_PROGRESS_BAR,
 	MI_BUTTON,
@@ -55,6 +56,12 @@ typedef struct Screen {
 
 	struct Screen* back;
 } Screen;
+
+typedef struct {
+	MenuItem item;
+	
+	funcDraw customDraw;
+} Canvas;
 
 typedef struct {
 	MenuItem item;
@@ -102,6 +109,10 @@ typedef struct {
 void initGUI(void);
 
 void setSomeLight(void);
+
+/* Canvas */
+
+void initCanvas(Canvas* canvas, float z, float width, float height, funcDraw customDraw);
 
 /* Label */
 

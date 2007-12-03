@@ -211,7 +211,7 @@ void updateGame(float interval) {
 
 void drawGameHUD(float widthWindow, float heightWindow)
 {
-	int seconds = (int) gGameTime;
+	int tenthSecond = (int) (gGameTime * 10.0f);
 	float scale = 0.06f;
 	float widthDefault = widthStrokeText("x:xx.x") * scale;
 
@@ -219,7 +219,7 @@ void drawGameHUD(float widthWindow, float heightWindow)
 	float width;
 	float height;
 
-	sprintf(strTime, "%d:%02d.%01d",  seconds / 60, seconds % 60, (int) ((gGameTime - seconds) * 10.0f));
+	sprintf(strTime, "%d:%02d.%01d",  tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
 
 	width = widthStrokeText(strTime) * scale;
 	height = scale;
