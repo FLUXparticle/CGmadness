@@ -180,15 +180,25 @@ void initBallShadow(void)
 	
 	float d;
 	
-	for (x = 0; x < SAMPLES_XY; x++)
+	for (y = 0; y < SAMPLES_XY; y++)
 	{
-		fx = (((float) x / SAMPLES_XY) - 0.5f) * MAX_XY;
+		for (x = 0; x < SAMPLES_XY; x++)
+		{
+			ballShadowData[0][y][x] = 1.0f;
+		}
+	}
+
+	for (z = 1; z < SAMPLES_Z; z++)
+	{
+		fz = ((float) z / SAMPLES_Z) * MAX_Z;
+
 		for (y = 0; y < SAMPLES_XY; y++)
 		{
 			fy = (((float) y / SAMPLES_XY) - 0.5f) * MAX_XY;
-			for (z = 0; z < SAMPLES_Z; z++)
+
+			for (x = 0; x < SAMPLES_XY; x++)
 			{
-				fz = ((float) z / SAMPLES_Z) * MAX_Z;
+				fx = (((float) x / SAMPLES_XY) - 0.5f) * MAX_XY;
 				
 				d = sqrt(sqr(fx) + sqr(fy) + sqr(fz));
 				
