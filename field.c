@@ -425,24 +425,27 @@ void updateGameField(void)
 		lastMY = my;
 	}
 
-	for (q = 0; q < gCntVertices; q += 4)
+	if (!useSpotlight())
 	{
-		Vector3 vz = sgNormals[q];
-		Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q])); 
-		Vector3 vy = norm(cross(vx, vz)); 
-		
-		int i;
-		
-		for (i = 0; i < 4; i++)
+		for (q = 0; q < gCntVertices; q += 4)
 		{
-			Vector3 vertex = sgVertices[q + i];
-			Vector3 d = sub(sgoBall.pos, vertex);
-
-			float x = dot(vx, d) / MAX_XY + 0.5f;
-			float y = dot(vy, d) / MAX_XY + 0.5f;
-			float z = dot(vz, d) / MAX_Z;
-
-		  gBallShadowCoords[q + i] = vector3(x, y, z);
+			Vector3 vz = sgNormals[q];
+			Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q])); 
+			Vector3 vy = norm(cross(vx, vz)); 
+			
+			int i;
+			
+			for (i = 0; i < 4; i++)
+			{
+				Vector3 vertex = sgVertices[q + i];
+				Vector3 d = sub(sgoBall.pos, vertex);
+	
+				float x = dot(vx, d) / MAX_XY + 0.5f;
+				float y = dot(vy, d) / MAX_XY + 0.5f;
+				float z = dot(vz, d) / MAX_Z;
+	
+			  gBallShadowCoords[q + i] = vector3(x, y, z);
+			}
 		}
 	}
 
