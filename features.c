@@ -91,7 +91,7 @@ int hasFramebuffer(void)
 
 int hasVertexbuffer(void)
 {
-	return gVertexbufferAvailable;
+	return 0 && gVertexbufferAvailable;
 }
 
 int hasTwoSideStencil(void)
@@ -101,7 +101,7 @@ int hasTwoSideStencil(void)
 
 int hasSpotlight(void)
 {
-	return 0 && hasShader();
+	return hasShader();
 }
 
 /* set */
