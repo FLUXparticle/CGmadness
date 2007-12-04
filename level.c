@@ -244,10 +244,6 @@ void initLevel(void)
 	{
 		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
 	}
-	
-	sgLevel.cntScoreCols = 1;
-	strncpy(sgLevel.scores[0].name, "Player", MAX_NAME_LENGTH);
-	sgLevel.scores[0].tenthSecond = 32;
 }
 
 void destroyLevel(void) {

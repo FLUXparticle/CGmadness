@@ -136,11 +136,13 @@ void drawHighScore(void)
 	
 		for (i = 0; i < sgLevel.cntScoreCols; i++)
 		{
+			char strName[MAX_NAME_LENGTH + 4];
 			char strTime[10];
 			
 			int tenthSecond = sgLevel.scores[i].tenthSecond;
 			
-			sprintf(strTime, "%d:%02d.%01d",  tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
+			sprintf(strName, "%2d%c%s", i + 1, 0, sgLevel.scores[i].name);
+			sprintf(strTime, "%d:%02d.%01d", tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
 			
 			glPushMatrix();
 			
@@ -148,8 +150,16 @@ void drawHighScore(void)
 			
 				glScalef(scale, scale, scale);
 	
-				drawStrokeText(sgLevel.scores[i].name);
+				glPushMatrix();
+				
+					glTranslatef((0.1f * HIGHSCORE_WIDTH / scale) - widthStrokeText(strName), 0.0f, 0.0f);
+					
+					strName[2] = ' ';
+					
+					drawStrokeText(strName);
 			
+				glPopMatrix();
+					
 				glTranslatef((HIGHSCORE_WIDTH / scale) - widthStrokeText(strTime), 0.0f, 0.0f);
 				
 				drawStrokeText(strTime);

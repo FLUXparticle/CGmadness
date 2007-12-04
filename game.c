@@ -73,8 +73,6 @@ static float gDistance;
 static float gLatitude;
 static float gLongitude;
 
-static StringList gLevelNames;
-static int gNextLevelIndex;
 static const char* gHotSeatLevel = NULL;
 
 void gameDrag(int dx, int dy) {
@@ -187,14 +185,14 @@ void updateGame(float interval) {
 			resumeGame();
 		}
 
-		updateBall(interval);
-
-		updateGameCamera(interval, sgoBall.pos);
-
 		if (!sgIsBallInPieces)
 		{
 			gGameTime += interval;
 		}
+
+		updateBall(interval);
+
+		updateGameCamera(interval, sgoBall.pos);
 	} else {
 		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
 		{
@@ -359,8 +357,35 @@ void loadNewLevel(void) {
 	}
 }
 
+void stopWatch(void)
+{
+	int i;
+	
+	int tenthSecond = (int) (gGameTime * 10.0f);
+	int newIndex = sgLevel.cntScoreCols;
+	
+	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
+	{
+		newIndex--;
+	}
+	
+	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
+	
+	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
+	{
+		sgLevel.scores[i] = sgLevel.scores[i - 1]; 
+	}
+	
+	if (newIndex < MAX_SCORE_COLS)
+	{
+		strncpy(sgLevel.scores[newIndex].name, "Player", MAX_NAME_LENGTH);
+		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
+	}
+}
+
 void gotoNextLevel(void)
 {
+	stopWatch();
 	pauseGame();
 	showGameMenu(3);
 }
@@ -400,24 +425,9 @@ int initGame(void) {
 	/* menu (must be after ball) */
 	initGameMenu();
 
-	
-	loadStringList(&gLevelNames, "levels/default.lev");
-	gNextLevelIndex = 0;
-
-#if 0
-	/* level (must be after menu) */
- 	if (!startLevel(getNextLevelName())) {
-		return 0;
-	}
-
-	gIsGameRunning = 0;
-	showGameMenu(0);
-	resetBall();
-
-	updateGameField();
-#endif
-	
 	sgWindowViewport.mouseEvent = eventGame;
-
+	
+	sgLevel.cntScoreCols = 0;
+	
 	return 1;
 }
