@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
 		file = argv[i];
 
-		if (loadFieldFromFile(file) && saveFieldToFile(file))
+		if (loadFieldFromFile(file) && saveFieldToFile())
 		{
 			printf("'%s' upgraded successfully.\n", file);
 		} else {

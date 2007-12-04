@@ -386,6 +386,7 @@ void stopWatch(void)
 void gotoNextLevel(void)
 {
 	stopWatch();
+	saveHighscoreToFile();
 	pauseGame();
 	showGameMenu(3);
 }

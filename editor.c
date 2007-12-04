@@ -67,8 +67,6 @@ static int gCamAngle = 0;
 static int gSin[] = { 0, 1, 0, -1 };
 static int gCos[] = { 1, 0, -1, 0 };
 
-static char* gFilename;
-
 static Vector3 gEditorScreenPosition;
 
 static int gDirtyTexCoords;
@@ -94,7 +92,7 @@ void saveLevel(void) {
 		gDirtyLightmaps = 0;
 	}
 
-	if (saveFieldToFile(gFilename)) {
+	if (saveFieldToFile()) {
 		showEditorScreen(1);
 	} else {
 		showEditorScreen(2);
@@ -441,10 +439,9 @@ void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent e
 	}
 }
 
-int initEditor(char* filename)
+int initEditor(const char* filename)
 {
-	gFilename = filename;
-	if (!loadFieldFromFile(gFilename))
+	if (!loadFieldFromFile(filename))
 	{
 		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
 		{

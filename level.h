@@ -83,6 +83,7 @@ typedef struct
 	unsigned int colorMap;
 	unsigned int lightMap;
 	
+	const char* filename;
 	unsigned int crc32;
 	
 	int cntScoreCols;
@@ -101,7 +102,8 @@ void destroyLevel(void);
 
 void newLevel(void);
 int loadFieldFromFile(const char* filename);
-int saveFieldToFile(const char* filename);
+int saveFieldToFile(void);
+int saveHighscoreToFile(void);
 
 void updatePlate(int x, int y);
 void getRoofSquare(int x, int y, Square* square);

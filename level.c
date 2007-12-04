@@ -34,6 +34,7 @@
 #include <math.h>
 
 #define THIS_CGM_VERSION 3
+#define THIS_HIGHSCORE_VERSION 1
 
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
@@ -302,7 +303,7 @@ void newLevel(void)
 	updateLightMap();
 }
 
-int readInt(FILE* file)
+int readByte(FILE* file)
 {
 	int value;
 
@@ -314,18 +315,18 @@ int readInt(FILE* file)
 
 void readFieldCoord(FILE* file, FieldCoord* coord)
 {
-	coord->x = readInt(file);
-	coord->y = readInt(file);
+	coord->x = readByte(file);
+	coord->y = readByte(file);
 }
 
 void readFieldPlate(FILE* file, Plate* plate)
 {
-	plate->z = readInt(file);
-	plate->dzx = readInt(file);
-	plate->dzy = readInt(file);
+	plate->z = readByte(file);
+	plate->dzx = readByte(file);
+	plate->dzy = readByte(file);
 }
 
-void readRLEInt(FILE* file, int* repeat, int* value) {
+void readRLEByte(FILE* file, int* repeat, int* value) {
 	int i;
 	
 	if (fscanf(file, "%ix%i", repeat, value) < 2)
@@ -350,7 +351,7 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 		int repeat;
 		int value;
 		
-		readRLEInt(file, &repeat, &value);
+		readRLEByte(file, &repeat, &value);
 		
 		for (i = 0; i < repeat; i++)
 		{
@@ -400,6 +401,8 @@ int loadFieldFromFile(const char* filename)
 		fprintf(stderr, "can not open file: %s\n", filename);
 		return 0;
 	}
+	
+	sgLevel.filename = filename;
 
 	/* version number */
 	fscanf(file, "v%u", &version);
@@ -457,14 +460,16 @@ int loadFieldFromFile(const char* filename)
 			}
 		}
 	}
+	
+	sgLevel.crc32 = getCRC32();
 
 	initCommon();
 
 	if (version >= 2 && !resize)
 	{
-		fscanf(file, "%x\n", &sgLevel.crc32);
+		fscanf(file, "%x\n", &crc32);
 
-		if (sgLevel.crc32 != getCRC32())
+		if (crc32 != getCRC32())
 		{
 			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 			result = 0;
@@ -577,24 +582,47 @@ int loadFieldFromFile(const char* filename)
 	return result;
 }
 
-void writeInt(FILE* file, int value) {
+void writeByte(FILE* file, int value) {
 	fprintf(file, "%i", value);
 	nextByte(value);
 }
 
+void writeInt(FILE* file, int value) {
+	int i;
+	
+	fprintf(file, "%i", value);
+	
+	for (i = 0; i < 4; i++)
+	{
+		nextByte(value);
+		value >>= 8;
+	}
+}
+
+void writeString(FILE* file, char* value)
+{
+	const char* s;
+	
+	for (s = value; *s ; s++)
+	{
+		fputc(*s, file);
+		nextByte(*s);
+	}
+}
+
 void writeFieldCoord(FILE* file, const FieldCoord coord) {
-	writeInt(file, coord.x);
+	writeByte(file, coord.x);
 	fputc(' ', file);
-	writeInt(file, coord.y);
+	writeByte(file, coord.y);
 	fputc('\n', file);
 }
 
 void writeFieldPlate(FILE* file, const Plate* plate) {
-	writeInt(file, plate->z);
+	writeByte(file, plate->z);
 	fputc(' ', file);
-	writeInt(file, plate->dzx);
+	writeByte(file, plate->dzx);
 	fputc(' ', file);
-	writeInt(file, plate->dzy);
+	writeByte(file, plate->dzy);
 	fputc('\n', file);
 }
 
@@ -639,8 +667,8 @@ void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
 	fputc('\n', file);
 }
 
-int saveFieldToFile(const char* filename) {
-	FILE* file = fopen(filename, "wt");
+int saveFieldToFile(void) {
+	FILE* file = fopen(sgLevel.filename, "wt");
 	
 	int x, y;
 
@@ -693,23 +721,54 @@ int saveFieldToFile(const char* filename) {
 	if (fclose(file) != 0) {
 		return 0;
 	}
+
+	return 1;
+}
+
+int saveHighscoreToFile(void)
+{
+	int i;
+	FILE* file;
+	char* filename;
 	
-#if 0
+	char* extHighScore = ".highscore";
+	
+	MALLOC(filename, strlen(sgLevel.filename) + strlen(extHighScore) + 1);
+	
+	strcpy(filename, sgLevel.filename);
+	strcat(filename, extHighScore);
+	
+	file = fopen(filename, "wt");
+	
+	if (!file) return 0;
+
+	/* version number */
+	fprintf(file, "v%u\n", THIS_HIGHSCORE_VERSION);
+
+	fprintf(file, "%08X\n", sgLevel.crc32);
+
+	resetCRC32();
+	
+	writeInt(file, sgLevel.cntScoreCols);
+
+	fputc('\n', file);
+	
+	for (i = 0; i < sgLevel.cntScoreCols; i++)
 	{
-		char* extraFilename;
-		
-		char* extHighScore = ".highscore";
-		
-		MALLOC(extraFilename, strlen(filename) + strlen(extHighScore) + 1);
-		
-		strcpy(extraFilename, filename);
-		strcat(extraFilename, extHighScore);
-		
-		file = fopen(extraFilename, "wt");
-		
-		FREE(extraFilename);
+		writeByte(file, sgLevel.scores[i].tenthSecond);
+		fputc(' ', file);
+		writeString(file, sgLevel.scores[i].name);
+		fputc('\n', file);
 	}
-#endif
 	
+	fprintf(file, "%08X\n", getCRC32());
+	
+	FREE(filename);
+
+	if (fclose(file) != 0)
+	{
+		return 0;
+	}
+
 	return 1;
 }
