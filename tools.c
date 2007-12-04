@@ -32,6 +32,18 @@ void message(void)
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
 }
 
+char* addStrings(const char* a, const char* b)
+{
+	char* c;
+	
+	MALLOC(c, strlen(a) + strlen(b) + 1);
+	
+	strcpy(c, a);
+	strcat(c, b);
+	
+	return c;
+}
+
 void assurePath(const char* progname)
 {
 	const char* lastSlash = NULL;

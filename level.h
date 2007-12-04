@@ -28,6 +28,9 @@
 #define MAX_SCORE_COLS 10
 #define MAX_NAME_LENGTH 20
 
+#define MIN_ALLOWED_CHAR 32
+#define MAX_ALLOWED_CHAR 127
+
 typedef struct
 {
 	Vector3 normal;
@@ -101,9 +104,12 @@ void initLevel(void);
 void destroyLevel(void);
 
 void newLevel(void);
+
+int loadHighscoreFromFile(void);
 int loadFieldFromFile(const char* filename);
-int saveFieldToFile(void);
+
 int saveHighscoreToFile(void);
+int saveFieldToFile(void);
 
 void updatePlate(int x, int y);
 void getRoofSquare(int x, int y, Square* square);

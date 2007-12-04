@@ -22,6 +22,7 @@
 #include "common.h"
 #include "atlas.h"
 #include "crc32.h"
+#include "tools.h"
 
 #include "functions.h"
 #include "debug.h"
@@ -35,6 +36,8 @@
 
 #define THIS_CGM_VERSION 3
 #define THIS_HIGHSCORE_VERSION 1
+
+#define EXT_HIGHSCORE ".highscore"
 
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
@@ -313,6 +316,25 @@ int readByte(FILE* file)
 	return value;
 }
 
+int readInt(FILE* file)
+{
+	int value;
+	int tmp;
+	int i;
+
+	fscanf(file, "%i", &value);
+	
+	tmp = value;
+
+	for (i = 0; i < 4; i++)
+	{
+		nextByte(tmp);
+		tmp >>= 8;
+	}
+
+	return value;
+}
+
 void readFieldCoord(FILE* file, FieldCoord* coord)
 {
 	coord->x = readByte(file);
@@ -362,6 +384,33 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 	}
 }
 
+void readString(FILE* file, char* str)
+{
+	int i;
+	
+	char* s = str;
+	
+	fgetc(file);
+	
+	for (i = 0; i < MAX_NAME_LENGTH; i++)
+	{
+		int b = fgetc(file);
+		
+		if (b < MIN_ALLOWED_CHAR)
+		{
+			break;
+		}
+
+		*s = b;
+		nextByte(b);
+
+		s++;
+	}
+	
+	*s = '\0';
+}
+
+
 void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 {
 	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
@@ -383,6 +432,63 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	}
 
 	setSubLightMap(index, dataFloat);
+}
+
+int loadHighscoreFromFile(void)
+{
+	int i;
+	unsigned int version;
+	unsigned int crc32;
+	
+	char* filename = addStrings(sgLevel.filename, EXT_HIGHSCORE);
+	FILE* file = fopen(filename, "rt");
+	int result = 1;
+	
+	FREE(filename);
+
+	if (!file) return 0;
+	
+	/* version number */
+	fscanf(file, "v%u", &version);
+
+	if (version > THIS_HIGHSCORE_VERSION)
+	{
+		fprintf(stderr, "incompatible version number: %u\n", version);
+		fclose(file);
+		return 0;
+	}
+
+	fscanf(file, "%x\n", &crc32);
+
+	if (crc32 != sgLevel.crc32)
+	{
+		fprintf(stderr, "1st checksum mismatch: %s\n", filename);
+		fclose(file);
+		return 0;
+	}
+
+	setCRC32(sgLevel.crc32);
+	
+	sgLevel.cntScoreCols = readByte(file);
+
+	for (i = 0; i < sgLevel.cntScoreCols; i++)
+	{
+		sgLevel.scores[i].tenthSecond = readInt(file);
+		readString(file, sgLevel.scores[i].name);
+	}
+	
+	fscanf(file, "%x\n", &crc32);
+
+	if (crc32 != getCRC32())
+	{
+		fprintf(stderr, "2st checksum mismatch: %s\n", filename);
+		fclose(file);
+		return 0;
+	}
+	
+	fclose(file);
+
+	return result;
 }
 
 int loadFieldFromFile(const char* filename)
@@ -410,6 +516,7 @@ int loadFieldFromFile(const char* filename)
 	if (version > THIS_CGM_VERSION)
 	{
 		fprintf(stderr, "incompatible version number: %u\n", version);
+		fclose(file);
 		return 0;
 	}
 
@@ -472,9 +579,10 @@ int loadFieldFromFile(const char* filename)
 		if (crc32 != getCRC32())
 		{
 			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
-			result = 0;
+			fclose(file);
+			return 0;
 		}
-		else
+
 		{
 			int cntSubLightMaps = getCntAllocatedSubLightMaps();
 
@@ -568,7 +676,8 @@ int loadFieldFromFile(const char* filename)
 			if (crc32 != getCRC32())
 			{
 				fprintf(stderr, "2st checksum mismatch: %s\n", filename);
-				result = 0;
+				fclose(file);
+				return 0;
 			}
 		}
 	}
@@ -578,6 +687,11 @@ int loadFieldFromFile(const char* filename)
 	}
 
 	fclose(file);
+	
+	if (!loadHighscoreFromFile())
+	{
+		sgLevel.cntScoreCols = 0;
+	}
 
 	return result;
 }
@@ -667,6 +781,46 @@ void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
 	fputc('\n', file);
 }
 
+int saveHighscoreToFile(void)
+{
+	int i;
+
+	char* filename = addStrings(sgLevel.filename, EXT_HIGHSCORE);
+	FILE* file = fopen(filename, "wt");
+	
+	if (!file) return 0;
+
+	/* version number */
+	fprintf(file, "v%u\n", THIS_HIGHSCORE_VERSION);
+
+	fprintf(file, "%08X\n", sgLevel.crc32);
+
+	setCRC32(sgLevel.crc32);
+	
+	writeByte(file, sgLevel.cntScoreCols);
+
+	fputc('\n', file);
+	
+	for (i = 0; i < sgLevel.cntScoreCols; i++)
+	{
+		writeInt(file, sgLevel.scores[i].tenthSecond);
+		fputc(' ', file);
+		writeString(file, sgLevel.scores[i].name);
+		fputc('\n', file);
+	}
+	
+	fprintf(file, "%08X\n", getCRC32());
+	
+	FREE(filename);
+
+	if (fclose(file) != 0)
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
 int saveFieldToFile(void) {
 	FILE* file = fopen(sgLevel.filename, "wt");
 	
@@ -719,54 +873,6 @@ int saveFieldToFile(void) {
 	}
 
 	if (fclose(file) != 0) {
-		return 0;
-	}
-
-	return 1;
-}
-
-int saveHighscoreToFile(void)
-{
-	int i;
-	FILE* file;
-	char* filename;
-	
-	char* extHighScore = ".highscore";
-	
-	MALLOC(filename, strlen(sgLevel.filename) + strlen(extHighScore) + 1);
-	
-	strcpy(filename, sgLevel.filename);
-	strcat(filename, extHighScore);
-	
-	file = fopen(filename, "wt");
-	
-	if (!file) return 0;
-
-	/* version number */
-	fprintf(file, "v%u\n", THIS_HIGHSCORE_VERSION);
-
-	fprintf(file, "%08X\n", sgLevel.crc32);
-
-	resetCRC32();
-	
-	writeInt(file, sgLevel.cntScoreCols);
-
-	fputc('\n', file);
-	
-	for (i = 0; i < sgLevel.cntScoreCols; i++)
-	{
-		writeByte(file, sgLevel.scores[i].tenthSecond);
-		fputc(' ', file);
-		writeString(file, sgLevel.scores[i].name);
-		fputc('\n', file);
-	}
-	
-	fprintf(file, "%08X\n", getCRC32());
-	
-	FREE(filename);
-
-	if (fclose(file) != 0)
-	{
 		return 0;
 	}
 

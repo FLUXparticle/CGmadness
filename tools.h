@@ -21,6 +21,9 @@
 #define _tools_h_
 
 void message(void);
+
+char* addStrings(const char* a, const char* b);
+
 void assurePath(const char* progname);
 
 #endif

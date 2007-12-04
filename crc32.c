@@ -49,3 +49,8 @@ unsigned int getCRC32(void)
 {
 	return gRegister;
 }
+
+void setCRC32(unsigned int crc32)
+{
+	gRegister = crc32;
+}
