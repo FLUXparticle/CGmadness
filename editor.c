@@ -82,6 +82,11 @@ void resetEditor(void)
 
 	updateTexCoords();
 	gDirtyTexCoords = 0;
+
+	gCurStart.x = 0;
+	gCurStart.y = 0;
+	gCurEnd.x = 0;
+	gCurEnd.y = 0;
 }
 
 void resumeEditor(void) {
@@ -438,13 +443,18 @@ void drawEditor(void) {
 	}
 }
 
+void hideCursor(void)
+{
+	gCurStart.x = -1;
+	gCurStart.y = -1;
+	gCurEnd.x = -1;
+	gCurEnd.y = -1;
+}
+
 int initEditor(void)
 {
-	gCurStart.x = 0;
-	gCurStart.y = 0;
-	gCurEnd.x = 0;
-	gCurEnd.y = 0;
-
+	hideCursor();
+	
 	initEditorMenu();
 	
 #if 0

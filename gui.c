@@ -303,11 +303,11 @@ void eventCheck(Check* check, MouseEvent event)
  * TODO split SpinEdit into two seperate MenuItems
  */
 
-void initSpinEdit(SpinEdit* spinEdit, int value, int min, int max, float z, funcDraw draw, funcChange change)
+void initSpinEdit(SpinEdit* spinEdit, int value, int min, int max, float width, float z, funcDraw draw, funcChange change)
 {
 	spinEdit->item.type = MI_SPIN_EDIT;
 
-	spinEdit->item.width = 4.3;
+	spinEdit->item.width = width;
 	spinEdit->item.height = 1.0f;
 
 	spinEdit->item.position = vector2(-spinEdit->item.width / 2.0f, z - 0.5);
@@ -326,6 +326,7 @@ void initSpinEdit(SpinEdit* spinEdit, int value, int min, int max, float z, func
 void drawSpinEdit(const SpinEdit* spinEdit)
 {
 	float scale = 1.0f + 0.2f * spinEdit->item.emphasize;
+	float step = (spinEdit->item.width - 1.0f) / 2.0f;
 
 	glPushMatrix();
 
@@ -342,7 +343,7 @@ void drawSpinEdit(const SpinEdit* spinEdit)
 
 		glPopMatrix();
 
-		glTranslatef(1.65f, 0.0f, 0.0f);
+		glTranslatef(step, 0.0f, 0.0f);
 
 		glPushMatrix();
 
@@ -356,7 +357,7 @@ void drawSpinEdit(const SpinEdit* spinEdit)
 
 		glPopMatrix();
 
-		glTranslatef(1.65f, 0.0f, 0.0f);
+		glTranslatef(step, 0.0f, 0.0f);
 
 		glPushMatrix();
 

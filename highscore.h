@@ -17,16 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _gamemenu_h_
-#define _gamemenu_h_
+#ifndef _highscore_h_
+#define _highscore_h_
 
 #include "gui.h"
 
-#include "vector.h"
-#include "mouse.h"
+typedef Canvas HighScore;
 
-void initGameMenu(void);
+extern int sgLastPlayerIndex;
 
-void showGameMenu(int menu);
+void initHighScore(HighScore* highScore, float z);
 
 #endif

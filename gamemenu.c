@@ -25,17 +25,17 @@
 #include "game.h"
 #include "features.h"
 #include "keyboard.h"
-#include "gui.h"
-#include "menumanager.h"
-#include "debug.h"
+#include "highscore.h"
 #include "main.h"
 #include "objects.h"
 
+#include "menumanager.h"
+#include "gui.h"
+
+#include "debug.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#define HIGHSCORE_WIDTH 4.0f
-#define HIGHSCORE_HEIGHT 4.0f
 
 typedef struct {
 	char* left;
@@ -62,8 +62,6 @@ static Screen gScreenMain2;
 static Screen gScreenHelp;
 static Screen gScreenNext;
 static Screen gScreenEnd;
-
-int sgLastPlayerIndex;
 
 /* events */
 
@@ -133,107 +131,6 @@ void showGameMenu(int menu) {
 	setCheck(&gcReflection, useReflection());
 }
 
-void updateHighScore(float interval)
-{
-	unsigned char ch = getLastChar();
-	
-	if (sgLastPlayerIndex < MAX_SCORE_COLS && wasKeyPressed(ch))
-	{
-		char* name = sgLevel.scores[sgLastPlayerIndex].name;
-		int len = strlen(name);
-
-		switch (ch)
-		{
-		case '\b':
-			if (len > 0)
-			{
-				name[len - 1] = '\0';
-			}
-			break;
-		case KEY_ENTER:
-			saveHighscoreToFile();
-			sgLastPlayerIndex = MAX_SCORE_COLS;
-			break;
-		default:
-			if (ch >= MIN_ALLOWED_CHAR && ch <= MAX_ALLOWED_CHAR)
-			{
-				if (len < MAX_NAME_LENGTH)
-				{
-					name[len] = ch;
-					name[len + 1] = '\0';
-				}
-			}
-		}
-	}
-}
-
-void drawHighScore(void)
-{
-	int i;
-	
-	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 1);
-	
-	glPushMatrix();
-	
-		glTranslatef(HIGHSCORE_WIDTH / 2.0f, HIGHSCORE_HEIGHT / 2.0f, -0.1f);
-		
-		glScalef(HIGHSCORE_WIDTH / 2.0f, HIGHSCORE_HEIGHT / 2.0f, 1.0f);
-		
-		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
-		
-		glEnable(GL_BLEND);
-
-			drawSquare();
-		
-		glDisable(GL_BLEND);
-	
-	glPopMatrix();
-
-	for (i = 0; i < sgLevel.cntScoreCols; i++)
-	{
-		char strName[MAX_NAME_LENGTH + 4];
-		char strTime[10];
-		
-		int tenthSecond = sgLevel.scores[i].tenthSecond;
-		
-		sprintf(strName, "%2d%c%s", i + 1, 0, sgLevel.scores[i].name);
-		sprintf(strTime, "%d:%02d.%01d", tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
-		
-		if (i == sgLastPlayerIndex)
-		{
-			glColor3f(1.0f, 0.0f, 0.0f);
-		}
-		else
-		{
-			glColor3f(1.0f, 1.0f, 1.0f);
-		}
-		
-		glPushMatrix();
-		
-			glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i) / (MAX_SCORE_COLS + 1) * HIGHSCORE_HEIGHT, 0.0f);
-		
-			glScalef(scale, scale, scale);
-
-			glPushMatrix();
-			
-				glTranslatef((0.1f * HIGHSCORE_WIDTH / scale) - widthStrokeText(strName), 0.0f, 0.0f);
-				
-				strName[2] = ' ';
-				
-				drawStrokeThinText(strName);
-		
-			glPopMatrix();
-				
-			glTranslatef((0.95f * HIGHSCORE_WIDTH / scale) - widthStrokeText(strTime), 0.0f, 0.0f);
-			
-			drawStrokeThinText(strTime);
-		
-		glPopMatrix();
-	}
-	
-	glColor3f(1.0f, 1.0f, 1.0f);
-}
-
 void initGameMenu(void) {
 	static Button bStart;
 	static Button bResume;
@@ -247,7 +144,7 @@ void initGameMenu(void) {
 
 	static SpinEdit seBall;
 
-	static Canvas cHighScore;
+	static HighScore hsHighScore;
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
@@ -279,7 +176,7 @@ void initGameMenu(void) {
 
 	static MenuItem* itemsEnd[] =
 	{
-		&cHighScore.item,
+		&hsHighScore.item,
 		&bAgain.item,
 		&bQuit2.item
 	};
@@ -319,7 +216,7 @@ void initGameMenu(void) {
 	initButton(&bStart, 6.0f, clickButtonStart, "Start", KEY_ENTER);
 	initButton(&bResume, 6.0f, clickButtonResume, "Resume", KEY_ENTER);
 
-	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 5.2f, drawMenuBall, changeBallEdit);
+	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 
 	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
 	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
@@ -356,7 +253,7 @@ void initGameMenu(void) {
 
 	/* game complete menu */
 	
-	initCanvas(&cHighScore, 3.0f, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, updateHighScore, drawHighScore);
+	initHighScore(&hsHighScore, 3.0f);
 	
 	initButton(&bAgain, 2.0f, clickButtonAgain, "Play Again", KEY_ENTER);
 	initButton(&bQuit2, 1.0f, clickButtonQuit, "Quit", 'q');

@@ -26,6 +26,7 @@
 #include "environment.h"
 #include "editor.h"
 #include "common.h"
+#include "highscore.h"
 
 #include "menumanager.h"
 #include "gui.h"
@@ -90,6 +91,8 @@ static void changeLevelChooser(const void* self)
 			gLoadedLevel = spinedit->value;
 		}
 	}
+	
+	sgLastPlayerIndex = MAX_SCORE_COLS;
 }
 
 void initMainMenu(void)
@@ -102,6 +105,8 @@ void initMainMenu(void)
 	
 	static SpinEdit seLevel;
 
+	static HighScore hsHighScore;
+
 	static MenuItem* itemsMain[] =
 	{
 		&bCGMadness.item,
@@ -112,6 +117,7 @@ void initMainMenu(void)
 	static MenuItem* itemsChoose[] =
 	{
 		&seLevel.item,
+		&hsHighScore.item,
 		&bChoose.item,
 		&bBack.item
 	};
@@ -122,10 +128,12 @@ void initMainMenu(void)
 	
 	INIT_SCREEN(&gScreenMain, itemsMain);
 
-	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 5.2f, drawMenuLevel, changeLevelChooser);
+	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
 
-	initButton(&bChoose,    3.0f, clickButtonChoose, "choose", KEY_ENTER);
-	initButton(&bBack,      2.0f, clickButtonBack, "back", KEY_ESC);
+	initHighScore(&hsHighScore, 3.0f);
+
+	initButton(&bChoose,    2.0f, clickButtonChoose, "choose", KEY_ENTER);
+	initButton(&bBack,      1.0f, clickButtonBack, "back", KEY_ESC);
 	
 	INIT_SCREEN(&gScreenChoose, itemsChoose);
 }

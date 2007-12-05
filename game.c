@@ -21,6 +21,7 @@
 
 #include "common.h"
 #include "level.h"
+#include "highscore.h"
 
 #include "objects.h"
 #include "ball.h"

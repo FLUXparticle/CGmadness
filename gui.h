@@ -134,7 +134,7 @@ void initCheck(Check* check, float z, funcChange change, char* text);
 
 /* SpinEdit */
 
-void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, funcDraw draw, funcChange change);
+void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float width, float z, funcDraw draw, funcChange change);
 
 /* Screen */
 
