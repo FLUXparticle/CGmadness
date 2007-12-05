@@ -267,16 +267,8 @@ void startGame(void) {
 #endif
 
 	initGameField();
-	updateGameField();
 
-	gDistance  =  5.0f;
-	gLatitude  = 20.0f;
-	gLongitude =  0.0f;
-
-	resetGameTime();
-
-	pauseGame();
-	showGameMenu(0);
+	resetGame();
 }
 
 #if 0
@@ -314,8 +306,17 @@ void finishedGame()
 }
 
 void resetGame(void) {
+	gDistance  =  5.0f;
+	gLatitude  = 20.0f;
+	gLongitude =  0.0f;
+	
 	resetBall();
+	resetGameTime();
+	
 	updateGameField();
+	
+	pauseGame();
+	showGameMenu(0);
 }
 
 void initFog(void) {

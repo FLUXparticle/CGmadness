@@ -76,16 +76,19 @@ static void changeLevelChooser(const void* self)
 {
 	const SpinEdit* spinedit = self;
 	
-	if (gLoadedLevel >= 0)
+	if (spinedit->value != gLoadedLevel)
 	{
-		destroyLevel();
-		gLoadedLevel = -1;
-	}
-	
-	if (loadLevelFromFile(sgLevels.strings[spinedit->value], 1))
-	{
-		updateTexCoords();
-		gLoadedLevel = spinedit->value;
+		if (gLoadedLevel >= 0)
+		{
+			destroyLevel();
+			gLoadedLevel = -1;
+		}
+		
+		if (loadLevelFromFile(sgLevels.strings[spinedit->value], 1))
+		{
+			updateTexCoords();
+			gLoadedLevel = spinedit->value;
+		}
 	}
 }
 
