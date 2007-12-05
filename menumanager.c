@@ -34,8 +34,6 @@ static GLuint gTexLogo = 0;
 
 static Screen* gCurScreen = NULL;
 
-static Vector3 gScreenPosition;
-
 static Screen gScreenWait;
 
 void initMenuManager(void)
@@ -69,13 +67,8 @@ const Screen* getCurScreen(void)
 
 void updateMenuManager(float interval)
 {
-	Vector3 camera = gScreenPosition;
-	Vector3 lookat = gScreenPosition;
-
-	camera.y -= 10.0f;
-	camera.z += 7.0f;
-
-	lookat.z += 5.0f;
+	Vector3 camera = vector3(0.0f, -10.0f, 7.0f);
+	Vector3 lookat = vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
 	
@@ -99,7 +92,7 @@ void updateMenuManager(float interval)
 
 void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event)
 {
-	Vector3 newPosition = sub(*position, gScreenPosition);
+	Vector3 newPosition = *position;
 
 	if (newPosition.y < 0.0f && direction->y > 0.0f)
 	{
@@ -145,7 +138,6 @@ void drawMenuManager(void)
 		setSomeLight();
 
 		glPushMatrix();
-			glTranslatef(gScreenPosition.x, gScreenPosition.y, gScreenPosition.z);
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
 			drawLogo();
@@ -154,11 +146,6 @@ void drawMenuManager(void)
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
-}
-
-void setMenuPosistion(Vector3 pos)
-{
-	gScreenPosition = pos;
 }
 
 void showScreen(Screen* newScreen)

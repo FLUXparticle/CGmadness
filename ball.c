@@ -171,8 +171,8 @@ void resetBall(void)
 {
 	Square roofSquare;
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
-	sgoBall.pos.x = sgLevel.start.x + 0.5f;
-	sgoBall.pos.y = sgLevel.start.y + 0.5f;
+	sgoBall.pos.x = roofSquare.mid.x; 
+	sgoBall.pos.y = roofSquare.mid.y;
 	sgoBall.pos.z = getMaxZValue(&roofSquare) + 2.5f;
 
 	sgoBall.velocity.x = 0.0f;
@@ -397,8 +397,8 @@ void animateBall(float interval)
 
 	ball = add(sgoBall.pos, step);
 
-	x = floor(ball.x);
-	y = floor(ball.y);
+	x = floor(ball.x - sgLevel.origin.x);
+	y = floor(ball.y - sgLevel.origin.y);
 
   /* check only fields near by the ball. check field under ball first!!! */
   for (dx = 1; dx <= 3; dx++)
@@ -464,7 +464,7 @@ void animateBall(float interval)
 			/* collision was to havy */
 			explodeBall();
 		}
-		else if (floor(sgoBall.pos.x) == sgLevel.finish.x && floor(sgoBall.pos.y) == sgLevel.finish.y)
+		else if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
 			/* reached finish quad */
 			nextLevel();

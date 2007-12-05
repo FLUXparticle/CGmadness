@@ -69,8 +69,6 @@ static int gCos[] = { 1, 0, -1, 0 };
 
 static char* gFilename;
 
-static Vector3 gEditorScreenPosition;
-
 static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
@@ -444,7 +442,7 @@ void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent e
 int initEditor(char* filename)
 {
 	gFilename = filename;
-	if (!loadLevelFromFile(gFilename))
+	if (!loadLevelFromFile(gFilename, 0))
 	{
 		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
 		{
@@ -470,12 +468,6 @@ int initEditor(char* filename)
 	gCurEnd.y = 0;
 
 	initEditorMenu();
-
-	gEditorScreenPosition.x = sgLevel.size.x / 2.0f;
-	gEditorScreenPosition.y = -10.0f;
-	gEditorScreenPosition.z =   0.0f;
-
-	setMenuPosistion(gEditorScreenPosition);
 
 	pauseEditor();
 

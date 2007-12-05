@@ -73,6 +73,8 @@ typedef struct
 	unsigned int borderTexture;
 	unsigned int colorMap;
 	unsigned int lightMap;
+	
+	Vector3 origin;
 
 	int waiting;
 } Level;
@@ -86,7 +88,7 @@ void initLevel(void);
 void destroyLevel(void);
 
 void newLevel(void);
-int loadLevelFromFile(const char* filename);
+int loadLevelFromFile(const char* filename, int justLoad);
 int saveLevelToFile(const char* filename);
 
 void updatePlate(int x, int y);

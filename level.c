@@ -42,6 +42,13 @@ Level sgLevel;
 
 static void updateSquareAttributes(Square* square)
 {
+	int i;
+	
+	for (i = 0; i < 4; i++)
+	{
+		square->vertices[i] = add(square->vertices[i], sgLevel.origin);
+	}
+
 	square->mid = midpoint(square->vertices);
 
 	square->area = 0.5f * len(cross(sub(square->vertices[1], square->vertices[0]), sub(square->vertices[3], square->vertices[0]))) +
@@ -252,6 +259,10 @@ void initLevel(void)
 		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
 #endif
 	}
+
+	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
+	sgLevel.origin.y =  10.0f;
+	sgLevel.origin.z =   0.0f;
 }
 
 void destroyLevel(void) {
@@ -392,7 +403,7 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	setSubLightMap(index, dataFloat);
 }
 
-int loadLevelFromFile(const char* filename)
+int loadLevelFromFile(const char* filename, int justLoad)
 {
 	FILE* file = fopen(filename, "rt");
 	int result = 1;
@@ -426,7 +437,7 @@ int loadLevelFromFile(const char* filename)
 	readFieldCoord(file, &fileCoords);
 
 	/* read size from file, if not given through program parameters */
-	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
+	if (justLoad || sgLevel.size.x < 0 || sgLevel.size.y < 0)
 	{
 		sgLevel.size = fileCoords;
 		resize = 0;

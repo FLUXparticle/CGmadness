@@ -33,8 +33,6 @@ void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEv
 
 void drawMenuManager(void);
 
-void setMenuPosistion(Vector3 pos);
-
 void pushWaitScreen(void);
 
 void pushScreen(Screen* menu);

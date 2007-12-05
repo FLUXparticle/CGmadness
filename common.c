@@ -328,14 +328,14 @@ void updateTexCoords(void)
 					int i;
 					for (i = 0; i < 4; i++)
 					{
-						float tx = (sgEdgeX[next] - sgEdgeX[side]) * (square->vertices[i].x - x0);
-						float ty = (sgEdgeY[next] - sgEdgeY[side]) * (square->vertices[i].y - y0);
+						float tx = (sgEdgeX[next] - sgEdgeX[side]) * (square->vertices[i].x - sgLevel.origin.x - x0);
+						float ty = (sgEdgeY[next] - sgEdgeY[side]) * (square->vertices[i].y - sgLevel.origin.y - y0);
 						float tz = square->vertices[i].z - z0;
 
 						float txy = tx + ty;
 
 						square->texcoord[i].x = txy;
-						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z;
+						square->texcoord[i].y = ((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z - sgLevel.origin.z;
 
 						if (sgLevel.lightMap)
 						{

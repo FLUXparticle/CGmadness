@@ -49,7 +49,7 @@ static void clickButtonCGMEditor(void)
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 	
-	loadLevelFromFile(sgLevels.strings[0]);
+	loadLevelFromFile(sgLevels.strings[0], 1);
 	pushScreen(&gScreenChoose);
 }
 
@@ -72,10 +72,7 @@ static void changeLevelChooser(const void* self)
 {
 	const SpinEdit* spinedit = self;
 	
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-	
-	loadLevelFromFile(sgLevels.strings[spinedit->value]);
+	loadLevelFromFile(sgLevels.strings[spinedit->value], 1);
 }
 
 void initMainMenu(void)

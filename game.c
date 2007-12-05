@@ -237,6 +237,7 @@ void drawGameBallReflection(void)
 void drawGame(void)
 {
 	drawEnvironment(drawGameWaterReflection);
+
 	drawGameField(0);
 	drawGameBall();
 
@@ -260,9 +261,7 @@ void resetGameTime(void)
 }
 
 static int startLevel(const char* filename) {
-	static Vector3 gameMenuPosition;
-
-	if (!loadLevelFromFile(filename)) {
+	if (!loadLevelFromFile(filename, 1)) {
 		return 0;
 	}
 
@@ -284,12 +283,6 @@ static int startLevel(const char* filename) {
 	gDistance  =  5.0f;
 	gLatitude  = 20.0f;
 	gLongitude =  0.0f;
-
-	gameMenuPosition.x = sgLevel.size.x / 2.0f;
-	gameMenuPosition.y = -10.0f;
-	gameMenuPosition.z =   0.0f;
-
-	setMenuPosistion(gameMenuPosition);
 
 	resetGameTime();
 
