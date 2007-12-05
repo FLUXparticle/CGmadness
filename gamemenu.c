@@ -136,7 +136,7 @@ void updateHighScore(float interval)
 {
 	unsigned char ch = getLastChar();
 	
-	if (sgLastPlayerIndex >= 0 && wasKeyPressed(ch))
+	if (sgLastPlayerIndex < MAX_SCORE_COLS && wasKeyPressed(ch))
 	{
 		char* name = sgLevel.scores[sgLastPlayerIndex].name;
 		int len = strlen(name);
@@ -144,11 +144,14 @@ void updateHighScore(float interval)
 		switch (ch)
 		{
 		case '\b':
-			name[len - 1] = '\0';
+			if (len > 0)
+			{
+				name[len - 1] = '\0';
+			}
 			break;
 		case KEY_ENTER:
 			saveHighscoreToFile();
-			sgLastPlayerIndex = -1;
+			sgLastPlayerIndex = MAX_SCORE_COLS;
 			break;
 		default:
 			if (ch >= MIN_ALLOWED_CHAR && ch <= MAX_ALLOWED_CHAR)
