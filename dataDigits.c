@@ -19,7 +19,7 @@
 
 #include "dataDigits.h"
 
-#include "graph.h"
+#include "varray.h"
 
 float verticesDigits0[912 * 3] = {
 	5.830729, 10.548958, 1.000000,  6.556250, 10.295833, 1.000000,  5.830729, 10.548958, 0.000000,

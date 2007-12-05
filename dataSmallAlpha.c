@@ -19,7 +19,7 @@
 
 #include "dataSmallAlpha.h"
 
-#include "graph.h"
+#include "varray.h"
 
 float verticesSmallAlpha0[1176 * 3] = {
 	0.769792, 2.531771, 1.000000,  0.979167, 3.043750, 1.000000,  0.769792, 2.531771, 0.000000,
