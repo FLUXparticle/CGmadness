@@ -19,7 +19,7 @@
 
 #include "dataBigAlpha.h"
 
-#include "graph.h"
+#include "varray.h"
 
 float verticesBigAlpha0[792 * 3] = {
 	5.851042, 1.055729, 1.000000,  5.904167, 1.239583, 1.000000,  5.851042, 1.055729, 0.000000,

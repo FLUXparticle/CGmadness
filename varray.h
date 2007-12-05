@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _graph_h_
-#define _graph_h_
+#ifndef _varray_h_
+#define _varray_h_
 
 void drawTrianglesVerticesNormals(int count, const float* vertices, const float* normals);
 
