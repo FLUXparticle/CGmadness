@@ -60,7 +60,6 @@ static LeftRight gTextHelp[] = {
 static Screen gScreenMain1;
 static Screen gScreenMain2;
 static Screen gScreenHelp;
-static Screen gScreenNext;
 static Screen gScreenEnd;
 
 /* events */
@@ -76,25 +75,25 @@ static void clickButtonHelp(void)
 static void clickButtonQuit(void)
 {
 	stopGame();
+	popScreen();
 	setMainState(STATE_MAIN);
 }
 
 static void clickButtonAgain(void)
 {
-	popAllScreens();
+	popScreen();
 	resetGame();
 }
 
 static void clickButtonStart(void)
 {
-	popAllScreens();
-	resetBall();
+	popScreen();
 	resumeGame();
 }
 
 static void clickButtonResume(void)
 {
-	popAllScreens();
+	popScreen();
 	resumeGame();
 }
 
@@ -120,9 +119,7 @@ void showGameMenu(int menu) {
 	static Screen* screens[] = {
 		&gScreenMain1,
 		&gScreenMain2,
-		&gScreenNext,
-		&gScreenEnd,
-		&gScreenHelp
+		&gScreenEnd
 	};
 	
 	pushScreen(screens[menu]);
@@ -137,10 +134,7 @@ void initGameMenu(void) {
 	static Button bQuit;
 	static Button bHelp;
 	static Button bBack;
-	static Button bContinue;
-	static Button bMain;
 	static Button bAgain;
-	static Button bQuit2;
 
 	static SpinEdit seBall;
 
@@ -168,17 +162,11 @@ void initGameMenu(void) {
 		&bQuit.item
 	};
 
-	static MenuItem* itemsNext[] =
-	{
-		&bContinue.item,
-		&bMain.item
-	};
-
 	static MenuItem* itemsEnd[] =
 	{
 		&hsHighScore.item,
 		&bAgain.item,
-		&bQuit2.item
+		&bQuit.item
 	};
 
 	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
@@ -213,25 +201,19 @@ void initGameMenu(void) {
 	 */
 
 	/* main menu */
-	initButton(&bStart, 6.0f, clickButtonStart, "Start", KEY_ENTER);
-	initButton(&bResume, 6.0f, clickButtonResume, "Resume", KEY_ENTER);
+	initButton(&bStart, 6.0f, clickButtonStart, "start", KEY_ENTER);
+	initButton(&bResume, 6.0f, clickButtonResume, "resume", KEY_ENTER);
 
 	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 
-	initCheck(&gcShadows, 4.0f, changeShadows, "Shadows");
-	initCheck(&gcReflection, 3.0f, changeReflection, "Reflection");
+	initCheck(&gcShadows, 4.0f, changeShadows, "shadows");
+	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
 
-	initButton(&bHelp, 2.0f, clickButtonHelp, "Help", 'h');
-	initButton(&bQuit, 1.0f, clickButtonQuit, "Quit", 'q');
+	initButton(&bHelp, 2.0f, clickButtonHelp, "help", 'h');
+	initButton(&bQuit, 1.0f, clickButtonQuit, "change level", KEY_ESC);
 
 	INIT_SCREEN(&gScreenMain1, itemsMain1);
 	INIT_SCREEN(&gScreenMain2, itemsMain2);
-
-	/* next level menu */
-	initButton(&bContinue, 5.5f, clickButtonResume, "Continue", KEY_ENTER);
-	initButton(&bMain, 4.5f, clickButtonBack, "Main Menu", KEY_ESC);
-
-	INIT_SCREEN(&gScreenNext, itemsNext);
 
 	/* help menu */
 	for (i = 0; i < LENGTH(lTextHelp); i++)
@@ -255,8 +237,7 @@ void initGameMenu(void) {
 	
 	initHighScore(&hsHighScore, 3.0f);
 	
-	initButton(&bAgain, 2.0f, clickButtonAgain, "Play Again", KEY_ENTER);
-	initButton(&bQuit2, 1.0f, clickButtonQuit, "Quit", 'q');
+	initButton(&bAgain, 2.0f, clickButtonAgain, "play again", KEY_ENTER);
 
 	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

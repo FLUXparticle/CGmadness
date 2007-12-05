@@ -357,8 +357,7 @@ void finishedGame()
 {
 	stopWatch();
 	pauseGame();
-	showGameMenu(0);
-	showGameMenu(3);
+	showGameMenu(2);
 }
 
 void resetGame(void) {

@@ -37,6 +37,5 @@ void pushWaitScreen(void);
 
 void pushScreen(Screen* menu);
 void popScreen(void);
-void popAllScreens(void);
 
 #endif

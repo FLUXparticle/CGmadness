@@ -62,7 +62,7 @@ static Screen gScreenFailed;
 /* events */
 
 static void clickButtonEdit(void) {
-	popAllScreens();
+	popScreen();
 	resumeEditor();
 }
 

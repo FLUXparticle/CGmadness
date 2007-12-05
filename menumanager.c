@@ -185,12 +185,3 @@ void popScreen(void)
 		showScreen(gCurScreen);
 	}
 }
-
-void popAllScreens(void)
-{
-	while (gCurScreen)
-	{
-		gCurScreen = gCurScreen->back;
-	}
-}
-

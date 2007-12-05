@@ -43,6 +43,7 @@ void initMain(void)
 	initMainMenu();
 	
 	setMainState(STATE_MAIN);
+	showMainMenu();
 	
 	initGame();
 
@@ -55,7 +56,6 @@ void setMainState(MainState newState)
 	switch (gCurState)
 	{
 	case STATE_MAIN:
-		showMainMenu();
 		break;
 	case STATE_GAME:
 		startGame();

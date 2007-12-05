@@ -59,7 +59,6 @@ static void clickButtonQuit(void)
 
 static void clickButtonChoose(void)
 {
-	popAllScreens();
 	setMainState(STATE_GAME);
 }
 
