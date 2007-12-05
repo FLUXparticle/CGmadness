@@ -23,6 +23,7 @@
 #include "atlas.h"
 #include "crc32.h"
 #include "tools.h"
+#include "texture.h"
 
 #include "functions.h"
 #include "debug.h"
@@ -46,6 +47,13 @@ Level sgLevel;
 
 static void updateSquareAttributes(Square* square)
 {
+	int i;
+	
+	for (i = 0; i < 4; i++)
+	{
+		square->vertices[i] = add(square->vertices[i], sgLevel.origin);
+	}
+
 	square->mid = midpoint(square->vertices);
 
 	square->area = 0.5f * len(cross(sub(square->vertices[1], square->vertices[0]), sub(square->vertices[3], square->vertices[0]))) +
@@ -241,13 +249,25 @@ float getMaxZValue(const Square* square) {
 void initLevel(void)
 {
 	int x;
-
+	
 	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
 	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
 	for (x = 1; x < sgLevel.size.x; x++)
 	{
 		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
 	}
+
+	if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
+		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
+	}
+
+	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
+	sgLevel.origin.y =  10.0f;
+	sgLevel.origin.z =   0.0f;
 }
 
 void destroyLevel(void) {
@@ -491,7 +511,7 @@ int loadHighscoreFromFile(void)
 	return result;
 }
 
-int loadFieldFromFile(const char* filename)
+int loadLevelFromFile(const char* filename, int justLoad)
 {
 	FILE* file = fopen(filename, "rt");
 	int result = 1;
@@ -528,7 +548,7 @@ int loadFieldFromFile(const char* filename)
 	readFieldCoord(file, &fileCoords);
 
 	/* read size from file, if not given through program parameters */
-	if (sgLevel.size.x < 0 || sgLevel.size.y < 0)
+	if (justLoad || sgLevel.size.x < 0 || sgLevel.size.y < 0)
 	{
 		sgLevel.size = fileCoords;
 		resize = 0;
@@ -821,7 +841,7 @@ int saveHighscoreToFile(void)
 	return 1;
 }
 
-int saveFieldToFile(void) {
+int saveLevelToFile(void) {
 	FILE* file = fopen(sgLevel.filename, "wt");
 	
 	int x, y;

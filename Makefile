@@ -42,7 +42,7 @@ endif
 
 SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
-DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
+DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  mains.pl modules.pl
 DOC     :=  license.txt AUTHORS

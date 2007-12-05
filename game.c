@@ -21,6 +21,7 @@
 
 #include "common.h"
 #include "level.h"
+#include "highscore.h"
 
 #include "objects.h"
 #include "ball.h"
@@ -249,6 +250,7 @@ void drawGameBallReflection(void)
 void drawGame(void)
 {
 	drawEnvironment(drawGameWaterReflection);
+
 	drawGameField(0);
 	drawGameBall();
 
@@ -258,34 +260,12 @@ void drawGame(void)
 	}
 }
 
-void eventGame(const Vector3* position, const Vector3* direction, MouseEvent event)
-{
-	if (!gIsGameRunning)
-	{
-		eventMenuManager(position, direction, event);
-	}
-}
-
 void resetGameTime(void)
 {
 	gGameTime = 0.0f;
 }
 
-static int startLevel(const char* filename) {
-	static Vector3 gameMenuPosition;
-
-	if (!loadFieldFromFile(filename)) {
-		return 0;
-	}
-
-	if (sgLevel.borderTexture == 0) {
-#if (NOISE_TEXTURE)
-		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
-#else
-		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
-#endif
-	}
-
+void startGame(void) {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
@@ -301,19 +281,7 @@ static int startLevel(const char* filename) {
 
 	initGameField();
 
-	gDistance  =  5.0f;
-	gLatitude  = 20.0f;
-	gLongitude =  0.0f;
-
-	gameMenuPosition.x = sgLevel.size.x / 2.0f;
-	gameMenuPosition.y = -10.0f;
-	gameMenuPosition.z =   0.0f;
-
-	setMenuPosistion(gameMenuPosition);
-
-	resetGameTime();
-
-	return 1;
+	resetGame();
 }
 
 #if 0
@@ -347,16 +315,6 @@ static const char* getNextLevelName(void)
 }
 #endif
 
-void loadNewLevel(void) {
-	if (startLevel(gHotSeatLevel)) {
-		pauseGame();
-		showGameMenu(0);
-		resetBall();
-	} else {
-		exit(1);
-	}
-}
-
 void stopWatch(void)
 {
 	int i;
@@ -385,22 +343,35 @@ void stopWatch(void)
 	sgLastPlayerIndex = newIndex;
 }
 
-void gotoNextLevel(void)
+void stopGame(void)
+{
+	glDeleteTextures(1, &sgLevel.lightMap);
+#if (NOISE_TEXTURE)
+	glDeleteTextures(1, &sgLevel.colorMap);
+#endif
+
+	destroyGameField();
+}
+
+void finishedGame()
 {
 	stopWatch();
 	pauseGame();
-	showGameMenu(3);
+	showGameMenu(2);
 }
 
 void resetGame(void) {
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
+	gDistance  =  5.0f;
+	gLatitude  = 20.0f;
+	gLongitude =  0.0f;
 	
-	loadNewLevel();
+	resetBall();
+	resetGameTime();
+	
 	updateGameField();
-#if 0
-	resetCamera();
-#endif
+	
+	pauseGame();
+	showGameMenu(0);
 }
 
 void initFog(void) {
@@ -414,7 +385,7 @@ void initFog(void) {
 	glFogfv(GL_FOG_COLOR, color);
 }
 
-int initGame(void) {
+void initGame(void) {
 	resetCamera();
 
 	initObjects();
@@ -427,9 +398,16 @@ int initGame(void) {
 	/* menu (must be after ball) */
 	initGameMenu();
 
-	sgWindowViewport.mouseEvent = eventGame;
-	
-	sgLevel.cntScoreCols = 0;
-	
-	return 1;
+#if 0
+	/* level (must be after menu) */
+ 	if (!startGame(getNextLevelName())) {
+		return 0;
+	}
+
+	gIsGameRunning = 0;
+	showGameMenu(0);
+	resetBall();
+
+	updateGameField();
+#endif
 }

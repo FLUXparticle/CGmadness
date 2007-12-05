@@ -28,10 +28,14 @@
 
 #include "menumanager.h"
 
+StringList sgLevels;
+
 static MainState gCurState; 
 
-int initMain(void)
+void initMain(void)
 {
+	createStringListFromDir(&sgLevels, "levels");
+	
 	initEnvironment();
 
 	initMenuManager();
@@ -39,8 +43,11 @@ int initMain(void)
 	initMainMenu();
 	
 	setMainState(STATE_MAIN);
+	showMainMenu();
 	
-	return initGame();
+	initGame();
+
+	initEditor();
 }
 
 void setMainState(MainState newState)
@@ -49,10 +56,9 @@ void setMainState(MainState newState)
 	switch (gCurState)
 	{
 	case STATE_MAIN:
-		showMainMenu();
 		break;
 	case STATE_GAME:
-		resetGame();
+		startGame();
 		break;
 	case STATE_EDITOR:
 		break;

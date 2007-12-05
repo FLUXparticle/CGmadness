@@ -40,30 +40,11 @@
 
 #define FRAMES_PER_SECOND 60
 
-static void usage(void)
-{
-	printf("cgmadness [hotseat-mode]\n");
-	printf("usage: cgmadness <cgm-file>\n");
-}
-
 int main(int argc, char* argv[])
 {
 	message();
 
 	assurePath(argv[0]);
-
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-
-	if (argc > 1)
-	{
-		setHotSeatLevel(argv[1]);
-	}
-	else
-	{
-		usage();
-		exit(1);
-	}
 
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 
@@ -99,10 +80,8 @@ int main(int argc, char* argv[])
 
 	/* ---- */
 
-	if (!initMain()) {
-		return 1;
-	}
-	
+	initMain();
+
   startKeyboard();
   startMouse();
 

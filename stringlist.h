@@ -28,6 +28,10 @@ typedef struct
 	char* all;
 } StringList;
 
-void loadStringList(StringList* list, const char* filename);
+void createStringListFromDir(StringList* list, const char* dirname);
+
+void loadStringListFromFile(StringList* list, const char* filename);
+
+void sortStringList(StringList* list);
 
 #endif
