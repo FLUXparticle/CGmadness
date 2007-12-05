@@ -229,7 +229,7 @@ void drawGameHUD(float widthWindow, float heightWindow)
 		glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height), 0.0f);
 		glScalef(scale, scale, scale);
 
-		drawStrokeText(strTime);
+		drawStrokeThickText(strTime);
 
 	glPopMatrix();
 }
@@ -381,6 +381,8 @@ void stopWatch(void)
 		strncpy(sgLevel.scores[newIndex].name, "Player", MAX_NAME_LENGTH);
 		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
+	
+	sgLastPlayerIndex = newIndex;
 }
 
 void gotoNextLevel(void)

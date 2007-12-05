@@ -21,7 +21,6 @@
 
 #include "level.h"
 #include "camera.h"
-#include "game.h"
 
 #include "ball.h"
 #include "features.h"

@@ -25,6 +25,8 @@
 #include "vector.h"
 #include "mouse.h"
 
+extern int sgLastPlayerIndex;
+
 void initGameMenu(void);
 
 void showGameMenu(int menu);

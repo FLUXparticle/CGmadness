@@ -60,6 +60,7 @@ typedef struct Screen {
 typedef struct {
 	MenuItem item;
 	
+	funcUpdate customUpdate;
 	funcDraw customDraw;
 } Canvas;
 
@@ -112,7 +113,7 @@ void setSomeLight(void);
 
 /* Canvas */
 
-void initCanvas(Canvas* canvas, float z, float width, float height, funcDraw customDraw);
+void initCanvas(Canvas* canvas, float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw);
 
 /* Label */
 

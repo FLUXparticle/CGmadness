@@ -54,7 +54,7 @@ float widthStrokeText(const char* str)
 	return width / STROKE_SIZE;
 }
 
-void drawStrokeText(const char* str)
+static void drawStrokeText(const char* str)
 {
 	float scale = 1.0f / STROKE_SIZE;
 
@@ -64,16 +64,40 @@ void drawStrokeText(const char* str)
 
 		glScalef(scale, scale, scale);
 
-		glEnable(GL_BLEND);
-		glEnable(GL_LINE_SMOOTH);
-
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glLineWidth(4.0f);
-
 			for (s = str; *s; s++) {
 				glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
 			}
 
+			glLineWidth(1.0f);
+			
+		glDisable(GL_BLEND);
+		glDisable(GL_LINE_SMOOTH);
+
+	glPopMatrix();
+}
+
+void drawStrokeThinText(const char* str)
+{
+	glLineWidth(1.5f);
+	
+	drawStrokeText(str);
+
+	glLineWidth(1.0f);
+}
+
+void drawStrokeThickText(const char* str)
+{
+		glEnable(GL_BLEND);
+		glEnable(GL_LINE_SMOOTH);
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glLineWidth(3.5f);
+			
+			drawStrokeText(str);
+			
+			glLineWidth(1.0f);
+			
 		glDisable(GL_BLEND);
 		glDisable(GL_LINE_SMOOTH);
 
