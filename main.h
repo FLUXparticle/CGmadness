@@ -31,7 +31,7 @@ typedef enum
 
 extern StringList sgLevels;
 
-int initMain(void);
+void initMain(void);
 
 void setMainState(MainState newState);
 

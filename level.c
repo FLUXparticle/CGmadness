@@ -244,7 +244,7 @@ float getMaxZValue(const Square* square) {
 void initLevel(void)
 {
 	int x;
-
+	
 	MALLOC(sgLevel.field, sgLevel.size.x * sizeof(Plate*));
 	MALLOC(sgLevel.field[0], sgLevel.size.x * sgLevel.size.y * sizeof(Plate));
 	for (x = 1; x < sgLevel.size.x; x++)

@@ -20,7 +20,9 @@
 #ifndef _editor_h_
 #define _editor_h_
 
-int initEditor(char* filename);
+int initEditor(void);
+
+void resetEditor(void);
 
 void resumeEditor(void);
 

@@ -22,11 +22,14 @@
 
 #define MOUSE_CONTROL 0
 
-int initGame(void);
+void initGame(void);
 void resumeGame(void);
 void resetGame(void);
 
-void nextLevel(void);
+void startGame(void);
+void stopGame(void);
+
+void finishedGame();
 
 void resetGameTime(void);
 

@@ -94,7 +94,7 @@ void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEv
 {
 	Vector3 newPosition = *position;
 
-	if (newPosition.y < 0.0f && direction->y > 0.0f)
+	if (gCurScreen && newPosition.y < 0.0f && direction->y > 0.0f)
 	{
 		float t = -newPosition.y / direction->y;
 		float x = newPosition.x + t * direction->x;

@@ -77,6 +77,15 @@ void pauseEditor(void) {
 	gIsEditorRunning = 0;
 }
 
+void resetEditor(void)
+{
+	sgLevel.lightMap = 0;
+	gDirtyLightmaps = 0;
+
+	updateTexCoords();
+	gDirtyTexCoords = 0;
+}
+
 void resumeEditor(void) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsEditorRunning = 1;
@@ -431,45 +440,18 @@ void drawEditor(void) {
 	}
 }
 
-void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
+int initEditor(void)
 {
-	if (!gIsEditorRunning)
-	{
-		eventMenuManager(position, direction, event);
-	}
-}
-
-int initEditor(char* filename)
-{
-	gFilename = filename;
-	if (!loadLevelFromFile(gFilename, 0))
-	{
-		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
-		{
-			newLevel();
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	sgLevel.lightMap = 0;
-	gDirtyLightmaps = 0;
-
-	updateTexCoords();
-	gDirtyTexCoords = 0;
-
-	sgWindowViewport.mouseEvent = eventEditor;
-
 	gCurStart.x = 0;
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
 	initEditorMenu();
-
+	
+#if 0
 	pauseEditor();
-
+#endif
+	
 	return 1;
 }

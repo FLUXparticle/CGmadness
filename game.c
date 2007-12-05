@@ -247,24 +247,12 @@ void drawGame(void)
 	}
 }
 
-void eventGame(const Vector3* position, const Vector3* direction, MouseEvent event)
-{
-	if (!gIsGameRunning)
-	{
-		eventMenuManager(position, direction, event);
-	}
-}
-
 void resetGameTime(void)
 {
 	gGameTime = 0.0f;
 }
 
-static int startLevel(const char* filename) {
-	if (!loadLevelFromFile(filename, 1)) {
-		return 0;
-	}
-
+void startGame(void) {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
@@ -279,6 +267,7 @@ static int startLevel(const char* filename) {
 #endif
 
 	initGameField();
+	updateGameField();
 
 	gDistance  =  5.0f;
 	gLatitude  = 20.0f;
@@ -286,9 +275,11 @@ static int startLevel(const char* filename) {
 
 	resetGameTime();
 
-	return 1;
+	pauseGame();
+	showGameMenu(0);
 }
 
+#if 0
 static char* getNextLevelName(void)
 {
 	if (gNextLevelIndex < gLevelNames.count)
@@ -303,29 +294,9 @@ static char* getNextLevelName(void)
 		return NULL;
 	}
 }
+#endif
 
-void loadNewLevel(void) {
-	char* nextLevelname = getNextLevelName();
-
-	pauseGame();
-	
-	if (!nextLevelname)
-	{
-		setMainState(STATE_MAIN);
-	}
-	else
-	{
-		if (startLevel(nextLevelname)) {
-			showGameMenu(0);
-			showGameMenu(2);
-			resetBall();
-		} else {
-			exit(1);
-		}
-	}
-}
-
-void nextLevel(void)
+void stopGame(void)
 {
 	glDeleteTextures(1, &sgLevel.lightMap);
 #if (NOISE_TEXTURE)
@@ -333,17 +304,18 @@ void nextLevel(void)
 #endif
 
 	destroyGameField();
-	destroyLevel();
-	
-	loadNewLevel();
+}
+
+void finishedGame()
+{
+	pauseGame();
+	showGameMenu(0);
+	showGameMenu(3);
 }
 
 void resetGame(void) {
-	loadNewLevel();
+	resetBall();
 	updateGameField();
-#if 0
-	resetCamera();
-#endif
 }
 
 void initFog(void) {
@@ -357,7 +329,7 @@ void initFog(void) {
 	glFogfv(GL_FOG_COLOR, color);
 }
 
-int initGame(void) {
+void initGame(void) {
 	resetCamera();
 
 	initObjects();
@@ -370,13 +342,12 @@ int initGame(void) {
 	/* menu (must be after ball) */
 	initGameMenu();
 
-	
 	loadStringListFromFile(&gLevelNames, "levels/default.lev");
 	gNextLevelIndex = 0;
 
 #if 0
 	/* level (must be after menu) */
- 	if (!startLevel(getNextLevelName())) {
+ 	if (!startGame(getNextLevelName())) {
 		return 0;
 	}
 
@@ -386,8 +357,4 @@ int initGame(void) {
 
 	updateGameField();
 #endif
-	
-	sgWindowViewport.mouseEvent = eventGame;
-
-	return 1;
 }

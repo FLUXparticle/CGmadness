@@ -20,6 +20,7 @@
 #include "callback.h"
 
 #include "main.h"
+#include "menumanager.h"
 
 #include "text.h"
 #include "camera.h"
@@ -209,7 +210,7 @@ void timer(int lastCallTime) {
 	while (nextUpdateTime < thisCallTime) {
 		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
 		updateMain(interval);
-		gTargetWindow.viewport->mouseEvent(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
+		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
 		lastUpdateTime = nextUpdateTime;
 		nextUpdateTime += gMillis;
 	}
@@ -255,7 +256,7 @@ void mouseEvent(int mx, int my, MouseEvent event) {
 
 	if (event == MOUSE_CLICK)
 	{
-		gTargetWindow.viewport->mouseEvent(&position, &direction, event);
+		eventMenuManager(&position, &direction, event);
 	}
 
 	gLastMouseEvent.position = position;

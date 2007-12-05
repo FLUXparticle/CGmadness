@@ -66,6 +66,7 @@ static void clickButtonHelp(void)
 
 static void clickButtonQuit(void)
 {
+	stopGame();
 	setMainState(STATE_MAIN);
 }
 

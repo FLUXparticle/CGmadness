@@ -25,6 +25,7 @@
 #include "level.h"
 #include "environment.h"
 #include "editor.h"
+#include "common.h"
 
 #include "menumanager.h"
 #include "gui.h"
@@ -38,24 +39,27 @@
 static Screen gScreenMain;
 static Screen gScreenChoose;
 
+static int gLoadedLevel = -1;
+
 static void clickButtonCGMadness(void)
 {
-	popAllScreens();
-	setMainState(STATE_GAME);
+	pushScreen(&gScreenChoose);
 }
 
 static void clickButtonCGMEditor(void)
 {
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-	
-	loadLevelFromFile(sgLevels.strings[0], 1);
-	pushScreen(&gScreenChoose);
+	/* TODO */
 }
 
 static void clickButtonQuit(void)
 {
 	exit(0);
+}
+
+static void clickButtonChoose(void)
+{
+	popAllScreens();
+	setMainState(STATE_GAME);
 }
 
 static void clickButtonBack(void)
@@ -72,7 +76,17 @@ static void changeLevelChooser(const void* self)
 {
 	const SpinEdit* spinedit = self;
 	
-	loadLevelFromFile(sgLevels.strings[spinedit->value], 1);
+	if (gLoadedLevel >= 0)
+	{
+		destroyLevel();
+		gLoadedLevel = -1;
+	}
+	
+	if (loadLevelFromFile(sgLevels.strings[spinedit->value], 1))
+	{
+		updateTexCoords();
+		gLoadedLevel = spinedit->value;
+	}
 }
 
 void initMainMenu(void)
@@ -80,6 +94,7 @@ void initMainMenu(void)
 	static Button bCGMadness;
 	static Button bCGMEditor;
 	static Button bQuit;
+	static Button bChoose;
 	static Button bBack;
 	
 	static SpinEdit seLevel;
@@ -94,6 +109,7 @@ void initMainMenu(void)
 	static MenuItem* itemsChoose[] =
 	{
 		&seLevel.item,
+		&bChoose.item,
 		&bBack.item
 	};
 	
@@ -105,6 +121,7 @@ void initMainMenu(void)
 
 	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 5.2f, drawMenuLevel, changeLevelChooser);
 
+	initButton(&bChoose,    3.0f, clickButtonChoose, "choose", KEY_ENTER);
 	initButton(&bBack,      2.0f, clickButtonBack, "back", KEY_ESC);
 	
 	INIT_SCREEN(&gScreenChoose, itemsChoose);
@@ -123,11 +140,14 @@ void updateMainMenu(float interval)
 
 void drawMainMenu(void)
 {
-	drawEnvironment(NULL);
-	
 	if (getCurScreen() == &gScreenChoose)
 	{
+		drawEnvironment(drawEditorField);
 		drawEditorField();
+	}
+	else
+	{
+		drawEnvironment(NULL);
 	}
 	
 	drawMenuManager();

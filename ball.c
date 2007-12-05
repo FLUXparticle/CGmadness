@@ -467,7 +467,7 @@ void animateBall(float interval)
 		else if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
 			/* reached finish quad */
-			nextLevel();
+			finishedGame();
 		}
 		else
 		{

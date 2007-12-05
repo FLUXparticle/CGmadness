@@ -81,9 +81,7 @@ int main(int argc, char* argv[])
 
 	/* ---- */
 
-	if (!initMain()) {
-		return 1;
-	}
+	initMain();
 
   startKeyboard();
   startMouse();
