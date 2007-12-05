@@ -32,6 +32,7 @@
 #include "objects.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
@@ -133,7 +134,33 @@ void showGameMenu(int menu) {
 
 void updateHighScore(float interval)
 {
+	unsigned char ch = getLastChar();
 	
+	if (sgLastPlayerIndex >= 0 && wasKeyPressed(ch))
+	{
+		char* name = sgLevel.scores[sgLastPlayerIndex].name;
+		int len = strlen(name);
+
+		switch (ch)
+		{
+		case '\b':
+			name[len - 1] = '\0';
+			break;
+		case KEY_ENTER:
+			saveHighscoreToFile();
+			sgLastPlayerIndex = -1;
+			break;
+		default:
+			if (ch >= MIN_ALLOWED_CHAR && ch <= MAX_ALLOWED_CHAR)
+			{
+				if (len < MAX_NAME_LENGTH)
+				{
+					name[len] = ch;
+					name[len + 1] = '\0';
+				}
+			}
+		}
+	}
 }
 
 void drawHighScore(void)

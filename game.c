@@ -378,7 +378,7 @@ void stopWatch(void)
 	
 	if (newIndex < MAX_SCORE_COLS)
 	{
-		strncpy(sgLevel.scores[newIndex].name, "Player", MAX_NAME_LENGTH);
+		sgLevel.scores[newIndex].name[0] = '\0';
 		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
 	
@@ -388,7 +388,6 @@ void stopWatch(void)
 void gotoNextLevel(void)
 {
 	stopWatch();
-	saveHighscoreToFile();
 	pauseGame();
 	showGameMenu(3);
 }

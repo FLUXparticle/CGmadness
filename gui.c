@@ -433,6 +433,11 @@ void updateMenuItem(MenuItem* item, float interval)
 			button->click();
 		}
 	}
+	else if (item->type == MI_CANVAS)
+	{
+		Canvas* canvas = (Canvas*) item;
+		canvas->customUpdate(interval);
+	} 
 }
 
 void drawMenuItem(const MenuItem* item)

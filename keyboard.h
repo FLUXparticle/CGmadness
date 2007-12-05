@@ -29,6 +29,7 @@
 #define CURSOR_RIGHT 3
 
 int getModifiers(void);
+unsigned char getLastChar(void);
 
 int wasKeyPressed(unsigned char key);
 int isKeyPressed(unsigned char key);

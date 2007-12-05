@@ -58,8 +58,15 @@ int gFunctionKeys[MAX_FUNCTION];
 
 int gModifiers = 0;
 
+unsigned char gLastChar;
+
 int getModifiers(void) {
 	return gModifiers;
+}
+
+unsigned char getLastChar(void)
+{
+	return gLastChar;
 }
 
 int isPressed(const int* key) {
@@ -102,6 +109,8 @@ int wasFunctionPressed(int index) {
 void keyboardDown(unsigned char key, int x, int y) {
 	gKeys[key] = GLUT_DOWN;
 	gModifiers = glutGetModifiers();
+	
+	gLastChar = key;
 }
 
 void keyboardUp(unsigned char key, int x, int y) {
