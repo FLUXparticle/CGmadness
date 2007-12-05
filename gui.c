@@ -372,6 +372,12 @@ void drawSpinEdit(const SpinEdit* spinEdit)
 	glPopMatrix();
 }
 
+void changeSpinEdit(SpinEdit* spinEdit, int change)
+{
+	spinEdit->value = clampi(spinEdit->value + change, spinEdit->minValue, spinEdit->maxValue);
+	spinEdit->change(spinEdit);
+}
+
 void eventSpinEdit(SpinEdit* spinEdit, float x, float y, MouseEvent event)
 {
 	int side;
@@ -393,12 +399,10 @@ void eventSpinEdit(SpinEdit* spinEdit, float x, float y, MouseEvent event)
 		spinEdit->side = side;
 	}
 
-
 	switch (event)
 	{
 		case MOUSE_CLICK:
-			spinEdit->value = clampi(spinEdit->value + side, spinEdit->minValue, spinEdit->maxValue);
-			spinEdit->change(spinEdit);
+			changeSpinEdit(spinEdit, side);
 			break;
 		default:
 			spinEdit->item.hover = (side != 0);
@@ -431,6 +435,18 @@ void updateMenuItem(MenuItem* item, float interval)
 		if (wasKeyPressed(button->shortcut))
 		{
 			button->click();
+		}
+	}
+	else if (item->type == MI_SPIN_EDIT)
+	{
+		SpinEdit* spinEdit = (SpinEdit*) item;
+		if (wasCursorPressed(CURSOR_LEFT))
+		{
+			changeSpinEdit(spinEdit, -1);
+		}
+		else if (wasCursorPressed(CURSOR_RIGHT))
+		{
+			changeSpinEdit(spinEdit, +1);
 		}
 	}
 	else if (item->type == MI_CANVAS)

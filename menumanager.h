@@ -25,13 +25,13 @@
 
 void initMenuManager(void);
 
+const Screen* getCurScreen(void);
+
 void updateMenuManager(float interval);
 
 void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event);
 
 void drawMenuManager(void);
-
-void setMenuPosistion(Vector3 pos);
 
 void pushWaitScreen(void);
 

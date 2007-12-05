@@ -20,6 +20,8 @@
 #ifndef _main_h_
 #define _main_h_
 
+#include "stringlist.h"
+
 typedef enum
 {
 	STATE_MAIN,
@@ -27,7 +29,9 @@ typedef enum
 	STATE_EDITOR
 } MainState;
 
-int initMain(void);
+extern StringList sgLevels;
+
+void initMain(void);
 
 void setMainState(MainState newState);
 

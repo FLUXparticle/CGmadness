@@ -92,6 +92,8 @@ typedef struct
 	int cntScoreCols;
 	ScoreCol scores[MAX_SCORE_COLS];
 
+	Vector3 origin;
+
 	int waiting;
 } Level;
 
@@ -106,10 +108,10 @@ void destroyLevel(void);
 void newLevel(void);
 
 int loadHighscoreFromFile(void);
-int loadFieldFromFile(const char* filename);
+int loadLevelFromFile(const char* filename, int justLoad);
 
 int saveHighscoreToFile(void);
-int saveFieldToFile(void);
+int saveLevelToFile(void);
 
 void updatePlate(int x, int y);
 void getRoofSquare(int x, int y, Square* square);

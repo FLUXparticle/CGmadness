@@ -26,7 +26,7 @@
 
 typedef void (*funcClick)(void);
 
-typedef void (*funcChange)(void* self);
+typedef void (*funcChange)(const void* self);
 
 /***/
 

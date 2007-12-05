@@ -22,12 +22,14 @@
 
 extern int sgIsMouseControl;
 
-int initGame(void);
+void initGame(void);
 void resumeGame(void);
 void resetGame(void);
 
-void setHotSeatLevel(const char* filename);
-void gotoNextLevel(void);
+void startGame(void);
+void stopGame(void);
+
+void finishedGame();
 
 void resetGameTime(void);
 

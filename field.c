@@ -166,7 +166,22 @@ void initGameField(void)
 
   /* init level stuff */
 	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
-	gMaxQuads = (1 + 4 * (MAX_LEVEL_HEIGHT + 1)) * gMaxPlates;
+	gMaxQuads = 0;
+	
+	for (y = 0; y < sgLevel.size.y; y++) {
+		for (x = 0; x < sgLevel.size.x; x++) {
+			gMaxQuads++;
+
+			for (i = 0; i < 4; i++) {
+				SideFace face;
+				
+				getSideFace(x, y, i, &face);
+
+				gMaxQuads += face.cntSquares;
+			}
+		}
+	}
+	
 	gMaxVertices = 4 * gMaxQuads;
 
 	MALLOC(sgVertices, gMaxVertices * sizeof(Vector3));

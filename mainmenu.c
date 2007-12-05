@@ -21,7 +21,11 @@
 #include "mainmenu.h"
 
 #include "main.h"
+#include "field.h"
+#include "level.h"
 #include "environment.h"
+#include "editor.h"
+#include "common.h"
 
 #include "menumanager.h"
 #include "gui.h"
@@ -33,17 +37,18 @@
 #include <stdlib.h>
 
 static Screen gScreenMain;
+static Screen gScreenChoose;
+
+static int gLoadedLevel = -1;
 
 static void clickButtonCGMadness(void)
 {
-	popAllScreens();
-	setMainState(STATE_GAME);
+	pushScreen(&gScreenChoose);
 }
 
 static void clickButtonCGMEditor(void)
 {
-	popAllScreens();
-	setMainState(STATE_EDITOR);
+	/* TODO */
 }
 
 static void clickButtonQuit(void)
@@ -51,12 +56,52 @@ static void clickButtonQuit(void)
 	exit(0);
 }
 
+static void clickButtonChoose(void)
+{
+	popAllScreens();
+	setMainState(STATE_GAME);
+}
+
+static void clickButtonBack(void)
+{
+	popScreen();
+}
+
+static void drawMenuLevel(void)
+{
+	/* empty */
+}
+
+static void changeLevelChooser(const void* self)
+{
+	const SpinEdit* spinedit = self;
+	
+	if (spinedit->value != gLoadedLevel)
+	{
+		if (gLoadedLevel >= 0)
+		{
+			destroyLevel();
+			gLoadedLevel = -1;
+		}
+		
+		if (loadLevelFromFile(sgLevels.strings[spinedit->value], 1))
+		{
+			updateTexCoords();
+			gLoadedLevel = spinedit->value;
+		}
+	}
+}
+
 void initMainMenu(void)
 {
 	static Button bCGMadness;
 	static Button bCGMEditor;
 	static Button bQuit;
+	static Button bChoose;
+	static Button bBack;
 	
+	static SpinEdit seLevel;
+
 	static MenuItem* itemsMain[] =
 	{
 		&bCGMadness.item,
@@ -64,11 +109,25 @@ void initMainMenu(void)
 		&bQuit.item
 	};
 	
+	static MenuItem* itemsChoose[] =
+	{
+		&seLevel.item,
+		&bChoose.item,
+		&bBack.item
+	};
+	
 	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
 	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 0);
 	initButton(&bQuit,      2.0f, clickButtonQuit, "Quit", 'q');
 	
 	INIT_SCREEN(&gScreenMain, itemsMain);
+
+	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 5.2f, drawMenuLevel, changeLevelChooser);
+
+	initButton(&bChoose,    3.0f, clickButtonChoose, "choose", KEY_ENTER);
+	initButton(&bBack,      2.0f, clickButtonBack, "back", KEY_ESC);
+	
+	INIT_SCREEN(&gScreenChoose, itemsChoose);
 }
 
 void showMainMenu(void)
@@ -84,6 +143,15 @@ void updateMainMenu(float interval)
 
 void drawMainMenu(void)
 {
-	drawEnvironment(NULL);
+	if (getCurScreen() == &gScreenChoose)
+	{
+		drawEnvironment(drawEditorField);
+		drawEditorField();
+	}
+	else
+	{
+		drawEnvironment(NULL);
+	}
+	
 	drawMenuManager();
 }

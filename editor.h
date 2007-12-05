@@ -20,11 +20,15 @@
 #ifndef _editor_h_
 #define _editor_h_
 
-int initEditor(const char* filename);
+int initEditor(void);
+
+void resetEditor(void);
 
 void resumeEditor(void);
 
 void updateEditor(float interval);
+
+void drawEditorField(void);
 
 void drawEditor(void);
 

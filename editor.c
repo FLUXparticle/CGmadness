@@ -67,14 +67,21 @@ static int gCamAngle = 0;
 static int gSin[] = { 0, 1, 0, -1 };
 static int gCos[] = { 1, 0, -1, 0 };
 
-static Vector3 gEditorScreenPosition;
-
 static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
 void pauseEditor(void) {
 	showEditorScreen(0);
 	gIsEditorRunning = 0;
+}
+
+void resetEditor(void)
+{
+	sgLevel.lightMap = 0;
+	gDirtyLightmaps = 0;
+
+	updateTexCoords();
+	gDirtyTexCoords = 0;
 }
 
 void resumeEditor(void) {
@@ -92,7 +99,7 @@ void saveLevel(void) {
 		gDirtyLightmaps = 0;
 	}
 
-	if (saveFieldToFile()) {
+	if (saveLevelToFile()) {
 		showEditorScreen(1);
 	} else {
 		showEditorScreen(2);
@@ -431,55 +438,18 @@ void drawEditor(void) {
 	}
 }
 
-void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent event)
+int initEditor(void)
 {
-	if (!gIsEditorRunning)
-	{
-		eventMenuManager(position, direction, event);
-	}
-}
-
-int initEditor(const char* filename)
-{
-	if (!loadFieldFromFile(filename))
-	{
-		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
-		{
-			newLevel();
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	if (sgLevel.borderTexture == 0)
-	{
-		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
-	}
-
-	sgLevel.lightMap = 0;
-	gDirtyLightmaps = 0;
-
-	updateTexCoords();
-	gDirtyTexCoords = 0;
-
-	sgWindowViewport.mouseEvent = eventEditor;
-
 	gCurStart.x = 0;
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
 	initEditorMenu();
-
-	gEditorScreenPosition.x = sgLevel.size.x / 2.0f;
-	gEditorScreenPosition.y = -10.0f;
-	gEditorScreenPosition.z =   0.0f;
-
-	setMenuPosistion(gEditorScreenPosition);
-
+	
+#if 0
 	pauseEditor();
-
+#endif
+	
 	return 1;
 }
