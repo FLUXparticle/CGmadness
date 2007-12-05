@@ -86,8 +86,8 @@ void initLevel(void);
 void destroyLevel(void);
 
 void newLevel(void);
-int loadFieldFromFile(const char* filename);
-int saveFieldToFile(const char* filename);
+int loadLevelFromFile(const char* filename);
+int saveLevelToFile(const char* filename);
 
 void updatePlate(int x, int y);
 void getRoofSquare(int x, int y, Square* square);

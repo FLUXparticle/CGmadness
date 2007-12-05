@@ -85,17 +85,17 @@ static void clickButtonBack(void) {
 	popScreen();
 }
 
-static void changeBallEdit(void* self) {
+static void changeBallEdit(const void* self) {
 	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
 }
 
-static void changeShadows(void* self) {
-	Check* check = self;
+static void changeShadows(const void* self) {
+	const Check* check = self;
 	setShadows(check->value);
 }
 
-static void changeReflection(void* self) {
-	Check* check = self;
+static void changeReflection(const void* self) {
+	const Check* check = self;
 	setReflection(check->value);
 }
 

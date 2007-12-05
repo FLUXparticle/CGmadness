@@ -24,6 +24,7 @@
 #include "field.h"
 #include "level.h"
 #include "environment.h"
+#include "editor.h"
 
 #include "menumanager.h"
 #include "gui.h"
@@ -45,9 +46,10 @@ static void clickButtonCGMadness(void)
 
 static void clickButtonCGMEditor(void)
 {
-	loadFieldFromFile(sgLevels.strings[0]);
-	initGameField();
-	updateGameField();
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
+	
+	loadLevelFromFile(sgLevels.strings[0]);
 	pushScreen(&gScreenChoose);
 }
 
@@ -63,19 +65,17 @@ static void clickButtonBack(void)
 
 static void drawMenuLevel(void)
 {
-	glPushMatrix();
-	
-		glScalef(0.1f, 0.1f, 0.1f);
-		
-		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-		
-		drawGameField(0);
-		
-	glPopMatrix();
+	/* empty */
 }
 
-static void changeLevelChooser(void* self)
+static void changeLevelChooser(const void* self)
 {
+	const SpinEdit* spinedit = self;
+	
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
+	
+	loadLevelFromFile(sgLevels.strings[spinedit->value]);
 }
 
 void initMainMenu(void)
@@ -127,5 +127,11 @@ void updateMainMenu(float interval)
 void drawMainMenu(void)
 {
 	drawEnvironment(NULL);
+	
+	if (getCurScreen() == &gScreenChoose)
+	{
+		drawEditorField();
+	}
+	
 	drawMenuManager();
 }

@@ -94,7 +94,7 @@ void saveLevel(void) {
 		gDirtyLightmaps = 0;
 	}
 
-	if (saveFieldToFile(gFilename)) {
+	if (saveLevelToFile(gFilename)) {
 		showEditorScreen(1);
 	} else {
 		showEditorScreen(2);
@@ -444,7 +444,7 @@ void eventEditor(const Vector3* position, const Vector3* direction, MouseEvent e
 int initEditor(char* filename)
 {
 	gFilename = filename;
-	if (!loadFieldFromFile(gFilename))
+	if (!loadLevelFromFile(gFilename))
 	{
 		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
 		{
@@ -454,11 +454,6 @@ int initEditor(char* filename)
 		{
 			return 0;
 		}
-	}
-
-	if (sgLevel.borderTexture == 0)
-	{
-		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
 	}
 
 	sgLevel.lightMap = 0;

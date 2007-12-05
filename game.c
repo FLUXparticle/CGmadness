@@ -262,16 +262,8 @@ void resetGameTime(void)
 static int startLevel(const char* filename) {
 	static Vector3 gameMenuPosition;
 
-	if (!loadFieldFromFile(filename)) {
+	if (!loadLevelFromFile(filename)) {
 		return 0;
-	}
-
-	if (sgLevel.borderTexture == 0) {
-#if (NOISE_TEXTURE)
-		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
-#else
-		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
-#endif
 	}
 
 	sgLevel.lightMap = genTexture();

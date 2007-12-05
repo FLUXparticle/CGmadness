@@ -22,6 +22,7 @@
 #include "common.h"
 #include "atlas.h"
 #include "crc32.h"
+#include "texture.h"
 
 #include "functions.h"
 #include "debug.h"
@@ -243,6 +244,14 @@ void initLevel(void)
 	{
 		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
 	}
+
+	if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
+		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
+	}
 }
 
 void destroyLevel(void) {
@@ -383,7 +392,7 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	setSubLightMap(index, dataFloat);
 }
 
-int loadFieldFromFile(const char* filename)
+int loadLevelFromFile(const char* filename)
 {
 	FILE* file = fopen(filename, "rt");
 	int result = 1;
@@ -638,7 +647,7 @@ void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
 	fputc('\n', file);
 }
 
-int saveFieldToFile(const char* filename) {
+int saveLevelToFile(const char* filename) {
 	FILE* file = fopen(filename, "wt");
 	int x, y;
 

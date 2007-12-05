@@ -62,6 +62,11 @@ void initMenuManager(void)
 	gCurScreen = NULL;
 }
 
+const Screen* getCurScreen(void)
+{
+	return gCurScreen; 
+}
+
 void updateMenuManager(float interval)
 {
 	Vector3 camera = gScreenPosition;
