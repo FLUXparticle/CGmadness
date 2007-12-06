@@ -91,7 +91,7 @@ int hasFramebuffer(void)
 
 int hasVertexbuffer(void)
 {
-	return 0 && gVertexbufferAvailable;
+	return gVertexbufferAvailable;
 }
 
 int hasTwoSideStencil(void)

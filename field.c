@@ -37,6 +37,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define WITHOUT_DEPTH_TEST 0
@@ -56,7 +57,7 @@ static Vector2* gTexCoords;
 static Vector2* gColorMapCoords;
 static Vector2* gLightMapCoords;
 static Color4* gColors;
-static unsigned int gVBuffers[6];
+static unsigned int gVBuffers[7];
 
 static Vector3* gBallShadowCoords;
 
@@ -303,6 +304,9 @@ void initGameField(void)
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[5]);
 		bufferdata(gColors);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+		glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(Vector3) * gCntVertices, (gBallShadowCoords), GL_DYNAMIC_DRAW);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
@@ -572,7 +576,24 @@ void drawGameField(int ballReflection)
 
 	  glClientActiveTextureARB(GL_TEXTURE3);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(3, GL_FLOAT, 0, gBallShadowCoords);
+		if (hasVertexbuffer())
+		{
+			void* data;
+			
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+			
+			data = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+			
+				memcpy(data, gBallShadowCoords, sizeof(Vector3) * gCntVertices);
+				
+			glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+			
+			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glTexCoordPointer(3, GL_FLOAT, 0, gBallShadowCoords);
+		}
 	}
 
 		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
@@ -618,6 +639,9 @@ void drawGameField(int ballReflection)
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+
+  glClientActiveTextureARB(GL_TEXTURE3);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
   glClientActiveTextureARB(GL_TEXTURE2);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
