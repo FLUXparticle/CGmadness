@@ -28,4 +28,6 @@ extern int sgLastPlayerIndex;
 
 void initHighScore(HighScore* highScore, float z);
 
+void acceptHighScoreName(void);
+
 #endif

@@ -79,8 +79,15 @@ static void clickButtonQuit(void)
 	setMainState(STATE_MAIN);
 }
 
+static void clickButtonQuit2(void)
+{
+	acceptHighScoreName();
+	clickButtonQuit();
+}
+
 static void clickButtonAgain(void)
 {
+	acceptHighScoreName();
 	popScreen();
 	resetGame();
 }
@@ -132,6 +139,7 @@ void initGameMenu(void) {
 	static Button bStart;
 	static Button bResume;
 	static Button bQuit;
+	static Button bQuit2;
 	static Button bHelp;
 	static Button bBack;
 	static Button bAgain;
@@ -166,7 +174,7 @@ void initGameMenu(void) {
 	{
 		&hsHighScore.item,
 		&bAgain.item,
-		&bQuit.item
+		&bQuit2.item
 	};
 
 	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
@@ -210,7 +218,7 @@ void initGameMenu(void) {
 	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
 
 	initButton(&bHelp, 2.0f, clickButtonHelp, "help", 'h');
-	initButton(&bQuit, 1.0f, clickButtonQuit, "change level", KEY_ESC);
+	initButton(&bQuit, 1.0f, clickButtonQuit, "give up", KEY_ESC);
 
 	INIT_SCREEN(&gScreenMain1, itemsMain1);
 	INIT_SCREEN(&gScreenMain2, itemsMain2);
@@ -238,6 +246,7 @@ void initGameMenu(void) {
 	initHighScore(&hsHighScore, 3.0f);
 	
 	initButton(&bAgain, 2.0f, clickButtonAgain, "play again", KEY_ENTER);
+	initButton(&bQuit2, 1.0f, clickButtonQuit2, "change level", KEY_ESC);
 
 	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

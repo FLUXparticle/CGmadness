@@ -29,15 +29,33 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
 
 int sgLastPlayerIndex;
 
+static int gShowCursor;
+
+void acceptHighScoreName(void)
+{
+	if (sgLastPlayerIndex < MAX_SCORE_COLS)
+	{
+		saveHighscoreToFile();
+		sgLastPlayerIndex = MAX_SCORE_COLS;
+	}
+}
+
 void updateHighScore(float interval)
 {
+	static float time = 0.0f;
+
 	unsigned char ch = getLastChar();
+	
+	time += interval;
+	
+	gShowCursor = time - floor(time) < 0.5;
 	
 	if (sgLastPlayerIndex < MAX_SCORE_COLS && wasKeyPressed(ch))
 	{
@@ -53,8 +71,7 @@ void updateHighScore(float interval)
 			}
 			break;
 		case KEY_ENTER:
-			saveHighscoreToFile();
-			sgLastPlayerIndex = MAX_SCORE_COLS;
+			acceptHighScoreName();
 			break;
 		default:
 			if (ch >= MIN_ALLOWED_CHAR && ch <= MAX_ALLOWED_CHAR)
@@ -123,7 +140,14 @@ void drawHighScore(void)
 				strName[2] = ' ';
 				
 				drawStrokeThinText(strName);
-		
+				
+				glTranslatef(widthStrokeText(strName), 0.0f, 0.0f);
+				
+				if (gShowCursor && i == sgLastPlayerIndex)
+				{
+					drawStrokeThinText("_");
+				}
+				
 			glPopMatrix();
 				
 			glTranslatef((0.95f * HIGHSCORE_WIDTH / scale) - widthStrokeText(strTime), 0.0f, 0.0f);
