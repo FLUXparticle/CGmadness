@@ -35,6 +35,7 @@
 #define HIGHSCORE_HEIGHT 4.0f
 
 int sgLastPlayerIndex;
+const char* sgCurLevelname;
 
 static int gShowCursor;
 
@@ -90,7 +91,7 @@ void drawHighScore(void)
 {
 	int i;
 	
-	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 1);
+	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 2);
 	
 	glPushMatrix();
 	
@@ -108,6 +109,20 @@ void drawHighScore(void)
 	
 	glPopMatrix();
 
+	glPushMatrix();
+	
+		glTranslatef(HIGHSCORE_WIDTH / 2.0f, (float) (MAX_SCORE_COLS + 1) / (MAX_SCORE_COLS + 2) * HIGHSCORE_HEIGHT, 0.0f);
+	
+		glScalef(scale, scale, scale);
+
+		glTranslatef(-widthStrokeText(sgCurLevelname) / 2.0f, 0.0f, 0.0f);
+		
+		glColor3f(0.0f, 0.0f, 1.0f);
+		
+		drawStrokeThinText(sgCurLevelname);
+		
+	glPopMatrix();
+	
 	for (i = 0; i < sgLevel.cntScoreCols; i++)
 	{
 		char strName[MAX_NAME_LENGTH + 4];
@@ -129,7 +144,7 @@ void drawHighScore(void)
 		
 		glPushMatrix();
 		
-			glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i) / (MAX_SCORE_COLS + 1) * HIGHSCORE_HEIGHT, 0.0f);
+			glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i) / (MAX_SCORE_COLS + 2) * HIGHSCORE_HEIGHT, 0.0f);
 		
 			glScalef(scale, scale, scale);
 

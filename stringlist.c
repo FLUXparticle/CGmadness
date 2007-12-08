@@ -37,6 +37,74 @@ static int isCGM(char* filename)
 	return strcmp(filename + strlen(filename) - 4, ".cgm") == 0;
 }
 
+static const char* findLast(const char* str, char ch)
+{
+	const char* tmp = str;
+	
+	const char* p = NULL;
+	
+	while ((tmp = strchr(tmp, ch)))
+	{
+		p = tmp;
+		tmp++;
+	}
+	
+	return p;
+}
+
+void findBasename(const char* path, int* start, int* end)
+{
+	const char* s;
+	const char* e;
+	
+	s = findLast(path, '/');
+	
+	if (s)
+	{
+		s++;
+	}
+	else
+	{
+		s = path;
+	}
+	
+	e = findLast(path, '.');
+	
+	if (!e)
+	{
+		e = s + strlen(s);
+	}
+	
+	*start = s - path;
+	*end = e - path;
+}
+
+int lengthBasename(const char* path)
+{
+	int start;
+	int end;
+	
+	findBasename(path, &start, &end);
+	
+	return end - start;
+}
+
+char* copyBasename(const char* path, char* dest)
+{
+	int start;
+	int end;
+	int len;
+	
+	findBasename(path, &start, &end);
+	
+	len = end - start; 
+	
+	memcpy(dest, path + start, len);
+	dest[len] = 0;
+	
+	return dest + len + 1;
+}
+
 void createStringListFromDir(StringList* list, const char* dirname)
 {
 	struct dirent *fileinfo;
@@ -65,6 +133,7 @@ void createStringListFromDir(StringList* list, const char* dirname)
 				{
 					count++;
 					size += strlen(newdir) + 1;
+					size += lengthBasename(newdir) + 1;
 				}
 			}
 			
@@ -93,12 +162,15 @@ void createStringListFromDir(StringList* list, const char* dirname)
 				stat(newdir, &filestat);
 				if (S_ISREG(filestat.st_mode))
 				{
-					int len = strlen(newdir) + 1;
-					memcpy(p, newdir, len);
+					size = strlen(newdir) + 1;
+					memcpy(p, newdir, size);
 					
 					*pp = p;
 					
-					p += len;
+					p += size;
+					
+					p = copyBasename(newdir, p);
+					
 					pp++;
 				}
 			}

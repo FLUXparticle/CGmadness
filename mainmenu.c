@@ -36,6 +36,7 @@
 #include <GL/glut.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 static Screen gScreenMain;
 static Screen gScreenChoose;
@@ -88,6 +89,8 @@ static void changeLevelChooser(const void* self)
 		{
 			updateTexCoords();
 			gLoadedLevel = spinedit->value;
+			
+			sgCurLevelname = sgLevels.strings[gLoadedLevel] + strlen(sgLevels.strings[gLoadedLevel]) + 1;
 		}
 	}
 	
