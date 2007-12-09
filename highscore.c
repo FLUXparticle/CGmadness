@@ -29,15 +29,34 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
 
 int sgLastPlayerIndex;
+const char* sgCurLevelname;
+
+static int gShowCursor;
+
+void acceptHighScoreName(void)
+{
+	if (sgLastPlayerIndex < MAX_SCORE_COLS)
+	{
+		saveHighscoreToFile();
+		sgLastPlayerIndex = MAX_SCORE_COLS;
+	}
+}
 
 void updateHighScore(float interval)
 {
+	static float time = 0.0f;
+
 	unsigned char ch = getLastChar();
+	
+	time += interval;
+	
+	gShowCursor = time - floor(time) < 0.5;
 	
 	if (sgLastPlayerIndex < MAX_SCORE_COLS && wasKeyPressed(ch))
 	{
@@ -53,8 +72,7 @@ void updateHighScore(float interval)
 			}
 			break;
 		case KEY_ENTER:
-			saveHighscoreToFile();
-			sgLastPlayerIndex = MAX_SCORE_COLS;
+			acceptHighScoreName();
 			break;
 		default:
 			if (ch >= MIN_ALLOWED_CHAR && ch <= MAX_ALLOWED_CHAR)
@@ -73,7 +91,7 @@ void drawHighScore(void)
 {
 	int i;
 	
-	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 1);
+	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 2);
 	
 	glPushMatrix();
 	
@@ -91,6 +109,20 @@ void drawHighScore(void)
 	
 	glPopMatrix();
 
+	glPushMatrix();
+	
+		glTranslatef(HIGHSCORE_WIDTH / 2.0f, (float) (MAX_SCORE_COLS + 1) / (MAX_SCORE_COLS + 2) * HIGHSCORE_HEIGHT, 0.0f);
+	
+		glScalef(scale, scale, scale);
+
+		glTranslatef(-widthStrokeText(sgCurLevelname) / 2.0f, 0.0f, 0.0f);
+		
+		glColor3f(0.0f, 0.0f, 1.0f);
+		
+		drawStrokeThinText(sgCurLevelname);
+		
+	glPopMatrix();
+	
 	for (i = 0; i < sgLevel.cntScoreCols; i++)
 	{
 		char strName[MAX_NAME_LENGTH + 4];
@@ -112,7 +144,7 @@ void drawHighScore(void)
 		
 		glPushMatrix();
 		
-			glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i) / (MAX_SCORE_COLS + 1) * HIGHSCORE_HEIGHT, 0.0f);
+			glTranslatef(0.0f, (float) (MAX_SCORE_COLS - i) / (MAX_SCORE_COLS + 2) * HIGHSCORE_HEIGHT, 0.0f);
 		
 			glScalef(scale, scale, scale);
 
@@ -123,7 +155,14 @@ void drawHighScore(void)
 				strName[2] = ' ';
 				
 				drawStrokeThinText(strName);
-		
+				
+				glTranslatef(widthStrokeText(strName), 0.0f, 0.0f);
+				
+				if (gShowCursor && i == sgLastPlayerIndex)
+				{
+					drawStrokeThinText("_");
+				}
+				
 			glPopMatrix();
 				
 			glTranslatef((0.95f * HIGHSCORE_WIDTH / scale) - widthStrokeText(strTime), 0.0f, 0.0f);

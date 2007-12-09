@@ -429,10 +429,8 @@ void updateGameField(void)
 	static int lastMX = 0;
 	static int lastMY = 0;
 
-	int mx = floor(sgCamera.x);
-	int my = floor(sgCamera.y);
-	
-	int q;
+	int mx = floor(sgCamera.x - sgLevel.origin.x);
+	int my = floor(sgCamera.y - sgLevel.origin.y);
 
 	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY))
 	{
@@ -445,6 +443,8 @@ void updateGameField(void)
 
 	if (!useSpotlight())
 	{
+		int q;
+
 		for (q = 0; q < gCntVertices; q += 4)
 		{
 			Vector3 vz = sgNormals[q];
@@ -472,8 +472,8 @@ void updateGameField(void)
 		static int lastBX = 0;
 		static int lastBY = 0;
 
-		int bx = floor(sgoBall.pos.x);
-		int by = floor(sgoBall.pos.y);
+		int bx = floor(sgoBall.pos.x - sgLevel.origin.x);
+		int by = floor(sgoBall.pos.y - sgLevel.origin.y);
 
 		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
 		{
