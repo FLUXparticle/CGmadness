@@ -79,7 +79,8 @@ static void clickButtonBack(void) {
 }
 
 static void clickButtonQuit(void) {
-	exit(0);
+	popScreen();
+	setMainState(STATE_MAIN);
 }
 
 void showEditorScreen(int menu) {
@@ -136,10 +137,10 @@ void initEditorMenu() {
 	 */
 
 	/* main menu */
-	initButton(&bEdit, 6.0f, clickButtonEdit, "Edit", KEY_ENTER);
-	initButton(&bSave, 5.0f, clickButtonSave, "Save", 's');
-	initButton(&bHelp, 4.0f, clickButtonHelp, "Help", 'h');
-	initButton(&bQuit, 3.0f, clickButtonQuit, "Quit", 'q');
+	initButton(&bEdit, 6.0f, clickButtonEdit, "edit", KEY_ENTER);
+	initButton(&bSave, 5.0f, clickButtonSave, "save", 's');
+	initButton(&bHelp, 4.0f, clickButtonHelp, "help", 'h');
+	initButton(&bQuit, 3.0f, clickButtonQuit, "back", KEY_ESC);
 
 	INIT_SCREEN(&gScreenEditor, itemsEditor);
 	

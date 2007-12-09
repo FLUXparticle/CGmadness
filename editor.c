@@ -75,7 +75,7 @@ void pauseEditor(void) {
 	gIsEditorRunning = 0;
 }
 
-void resetEditor(void)
+void startEditor(void)
 {
 	sgLevel.lightMap = 0;
 	gDirtyLightmaps = 0;
@@ -87,6 +87,8 @@ void resetEditor(void)
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
+	
+	pauseEditor();
 }
 
 void resumeEditor(void) {
@@ -119,12 +121,11 @@ void addLine(Vector3 v1, Vector3 v2) {
 }
 #endif
 
-void updateEditorCamera(float interval, Vector3 ball) {
+void updateEditorCamera(float interval, Vector3 marker) {
 	static float distance = 5.0f;
 	static float height = 2.0f;
 	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
 	float angle;
-	Vector3 marker;
 
   /* camera controls for editor */
 
@@ -143,17 +144,12 @@ void updateEditorCamera(float interval, Vector3 ball) {
 	if (isKeyPressed('x')) height += 0.1f;
 	if (isKeyPressed('y')) height -= 0.1f;
 
-	/* look at */
-	marker.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
-	marker.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-	marker.z = ball.z;
-
 	angle = gCamAngle * 90.0f;
 
 	/* new camera position */
 	dest.x =  sin(angle * PI / 180.0f) * distance + marker.x;
 	dest.y = -cos(angle * PI / 180.0f) * distance + marker.y;
-	dest.z = ball.z + height;
+	dest.z = height + marker.z;
 
 	moveCamera(interval, dest, marker);
 }
@@ -335,11 +331,11 @@ void updateEditor(float interval) {
 			pauseEditor();
 		}
 
-		markerPos.x = gCurStart.x + 0.5f;
-		markerPos.y = gCurStart.y + 0.5f;
+		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
+		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
 		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
 
-		updateEditorCamera(interval, markerPos);
+		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
 		
 		if (gDirtyTexCoords)
