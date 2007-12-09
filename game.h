@@ -20,6 +20,8 @@
 #ifndef _game_h_
 #define _game_h_
 
+#include "vector.h"
+
 extern int sgIsMouseControl;
 
 void initGame(void);
@@ -34,6 +36,7 @@ void finishedGame();
 void resetGameTime(void);
 
 void updateGame(float interval);
+void updateGameCamera(float interval, Vector3 ball);
 
 void drawGame(void);
 void drawGameBallReflection(void);

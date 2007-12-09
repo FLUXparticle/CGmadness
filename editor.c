@@ -23,6 +23,9 @@
 #include "menumanager.h"
 
 #include "level.h"
+#include "ball.h"
+#include "game.h"
+#include "field.h"
 #include "callback.h"
 #include "camera.h"
 #include "keyboard.h"
@@ -70,6 +73,8 @@ static int gCos[] = { 1, 0, -1, 0 };
 static int gDirtyTexCoords;
 static int gDirtyLightmaps;
 
+static int gIsTestMode;
+
 void pauseEditor(void) {
 	showEditorScreen(0);
 	gIsEditorRunning = 0;
@@ -87,6 +92,8 @@ void startEditor(void)
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
+	
+	gIsTestMode = 0;
 	
 	pauseEditor();
 }
@@ -324,11 +331,37 @@ void animateEditor(float interval)
 }
 
 void updateEditor(float interval) {
-	if (gIsEditorRunning) {
+	if (!gIsEditorRunning) {
+		updateMenuManager(interval);
+	}
+	else if (gIsTestMode)
+	{
+		if (wasKeyPressed(KEY_ESC))
+		{
+			destroyGameField();
+			
+			gIsTestMode = 0;
+		}
+		
+		updateBall(interval);
+		updateGameCamera(interval, sgoBall.pos);
+	}
+	else
+	{
 		Vector3 markerPos;
 
 		if (wasKeyPressed(KEY_ESC)) {
 			pauseEditor();
+		}
+		
+		if (wasKeyPressed(KEY_ENTER))
+		{
+			resetBall();
+			changeBall(BALL_LAYOUT_TEXTURE);
+			
+			initGameField();
+			
+			gIsTestMode = 1;
 		}
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
@@ -343,10 +376,6 @@ void updateEditor(float interval) {
 			updateTexCoords();
 			gDirtyTexCoords = 0;
 		}
-	}
-	else
-	{
-		updateMenuManager(interval);
 	}
 }
 
@@ -429,6 +458,11 @@ void drawEditorField(void) {
 	}
 	glEnd();
 #endif
+	
+	if (gIsTestMode)
+	{
+		drawGameBall();
+	}
 }
 
 void drawEditor(void) {
