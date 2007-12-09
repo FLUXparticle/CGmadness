@@ -61,6 +61,7 @@ void setMainState(MainState newState)
 		startGame();
 		break;
 	case STATE_EDITOR:
+		startEditor();
 		break;
 	}
 }

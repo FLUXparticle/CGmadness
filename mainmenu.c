@@ -39,18 +39,19 @@
 #include <string.h>
 
 static Screen gScreenMain;
-static Screen gScreenChoose;
+static Screen gScreenChooseGame;
+static Screen gScreenChooseEditor;
 
 static int gLoadedLevel = -1;
 
 static void clickButtonCGMadness(void)
 {
-	pushScreen(&gScreenChoose);
+	pushScreen(&gScreenChooseGame);
 }
 
 static void clickButtonCGMEditor(void)
 {
-	/* TODO */
+	pushScreen(&gScreenChooseEditor);
 }
 
 static void clickButtonQuit(void)
@@ -58,9 +59,14 @@ static void clickButtonQuit(void)
 	exit(0);
 }
 
-static void clickButtonChoose(void)
+static void clickButtonChooseGame(void)
 {
 	setMainState(STATE_GAME);
+}
+
+static void clickButtonChooseEditor(void)
+{
+	setMainState(STATE_EDITOR);
 }
 
 static void clickButtonBack(void)
@@ -102,7 +108,8 @@ void initMainMenu(void)
 	static Button bCGMadness;
 	static Button bCGMEditor;
 	static Button bQuit;
-	static Button bChoose;
+	static Button bChooseGame;
+	static Button bChooseEditor;
 	static Button bBack;
 	
 	static SpinEdit seLevel;
@@ -116,11 +123,18 @@ void initMainMenu(void)
 		&bQuit.item
 	};
 	
-	static MenuItem* itemsChoose[] =
+	static MenuItem* itemsChooseGame[] =
 	{
 		&seLevel.item,
 		&hsHighScore.item,
-		&bChoose.item,
+		&bChooseGame.item,
+		&bBack.item
+	};
+	
+	static MenuItem* itemsChooseEditor[] =
+	{
+		&seLevel.item,
+		&bChooseEditor.item,
 		&bBack.item
 	};
 	
@@ -134,10 +148,14 @@ void initMainMenu(void)
 
 	initHighScore(&hsHighScore, 3.0f);
 
-	initButton(&bChoose,    2.0f, clickButtonChoose, "choose", KEY_ENTER);
+	initButton(&bChooseGame,    2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
 	initButton(&bBack,      1.0f, clickButtonBack, "back", KEY_ESC);
 	
-	INIT_SCREEN(&gScreenChoose, itemsChoose);
+	INIT_SCREEN(&gScreenChooseGame, itemsChooseGame);
+	
+	initButton(&bChooseEditor,    2.0f, clickButtonChooseEditor, "choose", KEY_ENTER);
+	
+	INIT_SCREEN(&gScreenChooseEditor, itemsChooseEditor);
 }
 
 void showMainMenu(void)
@@ -153,7 +171,12 @@ void updateMainMenu(float interval)
 
 void drawMainMenu(void)
 {
-	if (getCurScreen() == &gScreenChoose)
+	if (getCurScreen() == &gScreenChooseGame)
+	{
+		drawEnvironment(drawEditorField);
+		drawEditorField();
+	}
+	else if (getCurScreen() == &gScreenChooseEditor)
 	{
 		drawEnvironment(drawEditorField);
 		drawEditorField();
