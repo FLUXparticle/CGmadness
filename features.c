@@ -101,7 +101,7 @@ int hasTwoSideStencil(void)
 
 int hasSpotlight(void)
 {
-	return 0 && hasShader();
+	return hasShader();
 }
 
 /* set */

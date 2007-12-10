@@ -17,24 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-varying vec4 diffuse;
-varying vec3 normal, lightDir;
+varying vec3 normal;
+varying vec3 vertex;
+
+uniform vec3 ball;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform sampler2D tex2;
 
 void main()
 {
-	vec4 color = vec4(0);
+	vec3 d = ball - vertex;
 
-	vec3 light = normalize(lightDir);
+	float r = length(d);
 
-	float NdotL = max(dot(normalize(normal), light), 0.0);
-	float spotEffect = dot(normalize(gl_LightSource[2].spotDirection), -light);
+	float d1 = dot(normal, normalize(d));
 
-	if (spotEffect > gl_LightSource[2].spotCosCutoff) {
-		spotEffect = pow(spotEffect, gl_LightSource[2].spotExponent);
-		color = spotEffect * diffuse * NdotL;
+	float light = 1.0 - max(0.0, (d1 / (1.0 + ((r * r) / (0.2 * 0.2)))));
 
-		color.g *= min((1.0 - spotEffect) * 2.0, 1.0);
-	}
+	vec4 shadow = vec4(light);
 
-	gl_FragColor = color;
+	vec4 texColor0 = texture2D(tex0, vec2(gl_TexCoord[0]));
+	vec4 texColor1 = texture2D(tex1, vec2(gl_TexCoord[1]));
+	vec4 texColor2 = texture2D(tex2, vec2(gl_TexCoord[2]));
+
+	gl_FragColor = gl_Color * texColor0 * texColor1 * texColor2 * shadow;
 }

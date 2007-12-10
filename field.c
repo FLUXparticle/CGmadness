@@ -26,6 +26,7 @@
 #include "ball.h"
 #include "features.h"
 
+#include "vector.h"
 #include "functions.h"
 
 #include "types.h"
@@ -36,6 +37,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define WITHOUT_DEPTH_TEST 0
@@ -55,7 +57,12 @@ static Vector2* gTexCoords;
 static Vector2* gColorMapCoords;
 static Vector2* gLightMapCoords;
 static Color4* gColors;
-static unsigned int gVBuffers[6];
+static unsigned int gVBuffers[7];
+
+static Vector3* gBallShadowCoords;
+
+static GLuint gWhiteTexture; 
+static GLuint gBallShadow; 
 
 static int gCntVertices;
 static int gMaxPlates;
@@ -154,6 +161,66 @@ void setRoofColor(int x, int y, Color4 col)
 
 #define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * gCntVertices, (x), GL_STATIC_DRAW_ARB);
 
+#define MAX_XY 1.0f
+#define MAX_Z 1.0f
+
+#define SAMPLES_XY 64
+#define SAMPLES_Z 64
+
+void initBallShadow(void)
+{
+	GLfloat ballShadowData[SAMPLES_Z][SAMPLES_XY][SAMPLES_XY];
+	
+	int x;
+	int y;
+	int z;
+	
+	float fx;
+	float fy;
+	float fz;
+	
+	float d;
+	
+	for (y = 0; y < SAMPLES_XY; y++)
+	{
+		for (x = 0; x < SAMPLES_XY; x++)
+		{
+			ballShadowData[0][y][x] = 1.0f;
+		}
+	}
+
+	for (z = 1; z < SAMPLES_Z; z++)
+	{
+		fz = ((float) z / SAMPLES_Z) * MAX_Z;
+
+		for (y = 0; y < SAMPLES_XY; y++)
+		{
+			fy = (((float) y / SAMPLES_XY) - 0.5f) * MAX_XY;
+
+			for (x = 0; x < SAMPLES_XY; x++)
+			{
+				fx = (((float) x / SAMPLES_XY) - 0.5f) * MAX_XY;
+				
+				d = sqrt(sqr(fx) + sqr(fy) + sqr(fz));
+				
+				ballShadowData[z][y][x] = 1.0f - (fz / d) / (1.0f + sqr(d) / sqr(sgoBall.radius));
+			}
+		}
+	}
+	
+	glGenTextures(1, &gBallShadow);
+	glBindTexture(GL_TEXTURE_3D, gBallShadow);
+	
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, SAMPLES_XY, SAMPLES_XY, SAMPLES_Z, 0, GL_LUMINANCE, GL_FLOAT, &ballShadowData[0][0][0]);
+
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
+
 void initGameField(void)
 {
 	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -164,6 +231,13 @@ void initGameField(void)
 	int y;
 	int i;
 	int index = 0;
+	
+	glGenTextures(1, &gWhiteTexture);
+	
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 1, 1, 0, GL_LUMINANCE, GL_FLOAT, &white.r);
+	
+	initBallShadow();
 
   /* init level stuff */
 	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
@@ -188,10 +262,12 @@ void initGameField(void)
 	MALLOC(sgVertices, gMaxVertices * sizeof(Vector3));
 	MALLOC(sgNormals, gMaxVertices * sizeof(Vector3));
 	MALLOC(gIndexVertices, gMaxPlates * sizeof(int));
-  MALLOC(gTexCoords, gMaxVertices * sizeof(Vector2));
-  MALLOC(gColorMapCoords, gMaxVertices * sizeof(Vector2));
-  MALLOC(gLightMapCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gTexCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gColorMapCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gLightMapCoords, gMaxVertices * sizeof(Vector2));
 	MALLOC(gColors, gMaxVertices * sizeof(Color4));
+	
+	MALLOC(gBallShadowCoords, gMaxVertices * sizeof(Vector3));
 
 	gCntVertices = 0;
 
@@ -244,6 +320,9 @@ void initGameField(void)
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[5]);
 		bufferdata(gColors);
 
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+		glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(Vector3) * gCntVertices, (gBallShadowCoords), GL_DYNAMIC_DRAW);
+
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
@@ -278,6 +357,8 @@ void destroyGameField(void)
 	FREE(gColorMapCoords);
 	FREE(gLightMapCoords);
 	FREE(gColors);
+
+  FREE(gBallShadowCoords);
 }
 
 /*
@@ -364,6 +445,8 @@ void updateGameField(void)
 
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
+	
+	int q;
 
 	if (gCntCameraViewIndices == 0 || !(mx == lastMX && my == lastMY))
 	{
@@ -372,6 +455,30 @@ void updateGameField(void)
 
 		lastMX = mx;
 		lastMY = my;
+	}
+
+	if (!useSpotlight())
+	{
+		for (q = 0; q < gCntVertices; q += 4)
+		{
+			Vector3 vz = sgNormals[q];
+			Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q])); 
+			Vector3 vy = norm(cross(vx, vz)); 
+			
+			int i;
+			
+			for (i = 0; i < 4; i++)
+			{
+				Vector3 vertex = sgVertices[q + i];
+				Vector3 d = sub(sgoBall.pos, vertex);
+	
+				float x = dot(vx, d) / MAX_XY + 0.5f;
+				float y = dot(vy, d) / MAX_XY + 0.5f;
+				float z = dot(vz, d) / MAX_Z;
+	
+			  gBallShadowCoords[q + i] = vector3(x, y, z);
+			}
+		}
 	}
 
 	if (useBallReflection())
@@ -458,23 +565,64 @@ void drawGameField(int ballReflection)
 	}
 
   glActiveTexture(GL_TEXTURE0);
-#if (NOISE_TEXTURE)
   glEnable(GL_TEXTURE_2D);
+#if (NOISE_TEXTURE)
 	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
 #else
-  glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
 #endif
 
+  glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
 	if (useShadows())
 	{
-	  glActiveTexture(GL_TEXTURE1);
-		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
 	}
 
   glActiveTexture(GL_TEXTURE2);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
+
+	if (useSpotlight())
+	{
+		glUseProgram(sgSpotlightShader);
+
+		glUniform3fv(glGetUniformLocation(sgSpotlightShader, "ball"), 1, &sgoBall.pos.x);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex0"), 0);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex1"), 1);
+		glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex2"), 2);
+	}
+	else
+	{
+	  glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_3D);
+		glBindTexture(GL_TEXTURE_3D, gBallShadow);
+
+	  glClientActiveTextureARB(GL_TEXTURE3);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		if (hasVertexbuffer())
+		{
+			void* data;
+			
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+			
+			data = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+			
+				memcpy(data, gBallShadowCoords, sizeof(Vector3) * gCntVertices);
+				
+			glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+			
+			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+		}
+		else
+		{
+			glTexCoordPointer(3, GL_FLOAT, 0, gBallShadowCoords);
+		}
+	}
 
 		if (ballReflection)
 		{
@@ -484,6 +632,19 @@ void drawGameField(int ballReflection)
 		{
 			glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT, gCameraViewIndices);
 		}
+
+	if (useSpotlight())
+	{
+		glUseProgram(0);
+	}
+	else
+	{
+	  glActiveTexture(GL_TEXTURE3);
+		glDisable(GL_TEXTURE_3D);
+
+		glClientActiveTextureARB(GL_TEXTURE3);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
 
   glActiveTexture(GL_TEXTURE2);
 	glDisable(GL_TEXTURE_2D);
@@ -513,6 +674,9 @@ void drawGameField(int ballReflection)
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+
+  glClientActiveTextureARB(GL_TEXTURE3);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
   glClientActiveTextureARB(GL_TEXTURE2);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

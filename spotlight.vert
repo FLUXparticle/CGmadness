@@ -17,17 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-varying vec4 diffuse;
-varying vec3 normal, lightDir;
+varying vec3 normal;
+varying vec3 vertex;
 
 void main()
 {
-	vec3 ecPos = vec3(gl_ModelViewMatrix * gl_Vertex);
-	lightDir = vec3(gl_LightSource[2].position) - ecPos;
+	vertex = vec3(gl_Vertex);
+	normal = gl_Normal;
 
-	diffuse = gl_LightSource[2].diffuse * gl_Color;
-
-	normal = normalize(gl_NormalMatrix * gl_Normal);
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_TexCoord[1] = gl_MultiTexCoord1;
+	gl_TexCoord[2] = gl_MultiTexCoord2;
 
 	gl_Position = ftransform();
+	gl_FrontColor = gl_Color;
 }
