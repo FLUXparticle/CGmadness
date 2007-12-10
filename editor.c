@@ -24,7 +24,6 @@
 
 #include "level.h"
 #include "ball.h"
-#include "game.h"
 #include "field.h"
 #include "callback.h"
 #include "camera.h"
@@ -330,6 +329,26 @@ void animateEditor(float interval)
 	}
 }
 
+void enableTestMode(void)
+{
+	resetBall();
+	resetBallCamera();
+	changeBall(BALL_LAYOUT_TEXTURE);
+	enableBallCamera();
+	
+	initGameField();
+	
+	gIsTestMode = 1;
+}
+
+void disableTestMode(void)
+{
+	destroyGameField();
+	disableBallCamera();
+	
+	gIsTestMode = 0;
+}
+
 void updateEditor(float interval) {
 	if (!gIsEditorRunning) {
 		updateMenuManager(interval);
@@ -338,13 +357,10 @@ void updateEditor(float interval) {
 	{
 		if (wasKeyPressed(KEY_ESC))
 		{
-			destroyGameField();
-			
-			gIsTestMode = 0;
+			disableTestMode();
 		}
 		
 		updateBall(interval);
-		updateGameCamera(interval, sgoBall.pos);
 	}
 	else
 	{
@@ -356,12 +372,7 @@ void updateEditor(float interval) {
 		
 		if (wasKeyPressed(KEY_ENTER))
 		{
-			resetBall();
-			changeBall(BALL_LAYOUT_TEXTURE);
-			
-			initGameField();
-			
-			gIsTestMode = 1;
+			enableTestMode();
 		}
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;

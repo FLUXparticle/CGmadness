@@ -31,6 +31,7 @@
 #include "texture.h"
 #include "field.h"
 #include "lightmap.h"
+#include "camera.h"
 
 #include "functions.h"
 
@@ -57,9 +58,20 @@
 
 Ball sgoBall;
 int sgIsBallInPieces;
+int sgHasBallHitGoal;
+int sgIsMouseControl = 0;
 
 Vector3 sgForward;
 Vector3 sgRight;
+
+static int gIsBallCameraActive;
+
+static float gDistance;
+static float gLatitude;
+static float gLongitude;
+
+static int gDragX = 0;
+static int gDragY = 0;
 
 static RenderTarget gTargetCube[6];
 static Viewport gViewportCube[6];
@@ -100,6 +112,11 @@ int useBallReflection(void)
 
 void changeBall(int layout) {
   gBallLayout = layout;
+}
+
+void gameDrag(int dx, int dy) {
+	gDragX += dx;
+	gDragY += dy;
 }
 
 void updateReflection(void)
@@ -455,6 +472,8 @@ void animateBall(float interval)
 	sgoBall.pos = ball;
 
 	normal = norm(normal);
+	
+	sgHasBallHitGoal = 0;
 
 	/* contact to surface? */
 	if (collision)
@@ -467,11 +486,6 @@ void animateBall(float interval)
 			/* collision was to havy */
 			explodeBall();
 		}
-		else if (x == sgLevel.finish.x && y == sgLevel.finish.y)
-		{
-			/* reached finish quad */
-			finishedGame();
-		}
 		else
 		{
 			sgoBall.velocity = add(sgoBall.velocity, rebound);
@@ -481,6 +495,12 @@ void animateBall(float interval)
 			{
 				sgoBall.velocity = add(sgoBall.velocity, scale(JUMP_FORCE / sgoBall.mass * interval, normal));
 			}
+		}
+		
+		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
+		{
+			/* hit goal */
+			sgHasBallHitGoal = 1;
 		}
 	}
 
@@ -504,6 +524,81 @@ void animateBall(float interval)
 	gDirtyReflection = 1;
 }
 
+void resetBallCamera(void)
+{
+	gDistance  =  5.0f;
+	gLatitude  = 20.0f;
+	gLongitude =  0.0f;
+}
+
+void enableBallCamera(void)
+{
+	if (sgIsMouseControl)
+	{
+		setDragFunc(gameDrag);
+	}
+	
+	glutSetCursor(GLUT_CURSOR_NONE);
+	
+	gIsBallCameraActive = 1;
+}
+
+void disableBallCamera(void)
+{
+	setDragFunc(NULL);
+	
+	gIsBallCameraActive = 0;
+}
+
+void updateBallCamera(float interval, Vector3 ball) {
+	Vector3 diff;
+	Vector3 up = { 0.0f, 0.0f, 1.0f };
+	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
+
+  /* game controls for camera */
+
+	if (sgIsMouseControl)
+	{
+		gLongitude -= 5.0f * interval * gDragX;
+		gLatitude += 5.0f * interval * gDragY;
+	
+		gDragX = 0;
+		gDragY = 0;
+	}
+	else
+	{
+		/* zoom */
+		if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
+		if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
+	
+		/* rotation */
+		if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
+		if (isKeyPressed('d')) gLongitude += 120.0f * interval;
+	
+		/* height */
+		if (isKeyPressed('w')) gLatitude += 120.0f * interval;
+		if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
+	
+		gLatitude = clamp(gLatitude, -89.0f, 89.0f);
+	}
+
+	dest.x = ball.x + gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.y = ball.y - gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
+
+	moveCamera(interval, dest, ball);
+
+	if (sgIsMouseControl)
+	{
+		sgCamera = dest;
+	}
+
+	diff = sub(sgLookat, sgCamera);
+	diff.z = 0.0f;
+	sgForward = norm(diff);
+	sgRight = norm(cross(sgForward, up));
+}
+
 void updateBall(float interval)
 {
 	if (!sgIsBallInPieces)
@@ -514,6 +609,11 @@ void updateBall(float interval)
 	{
 		resetBall();
 		resetGameTime();
+	}
+	
+	if (gIsBallCameraActive)
+	{
+		updateBallCamera(interval, sgoBall.pos);
 	}
 
 	gDirtyReflection = 1;
