@@ -62,8 +62,8 @@ static int gMaxPlates;
 static int gMaxQuads;
 static int gMaxVertices;
 
-static int gCntIndices = 0;
-static int* gIndices;
+static int gCntCameraViewIndices = 0;
+static int* gCameraViewIndices;
 
 static int gCntBallReflectionIndices = 0;
 static int* gBallReflectionIndices;
@@ -250,8 +250,8 @@ void initGameField(void)
 	printf("gMaxVertices: %d\n", gMaxVertices);
 	printf("gCntVertices: %d\n", gCntVertices);
 
-	gCntIndices = 0;
-	MALLOC(gIndices, gCntVertices * sizeof(int));
+	gCntCameraViewIndices = 0;
+	MALLOC(gCameraViewIndices, gCntVertices * sizeof(int));
 	MALLOC(gBallReflectionIndices, gCntVertices * sizeof(int));
 
 	if (hasSpotlight())
@@ -272,7 +272,7 @@ void destroyGameField(void)
 	}
 
 	FREE(gIndexVertices);
-  FREE(gIndices);
+  FREE(gCameraViewIndices);
   FREE(gBallReflectionIndices);
 	FREE(gTexCoords);
 	FREE(gColorMapCoords);
@@ -283,7 +283,7 @@ void destroyGameField(void)
 /*
  * render from close to far
  */
-void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int farToClose, int* indices, int* index)
+void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, Vector3 camera, int farToClose, int* indices, int* index)
 {
 	if (sizeX == 0 || sizeY == 0)
 	{
@@ -294,12 +294,25 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int
 		int start;
 		int end;
 		int q;
+		int i;
 
 		getVertIndex(startX, startY, &start, &end);
 
-		for (q = start; q < end; q++)
+		for (q = start; q < end; q += 4)
 		{
-			indices[(*index)++] = q;
+			/*
+			 * the top square must always be drawn, because this function
+			 * is not called if only the height of the camera changes.
+			 * Fortunately it is always the first square in the array range.
+			 * WARNING: be aware of this if you change the order of sqaures.
+			 */
+			if (q == start || dot(sgNormals[q], sub(camera, sgVertices[q])) >= 0)
+			{
+				for (i = 0; i < 4; i++)
+				{
+					indices[(*index)++] = q + i;
+				}
+			}
 		}
 	}
 	else
@@ -333,13 +346,13 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int
 
 		if (farToClose ^ closer)
 		{
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose, indices, index);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose, indices, index);
 		}
 		else
 		{
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose, indices, index);
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose, indices, index);
 		}
 	}
 }
@@ -352,10 +365,10 @@ void updateGameField(void)
 	int mx = floor(sgCamera.x);
 	int my = floor(sgCamera.y);
 
-	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY))
+	if (gCntCameraViewIndices == 0 || !(mx == lastMX && my == lastMY))
 	{
-		gCntIndices = 0;
-		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+		gCntCameraViewIndices = 0;
+		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, sgCamera, 0, gCameraViewIndices, &gCntCameraViewIndices);
 
 		lastMX = mx;
 		lastMY = my;
@@ -372,7 +385,7 @@ void updateGameField(void)
 		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
 		{
 			gCntBallReflectionIndices = 0;
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.pos, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
 
 			lastBX = bx;
 			lastBY = by;
@@ -463,7 +476,14 @@ void drawGameField(int ballReflection)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
-		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
+		if (ballReflection)
+		{
+			glDrawElements(GL_QUADS, gCntBallReflectionIndices, GL_UNSIGNED_INT, gBallReflectionIndices);
+		}
+		else
+		{
+			glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT, gCameraViewIndices);
+		}
 
   glActiveTexture(GL_TEXTURE2);
 	glDisable(GL_TEXTURE_2D);
@@ -482,7 +502,7 @@ void drawGameField(int ballReflection)
 	glLineWidth(5.0f);
 
 		glColor3f(0.0f, 0.0f, 0.0f);
-		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
+		glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gCameraViewIndices);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
