@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 
 void message(void)
 {
-	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>\n");
+	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>\n");
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
 }
 
