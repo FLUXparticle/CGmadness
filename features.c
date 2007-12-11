@@ -32,11 +32,11 @@ static int gVertexbufferAvailable;
 static int gTwoSideStencilAvailable;
 static int gShaderAvailable;
 
-static int gUseSpotlight = 0;
-static int gUseShadows = 0;
+static int gUseBallShadow = 0;
 static int gUseReflection = 0;
 
 GLhandleARB sgSpotlightShader = 0;
+GLhandleARB sgGolfballShader = 0;
 
 void initFeatures(int argc, char* argv[]) {
 	gShaderAvailable = 1;
@@ -72,7 +72,12 @@ void initFeatures(int argc, char* argv[]) {
 		sgSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
 		if (sgSpotlightShader) {
 			printf("Spotlight-Shader ready :-)\n");
-			setSpotlight(1);
+		}
+
+		sgGolfballShader = makeShader("golfball.vert", "golfball.frag");
+		if (sgGolfballShader)
+		{
+			printf("Golfball-Shader ready :-)\n");
 		}
 	}
 }
@@ -99,21 +104,21 @@ int hasTwoSideStencil(void)
 	return gTwoSideStencilAvailable;
 }
 
-int hasSpotlight(void)
+int hasSpotlightShader(void)
 {
-	return hasShader();
+	return hasShader() && sgSpotlightShader;
+}
+
+int hasGolfballShader(void)
+{
+	return hasShader() && sgGolfballShader;
 }
 
 /* set */
 
-void setSpotlight(int use)
+void setBallShadow(int use)
 {
-	gUseSpotlight = use;
-}
-
-void setShadows(int use)
-{
-	gUseShadows = use;
+	gUseBallShadow = use;
 }
 
 void setReflection(int use)
@@ -123,14 +128,9 @@ void setReflection(int use)
 
 /* use...? */
 
-int useSpotlight(void)
+int useBallShadow(void)
 {
-	return hasSpotlight() && gUseSpotlight;
-}
-
-int useShadows(void)
-{
-	return gUseShadows;
+	return gUseBallShadow;
 }
 
 int useReflection(void)
