@@ -38,9 +38,16 @@
 
 #define FRAMES_PER_SECOND 60
 
+void usage(void)
+{
+	printf("usage: cgmadness [options...]\n");
+	usageFeatures();
+}
+
 int main(int argc, char* argv[])
 {
 	message();
+	usage();
 
 	assurePath(argv[0]);
 

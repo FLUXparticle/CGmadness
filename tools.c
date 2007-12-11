@@ -30,6 +30,7 @@ void message(void)
 {
 	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>\n");
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
+	printf("\n");
 }
 
 void assurePath(const char* progname)
