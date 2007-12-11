@@ -44,8 +44,6 @@
 #include <math.h>
 #include <float.h>
 
-#define MAX_LEVEL_SIZE 100
-
 #define DRAW_DEBUG_LINES 0
 
 typedef struct {

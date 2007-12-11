@@ -23,7 +23,6 @@
 #include "atlas.h"
 #include "crc32.h"
 #include "tools.h"
-#include "texture.h"
 
 #include "functions.h"
 #include "debug.h"
@@ -39,6 +38,8 @@
 #define THIS_HIGHSCORE_VERSION 1
 
 #define EXT_HIGHSCORE ".highscore"
+
+#define MAX_LEVEL_SIZE 100
 
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
@@ -255,14 +256,6 @@ void initLevel(void)
 	for (x = 1; x < sgLevel.size.x; x++)
 	{
 		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
-	}
-
-	if (sgLevel.borderTexture == 0) {
-#if (NOISE_TEXTURE)
-		sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
-#else
-		sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
-#endif
 	}
 
 	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
@@ -522,14 +515,22 @@ int loadLevelFromFile(const char* filename, int justLoad)
 	unsigned int crc32;
 	int resize = 1;
 
-	if (!file)
-	{
-		fprintf(stderr, "can not open file: %s\n", filename);
-		return 0;
-	}
-	
 	sgLevel.filename = filename;
 
+	if (!file)
+	{
+		if (between(sgLevel.size.x, 1, MAX_LEVEL_SIZE) && between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
+		{
+			newLevel();
+			return 1;
+		}
+		else
+		{
+			fprintf(stderr, "can not open file: %s\n", filename);
+			return 0;
+		}
+	}
+	
 	/* version number */
 	fscanf(file, "v%u", &version);
 
