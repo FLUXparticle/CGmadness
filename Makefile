@@ -26,7 +26,7 @@ CFLAGS += -ansi -pedantic -Wall
 
 LIBS := -lm
 PROJECT := cgmadness
-SHADER := golfball spotlight
+SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC

@@ -75,9 +75,6 @@ static int* gIndices;
 static int gCntBallReflectionIndices = 0;
 static int* gBallReflectionIndices;
 
-static int gCntSpotlightIndices;
-static int* gSpotlightIndices;
-
 static int* gIndexVertices;
 
 static void setColor(Color4 col) {
@@ -317,23 +314,12 @@ void initGameField(void)
 	gCntIndices = 0;
 	MALLOC(gIndices, gCntVertices * sizeof(int));
 	MALLOC(gBallReflectionIndices, gCntVertices * sizeof(int));
-
-	if (hasSpotlightShader())
-	{
-		gCntSpotlightIndices = 0;
-		MALLOC(gSpotlightIndices, gCntVertices * sizeof(int));
-	}
 }
 
 void destroyGameField(void)
 {
 	FREE(sgVertices);
 	FREE(sgNormals);
-
-	if (hasSpotlightShader())
-	{
-  	FREE(gSpotlightIndices);
-	}
 
 	FREE(gIndexVertices);
   FREE(gIndices);
@@ -429,7 +415,7 @@ void updateGameField(void)
 		lastMY = my;
 	}
 
-	if (!hasShader() && useBallShadow())
+	if (!hasBallShadowShader() && useBallShadow())
 	{
 		for (q = 0; q < gCntVertices; q += 4)
 		{
@@ -545,14 +531,14 @@ void drawGameField(int ballReflection)
 
 	if (useBallShadow())
 	{
-		if (hasShader())
+		if (hasBallShadowShader())
 		{
-			glUseProgram(sgSpotlightShader);
+			glUseProgram(sgBallShadowShader);
 	
-			glUniform3fv(glGetUniformLocation(sgSpotlightShader, "ball"), 1, &sgoBall.pos.x);
-			glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex0"), 0);
-			glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex1"), 1);
-			glUniform1i(glGetUniformLocation(sgSpotlightShader, "tex2"), 2);
+			glUniform3fv(glGetUniformLocation(sgBallShadowShader, "ball"), 1, &sgoBall.pos.x);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex0"), 0);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex1"), 1);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex2"), 2);
 		}
 		else
 		{

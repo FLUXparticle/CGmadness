@@ -84,7 +84,7 @@ int hasCubeMap(void)
 
 int useBallShader(void)
 {
-	return hasShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasGolfballShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
 int useBallReflection(void)

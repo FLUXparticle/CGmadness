@@ -35,7 +35,7 @@ static int gShaderAvailable;
 static int gUseBallShadow = 0;
 static int gUseReflection = 0;
 
-GLhandleARB sgSpotlightShader = 0;
+GLhandleARB sgBallShadowShader = 0;
 GLhandleARB sgGolfballShader = 0;
 
 void initFeatures(int argc, char* argv[]) {
@@ -69,9 +69,9 @@ void initFeatures(int argc, char* argv[]) {
 
 	if (hasShader())
 	{
-		sgSpotlightShader = makeShader("spotlight.vert", "spotlight.frag");
-		if (sgSpotlightShader) {
-			printf("Spotlight-Shader ready :-)\n");
+		sgBallShadowShader = makeShader("ballshadow.vert", "ballshadow.frag");
+		if (sgBallShadowShader) {
+			printf("BallShadow-Shader ready :-)\n");
 		}
 
 		sgGolfballShader = makeShader("golfball.vert", "golfball.frag");
@@ -104,9 +104,9 @@ int hasTwoSideStencil(void)
 	return gTwoSideStencilAvailable;
 }
 
-int hasSpotlightShader(void)
+int hasBallShadowShader(void)
 {
-	return hasShader() && sgSpotlightShader;
+	return hasShader() && sgBallShadowShader;
 }
 
 int hasGolfballShader(void)
