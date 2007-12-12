@@ -154,6 +154,26 @@ void updateEditorCamera(float interval, Vector3 marker) {
 	moveCamera(interval, dest, marker);
 }
 
+void markerChanged(void)
+{
+	int x;
+	int y;
+
+	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	{
+		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		{
+			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
+			{
+				sgLevel.field[x][y].dirty = 1;
+			}
+		}
+	}
+	
+	gDirtyLightmaps = 1;
+	gDirtyTexCoords = 1;
+}
+
 void changeMarkerArea(int incz, int incdzx, int incdzy) {
 	int x;
 	int y;
@@ -186,20 +206,29 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 
 		incx += 2 * incdzx;
 	}
+	
+	markerChanged();
+}
 
-	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+void flattenMarkerArea(void)
+{
+	int x;
+	int y;
+
+	for (x = gCurStart.x; x <= gCurEnd.x; x++)
 	{
-		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		for (y = gCurStart.y; y <= gCurEnd.y; y++)
 		{
-			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
-			{
-				sgLevel.field[x][y].dirty = 1;
-			}
+			Plate* p = &sgLevel.field[x][y];
+
+			p->dzx = 0;
+			p->dzy = 0;
 		}
 	}
-	gDirtyLightmaps = 1;
-	gDirtyTexCoords = 1;
+
+	markerChanged();
 }
+
 
 void modBetween(int* value, int mod, int min, int max) {
 	*value += mod;
@@ -277,7 +306,12 @@ void animateEditor(float interval)
 
 	if (wasKeyPressed('r'))
 	{
-		changeMarkerArea(1, 0, 0)	;
+		changeMarkerArea(1, 0, 0);
+	}
+	
+	if (wasKeyPressed('0'))
+	{
+		flattenMarkerArea();
 	}
 
 	/* editor controls for current field */

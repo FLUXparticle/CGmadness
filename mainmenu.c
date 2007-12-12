@@ -139,7 +139,7 @@ void initMainMenu(void)
 	};
 	
 	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
-	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 0);
+	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 'e');
 	initButton(&bQuit,      2.0f, clickButtonQuit, "Quit", 'q');
 	
 	INIT_SCREEN(&gScreenMain, itemsMain);

@@ -45,13 +45,14 @@ typedef struct {
  * help text
  */
 static LeftRight gTextHelp[] = {
-	{ "Cursor", "Move" },
-	{ "Shift", "Multi Select" },
-	{ "W A S D", "Pitch" },
-	{ "R F", "Hight" },
-	{ "Y X C V B N", "Camera" },
-	{ "1 2", "Start Finish" },
-	{ "Esc", "Menu" },
+	{ "Cursor", "move" },
+	{ "Shift", "multi select" },
+	{ "W A S D", "pitch" },
+	{ "R F", "hight" },
+	{ "0", "flatten" },
+	{ "Y X C V B N", "camera" },
+	{ "1 2", "start finish" },
+	{ "Esc", "menu" },
 };
 
 static Screen gScreenEditor;
