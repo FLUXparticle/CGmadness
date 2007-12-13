@@ -17,14 +17,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _common_h_
-#define _common_h_
+#include "idle.h"
 
-void initCommon(void);
-void destroyCommon(void);
+#include <GL/glut.h>
 
-void updateLightMap(void);
-void updateColorMap(void);
-void updateTexCoords(void);
+float sgIdleProgress;
+int sgIdleWorking = 0;
 
-#endif
+static int gIdleStep;
+static int gMaxIdleSteps;
+
+static void doIdle(void)
+{
+
+	gIdleStep++;
+	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
+
+	if (gIdleStep >= gMaxIdleSteps)
+	{
+		stopIdle();
+	}
+}
+
+void startIdle(int steps, funcIdle idle)
+{
+	gIdleStep = 0;
+	gMaxIdleSteps = steps;
+
+	sgIdleProgress = 0.0f;
+	sgIdleWorking = 1;
+
+	glutIdleFunc(doIdle);
+}
+
+void stopIdle(void)
+{
+	sgIdleProgress = 1.0f;
+	sgIdleWorking = 0;
+
+	glutIdleFunc(NULL);
+}

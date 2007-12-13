@@ -20,13 +20,10 @@
 
 #include "menumanager.h"
 
+#include "idle.h"
 #include "texture.h"
-
-#include "common.h"
-
 #include "camera.h"
 #include "objects.h"
-#include "keyboard.h"
 
 #include <GL/glut.h>
 

@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,14 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _common_h_
-#define _common_h_
+#ifndef _idle_h_
+#define _idle_h_
 
-void initCommon(void);
-void destroyCommon(void);
+typedef void (*funcIdle)(int step);
 
-void updateLightMap(void);
-void updateColorMap(void);
-void updateTexCoords(void);
+extern float sgIdleProgress;
+extern int sgIdleWorking;
+
+void startIdle(int steps, funcIdle idle);
+void stopIdle(void);
 
 #endif

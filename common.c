@@ -21,6 +21,7 @@
 
 #include "atlas.h"
 #include "noise.h"
+#include "idle.h"
 #include "lightmap.h"
 #include "level.h"
 
@@ -43,10 +44,6 @@ typedef struct
 {
 	SubAtlas sides[4];
 } CellLightMap;
-
-float sgIdleProgress;
-
-static int gIdleStep;
 
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
@@ -197,21 +194,11 @@ void updateLightMap(void)
 	}
 }
 
-static void stopIdle(void)
+static void calcNoiseIdle(int step)
 {
-	sgLevel.waiting = 0;
-	sgIdleProgress = 1.0f;
-
-	glutIdleFunc(NULL);
-}
-
-static void doIdle(void)
-{
-	int maxIdleSteps = sgLevel.size.x * sgLevel.size.y * 5;
-
-	int side = gIdleStep % 5;
-	int y = gIdleStep / 5 % sgLevel.size.y;
-	int x = gIdleStep / 5 / sgLevel.size.y;
+	int side = step % 5;
+	int y = step / 5 % sgLevel.size.y;
+	int x = step / 5 / sgLevel.size.y;
 
 	if (side < 4)
 	{
@@ -223,31 +210,13 @@ static void doIdle(void)
 		Orientation floor = orientationFloor(x, y);
 		genNoiseTexture(&SUB_ATLAS_FLOOR(x, y), floor.origin, floor.vx, floor.vy);
 	}
-
-	gIdleStep++;
-	sgIdleProgress = (float) gIdleStep / maxIdleSteps;
-
-	if (gIdleStep >= maxIdleSteps)
-	{
-		stopIdle();
-	}
-}
-
-static void startIdle(void)
-{
-	gIdleStep = 0;
-
-	sgLevel.waiting = 1;
-	sgIdleProgress = 0.0f;
-
-	glutIdleFunc(doIdle);
 }
 
 void updateColorMap(void)
 {
 	initNoise();
 
-	startIdle();
+	startIdle(sgLevel.size.x * sgLevel.size.y * 5, calcNoiseIdle);
 }
 
 void updateTexCoords(void)
