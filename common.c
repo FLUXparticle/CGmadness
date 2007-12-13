@@ -142,7 +142,7 @@ Orientation orientationSide(int fx, int fy, int side)
 
 	getSideFace(fx, fy, side, &face);
 
-	orientation.origin = vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom));
+	orientation.origin = add(vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom)), sgLevel.origin);
 	orientation.vx = vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
 	orientation.vy = vector3(0.0f, 0.0f, 1.0f);
 	orientation.normal = vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);

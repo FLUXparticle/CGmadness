@@ -66,7 +66,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 			Square square;
 			int j;
 
-			if (len(sub(position, vector3(x + 0.5f, y + 0.5f, position.z))) > 6.0f)
+			if (len(sub(position, add(vector3(x + 0.5f, y + 0.5f, position.z), sgLevel.origin))) > 6.0f)
 			{
 				continue;
 			}
