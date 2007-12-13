@@ -108,7 +108,7 @@ void saveLevel(void) {
 		destroyCommon();
 
 		initCommon();
-		setUpdateFrequency(1);
+		setUpdateFrequency(10);
 		pushWaitScreen(lightMapsReady);
 		updateLightMap(1);
 	}
