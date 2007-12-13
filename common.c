@@ -150,46 +150,45 @@ Orientation orientationSide(int fx, int fy, int side)
 	return orientation;
 }
 
-void updateLightMap(void)
+static void updateLightMapIdle(int step)
 {
-	int x;
-	int y;
-	int side;
-
-	int steps = 0;
-	int cntSteps = 2 * sgLevel.size.x * sgLevel.size.y;
-
-	printf("calculating lightmaps...\n");
-	resetProgress();
-
-	/*****/
-
-	for (x = 0; x < sgLevel.size.x; x++)
+	int side = step % 5 - 1;
+	int y = step / 5 % sgLevel.size.y;
+	int x = step / 5 / sgLevel.size.y;
+	
+	if (side < 0)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			Orientation floor = orientationFloor(x, y);
-
-			genAmbientOcclusionTexture(&SUB_ATLAS_FLOOR(x, y), floor);
-
-			steps++;
-			setProgress((float) steps / cntSteps);
-		}
+		Orientation floor = orientationFloor(x, y);
+		genAmbientOcclusionTexture(&SUB_ATLAS_FLOOR(x, y), floor);
 	}
-
-	for (x = 0; x < sgLevel.size.x; x++)
+	else
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		Orientation orientation = orientationSide(x, y, side);
+		genAmbientOcclusionTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation);
+	}
+}
+
+void updateLightMap(int useProgressBar)
+{
+	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
+	
+	if (useProgressBar)
+	{
+		startIdle(cntSteps, updateLightMapIdle);
+	}
+	else
+	{
+		int step;
+		
+		printf("calculating lightmaps...\n");
+		resetProgress();
+		
+		for (step = 0; step < cntSteps; )
 		{
-			for (side = 0; side < 4; side++)
-			{
-				Orientation orientation = orientationSide(x, y, side);
-
-				genAmbientOcclusionTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation);
-			}
-
-			steps++;
-			setProgress((float) steps / cntSteps);
+			updateLightMapIdle(step);
+			
+			step++;
+			setProgress((float) step / cntSteps);
 		}
 	}
 }

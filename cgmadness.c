@@ -38,8 +38,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define FRAMES_PER_SECOND 60
-
 int main(int argc, char* argv[])
 {
 	message();
@@ -85,7 +83,7 @@ int main(int argc, char* argv[])
   startKeyboard();
   startMouse();
 
-  startTimer(FRAMES_PER_SECOND);
+  startTimer();
   startDisplay();
 
   glutMainLoop();

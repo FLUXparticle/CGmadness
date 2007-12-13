@@ -195,13 +195,15 @@ void updateGame(float interval) {
 
 		updateGameCamera(interval, sgoBall.pos);
 	} else {
+#if NOISE_TEXTURE
 		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
 		{
 			sgLevel.colorMap = genTexture();
 			colorMapToTexture(sgLevel.colorMap);
 			resetBall();
 		}
-
+#endif
+		
 		updateMenuManager(interval);
 	}
 

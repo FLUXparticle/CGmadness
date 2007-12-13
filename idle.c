@@ -26,10 +26,12 @@ int sgIdleWorking = 0;
 
 static int gIdleStep;
 static int gMaxIdleSteps;
+static funcIdle gIdle;
 
 static void doIdle(void)
 {
-
+	gIdle(gIdleStep);
+	
 	gIdleStep++;
 	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
 
@@ -43,6 +45,7 @@ void startIdle(int steps, funcIdle idle)
 {
 	gIdleStep = 0;
 	gMaxIdleSteps = steps;
+	gIdle = idle;
 
 	sgIdleProgress = 0.0f;
 	sgIdleWorking = 1;

@@ -96,20 +96,29 @@ void resumeEditor(void) {
 	gIsEditorRunning = 1;
 }
 
+void lightMapsReady(void)
+{
+	gDirtyLightmaps = 0;
+	saveLevel();
+}
+
 void saveLevel(void) {
 	if (gDirtyLightmaps)
 	{
 		destroyCommon();
 
 		initCommon();
-		updateLightMap();
-		gDirtyLightmaps = 0;
+		setUpdateFrequency(1);
+		pushWaitScreen(lightMapsReady);
+		updateLightMap(1);
 	}
-
-	if (saveLevelToFile()) {
-		showEditorScreen(1);
-	} else {
-		showEditorScreen(2);
+	else
+	{
+		if (saveLevelToFile()) {
+			showEditorScreen(1);
+		} else {
+			showEditorScreen(2);
+		}
 	}
 }
 

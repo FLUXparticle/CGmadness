@@ -323,7 +323,7 @@ void newLevel(void)
 
 	initCommon();
 
-	updateLightMap();
+	updateLightMap(0);
 }
 
 int readByte(FILE* file)
@@ -703,7 +703,7 @@ int loadLevelFromFile(const char* filename, int justLoad)
 	}
 	else
 	{
-		updateLightMap();
+		updateLightMap(0);
 	}
 
 	fclose(file);

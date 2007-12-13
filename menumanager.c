@@ -21,6 +21,8 @@
 #include "menumanager.h"
 
 #include "idle.h"
+#include "keyboard.h"
+#include "callback.h"
 #include "texture.h"
 #include "camera.h"
 #include "objects.h"
@@ -32,6 +34,7 @@ static GLuint gTexLogo = 0;
 static Screen* gCurScreen = NULL;
 
 static Screen gScreenWait;
+static funcCallback gWaitCallback = NULL;
 
 void initMenuManager(void)
 {
@@ -73,16 +76,20 @@ void updateMenuManager(float interval)
 
 	if (gCurScreen == &gScreenWait)
 	{
-#if 0
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
 		{
-			clickButtonQuit();
-		}
-#endif
-
-		if (sgIdleProgress >= 1.0f)
-		{
+			stopIdle();
+			setUpdateFrequency(0);
 			popScreen();
+		} else if (!sgIdleWorking)
+		{
+			setUpdateFrequency(0);
+			popScreen();
+			
+			if (gWaitCallback)
+			{
+				gWaitCallback();
+			}
 		}
 	}
 }
@@ -152,8 +159,9 @@ void showScreen(Screen* newScreen)
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
-void pushWaitScreen(void)
+void pushWaitScreen(funcCallback callback)
 {
+	gWaitCallback = callback;
 	pushScreen(&gScreenWait);
 }
 

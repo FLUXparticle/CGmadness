@@ -23,7 +23,7 @@
 void initCommon(void);
 void destroyCommon(void);
 
-void updateLightMap(void);
+void updateLightMap(int useProgressBar);
 void updateColorMap(void);
 void updateTexCoords(void);
 
