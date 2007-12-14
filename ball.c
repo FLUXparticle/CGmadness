@@ -517,7 +517,7 @@ void animateBall(float interval)
 	}
 
   /* reset through user */
-	if (isKeyPressed(KEY_ENTER)) {
+	if (wasKeyPressed(KEY_ENTER)) {
 		explodeBall();
 	}
 

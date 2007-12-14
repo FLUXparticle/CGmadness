@@ -19,9 +19,10 @@
 
 #include "objects.h"
 
-#include "types.h"
-#include "vector.h"
+#include "keyboard.h"
 
+#include "vector.h"
+#include "types.h"
 #include "debug.h"
 
 #include <GL/gl.h>
@@ -295,7 +296,7 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 	float b1 = -2*t*t*t + 3*t*t;
 	float b2 =    t*t*t - 2*t*t + t;
 	float b3 =    t*t*t -   t*t;
-
+	
 	pos->x = 0;
 	pos->y = 0;
 	pos->z = 0;
@@ -329,6 +330,17 @@ int updateExplosion(float interval, Vector3* speed, Vector3* pos) {
 	}
 
 	gExplosionTime += interval;
+	
+	if (wasKeyPressed(KEY_ENTER) && gMaxExplosionTime - gExplosionTime > 1.0f)
+	{
+		gExplosionTime = gMaxExplosionTime - 1.0f;
+		
+		for (i = 0; i < LENGTH(gFragments); i++)
+		{
+			gFragments[i].rotSpeed = vector3(0.0f, 0.0f, 0.0f);
+			gFragments[i].rotation = vector3(0.0f, 0.0f, 0.0f);
+		}
+	}
 
 	return gExplosionTime >= gMaxExplosionTime;
 }
