@@ -23,6 +23,7 @@
 #include "main.h"
 #include "field.h"
 #include "level.h"
+#include "texture.h"
 #include "environment.h"
 #include "editor.h"
 #include "common.h"
@@ -162,6 +163,14 @@ static void changeLevelChooser(const void* self)
 			updateTexCoords();
 			gLoadedLevel = spinedit->value;
 			
+			if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
+				sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+				sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
+			}
+
 			sgCurLevelname = sgLevels.strings[gLoadedLevel] + strlen(sgLevels.strings[gLoadedLevel]) + 1;
 		}
 	}
