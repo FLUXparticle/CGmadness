@@ -343,7 +343,7 @@ void destroyGameField(void)
 {
 	FREE(sgVertices);
 	FREE(sgNormals);
-
+	
 	if (hasSpotlight())
 	{
   	FREE(gSpotlightIndices);
@@ -358,6 +358,10 @@ void destroyGameField(void)
 	FREE(gColors);
 
   FREE(gBallShadowCoords);
+
+	gMaxVertices = 0;
+	gCntIndices = 0;
+	gCntBallReflectionIndices = 0;
 }
 
 /*
@@ -435,10 +439,13 @@ void updateGameField(void)
 	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY))
 	{
 		gCntIndices = 0;
-		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
-
-		lastMX = mx;
-		lastMY = my;
+		if (gMaxVertices > 0)
+		{
+			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+	
+			lastMX = mx;
+			lastMY = my;
+		}
 	}
 
 	if (!useSpotlight())
@@ -478,10 +485,13 @@ void updateGameField(void)
 		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
 		{
 			gCntBallReflectionIndices = 0;
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
-
-			lastBX = bx;
-			lastBY = by;
+			if (gMaxVertices > 0)
+			{
+				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+	
+				lastBX = bx;
+				lastBY = by;
+			}
 		}
 	}
 }
