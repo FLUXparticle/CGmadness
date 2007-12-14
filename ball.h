@@ -67,8 +67,7 @@ void drawMenuBall(void);
 void drawGameBall(void);
 
 int hasBallTexture(void);
-int hasBallReflection(void);
-int hasBallShader(void);
+int hasCubeMap(void);
 
 int useBallReflection(void);
 

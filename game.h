@@ -37,9 +37,6 @@ void drawGame(void);
 void drawGameBallReflection(void);
 void drawGameHUD(float widthWindow, float heightWindow);
 
-extern int sgGameMainLight;
-extern int sgGameSpotLight;
-
 extern int sgRenderPass;
 
 #endif

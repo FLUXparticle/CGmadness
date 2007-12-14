@@ -30,6 +30,7 @@ void message(void)
 {
 	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>\n");
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
+	printf("\n");
 }
 
 char* addStrings(const char* a, const char* b)

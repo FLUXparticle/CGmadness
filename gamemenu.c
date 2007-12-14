@@ -42,7 +42,7 @@ typedef struct {
 	char* right;
 } LeftRight;
 
-static Check gcShadows;
+static Check gcBallShadow;
 static Check gcReflection;
 
 static SpinEdit gseBall;
@@ -114,9 +114,9 @@ static void changeBallEdit(const void* self) {
 	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
 }
 
-static void changeShadows(const void* self) {
+static void changeBallShadow(const void* self) {
 	const Check* check = self;
-	setShadows(check->value);
+	setBallShadow(check->value);
 }
 
 static void changeReflection(const void* self) {
@@ -133,7 +133,7 @@ void showGameMenu(int menu) {
 	
 	pushScreen(screens[menu]);
 
-	setCheck(&gcShadows, useShadows());
+	setCheck(&gcBallShadow, useBallShadow());
 	setCheck(&gcReflection, useReflection());
 	changeBallEdit(&gseBall);
 }
@@ -155,7 +155,7 @@ void initGameMenu(void) {
 	{
 		&bStart.item,
 		&gseBall.item,
-		&gcShadows.item,
+		&gcBallShadow.item,
 		&gcReflection.item,
 		&bHelp.item,
 		&bQuit.item
@@ -165,7 +165,7 @@ void initGameMenu(void) {
 	{
 		&bResume.item,
 		&gseBall.item,
-		&gcShadows.item,
+		&gcBallShadow.item,
 		&gcReflection.item,
 		&bHelp.item,
 		&bQuit.item
@@ -193,15 +193,15 @@ void initGameMenu(void) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_TEXTURE;
 	}
 
-	if (hasBallReflection()) {
+	if (hasCubeMap()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_METAL;
 	}
 
-	if (hasBallShader()) {
+	if (hasGolfballShader()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL;
 	}
 
-	if (hasBallShader() && hasBallReflection()) {
+	if (hasGolfballShader() && hasCubeMap()) {
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL_METAL;
 	}
 
@@ -215,7 +215,7 @@ void initGameMenu(void) {
 
 	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 
-	initCheck(&gcShadows, 4.0f, changeShadows, "shadows");
+	initCheck(&gcBallShadow, 4.0f, changeBallShadow, "ball shadow");
 	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
 
 	initButton(&bHelp, 2.0f, clickButtonHelp, "help", 'h');

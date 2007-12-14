@@ -136,13 +136,10 @@ void updateGame(float interval) {
 
 		/* manually switch features */
 		if (wasFunctionPressed(1)) {
-			setSpotlight(!useSpotlight());
-		}
-		if (wasFunctionPressed(2)) {
-			setShadows(!useShadows());
+			setBallShadow(!useBallShadow());
 		}
 
-		if (wasFunctionPressed(3)) {
+		if (wasFunctionPressed(2)) {
 			setReflection(!useReflection());
 		}
 		

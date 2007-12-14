@@ -22,7 +22,10 @@
 
 #include <GL/glew.h>
 
-extern GLhandleARB sgSpotlightShader;
+extern GLhandleARB sgBallShadowShader;
+extern GLhandleARB sgGolfballShader;
+
+void usageFeatures(void);
 
 void initFeatures(int argc, char* argv[]);
 
@@ -30,14 +33,13 @@ int hasShader(void);
 int hasFramebuffer(void);
 int hasVertexbuffer(void);
 int hasTwoSideStencil(void);
-int hasSpotlight(void);
+int hasBallShadowShader(void);
+int hasGolfballShader(void);
 
-void setSpotlight(int use);
-void setShadows(int use);
+void setBallShadow(int use);
 void setReflection(int use);
 
-int useSpotlight(void);
-int useShadows(void);
+int useBallShadow(void);
 int useReflection(void);
 
 #endif

@@ -80,7 +80,6 @@ static int gBallLayout = 0;
 
 static int gDirtyReflection = 1;
 
-static GLhandleARB gShaderBall;
 static int gCubeMapBall;
 
 static int gTextureBall;
@@ -90,19 +89,14 @@ int hasBallTexture(void)
 	return gTextureBall >= 0;
 }
 
-int hasBallReflection(void)
+int hasCubeMap(void)
 {
 	return gCubeMapBall != 0;
 }
 
-int hasBallShader(void)
-{
-	return gShaderBall != 0;
-}
-
 int useBallShader(void)
 {
-	return hasShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasGolfballShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
 int useBallReflection(void)
@@ -242,20 +236,6 @@ void initCubeMap(void)
 
 void initBall(void)
 {
-	if (hasShader())
-	{
-		gShaderBall = makeShader("golfball.vert", "golfball.frag");
-
-		if (gShaderBall == 0)
-		{
-			printf("Golfball-Shader not ready :-(\n");
-		}
-		else
-		{
-			printf("Golfball-Shader ready :-)\n");
-		}
-	}
-
 	if (hasFramebuffer())
 	{
 		initCubeMap();
@@ -702,11 +682,11 @@ void activateBallShader(void)
 			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
 			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
 		}
+		
+		glUseProgram(sgGolfballShader);
 
-		glUseProgram(gShaderBall);
-
-		glUniform1i(glGetUniformLocation(gShaderBall, "Environment"), 0);
-		glUniform1f(glGetUniformLocation(gShaderBall, "reflection"), reflection);
+		glUniform1i(glGetUniformLocation(sgGolfballShader, "Environment"), 0);
+		glUniform1f(glGetUniformLocation(sgGolfballShader, "reflection"), reflection);
 	}
 }
 

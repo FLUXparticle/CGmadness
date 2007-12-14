@@ -38,9 +38,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void usage(void)
+{
+	printf("usage: cgmadness [options...]\n");
+	usageFeatures();
+}
+
 int main(int argc, char* argv[])
 {
 	message();
+	usage();
 
 	assurePath(argv[0]);
 
