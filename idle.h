@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,20 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _highscore_h_
-#define _highscore_h_
+#ifndef _idle_h_
+#define _idle_h_
 
-#include "gui.h"
+typedef void (*funcIdle)(int step);
 
-typedef Canvas HighScore;
+extern float sgIdleProgress;
+extern int sgIdleWorking;
 
-extern int sgLastPlayerIndex;
-extern const char* sgCurLevelname;
-
-void initHighScore(HighScore* highScore, float z);
-
-void drawPanel(float width, float height);
-
-void acceptHighScoreName(void);
+void startIdle(int steps, funcIdle idle);
+void stopIdle(void);
 
 #endif

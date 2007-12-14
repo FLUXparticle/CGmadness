@@ -23,6 +23,7 @@
 int initEditor(void);
 
 void startEditor(void);
+void stopEditor(void);
 
 void resumeEditor(void);
 

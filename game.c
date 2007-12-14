@@ -31,7 +31,6 @@
 #include "files.h"
 #include "features.h"
 #include "keyboard.h"
-#include "mouse.h"
 #include "camera.h"
 #include "callback.h"
 #include "text.h"
@@ -66,33 +65,15 @@ static int gIsGameRunning;
 
 static float gGameTime;
 
-static int gDragX = 0;
-static int gDragY = 0;
-int sgIsMouseControl = 0;
-
-static float gDistance;
-static float gLatitude;
-static float gLongitude;
-
 static const char* gHotSeatLevel = NULL;
 
-void gameDrag(int dx, int dy) {
-	gDragX += dx;
-	gDragY += dy;
-}
-
 void pauseGame(void) {
-	setDragFunc(NULL);
+	disableBallCamera();
 	gIsGameRunning = 0;
 }
 
 void resumeGame(void) {
-	if (sgIsMouseControl)
-	{
-		setDragFunc(gameDrag);
-	}
-	
-	glutSetCursor(GLUT_CURSOR_NONE);
+	enableBallCamera();
 	gIsGameRunning = 1;
 }
 
@@ -101,53 +82,39 @@ void setHotSeatLevel(const char* filename)
 	gHotSeatLevel = filename;
 }
 
-void updateGameCamera(float interval, Vector3 ball) {
-	Vector3 diff;
-	Vector3 up = { 0.0f, 0.0f, 1.0f };
-	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
-
-  /* game controls for camera */
-
-	if (sgIsMouseControl)
+void stopWatch(void)
+{
+	int i;
+	
+	int tenthSecond = (int) (gGameTime * 10.0f);
+	int newIndex = sgLevel.cntScoreCols;
+	
+	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
 	{
-		gLongitude -= 5.0f * interval * gDragX;
-		gLatitude += 5.0f * interval * gDragY;
-	
-		gDragX = 0;
-		gDragY = 0;
+		newIndex--;
 	}
-	else
+	
+	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
+	
+	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
 	{
-		/* zoom */
-		if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
-		if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
-	
-		/* rotation */
-		if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
-		if (isKeyPressed('d')) gLongitude += 120.0f * interval;
-	
-		/* height */
-		if (isKeyPressed('w')) gLatitude += 120.0f * interval;
-		if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
-	
-		gLatitude = clamp(gLatitude, -89.0f, 89.0f);
+		sgLevel.scores[i] = sgLevel.scores[i - 1]; 
 	}
-
-	dest.x = ball.x + gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
-	dest.y = ball.y - gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
-	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
-
-	moveCamera(interval, dest, ball);
-
-	if (sgIsMouseControl)
+	
+	if (newIndex < MAX_SCORE_COLS)
 	{
-		sgCamera = dest;
+		sgLevel.scores[newIndex].name[0] = '\0';
+		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
+	
+	sgLastPlayerIndex = newIndex;
+}
 
-	diff = sub(sgLookat, sgCamera);
-	diff.z = 0.0f;
-	sgForward = norm(diff);
-	sgRight = norm(cross(sgForward, up));
+void finishedGame()
+{
+	stopWatch();
+	pauseGame();
+	showGameMenu(2);
 }
 
 void updateGame(float interval) {
@@ -192,16 +159,21 @@ void updateGame(float interval) {
 		}
 
 		updateBall(interval);
-
-		updateGameCamera(interval, sgoBall.pos);
+		
+		if (sgHasBallHitGoal)
+		{
+			finishedGame();
+		}
 	} else {
+#if NOISE_TEXTURE
 		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
 		{
 			sgLevel.colorMap = genTexture();
 			colorMapToTexture(sgLevel.colorMap);
 			resetBall();
 		}
-
+#endif
+		
 		updateMenuManager(interval);
 	}
 
@@ -315,34 +287,6 @@ static const char* getNextLevelName(void)
 }
 #endif
 
-void stopWatch(void)
-{
-	int i;
-	
-	int tenthSecond = (int) (gGameTime * 10.0f);
-	int newIndex = sgLevel.cntScoreCols;
-	
-	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
-	{
-		newIndex--;
-	}
-	
-	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
-	
-	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
-	{
-		sgLevel.scores[i] = sgLevel.scores[i - 1]; 
-	}
-	
-	if (newIndex < MAX_SCORE_COLS)
-	{
-		sgLevel.scores[newIndex].name[0] = '\0';
-		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
-	}
-	
-	sgLastPlayerIndex = newIndex;
-}
-
 void stopGame(void)
 {
 	glDeleteTextures(1, &sgLevel.lightMap);
@@ -353,19 +297,10 @@ void stopGame(void)
 	destroyGameField();
 }
 
-void finishedGame()
-{
-	stopWatch();
-	pauseGame();
-	showGameMenu(2);
-}
-
 void resetGame(void) {
-	gDistance  =  5.0f;
-	gLatitude  = 20.0f;
-	gLongitude =  0.0f;
-	
 	resetBall();
+	resetBallCamera();
+	
 	resetGameTime();
 	
 	updateGameField();

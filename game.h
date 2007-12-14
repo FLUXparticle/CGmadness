@@ -20,7 +20,7 @@
 #ifndef _game_h_
 #define _game_h_
 
-extern int sgIsMouseControl;
+#include "vector.h"
 
 void initGame(void);
 void resumeGame(void);
@@ -28,8 +28,6 @@ void resetGame(void);
 
 void startGame(void);
 void stopGame(void);
-
-void finishedGame();
 
 void resetGameTime(void);
 

@@ -20,13 +20,12 @@
 
 #include "menumanager.h"
 
+#include "idle.h"
+#include "keyboard.h"
+#include "callback.h"
 #include "texture.h"
-
-#include "common.h"
-
 #include "camera.h"
 #include "objects.h"
-#include "keyboard.h"
 
 #include <GL/glut.h>
 
@@ -35,6 +34,7 @@ static GLuint gTexLogo = 0;
 static Screen* gCurScreen = NULL;
 
 static Screen gScreenWait;
+static funcCallback gWaitCallback = NULL;
 
 void initMenuManager(void)
 {
@@ -76,16 +76,20 @@ void updateMenuManager(float interval)
 
 	if (gCurScreen == &gScreenWait)
 	{
-#if 0
 		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
 		{
-			clickButtonQuit();
-		}
-#endif
-
-		if (sgIdleProgress >= 1.0f)
-		{
+			stopIdle();
+			setUpdateFrequency(0);
 			popScreen();
+		} else if (!sgIdleWorking)
+		{
+			setUpdateFrequency(0);
+			popScreen();
+			
+			if (gWaitCallback)
+			{
+				gWaitCallback();
+			}
 		}
 	}
 }
@@ -128,14 +132,17 @@ static void drawLogo(void)
 
 void drawMenuManager(void)
 {
+	float pos[4]  = { 0.0f, -1.0f, 0.5f, 0.0f };
+
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 		glColor3f(1.0f, 1.0f, 1.0f);
-
-		setSomeLight();
 
 		glPushMatrix();
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
@@ -144,8 +151,9 @@ void drawMenuManager(void)
 			drawScreen(gCurScreen);
 		glPopMatrix();
 
-	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
 }
 
 void showScreen(Screen* newScreen)
@@ -155,8 +163,9 @@ void showScreen(Screen* newScreen)
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
-void pushWaitScreen(void)
+void pushWaitScreen(funcCallback callback)
 {
+	gWaitCallback = callback;
 	pushScreen(&gScreenWait);
 }
 

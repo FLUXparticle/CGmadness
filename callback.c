@@ -33,6 +33,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#define FRAMES_PER_SECOND 60
+#define TIME_STEP (1000 / FRAMES_PER_SECOND)
+
 #define DEBUG_PREDISPLAY 0
 #define NO_FRAME_LIMIT 0
 
@@ -201,36 +204,40 @@ struct {
 	MouseEvent event;
 } gLastMouseEvent;
 
-void timer(int lastCallTime) {
-  int thisCallTime = glutGet(GLUT_ELAPSED_TIME);
-	int lastUpdateTime = lastCallTime;
-	int nextUpdateTime = lastUpdateTime + gMillis;
-	int diff;
-
-	while (nextUpdateTime < thisCallTime) {
-		float interval = (float) (nextUpdateTime - lastUpdateTime) / 1000.0f;
-		updateMain(interval);
-		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
-		lastUpdateTime = nextUpdateTime;
-		nextUpdateTime += gMillis;
-	}
-
-	diff = nextUpdateTime - glutGet(GLUT_ELAPSED_TIME);
-	if (diff < 0) {
-		diff = 0;
-	}
-
-	glutTimerFunc(diff, timer, lastUpdateTime);
+void timer(int startTime) {
+	static int simulationTime = 0;
+  int realTime = glutGet(GLUT_ELAPSED_TIME) - startTime;
 
 	if (!gSceneDirty) {
 		gSceneDirty = 1;
 		glutPostRedisplay();
 	}
+
+	glutTimerFunc(gMillis, timer, startTime);
+	
+	while (simulationTime < realTime) {
+		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
+
+		updateMain(TIME_STEP / 1000.0f);
+		simulationTime += TIME_STEP;
+	}
 }
 
-void startTimer(int callsPerSecond) {
-  gMillis = 1000 / callsPerSecond;
+void startTimer(void) {
+	setUpdateFrequency(0);
 	timer(glutGet(GLUT_ELAPSED_TIME));
+}
+
+void setUpdateFrequency(int callsPerSecond)
+{
+	if (callsPerSecond > 0)
+	{
+		gMillis = 1000 / callsPerSecond;
+	}
+	else
+	{
+		gMillis = TIME_STEP;
+	}
 }
 
 /*** Picking ***/

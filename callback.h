@@ -50,7 +50,8 @@ void centerMouse(int* x, int* y);
 
 void startDisplay(void);
 
-void startTimer(int callsPerSecond);
+void startTimer(void);
+void setUpdateFrequency(int callsPerSecond);
 
 void mouseEvent(int x, int y, MouseEvent event);
 

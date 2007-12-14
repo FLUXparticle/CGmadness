@@ -81,6 +81,7 @@ static void clickButtonBack(void) {
 
 static void clickButtonQuit(void) {
 	popScreen();
+	stopEditor();
 	setMainState(STATE_MAIN);
 }
 

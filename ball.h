@@ -43,6 +43,8 @@ typedef struct {
 
 extern Ball sgoBall;
 extern int sgIsBallInPieces;
+extern int sgHasBallHitGoal;
+extern int sgIsMouseControl;
 
 extern Vector3 sgForward;
 extern Vector3 sgRight;
@@ -50,6 +52,10 @@ extern Vector3 sgRight;
 void initBall(void);
 
 void resetBall(void);
+void resetBallCamera(void);
+
+void enableBallCamera(void);
+void disableBallCamera(void);
 
 void updateBall(float interval);
 void changeBall(int layout);

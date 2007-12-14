@@ -45,6 +45,8 @@ typedef struct {
 static Check gcShadows;
 static Check gcReflection;
 
+static SpinEdit gseBall;
+
 /*
  * help text
  */
@@ -133,6 +135,7 @@ void showGameMenu(int menu) {
 
 	setCheck(&gcShadows, useShadows());
 	setCheck(&gcReflection, useReflection());
+	changeBallEdit(&gseBall);
 }
 
 void initGameMenu(void) {
@@ -144,8 +147,6 @@ void initGameMenu(void) {
 	static Button bBack;
 	static Button bAgain;
 
-	static SpinEdit seBall;
-
 	static HighScore hsHighScore;
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
@@ -153,7 +154,7 @@ void initGameMenu(void) {
 	static MenuItem* itemsMain1[] =
 	{
 		&bStart.item,
-		&seBall.item,
+		&gseBall.item,
 		&gcShadows.item,
 		&gcReflection.item,
 		&bHelp.item,
@@ -163,7 +164,7 @@ void initGameMenu(void) {
 	static MenuItem* itemsMain2[] =
 	{
 		&bResume.item,
-		&seBall.item,
+		&gseBall.item,
 		&gcShadows.item,
 		&gcReflection.item,
 		&bHelp.item,
@@ -212,7 +213,7 @@ void initGameMenu(void) {
 	initButton(&bStart, 6.0f, clickButtonStart, "start", KEY_ENTER);
 	initButton(&bResume, 6.0f, clickButtonResume, "resume", KEY_ENTER);
 
-	initSpinEdit(&seBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
+	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 
 	initCheck(&gcShadows, 4.0f, changeShadows, "shadows");
 	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");

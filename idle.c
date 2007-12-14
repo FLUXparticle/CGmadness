@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,20 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _highscore_h_
-#define _highscore_h_
+#include "idle.h"
 
-#include "gui.h"
+#include <GL/glut.h>
 
-typedef Canvas HighScore;
+float sgIdleProgress;
+int sgIdleWorking = 0;
 
-extern int sgLastPlayerIndex;
-extern const char* sgCurLevelname;
+static int gIdleStep;
+static int gMaxIdleSteps;
+static funcIdle gIdle;
 
-void initHighScore(HighScore* highScore, float z);
+static void doIdle(void)
+{
+	gIdle(gIdleStep);
+	
+	gIdleStep++;
+	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
 
-void drawPanel(float width, float height);
+	if (gIdleStep >= gMaxIdleSteps)
+	{
+		stopIdle();
+	}
+}
 
-void acceptHighScoreName(void);
+void startIdle(int steps, funcIdle idle)
+{
+	gIdleStep = 0;
+	gMaxIdleSteps = steps;
+	gIdle = idle;
 
-#endif
+	sgIdleProgress = 0.0f;
+	sgIdleWorking = 1;
+
+	glutIdleFunc(doIdle);
+}
+
+void stopIdle(void)
+{
+	sgIdleProgress = 1.0f;
+	sgIdleWorking = 0;
+
+	glutIdleFunc(NULL);
+}

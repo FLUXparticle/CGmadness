@@ -87,17 +87,13 @@ void updateHighScore(float interval)
 	}
 }
 
-void drawHighScore(void)
+void drawPanel(float width, float height)
 {
-	int i;
-	
-	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 2);
-	
 	glPushMatrix();
 	
-		glTranslatef(HIGHSCORE_WIDTH / 2.0f, HIGHSCORE_HEIGHT / 2.0f, -0.1f);
+		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
 		
-		glScalef(HIGHSCORE_WIDTH / 2.0f, HIGHSCORE_HEIGHT / 2.0f, 1.0f);
+		glScalef(width / 2.0f, height / 2.0f, 1.0f);
 		
 		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
 		
@@ -108,7 +104,16 @@ void drawHighScore(void)
 		glDisable(GL_BLEND);
 	
 	glPopMatrix();
+}
 
+void drawHighScore(void)
+{
+	int i;
+	
+	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 2);
+	
+	drawPanel(HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT);
+	
 	glPushMatrix();
 	
 		glTranslatef(HIGHSCORE_WIDTH / 2.0f, (float) (MAX_SCORE_COLS + 1) / (MAX_SCORE_COLS + 2) * HIGHSCORE_HEIGHT, 0.0f);

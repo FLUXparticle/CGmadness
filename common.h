@@ -20,12 +20,10 @@
 #ifndef _common_h_
 #define _common_h_
 
-extern float sgIdleProgress;
-
 void initCommon(void);
 void destroyCommon(void);
 
-void updateLightMap(void);
+void updateLightMap(int useProgressBar);
 void updateColorMap(void);
 void updateTexCoords(void);
 

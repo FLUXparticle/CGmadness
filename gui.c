@@ -95,19 +95,6 @@ void initGUI() {
 	}
 }
 
-void setSomeLight(void) {
-	float pos[4]  = { 0.0f, -1.0f, 0.0f, 0.0f };
-	float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-	float diffuse[4]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float specular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT,  ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE,  diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-	glEnable(GL_LIGHT0);
-}
-
 /*** Canvas ***/
 
 void initCanvas(Canvas* canvas, float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw)

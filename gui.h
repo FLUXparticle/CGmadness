@@ -109,8 +109,6 @@ typedef struct {
 
 void initGUI(void);
 
-void setSomeLight(void);
-
 /* Canvas */
 
 void initCanvas(Canvas* canvas, float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw);

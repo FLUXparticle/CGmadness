@@ -38,8 +38,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define FRAMES_PER_SECOND 60
-
 int main(int argc, char* argv[])
 {
 	message();
@@ -78,6 +76,13 @@ int main(int argc, char* argv[])
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
+  {
+  	float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+  	
+  	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+  }
+
+
 	/* ---- */
 
 	initMain();
@@ -85,7 +90,7 @@ int main(int argc, char* argv[])
   startKeyboard();
   startMouse();
 
-  startTimer(FRAMES_PER_SECOND);
+  startTimer();
   startDisplay();
 
   glutMainLoop();
