@@ -117,14 +117,15 @@ void drawCanvas(const Canvas* canvas)
 
 /*** Label ***/
 
-void initLabel(Label* label, float x, float z, int alignRight, char* text)
+void initLabel(Label* label, float x, float z, float size, int alignRight, char* text)
 {
 	label->text = text;
+	label->size = size;
 
 	label->item.type = MI_LABEL;
 
-	label->item.width = widthFont3DText(label->text) * scaleText;
-	label->item.height = 0.9f;
+	label->item.width = widthFont3DText(label->text) * scaleText * size;
+	label->item.height = 0.9f * size;
 
 	if (alignRight)
 	{
@@ -138,7 +139,7 @@ void initLabel(Label* label, float x, float z, int alignRight, char* text)
 
 void drawLabel(const Label* label)
 {
-	float scale = scaleText;
+	float scale = scaleText * label->size;
 
 	glPushMatrix();
 

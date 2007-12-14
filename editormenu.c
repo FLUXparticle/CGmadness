@@ -50,6 +50,7 @@ static LeftRight gTextHelp[] = {
 	{ "W A S D", "pitch" },
 	{ "R F", "hight" },
 	{ "0", "flatten" },
+	{ "Enter", "test" },
 	{ "Y X C V B N", "camera" },
 	{ "1 2", "start finish" },
 	{ "Esc", "menu" },
@@ -130,6 +131,8 @@ void initEditorMenu() {
 		&bFailed.item,
 	};
 
+	static const float sizeHelp = 0.75f; 
+
 	int i;
 
 	initGUI();
@@ -151,14 +154,14 @@ void initEditorMenu() {
 	{
 		int row = i / 2;
 		int col = i % 2;
-		float z = 6.0f - row;
+		float z = 6.0f - row * sizeHelp;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, col, col ? gTextHelp[row].right : gTextHelp[row].left);
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, sizeHelp, col, col ? gTextHelp[row].right : gTextHelp[row].left);
 
 		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack, "back", KEY_ESC);
 
 	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 

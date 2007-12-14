@@ -231,7 +231,7 @@ void initGameMenu(void) {
 		int col = i % 2;
 		float z = 6.0f - row;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, col, col ? gTextHelp[row].right : gTextHelp[row].left);
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, 1.0f, col, col ? gTextHelp[row].right : gTextHelp[row].left);
 
 		itemsHelp[i] = &lTextHelp[i].item;
 	}

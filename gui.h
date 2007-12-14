@@ -68,6 +68,7 @@ typedef struct {
 	MenuItem item;
 
 	char* text;
+	float size;
 } Label;
 
 typedef struct {
@@ -115,7 +116,7 @@ void initCanvas(Canvas* canvas, float z, float width, float height, funcUpdate c
 
 /* Label */
 
-void initLabel(Label* label, float x, float z, int alignRight, char* text);
+void initLabel(Label* label, float x, float z, float size, int alignRight, char* text);
 
 /* ProgressBar */
 
