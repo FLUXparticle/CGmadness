@@ -62,6 +62,8 @@ int gCntLines = 0;
 
 static int gIsEditorRunning;
 
+static int gShowCursor;
+
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
 static int gCamAngle = 0;
@@ -93,8 +95,14 @@ void startEditor(void)
 	gCurEnd.y = 0;
 	
 	gIsTestMode = 0;
+	gShowCursor = 1;
 	
 	pauseEditor();
+}
+
+void stopEditor(void)
+{
+	gShowCursor = 0;
 }
 
 void resumeEditor(void) {
@@ -339,6 +347,7 @@ void enableTestMode(void)
 	initGameField();
 	
 	gIsTestMode = 1;
+	gShowCursor = 0;
 }
 
 void disableTestMode(void)
@@ -347,6 +356,7 @@ void disableTestMode(void)
 	disableBallCamera();
 	
 	gIsTestMode = 0;
+	gShowCursor = 1;
 }
 
 void updateEditor(float interval) {
@@ -406,7 +416,7 @@ void drawEditorField(void) {
 			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 			{
 
-				if (cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
+				if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
 				{
 					glColor3f(1.0f, 0.0f, 0.0f);
 				}
@@ -484,17 +494,9 @@ void drawEditor(void) {
 	}
 }
 
-void hideCursor(void)
-{
-	gCurStart.x = -1;
-	gCurStart.y = -1;
-	gCurEnd.x = -1;
-	gCurEnd.y = -1;
-}
-
 int initEditor(void)
 {
-	hideCursor();
+	gShowCursor = 0;
 	
 	initEditorMenu();
 	
