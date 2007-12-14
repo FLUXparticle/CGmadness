@@ -128,14 +128,17 @@ static void drawLogo(void)
 
 void drawMenuManager(void)
 {
+	float pos[4]  = { 0.0f, -1.0f, 0.5f, 0.0f };
+
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 
 		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 		glColor3f(1.0f, 1.0f, 1.0f);
-
-		setSomeLight();
 
 		glPushMatrix();
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
@@ -144,8 +147,9 @@ void drawMenuManager(void)
 			drawScreen(gCurScreen);
 		glPopMatrix();
 
-	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
 }
 
 void showScreen(Screen* newScreen)

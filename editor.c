@@ -406,6 +406,11 @@ void drawEditorField(void) {
 	FieldCoord cur;
 	Square square;
 	
+	float pos[4]  = { 0.0f, 0.0f, 1.0f, 0.0f };
+	
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);

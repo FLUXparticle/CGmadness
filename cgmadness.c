@@ -78,6 +78,13 @@ int main(int argc, char* argv[])
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
+  {
+  	float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+  	
+  	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+  }
+
+
 	/* ---- */
 
 	initMain();
