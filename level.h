@@ -94,6 +94,7 @@ typedef struct
 
 	Vector3 origin;
 
+	int saved;
 	int waiting;
 } Level;
 
