@@ -17,42 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _callback_h_
-#define _callback_h_
+#ifndef _idle_h_
+#define _idle_h_
 
-#include "mouse.h"
+typedef void (*funcIdle)(int step);
 
-#include "vector.h"
-#include "types.h"
+extern float sgIdleProgress;
+extern int sgIdleWorking;
 
-typedef void (*funcDrawHUD)(float width, float height);
-
-typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* direction, MouseEvent event);
-
-typedef struct {
-	Matrix projection;
-	Matrix view;
-} Viewport;
-
-typedef struct {
-	int width;
-	int height;
-
-	int framebuffer;
-	Viewport* viewport;
-} RenderTarget;
-
-extern Viewport sgWindowViewport;
-
-void setPreDisplayFunc(funcDraw preDisplay);
-
-void centerMouse(int* x, int* y);
-
-void startDisplay(void);
-
-void startTimer(void);
-void setUpdateFrequency(int callsPerSecond);
-
-void mouseEvent(int x, int y, MouseEvent event);
+void startIdle(int steps, funcIdle idle);
+void stopIdle(void);
 
 #endif

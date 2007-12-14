@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,42 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _callback_h_
-#define _callback_h_
+#include "idle.h"
 
-#include "mouse.h"
+#include <GL/glut.h>
 
-#include "vector.h"
-#include "types.h"
+float sgIdleProgress;
+int sgIdleWorking = 0;
 
-typedef void (*funcDrawHUD)(float width, float height);
+static int gIdleStep;
+static int gMaxIdleSteps;
+static funcIdle gIdle;
 
-typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* direction, MouseEvent event);
+static void doIdle(void)
+{
+	gIdle(gIdleStep);
+	
+	gIdleStep++;
+	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
 
-typedef struct {
-	Matrix projection;
-	Matrix view;
-} Viewport;
+	if (gIdleStep >= gMaxIdleSteps)
+	{
+		stopIdle();
+	}
+}
 
-typedef struct {
-	int width;
-	int height;
+void startIdle(int steps, funcIdle idle)
+{
+	gIdleStep = 0;
+	gMaxIdleSteps = steps;
+	gIdle = idle;
 
-	int framebuffer;
-	Viewport* viewport;
-} RenderTarget;
+	sgIdleProgress = 0.0f;
+	sgIdleWorking = 1;
 
-extern Viewport sgWindowViewport;
+	glutIdleFunc(doIdle);
+}
 
-void setPreDisplayFunc(funcDraw preDisplay);
+void stopIdle(void)
+{
+	sgIdleProgress = 1.0f;
+	sgIdleWorking = 0;
 
-void centerMouse(int* x, int* y);
-
-void startDisplay(void);
-
-void startTimer(void);
-void setUpdateFrequency(int callsPerSecond);
-
-void mouseEvent(int x, int y, MouseEvent event);
-
-#endif
+	glutIdleFunc(NULL);
+}

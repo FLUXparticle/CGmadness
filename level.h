@@ -31,6 +31,8 @@
 #define MIN_ALLOWED_CHAR 32
 #define MAX_ALLOWED_CHAR 127
 
+#define NOISE_TEXTURE 0
+
 typedef struct
 {
 	Vector3 normal;
