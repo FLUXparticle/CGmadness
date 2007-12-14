@@ -29,6 +29,8 @@ extern const char* sgCurLevelname;
 
 void initHighScore(HighScore* highScore, float z);
 
+void drawPanel(float width, float height);
+
 void acceptHighScoreName(void);
 
 #endif

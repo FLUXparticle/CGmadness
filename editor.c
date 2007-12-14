@@ -84,7 +84,10 @@ void pauseEditor(void) {
 void startEditor(void)
 {
 	sgLevel.lightMap = 0;
-	gDirtyLightmaps = 0;
+	if (sgLevel.saved)
+	{
+		gDirtyLightmaps = 0;
+	}
 
 	updateTexCoords();
 	gDirtyTexCoords = 0;
@@ -121,6 +124,7 @@ void saveLevel(void) {
 	}
 
 	if (saveLevelToFile()) {
+		sgLevel.saved = 1;
 		showEditorScreen(1);
 	} else {
 		showEditorScreen(2);
@@ -211,6 +215,8 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 			}
 		}
 	}
+	
+	sgLevel.saved = 0;
 	gDirtyLightmaps = 1;
 	gDirtyTexCoords = 1;
 }

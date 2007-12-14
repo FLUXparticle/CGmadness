@@ -712,6 +712,8 @@ int loadLevelFromFile(const char* filename, int justLoad)
 	{
 		sgLevel.cntScoreCols = 0;
 	}
+	
+	sgLevel.saved = 1;
 
 	return result;
 }
