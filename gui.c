@@ -382,11 +382,14 @@ void changeSpinEdit(SpinEdit* spinEdit, int change)
 void eventSpinEdit(SpinEdit* spinEdit, float x, float y, MouseEvent event)
 {
 	int side;
-	if (x < -1.15f)
+	
+	float dist = spinEdit->item.width / 2.0f - 1.0f;
+	
+	if (x < -dist)
 	{
 		side = -1;
 	}
-	else if (x > 1.15f)
+	else if (x > dist)
 	{
 		side = 1;
 	}
