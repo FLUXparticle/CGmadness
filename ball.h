@@ -30,7 +30,8 @@
 #define BALL_LAYOUT_GOLFBALL 3
 #define BALL_LAYOUT_GOLFBALL_METAL 4
 
-typedef struct {
+typedef struct
+{
 	float mass;
 	float radius;
 

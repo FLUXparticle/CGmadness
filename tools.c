@@ -33,23 +33,23 @@ void message(void)
 	printf("\n");
 }
 
-char* addStrings(const char* a, const char* b)
+char *addStrings(const char *a, const char *b)
 {
-	char* c;
-	
+	char *c;
+
 	MALLOC(c, strlen(a) + strlen(b) + 1);
-	
+
 	strcpy(c, a);
 	strcat(c, b);
-	
+
 	return c;
 }
 
-void assurePath(const char* progname)
+void assurePath(const char *progname)
 {
-	const char* lastSlash = NULL;
+	const char *lastSlash = NULL;
 
-	const char* s;
+	const char *s;
 
 	for (s = progname; *s; s++)
 	{
@@ -62,7 +62,7 @@ void assurePath(const char* progname)
 	if (lastSlash)
 	{
 		int length = lastSlash - progname;
-		char* path;
+		char *path;
 
 		MALLOC(path, length + 1);
 

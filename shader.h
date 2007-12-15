@@ -22,6 +22,7 @@
 
 #include <GL/glew.h>
 
-GLhandleARB makeShader(const char* vertexShaderFilename, const char* fragmentShaderFilename);
+GLhandleARB makeShader(const char *vertexShaderFilename,
+											 const char *fragmentShaderFilename);
 
 #endif

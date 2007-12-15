@@ -60,7 +60,8 @@ int gModifiers = 0;
 
 unsigned char gLastChar;
 
-int getModifiers(void) {
+int getModifiers(void)
+{
 	return gModifiers;
 }
 
@@ -69,12 +70,15 @@ unsigned char getLastChar(void)
 	return gLastChar;
 }
 
-int isPressed(const int* key) {
+int isPressed(const int *key)
+{
 	return *key == GLUT_DOWN;
 }
 
-int wasPressed(int* key) {
-	if (isPressed(key)) {
+int wasPressed(int *key)
+{
+	if (isPressed(key))
+	{
 		*key = GLUT_UP;
 		return 1;
 	}
@@ -82,52 +86,68 @@ int wasPressed(int* key) {
 	return 0;
 }
 
-int isKeyPressed(unsigned char key) {
+int isKeyPressed(unsigned char key)
+{
 	return isPressed(&gKeys[key]);
 }
 
-int wasKeyPressed(unsigned char key) {
+int wasKeyPressed(unsigned char key)
+{
 	return wasPressed(&gKeys[key]);
 }
 
-int isCursorPressed(int cursor) {
+int isCursorPressed(int cursor)
+{
 	return cursor >= 0 && cursor < MAX_CURSORS && isPressed(&gCursorKeys[cursor]);
 }
 
-int wasCursorPressed(int cursor) {
-	return cursor >= 0 && cursor < MAX_CURSORS && wasPressed(&gCursorKeys[cursor]);
+int wasCursorPressed(int cursor)
+{
+	return cursor >= 0 && cursor < MAX_CURSORS
+		&& wasPressed(&gCursorKeys[cursor]);
 }
 
-int isFunctionPressed(int index) {
-	return index >= 1 && index <= MAX_FUNCTION && isPressed(&gFunctionKeys[index - 1]);
+int isFunctionPressed(int index)
+{
+	return index >= 1 && index <= MAX_FUNCTION
+		&& isPressed(&gFunctionKeys[index - 1]);
 }
 
-int wasFunctionPressed(int index) {
-	return index >= 1 && index <= MAX_FUNCTION && wasPressed(&gFunctionKeys[index - 1]);
+int wasFunctionPressed(int index)
+{
+	return index >= 1 && index <= MAX_FUNCTION
+		&& wasPressed(&gFunctionKeys[index - 1]);
 }
 
-void keyboardDown(unsigned char key, int x, int y) {
+void keyboardDown(unsigned char key, int x, int y)
+{
 	gKeys[key] = GLUT_DOWN;
 	gModifiers = glutGetModifiers();
-	
+
 	gLastChar = key;
 }
 
-void keyboardUp(unsigned char key, int x, int y) {
+void keyboardUp(unsigned char key, int x, int y)
+{
 	gKeys[key] = GLUT_UP;
 	gModifiers = glutGetModifiers();
 }
 
-int* getSpecialKeyPtr(int key) {
+int *getSpecialKeyPtr(int key)
+{
 	int i;
-	for (i = 0; i < MAX_CURSORS; i++) {
-		if (key == gCursors[i]) {
+	for (i = 0; i < MAX_CURSORS; i++)
+	{
+		if (key == gCursors[i])
+		{
 			return &gCursorKeys[i];
 		}
 	}
 
-	for (i = 0; i < MAX_FUNCTION; i++) {
-		if (key == gFunctions[i]) {
+	for (i = 0; i < MAX_FUNCTION; i++)
+	{
+		if (key == gFunctions[i])
+		{
 			return &gFunctionKeys[i];
 		}
 	}
@@ -135,33 +155,41 @@ int* getSpecialKeyPtr(int key) {
 	return NULL;
 }
 
-void specialKeyDown(int key, int x, int y) {
-	int* ptr = getSpecialKeyPtr(key);
+void specialKeyDown(int key, int x, int y)
+{
+	int *ptr = getSpecialKeyPtr(key);
 
-	if (ptr) {
+	if (ptr)
+	{
 		*ptr = GLUT_DOWN;
 		gModifiers = glutGetModifiers();
 	}
 }
 
-void specialKeyUp(int key, int x, int y) {
-	int* ptr = getSpecialKeyPtr(key);
+void specialKeyUp(int key, int x, int y)
+{
+	int *ptr = getSpecialKeyPtr(key);
 
-	if (ptr) {
+	if (ptr)
+	{
 		*ptr = GLUT_UP;
 		gModifiers = glutGetModifiers();
 	}
 }
 
-void startKeyboard(void) {
+void startKeyboard(void)
+{
 	int i;
-	for (i = 0; i < MAX_KEYS; i++) {
+	for (i = 0; i < MAX_KEYS; i++)
+	{
 		gKeys[i] = GLUT_UP;
 	}
-	for (i = 0; i < MAX_CURSORS; i++) {
+	for (i = 0; i < MAX_CURSORS; i++)
+	{
 		gCursorKeys[i] = GLUT_UP;
 	}
-	for (i = 0; i < MAX_FUNCTION; i++) {
+	for (i = 0; i < MAX_FUNCTION; i++)
+	{
 		gFunctionKeys[i] = GLUT_UP;
 	}
 

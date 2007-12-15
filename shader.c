@@ -29,14 +29,16 @@
 /*
  * Gibt ggf. Fehlermeldungen bei der Compilierung aus
  */
-int printInfoLog(GLhandleARB obj, const char* text) {
+int printInfoLog(GLhandleARB obj, const char *text)
+{
 	int infologLength = 0;
-	int charsWritten  = 0;
-	char* infoLog;
+	int charsWritten = 0;
+	char *infoLog;
 
 	glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infologLength);
 
-	if (infologLength > 1) {
+	if (infologLength > 1)
+	{
 		MALLOC(infoLog, infologLength);
 		glGetInfoLogARB(obj, infologLength, &charsWritten, infoLog);
 		printf("%s: %s\n", text, infoLog);
@@ -52,9 +54,11 @@ int printInfoLog(GLhandleARB obj, const char* text) {
 /*
  * Erzeugt ein Programm aus einem Vertex- und einem FragmentShader
  */
-GLhandleARB makeShader(const char* vertexShaderFilename, const char* fragmentShaderFilename) {
-	char* vs;
-	char* fs;
+GLhandleARB makeShader(const char *vertexShaderFilename,
+											 const char *fragmentShaderFilename)
+{
+	char *vs;
+	char *fs;
 	int compiled;
 	int linked;
 
@@ -62,18 +66,20 @@ GLhandleARB makeShader(const char* vertexShaderFilename, const char* fragmentSha
 	GLhandleARB f = glCreateShader(GL_FRAGMENT_SHADER);
 	GLhandleARB p;
 
-	if ((vs = textFileRead(vertexShaderFilename)) == NULL) {
-		return 0;
-	}
-	
-	if ((fs = textFileRead(fragmentShaderFilename)) == NULL) {
-		return 0;
-	}
-	
+	if ((vs = textFileRead(vertexShaderFilename)) == NULL)
 	{
-		const char* vv = vs;
-		const char* ff = fs;
-		
+		return 0;
+	}
+
+	if ((fs = textFileRead(fragmentShaderFilename)) == NULL)
+	{
+		return 0;
+	}
+
+	{
+		const char *vv = vs;
+		const char *ff = fs;
+
 		glShaderSource(v, 1, &vv, NULL);
 		glShaderSource(f, 1, &ff, NULL);
 	}
@@ -84,26 +90,29 @@ GLhandleARB makeShader(const char* vertexShaderFilename, const char* fragmentSha
 	glCompileShader(v);
 	printInfoLog(v, vertexShaderFilename);
 	glGetObjectParameterivARB(v, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
-	if (!compiled) {
+	if (!compiled)
+	{
 		return 0;
 	}
-	
+
 	glCompileShader(f);
 	printInfoLog(f, fragmentShaderFilename);
 	glGetObjectParameterivARB(f, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
-	if (!compiled) {
+	if (!compiled)
+	{
 		return 0;
 	}
 
 	p = glCreateProgram();
-	
+
 	glAttachShader(p, v);
 	glAttachShader(p, f);
 
 	glLinkProgram(p);
 	printInfoLog(p, "Link");
 	glGetObjectParameterivARB(p, GL_OBJECT_LINK_STATUS_ARB, &linked);
-	if (!linked) {
+	if (!linked)
+	{
 		return 0;
 	}
 

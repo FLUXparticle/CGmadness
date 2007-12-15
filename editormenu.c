@@ -36,24 +36,25 @@
 
 #define SCALE_FONT 0.5f
 
-typedef struct {
-	char* left;
-	char* right;
+typedef struct
+{
+	char *left;
+	char *right;
 } LeftRight;
 
 /*
  * help text
  */
 static LeftRight gTextHelp[] = {
-	{ "Cursor", "move" },
-	{ "Shift", "multi select" },
-	{ "W A S D", "pitch" },
-	{ "R F", "hight" },
-	{ "0", "flatten" },
-	{ "Enter", "test" },
-	{ "Y X C V B N", "camera" },
-	{ "1 2", "start finish" },
-	{ "Esc", "menu" },
+	{"Cursor", "move"},
+	{"Shift", "multi select"},
+	{"W A S D", "pitch"},
+	{"R F", "hight"},
+	{"0", "flatten"},
+	{"Enter", "test"},
+	{"Y X C V B N", "camera"},
+	{"1 2", "start finish"},
+	{"Esc", "menu"},
 };
 
 static Screen gScreenEditor;
@@ -63,31 +64,38 @@ static Screen gScreenFailed;
 
 /* events */
 
-static void clickButtonEdit(void) {
+static void clickButtonEdit(void)
+{
 	popScreen();
 	resumeEditor();
 }
 
-static void clickButtonSave(void) {
+static void clickButtonSave(void)
+{
 	saveLevel();
 }
 
-static void clickButtonHelp(void) {
+static void clickButtonHelp(void)
+{
 	pushScreen(&gScreenHelp);
 }
 
-static void clickButtonBack(void) {
+static void clickButtonBack(void)
+{
 	popScreen();
 }
 
-static void clickButtonQuit(void) {
+static void clickButtonQuit(void)
+{
 	popScreen();
 	stopEditor();
 	setMainState(STATE_MAIN);
 }
 
-void showEditorScreen(int menu) {
-	switch (menu) {
+void showEditorScreen(int menu)
+{
+	switch (menu)
+	{
 	case 0:
 		pushScreen(&gScreenEditor);
 		break;
@@ -100,7 +108,8 @@ void showEditorScreen(int menu) {
 	}
 }
 
-void initEditorMenu() {
+void initEditorMenu()
+{
 	static Button bEdit;
 	static Button bSave;
 	static Button bHelp;
@@ -111,27 +120,24 @@ void initEditorMenu() {
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
-	static MenuItem* itemsEditor[] =
-	{
-			&bEdit.item,
-			&bSave.item,
-			&bHelp.item,
-			&bQuit.item
+	static MenuItem *itemsEditor[] = {
+		&bEdit.item,
+		&bSave.item,
+		&bHelp.item,
+		&bQuit.item
 	};
 
-	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
-	
-	static MenuItem* itemsSuccessful[] =
-	{
+	static MenuItem *itemsHelp[LENGTH(lTextHelp) + 1];
+
+	static MenuItem *itemsSuccessful[] = {
 		&bSuccessful.item,
 	};
 
-	static MenuItem* itemsFailed[] =
-	{
+	static MenuItem *itemsFailed[] = {
 		&bFailed.item,
 	};
 
-	static const float sizeHelp = 0.75f; 
+	static const float sizeHelp = 0.75f;
 
 	int i;
 
@@ -148,7 +154,7 @@ void initEditorMenu() {
 	initButton(&bQuit, 3.0f, clickButtonQuit, "back", KEY_ESC);
 
 	INIT_SCREEN(&gScreenEditor, itemsEditor);
-	
+
 	/* help menu */
 	for (i = 0; i < LENGTH(lTextHelp); i++)
 	{
@@ -156,20 +162,23 @@ void initEditorMenu() {
 		int col = i % 2;
 		float z = 6.0f - row * sizeHelp;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, sizeHelp, col, col ? gTextHelp[row].right : gTextHelp[row].left);
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, sizeHelp, col,
+							col ? gTextHelp[row].right : gTextHelp[row].left);
 
 		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack, "back", KEY_ESC);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack,
+						 "back", KEY_ESC);
 
 	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
- 	/* response */
+	/* response */
 
-	initButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully", KEY_ENTER);
+	initButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully",
+						 KEY_ENTER);
 	INIT_SCREEN(&gScreenSuccessful, itemsSuccessful);
 
 	initButton(&bFailed, 5.0, clickButtonBack, "operation failed", KEY_ENTER);

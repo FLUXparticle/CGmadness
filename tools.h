@@ -22,8 +22,8 @@
 
 void message(void);
 
-char* addStrings(const char* a, const char* b);
+char *addStrings(const char *a, const char *b);
 
-void assurePath(const char* progname);
+void assurePath(const char *progname);
 
 #endif

@@ -96,19 +96,23 @@ int hasCubeMap(void)
 
 int useBallShader(void)
 {
-	return hasGolfballShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasGolfballShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL
+																 || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
 int useBallReflection(void)
 {
-	return hasFramebuffer() && (gBallLayout == BALL_LAYOUT_METAL || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasFramebuffer() && (gBallLayout == BALL_LAYOUT_METAL
+															|| gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
-void changeBall(int layout) {
-  gBallLayout = layout;
+void changeBall(int layout)
+{
+	gBallLayout = layout;
 }
 
-void gameDrag(int dx, int dy) {
+void gameDrag(int dx, int dy)
+{
 	gDragX += dx;
 	gDragY += dy;
 }
@@ -116,25 +120,25 @@ void gameDrag(int dx, int dy) {
 void updateReflection(void)
 {
 	static Vector3 lookat[] = {
-		{  1.0f,  0.0f,  0.0f },
-		{ -1.0f,  0.0f,  0.0f },
+		{1.0f, 0.0f, 0.0f},
+		{-1.0f, 0.0f, 0.0f},
 
-		{  0.0f,  1.0f,  0.0f },
-		{  0.0f, -1.0f,  0.0f },
+		{0.0f, 1.0f, 0.0f},
+		{0.0f, -1.0f, 0.0f},
 
-		{  0.0f,  0.0f,  1.0f },
-		{  0.0f,  0.0f, -1.0f }
+		{0.0f, 0.0f, 1.0f},
+		{0.0f, 0.0f, -1.0f}
 	};
 
 	static Vector3 up[] = {
-		{ 0.0f, -1.0f,  0.0f },
-		{ 0.0f, -1.0f,  0.0f },
+		{0.0f, -1.0f, 0.0f},
+		{0.0f, -1.0f, 0.0f},
 
-		{ 0.0f,  0.0f,  1.0f },
-		{ 0.0f,  0.0f, -1.0f },
+		{0.0f, 0.0f, 1.0f},
+		{0.0f, 0.0f, -1.0f},
 
-		{ 0.0f, -1.0f,  0.0f },
-    { 0.0f, -1.0f,  0.0f }
+		{0.0f, -1.0f, 0.0f},
+		{0.0f, -1.0f, 0.0f}
 	};
 
 	if (useBallReflection() && gDirtyReflection)
@@ -147,14 +151,17 @@ void updateReflection(void)
 		glViewport(0, 0, CUBE_MAP_SIZE, CUBE_MAP_SIZE);
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, gTargetCube[0].framebuffer));
 
-		for (i = 0; i < 6; i++) {
-			RenderTarget* target = &gTargetCube[i];
-			Viewport* v = target->viewport;
+		for (i = 0; i < 6; i++)
+		{
+			RenderTarget *target = &gTargetCube[i];
+			Viewport *v = target->viewport;
 
 #if DEBUG_TIME
 			PRINT_INT(i);
 #endif
-			TIME(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, gCubeMapBall, 0));
+			TIME(glFramebufferTexture2DEXT
+					 (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+						GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, gCubeMapBall, 0));
 
 			glClear(GL_COLOR_BUFFER_BIT);
 
@@ -163,13 +170,11 @@ void updateReflection(void)
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
-			gluLookAt(
-					sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z,
-					sgoBall.pos.x + lookat[i].x, sgoBall.pos.y + lookat[i].y, sgoBall.pos.z + lookat[i].z,
-					up[i].x, up[i].y, up[i].z
-					);
+			gluLookAt(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z,
+								sgoBall.pos.x + lookat[i].x, sgoBall.pos.y + lookat[i].y,
+								sgoBall.pos.z + lookat[i].z, up[i].x, up[i].y, up[i].z);
 
- 			TIME(drawGameBallReflection());
+			TIME(drawGameBallReflection());
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
@@ -182,7 +187,7 @@ void resetBall(void)
 {
 	Square roofSquare;
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
-	sgoBall.pos.x = roofSquare.mid.x; 
+	sgoBall.pos.x = roofSquare.mid.x;
 	sgoBall.pos.y = roofSquare.mid.y;
 	sgoBall.pos.z = getMaxZValue(&roofSquare) + 2.5f;
 
@@ -251,7 +256,8 @@ void initBall(void)
 	setPreDisplayFunc(updateReflection);
 }
 
-int collisionPoint(const Vector3 sphere, const Vector3* quad, const Vector3 normal, Vector3* collision)
+int collisionPoint(const Vector3 sphere, const Vector3 * quad,
+									 const Vector3 normal, Vector3 * collision)
 {
 	float dToPlane = dot(sphere, normal) - dot(quad[0], normal);
 	int inside = 1;
@@ -346,17 +352,17 @@ void animateBall(float interval)
 		{
 			force = sub(force, sgRight);
 		}
-	
+
 		if (isKeyPressed('d'))
 		{
 			force = add(force, sgRight);
 		}
-	
+
 		if (isKeyPressed('s'))
 		{
 			force = sub(force, sgForward);
 		}
-	
+
 		if (isKeyPressed('w'))
 		{
 			force = add(force, sgForward);
@@ -368,17 +374,17 @@ void animateBall(float interval)
 		{
 			force = sub(force, sgRight);
 		}
-	
+
 		if (isCursorPressed(CURSOR_RIGHT))
 		{
 			force = add(force, sgRight);
 		}
-	
+
 		if (isCursorPressed(CURSOR_DOWN))
 		{
 			force = sub(force, sgForward);
 		}
-	
+
 		if (isCursorPressed(CURSOR_UP))
 		{
 			force = add(force, sgForward);
@@ -387,7 +393,8 @@ void animateBall(float interval)
 
 	force = norm(force);
 
-	sgoBall.velocity = add(sgoBall.velocity, scale(MOVE_FORCE / sgoBall.mass * interval, force));
+	sgoBall.velocity =
+		add(sgoBall.velocity, scale(MOVE_FORCE / sgoBall.mass * interval, force));
 
 	sgoBall.velocity.z -= GRAVITY * interval;
 
@@ -400,9 +407,9 @@ void animateBall(float interval)
 	x = floor(ball.x - sgLevel.origin.x);
 	y = floor(ball.y - sgLevel.origin.y);
 
-  /* check only fields near by the ball. check field under ball first!!! */
-  for (dx = 1; dx <= 3; dx++)
-  {
+	/* check only fields near by the ball. check field under ball first!!! */
+	for (dx = 1; dx <= 3; dx++)
+	{
 		for (dy = 1; dy <= 3; dy++)
 		{
 			int start;
@@ -412,7 +419,7 @@ void animateBall(float interval)
 
 			for (q = start; q < end; q += 4)
 			{
-				Vector3* quad = &sgVertices[q];
+				Vector3 *quad = &sgVertices[q];
 				Vector3 dir = sgNormals[q];
 
 				Vector3 a;
@@ -434,7 +441,9 @@ void animateBall(float interval)
 					Vector3 right = norm(cross(dir, step));
 					Vector3 forward = norm(cross(right, dir));
 
-					sgoBall.angularRate = scale(dot(sub(ball, sgoBall.pos), forward) / (2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
+					sgoBall.angularRate =
+						scale(dot(sub(ball, sgoBall.pos), forward) /
+									(2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
 
 					ball = add(ball, move);
 
@@ -452,7 +461,7 @@ void animateBall(float interval)
 	sgoBall.pos = ball;
 
 	normal = norm(normal);
-	
+
 	sgHasBallHitGoal = 0;
 
 	/* contact to surface? */
@@ -461,8 +470,8 @@ void animateBall(float interval)
 		float vn = dot(sgoBall.velocity, normal);
 		Vector3 rebound = scale(-(1 + ELASTICITY) * vn, normal);
 
-    if (len(rebound) > 3.0f * JUMP_FORCE * interval)
-    {
+		if (len(rebound) > 3.0f * JUMP_FORCE * interval)
+		{
 			/* collision was to havy */
 			explodeBall();
 		}
@@ -473,10 +482,12 @@ void animateBall(float interval)
 			/* jump */
 			if (isKeyPressed(' '))
 			{
-				sgoBall.velocity = add(sgoBall.velocity, scale(JUMP_FORCE / sgoBall.mass * interval, normal));
+				sgoBall.velocity =
+					add(sgoBall.velocity,
+							scale(JUMP_FORCE / sgoBall.mass * interval, normal));
 			}
 		}
-		
+
 		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
 			/* hit goal */
@@ -489,15 +500,20 @@ void animateBall(float interval)
 	/* damping */
 	sgoBall.velocity = scale(DAMPING, sgoBall.velocity);
 
-	sgoBall.orientation = mulQuaternion(mkQuaternion(len(sgoBall.angularRate) * interval, sgoBall.angularRate), sgoBall.orientation);
+	sgoBall.orientation =
+		mulQuaternion(mkQuaternion
+									(len(sgoBall.angularRate) * interval, sgoBall.angularRate),
+									sgoBall.orientation);
 
 	/* falling to infinity */
-	if (sgoBall.pos.z < -1.0f) {
+	if (sgoBall.pos.z < -1.0f)
+	{
 		explodeBall();
 	}
 
-  /* reset through user */
-	if (wasKeyPressed(KEY_ENTER)) {
+	/* reset through user */
+	if (wasKeyPressed(KEY_ENTER))
+	{
 		explodeBall();
 	}
 
@@ -506,9 +522,9 @@ void animateBall(float interval)
 
 void resetBallCamera(void)
 {
-	gDistance  =  5.0f;
-	gLatitude  = 20.0f;
-	gLongitude =  0.0f;
+	gDistance = 5.0f;
+	gLatitude = 20.0f;
+	gLongitude = 0.0f;
 }
 
 void enableBallCamera(void)
@@ -517,53 +533,64 @@ void enableBallCamera(void)
 	{
 		setDragFunc(gameDrag);
 	}
-	
+
 	glutSetCursor(GLUT_CURSOR_NONE);
-	
+
 	gIsBallCameraActive = 1;
 }
 
 void disableBallCamera(void)
 {
 	setDragFunc(NULL);
-	
+
 	gIsBallCameraActive = 0;
 }
 
-void updateBallCamera(float interval, Vector3 ball) {
+void updateBallCamera(float interval, Vector3 ball)
+{
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
 
-  /* game controls for camera */
+	/* game controls for camera */
 
 	if (sgIsMouseControl)
 	{
 		gLongitude -= 5.0f * interval * gDragX;
 		gLatitude += 5.0f * interval * gDragY;
-	
+
 		gDragX = 0;
 		gDragY = 0;
 	}
 	else
 	{
 		/* zoom */
-		if (isKeyPressed('f') && gDistance < 20.0f) gDistance += 0.1f;
-		if (isKeyPressed('r') && gDistance > 0.5) gDistance -= 0.1f;
-	
+		if (isKeyPressed('f') && gDistance < 20.0f)
+			gDistance += 0.1f;
+		if (isKeyPressed('r') && gDistance > 0.5)
+			gDistance -= 0.1f;
+
 		/* rotation */
-		if (isKeyPressed('a')) gLongitude -= 120.0f * interval;
-		if (isKeyPressed('d')) gLongitude += 120.0f * interval;
-	
+		if (isKeyPressed('a'))
+			gLongitude -= 120.0f * interval;
+		if (isKeyPressed('d'))
+			gLongitude += 120.0f * interval;
+
 		/* height */
-		if (isKeyPressed('w')) gLatitude += 120.0f * interval;
-		if (isKeyPressed('s')) gLatitude -= 120.0f * interval;
-	
+		if (isKeyPressed('w'))
+			gLatitude += 120.0f * interval;
+		if (isKeyPressed('s'))
+			gLatitude -= 120.0f * interval;
+
 		gLatitude = clamp(gLatitude, -89.0f, 89.0f);
 	}
 
-	dest.x = ball.x + gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
-	dest.y = ball.y - gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.x =
+		ball.x +
+		gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+	dest.y =
+		ball.y -
+		gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
 	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
 
 	moveCamera(interval, dest, ball);
@@ -590,7 +617,7 @@ void updateBall(float interval)
 		resetBall();
 		resetGameTime();
 	}
-	
+
 	if (gIsBallCameraActive)
 	{
 		updateBallCamera(interval, sgoBall.pos);
@@ -602,40 +629,40 @@ void updateBall(float interval)
 void activateBallShader(void)
 {
 	Vector3 normal = vector3(0.0f, 0.0f, 1.0f);
-	float light =	approximation(sgoBall.pos, normal);
+	float light = approximation(sgoBall.pos, normal);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(light, light, light);
 
 	switch (gBallLayout)
 	{
-		case BALL_LAYOUT_DEFAULT:
+	case BALL_LAYOUT_DEFAULT:
 		{
 			glColor3f(light, 0.0f, 0.0f);
 			break;
 		}
-		case BALL_LAYOUT_TEXTURE:
+	case BALL_LAYOUT_TEXTURE:
 		{
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, gTextureBall);
 
 			break;
 		}
-		case BALL_LAYOUT_METAL:
-			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
-			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
-			glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
+	case BALL_LAYOUT_METAL:
+		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
+		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
+		glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
 
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glEnable(GL_TEXTURE_GEN_R);
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
+		glEnable(GL_TEXTURE_GEN_R);
 
-			glColor3f(1.0f, 1.0f, 1.0f);
-			break;
-		case BALL_LAYOUT_GOLFBALL:
-			break;
-		case BALL_LAYOUT_GOLFBALL_METAL:
-			break;
+		glColor3f(1.0f, 1.0f, 1.0f);
+		break;
+	case BALL_LAYOUT_GOLFBALL:
+		break;
+	case BALL_LAYOUT_GOLFBALL_METAL:
+		break;
 	}
 
 	if (useBallReflection())
@@ -647,11 +674,16 @@ void activateBallShader(void)
 
 		glGetFloatv(GL_MODELVIEW_MATRIX, &modelview[0][0]);
 
-		for (x = 0; x < 4; x++) {
-			for (y = 0; y < 4; y++) {
-				if (x < 3 && y < 3) {
+		for (x = 0; x < 4; x++)
+		{
+			for (y = 0; y < 4; y++)
+			{
+				if (x < 3 && y < 3)
+				{
 					texture[x][y] = modelview[y][x];
-				} else {
+				}
+				else
+				{
 					texture[x][y] = (x == y);
 				}
 			}
@@ -682,11 +714,12 @@ void activateBallShader(void)
 			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
 			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
 		}
-		
+
 		glUseProgram(sgGolfballShader);
 
 		glUniform1i(glGetUniformLocation(sgGolfballShader, "Environment"), 0);
-		glUniform1f(glGetUniformLocation(sgGolfballShader, "reflection"), reflection);
+		glUniform1f(glGetUniformLocation(sgGolfballShader, "reflection"),
+								reflection);
 	}
 }
 
@@ -696,20 +729,20 @@ void deactivateBallShader(void)
 
 	switch (gBallLayout)
 	{
-		case BALL_LAYOUT_DEFAULT:
-			break;
-		case BALL_LAYOUT_TEXTURE:
-			glDisable(GL_TEXTURE_2D);
-			break;
-		case BALL_LAYOUT_METAL:
-			glDisable(GL_TEXTURE_GEN_S);
-			glDisable(GL_TEXTURE_GEN_T);
-			glDisable(GL_TEXTURE_GEN_R);
-			break;
-		case BALL_LAYOUT_GOLFBALL:
-			break;
-		case BALL_LAYOUT_GOLFBALL_METAL:
-			break;
+	case BALL_LAYOUT_DEFAULT:
+		break;
+	case BALL_LAYOUT_TEXTURE:
+		glDisable(GL_TEXTURE_2D);
+		break;
+	case BALL_LAYOUT_METAL:
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
+		glDisable(GL_TEXTURE_GEN_R);
+		break;
+	case BALL_LAYOUT_GOLFBALL:
+		break;
+	case BALL_LAYOUT_GOLFBALL_METAL:
+		break;
 	}
 
 	if (useBallReflection())
@@ -733,16 +766,17 @@ void deactivateBallShader(void)
 	}
 }
 
-void drawMenuBall(void) {
+void drawMenuBall(void)
+{
 	glPushMatrix();
 
-		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 
-		activateBallShader();
+	activateBallShader();
 
-			drawBallObject(useBallShader());
+	drawBallObject(useBallShader());
 
-		deactivateBallShader();
+	deactivateBallShader();
 
 	glPopMatrix();
 }
@@ -753,38 +787,38 @@ void drawGameBall(void)
 
 	activateBallShader();
 
-		if (gBallLayout == BALL_LAYOUT_DEFAULT)
-		{
-			float pos[4]  = { 0.0f, 0.0f, 1.0f, 0.0f };
+	if (gBallLayout == BALL_LAYOUT_DEFAULT)
+	{
+		float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-			glEnable(GL_LIGHT0);
-			glLightfv(GL_LIGHT0, GL_POSITION, pos);
+		glEnable(GL_LIGHT0);
+		glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-			glEnable(GL_LIGHTING);
-		}
+		glEnable(GL_LIGHTING);
+	}
 
-		glPushMatrix();
+	glPushMatrix();
 
-			glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
-			glScalef(sgoBall.radius, sgoBall.radius, sgoBall.radius);
-			quaternionTransform(sgoBall.orientation);
+	glTranslatef(sgoBall.pos.x, sgoBall.pos.y, sgoBall.pos.z);
+	glScalef(sgoBall.radius, sgoBall.radius, sgoBall.radius);
+	quaternionTransform(sgoBall.orientation);
 
-			/* explosion? */
-			if (sgIsBallInPieces)
-			{
-				drawExplosion(shader);
-			}
-			else
-			{
-				drawBallObject(shader);
-			}
+	/* explosion? */
+	if (sgIsBallInPieces)
+	{
+		drawExplosion(shader);
+	}
+	else
+	{
+		drawBallObject(shader);
+	}
 
-		glPopMatrix();
+	glPopMatrix();
 
-		if (gBallLayout == BALL_LAYOUT_DEFAULT)
-		{
-			glDisable(GL_LIGHTING);
-		}
+	if (gBallLayout == BALL_LAYOUT_DEFAULT)
+	{
+		glDisable(GL_LIGHTING);
+	}
 
 	deactivateBallShader();
 }

@@ -25,14 +25,17 @@
 static float gCurProgress;
 static time_t gLastUpdate;
 
-void resetProgress(void) {
+void resetProgress(void)
+{
 	gCurProgress = 0.0f;
 	gLastUpdate = time(NULL);
 }
 
-void setProgress(float progress) {
+void setProgress(float progress)
+{
 	time_t curTime = time(NULL);
-	if (curTime > gLastUpdate && progress > gCurProgress)	{
+	if (curTime > gLastUpdate && progress > gCurProgress)
+	{
 		gCurProgress = progress;
 		gLastUpdate = curTime;
 

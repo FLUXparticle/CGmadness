@@ -30,21 +30,21 @@
 
 StringList sgLevels;
 
-static MainState gCurState; 
+static MainState gCurState;
 
 void initMain(void)
 {
 	createStringListFromDir(&sgLevels, "levels");
-	
+
 	initEnvironment();
 
 	initMenuManager();
-	
+
 	initMainMenu();
-	
+
 	setMainState(STATE_MAIN);
 	showMainMenu();
-	
+
 	initGame();
 
 	initEditor();

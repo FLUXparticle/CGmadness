@@ -28,8 +28,9 @@ void drawSquare(void);
 
 void drawBallObject(int shader);
 
-void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos, Vector3 endSpeed);
-int updateExplosion(float interval, Vector3* speed, Vector3* pos);
+void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
+									 Vector3 endSpeed);
+int updateExplosion(float interval, Vector3 * speed, Vector3 * pos);
 void drawExplosion(int shader);
 
 #endif

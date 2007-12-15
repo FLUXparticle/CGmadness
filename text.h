@@ -20,13 +20,13 @@
 #ifndef _text_h_
 #define _text_h_
 
-void drawBitmapText(const char* str);
+void drawBitmapText(const char *str);
 
-float widthStrokeText(const char* str);
-void drawStrokeThinText(const char* str);
-void drawStrokeThickText(const char* str);
+float widthStrokeText(const char *str);
+void drawStrokeThinText(const char *str);
+void drawStrokeThickText(const char *str);
 
-float widthFont3DText(const char* str);
-void drawFont3DText(const char* str);
+float widthFont3DText(const char *str);
+void drawFont3DText(const char *str);
 
 #endif

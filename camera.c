@@ -26,7 +26,8 @@
 Vector3 sgCamera;
 Vector3 sgLookat;
 
-void resetCamera(void) {
+void resetCamera(void)
+{
 	sgCamera.x = 0.0f;
 	sgCamera.y = 0.0f;
 	sgCamera.z = 1.0f;
@@ -36,7 +37,8 @@ void resetCamera(void) {
 	sgLookat.z = 0.0f;
 }
 
-void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
+void moveCamera(float interval, Vector3 camera, Vector3 lookat)
+{
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	float error;
@@ -54,11 +56,8 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(
-			sgCamera.x,  sgCamera.y, sgCamera.z,
-			sgLookat.x, sgLookat.y, sgLookat.z,
-			up.x, up.y, up.z
-			);
+	gluLookAt(sgCamera.x, sgCamera.y, sgCamera.z,
+						sgLookat.x, sgLookat.y, sgLookat.z, up.x, up.y, up.z);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
 }

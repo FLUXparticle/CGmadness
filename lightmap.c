@@ -25,7 +25,8 @@
 
 #include <math.h>
 
-float approximationSquare(const Vector3 position, const Vector3 normal, const Square square)
+float approximationSquare(const Vector3 position, const Vector3 normal,
+													const Square square)
 {
 	Vector3 d;
 	float r;
@@ -66,7 +67,11 @@ float approximation(const Vector3 position, const Vector3 normal)
 			Square square;
 			int j;
 
-			if (len(sub(position, add(vector3(x + 0.5f, y + 0.5f, position.z), sgLevel.origin))) > 6.0f)
+			if (len
+					(sub
+					 (position,
+						add(vector3(x + 0.5f, y + 0.5f, position.z),
+								sgLevel.origin))) > 6.0f)
 			{
 				continue;
 			}
@@ -107,7 +112,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 	return light;
 }
 
-void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation)
+void genAmbientOcclusionTexture(SubAtlas * lightMap, Orientation orientation)
 {
 	int x;
 	int y;
@@ -116,8 +121,12 @@ void genAmbientOcclusionTexture(SubAtlas* lightMap, Orientation orientation)
 	{
 		for (y = 0; y < lightMap->sizeY * LIGHT_MAP_SIZE; y++)
 		{
-			float sx = (x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
-			float sy = (y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE - 1);
+			float sx =
+				(x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
+																															 1);
+			float sy =
+				(y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
+																															 1);
 
 			Vector3 off = add(scale(sx, orientation.vx), scale(sy, orientation.vy));
 			Vector3 rayPosition = add(orientation.origin, off);

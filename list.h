@@ -22,19 +22,20 @@
 
 #include <stdlib.h>
 
-typedef struct Node* List;
+typedef struct Node *List;
 
-struct Node {
-	void* info;
+struct Node
+{
+	void *info;
 	List next;
 };
 
-List prependElement(List list, void* element);
-List appendElement(List list, void* element);
-List removeElement(List list, const void* element);
+List prependElement(List list, void *element);
+List appendElement(List list, void *element);
+List removeElement(List list, const void *element);
 List removeAll(List list);
 
 int countElements(const List list);
-void* getElement(const List list, int index);
+void *getElement(const List list, int index);
 
 #endif

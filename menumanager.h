@@ -23,21 +23,22 @@
 
 #include "gui.h"
 
-typedef void (*funcCallback)(void);
+typedef void (*funcCallback) (void);
 
 void initMenuManager(void);
 
-const Screen* getCurScreen(void);
+const Screen *getCurScreen(void);
 
 void updateMenuManager(float interval);
 
-void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event);
+void eventMenuManager(const Vector3 * position, const Vector3 * direction,
+											MouseEvent event);
 
 void drawMenuManager(void);
 
 void pushWaitScreen(funcCallback callback);
 
-void pushScreen(Screen* menu);
+void pushScreen(Screen * menu);
 void popScreen(void);
 
 #endif

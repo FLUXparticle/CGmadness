@@ -31,7 +31,7 @@ static funcIdle gIdle;
 static void doIdle(void)
 {
 	gIdle(gIdleStep);
-	
+
 	gIdleStep++;
 	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
 

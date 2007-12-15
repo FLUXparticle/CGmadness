@@ -45,11 +45,12 @@ static RenderTarget gTargetWindow;
 
 /*** Scene ***/
 
-static funcDraw   gPreDisplay = NULL;
+static funcDraw gPreDisplay = NULL;
 
 static int gSceneDirty = 1;
 
-void setPreDisplayFunc(funcDraw preDisplay) {
+void setPreDisplayFunc(funcDraw preDisplay)
+{
 	gPreDisplay = preDisplay;
 }
 
@@ -59,16 +60,18 @@ static float gFPS = 0.0f;
 
 static Matrix gProjectionText;
 
-void framerate(void) {
-  static int timebase = 0;
-  static int frameCount = 0;
-  static int time = 0;
+void framerate(void)
+{
+	static int timebase = 0;
+	static int frameCount = 0;
+	static int time = 0;
 
-  frameCount++;
+	frameCount++;
 
-  time = glutGet(GLUT_ELAPSED_TIME);
+	time = glutGet(GLUT_ELAPSED_TIME);
 
-  if (time - timebase > 1000) {
+	if (time - timebase > 1000)
+	{
 		gFPS = frameCount * 1000.0 / (time - timebase);
 
 		timebase = time;
@@ -76,17 +79,19 @@ void framerate(void) {
 	}
 }
 
-void display(void) {
+void display(void)
+{
 #if(DEBUG_PREDISPLAY)
 	static int sumPredisplayTime = 0;
 	static int cntPredisplayTime = 0;
 	float predisplayTime = 0.0f;
 #endif
 
-	Viewport* v = gTargetWindow.viewport;
+	Viewport *v = gTargetWindow.viewport;
 	float aspect = (float) gTargetWindow.height / gTargetWindow.width;
 
-	if (gPreDisplay) {
+	if (gPreDisplay)
+	{
 #if(DEBUG_PREDISPLAY)
 		int after;
 		int before = glutGet(GLUT_ELAPSED_TIME);
@@ -123,30 +128,31 @@ void display(void) {
 
 	glDisable(GL_DEPTH_TEST);
 
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-	
-				glScalef(aspect, 1.0f, 1.0f);
-	
-				glMatrixMode(GL_MODELVIEW);
-	
-				drawMainHUD(1.0f / aspect, 1.0f);
-	
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
 
-		{
+	glScalef(aspect, 1.0f, 1.0f);
+
+	glMatrixMode(GL_MODELVIEW);
+
+	drawMainHUD(1.0f / aspect, 1.0f);
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	{
 #if(DEBUG_PREDISPLAY)
-			char text[48];
-			sprintf(text, "FPS: %4.1f PredisplayTime: %4.1f%%", gFPS, predisplayTime * 100.0f);
+		char text[48];
+		sprintf(text, "FPS: %4.1f PredisplayTime: %4.1f%%", gFPS,
+						predisplayTime * 100.0f);
 #else
-			char text[20];
-			sprintf(text, "FPS: %4.1f", gFPS);
+		char text[20];
+		sprintf(text, "FPS: %4.1f", gFPS);
 #endif
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			glRasterPos2f(0.0f, 0.0f);
-			drawBitmapText(text);
-		}
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glRasterPos2f(0.0f, 0.0f);
+		drawBitmapText(text);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -156,12 +162,14 @@ void display(void) {
 	gSceneDirty = 0;
 }
 
-void reshape(int w, int h) {
+void reshape(int w, int h)
+{
 	gTargetWindow.width = w;
 	gTargetWindow.height = h;
 }
 
-void startDisplay(void) {
+void startDisplay(void)
+{
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -170,10 +178,12 @@ void startDisplay(void) {
 	{
 		int x;
 		int y;
-		Viewport* v = &sgWindowViewport;
+		Viewport *v = &sgWindowViewport;
 
-		for (x = 0; x < 4; x++) {
-			for (y = 0; y < 4; y++) {
+		for (x = 0; x < 4; x++)
+		{
+			for (y = 0; y < 4; y++)
+			{
 				v->view[x][y] = (x == y);
 			}
 		}
@@ -198,32 +208,38 @@ void startDisplay(void) {
 
 int gMillis;
 
-struct {
+struct
+{
 	Vector3 position;
 	Vector3 direction;
 	MouseEvent event;
 } gLastMouseEvent;
 
-void timer(int startTime) {
+void timer(int startTime)
+{
 	static int simulationTime = 0;
-  int realTime = glutGet(GLUT_ELAPSED_TIME) - startTime;
+	int realTime = glutGet(GLUT_ELAPSED_TIME) - startTime;
 
-	if (!gSceneDirty) {
+	if (!gSceneDirty)
+	{
 		gSceneDirty = 1;
 		glutPostRedisplay();
 	}
 
 	glutTimerFunc(gMillis, timer, startTime);
-	
-	while (simulationTime < realTime) {
-		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction, gLastMouseEvent.event);
+
+	while (simulationTime < realTime)
+	{
+		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction,
+										 gLastMouseEvent.event);
 
 		updateMain(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
 }
 
-void startTimer(void) {
+void startTimer(void)
+{
 	setUpdateFrequency(0);
 	timer(glutGet(GLUT_ELAPSED_TIME));
 }
@@ -242,8 +258,9 @@ void setUpdateFrequency(int callsPerSecond)
 
 /*** Picking ***/
 
-void mouseEvent(int mx, int my, MouseEvent event) {
-	int width  = gTargetWindow.width;
+void mouseEvent(int mx, int my, MouseEvent event)
+{
+	int width = gTargetWindow.width;
 	int height = gTargetWindow.height;
 	float aspect = (float) width / height;
 	float f = tan(FOV / 2.0f * PI / 180.0f);
@@ -252,14 +269,17 @@ void mouseEvent(int mx, int my, MouseEvent event) {
 
 	Vector3 dir = vector3(aspect * f * x, f * -y, -1.0f);
 
-	Viewport* v = gTargetWindow.viewport;
+	Viewport *v = gTargetWindow.viewport;
 
 	Vector3 position = sgCamera;
 	Vector3 direction;
 
-	direction.x = dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
-	direction.y = dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
-	direction.z = dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
+	direction.x =
+		dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
+	direction.y =
+		dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
+	direction.z =
+		dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
 
 	if (event == MOUSE_CLICK)
 	{
@@ -271,7 +291,7 @@ void mouseEvent(int mx, int my, MouseEvent event) {
 	gLastMouseEvent.event = MOUSE_MOTION;
 }
 
-void centerMouse(int* x, int* y)
+void centerMouse(int *x, int *y)
 {
 	*x = gTargetWindow.width / 2;
 	*y = gTargetWindow.height / 2;

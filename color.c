@@ -51,5 +51,6 @@ Color3 interpolateColor(Color3 col1, Color3 col2, float t)
 {
 	float invT = 1.0f - t;
 
-	return color3(col1.r * invT + col2.r * t, col1.g * invT + col2.g * t, col1.b * invT + col2.b * t);
+	return color3(col1.r * invT + col2.r * t, col1.g * invT + col2.g * t,
+								col1.b * invT + col2.b * t);
 }

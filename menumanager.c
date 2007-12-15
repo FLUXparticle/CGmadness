@@ -31,7 +31,7 @@
 
 static GLuint gTexLogo = 0;
 
-static Screen* gCurScreen = NULL;
+static Screen *gCurScreen = NULL;
 
 static Screen gScreenWait;
 static funcCallback gWaitCallback = NULL;
@@ -40,8 +40,7 @@ void initMenuManager(void)
 {
 	static ProgressBar pbProgress;
 
-	static MenuItem* itemsWait[] =
-	{
+	static MenuItem *itemsWait[] = {
 		&pbProgress.item
 	};
 
@@ -51,18 +50,18 @@ void initMenuManager(void)
 	{
 		gTexLogo = loadTexture("data/logo.tga", 0);
 	}
-	
+
 	/* wait menu */
 	initProgressBar(&pbProgress, 5.0f, &sgIdleProgress);
 
 	INIT_SCREEN(&gScreenWait, itemsWait);
-	
+
 	gCurScreen = NULL;
 }
 
-const Screen* getCurScreen(void)
+const Screen *getCurScreen(void)
 {
-	return gCurScreen; 
+	return gCurScreen;
 }
 
 void updateMenuManager(float interval)
@@ -71,7 +70,7 @@ void updateMenuManager(float interval)
 	Vector3 lookat = vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
-	
+
 	updateScreen(gCurScreen, interval);
 
 	if (gCurScreen == &gScreenWait)
@@ -81,11 +80,12 @@ void updateMenuManager(float interval)
 			stopIdle();
 			setUpdateFrequency(0);
 			popScreen();
-		} else if (!sgIdleWorking)
+		}
+		else if (!sgIdleWorking)
 		{
 			setUpdateFrequency(0);
 			popScreen();
-			
+
 			if (gWaitCallback)
 			{
 				gWaitCallback();
@@ -94,7 +94,8 @@ void updateMenuManager(float interval)
 	}
 }
 
-void eventMenuManager(const Vector3* position, const Vector3* direction, MouseEvent event)
+void eventMenuManager(const Vector3 * position, const Vector3 * direction,
+											MouseEvent event)
 {
 	Vector3 newPosition = *position;
 
@@ -132,7 +133,7 @@ static void drawLogo(void)
 
 void drawMenuManager(void)
 {
-	float pos[4]  = { 0.0f, -1.0f, 0.5f, 0.0f };
+	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -140,23 +141,23 @@ void drawMenuManager(void)
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-		glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
-		glPushMatrix();
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	glPushMatrix();
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-			drawLogo();
-			drawScreen(gCurScreen);
-		glPopMatrix();
+	drawLogo();
+	drawScreen(gCurScreen);
+	glPopMatrix();
 
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
 }
 
-void showScreen(Screen* newScreen)
+void showScreen(Screen * newScreen)
 {
 	prepareScreen(gCurScreen);
 
@@ -169,7 +170,7 @@ void pushWaitScreen(funcCallback callback)
 	pushScreen(&gScreenWait);
 }
 
-void pushScreen(Screen* newScreen)
+void pushScreen(Screen * newScreen)
 {
 	if (gCurScreen == &gScreenWait)
 	{

@@ -27,7 +27,7 @@ extern GLhandleARB sgGolfballShader;
 
 void usageFeatures(void);
 
-void initFeatures(int argc, char* argv[]);
+void initFeatures(int argc, char *argv[]);
 
 int hasShader(void);
 int hasFramebuffer(void);

@@ -20,13 +20,15 @@
 #ifndef _color_h_
 #define _color_h_
 
-typedef struct {
+typedef struct
+{
 	float r;
 	float g;
 	float b;
 } Color3;
 
-typedef struct {
+typedef struct
+{
 	float r;
 	float g;
 	float b;

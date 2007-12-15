@@ -20,6 +20,7 @@
 #ifndef _varray_h_
 #define _varray_h_
 
-void drawTrianglesVerticesNormals(int count, const float* vertices, const float* normals);
+void drawTrianglesVerticesNormals(int count, const float *vertices,
+																	const float *normals);
 
 #endif

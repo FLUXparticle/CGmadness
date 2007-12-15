@@ -45,19 +45,22 @@ GLhandleARB sgGolfballShader = 0;
 
 void usageFeatures(void)
 {
-	printf("  " NO_FRAMEBUFFER "  deactivate framebuffer objects - use if both reflecting balls slow down the game\n");
-	printf("  " NO_SHADER "       deactivate shader              - use if only the golfballs slow down the game\n");
+	printf("  " NO_FRAMEBUFFER
+				 "  deactivate framebuffer objects - use if both reflecting balls slow down the game\n");
+	printf("  " NO_SHADER
+				 "       deactivate shader              - use if only the golfballs slow down the game\n");
 	printf("  " NO_VBO "          deactivate vertex buffer objects\n");
 	printf("\n");
 }
 
-void initFeatures(int argc, char* argv[]) {
+void initFeatures(int argc, char *argv[])
+{
 	int i;
-	
+
 	int noFramebuffer = 0;
 	int noShader = 0;
 	int noVBO = 0;
-	
+
 	for (i = 1; i < argc; i++)
 	{
 		if (strcmp(argv[i], NO_FRAMEBUFFER) == 0)
@@ -73,7 +76,7 @@ void initFeatures(int argc, char* argv[]) {
 			noVBO = 1;
 		}
 	}
-	
+
 	gFramebufferAvailable = 1;
 	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil)
 	{
@@ -120,7 +123,8 @@ void initFeatures(int argc, char* argv[]) {
 	if (hasShader())
 	{
 		sgBallShadowShader = makeShader("ballshadow.vert", "ballshadow.frag");
-		if (sgBallShadowShader) {
+		if (sgBallShadowShader)
+		{
 			printf("BallShadow-Shader ready :-)\n");
 		}
 
@@ -187,4 +191,3 @@ int useReflection(void)
 {
 	return gUseReflection;
 }
-

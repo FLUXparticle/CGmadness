@@ -43,7 +43,7 @@
 
 typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
 
-typedef void (*funcUpdate)(float interval);
-typedef void (*funcDraw)(void);
+typedef void (*funcUpdate) (float interval);
+typedef void (*funcDraw) (void);
 
 #endif

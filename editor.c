@@ -48,7 +48,8 @@
 
 #define DRAW_DEBUG_LINES 0
 
-typedef struct {
+typedef struct
+{
 	Vector3 v1;
 	Vector3 v2;
 } Line;
@@ -74,7 +75,8 @@ static int gDirtyLightmaps;
 
 static int gIsTestMode;
 
-void pauseEditor(void) {
+void pauseEditor(void)
+{
 	showEditorScreen(0);
 	gIsEditorRunning = 0;
 }
@@ -94,10 +96,10 @@ void startEditor(void)
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
-	
+
 	gIsTestMode = 0;
 	gShowCursor = 1;
-	
+
 	pauseEditor();
 }
 
@@ -106,7 +108,8 @@ void stopEditor(void)
 	gShowCursor = 0;
 }
 
-void resumeEditor(void) {
+void resumeEditor(void)
+{
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsEditorRunning = 1;
 }
@@ -117,7 +120,8 @@ void lightMapsReady(void)
 	saveLevel();
 }
 
-void saveLevel(void) {
+void saveLevel(void)
+{
 	if (gDirtyLightmaps)
 	{
 		destroyCommon();
@@ -129,50 +133,63 @@ void saveLevel(void) {
 	}
 	else
 	{
-		if (saveLevelToFile()) {
+		if (saveLevelToFile())
+		{
 			sgLevel.saved = 1;
 			showEditorScreen(1);
-		} else {
+		}
+		else
+		{
 			showEditorScreen(2);
 		}
 	}
 }
 
 #if (DRAW_DEBUG_LINES)
-void addLine(Vector3 v1, Vector3 v2) {
+void addLine(Vector3 v1, Vector3 v2)
+{
 	gLines[gCntLines].v1 = v1;
 	gLines[gCntLines].v2 = v2;
 	gCntLines++;
 }
 #endif
 
-void updateEditorCamera(float interval, Vector3 marker) {
+void updateEditorCamera(float interval, Vector3 marker)
+{
 	static float distance = 5.0f;
 	static float height = 2.0f;
 	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
 	float angle;
 
-  /* camera controls for editor */
+	/* camera controls for editor */
 
 	/* zoom */
-	if (isKeyPressed('v')) distance += 0.1f;
-	if (isKeyPressed('c') && distance > 0.5) distance -= 0.1f;
+	if (isKeyPressed('v'))
+		distance += 0.1f;
+	if (isKeyPressed('c') && distance > 0.5)
+		distance -= 0.1f;
 
 	/* rotation */
-	if (wasKeyPressed('b')) gCamAngle--;
-	if (wasKeyPressed('n')) gCamAngle++;
+	if (wasKeyPressed('b'))
+		gCamAngle--;
+	if (wasKeyPressed('n'))
+		gCamAngle++;
 
-	if (gCamAngle <  0) gCamAngle += 4;
-	if (gCamAngle >= 4) gCamAngle -= 4;
+	if (gCamAngle < 0)
+		gCamAngle += 4;
+	if (gCamAngle >= 4)
+		gCamAngle -= 4;
 
 	/* height */
-	if (isKeyPressed('x')) height += 0.1f;
-	if (isKeyPressed('y')) height -= 0.1f;
+	if (isKeyPressed('x'))
+		height += 0.1f;
+	if (isKeyPressed('y'))
+		height -= 0.1f;
 
 	angle = gCamAngle * 90.0f;
 
 	/* new camera position */
-	dest.x =  sin(angle * PI / 180.0f) * distance + marker.x;
+	dest.x = sin(angle * PI / 180.0f) * distance + marker.x;
 	dest.y = -cos(angle * PI / 180.0f) * distance + marker.y;
 	dest.z = height + marker.z;
 
@@ -194,13 +211,14 @@ void markerChanged(void)
 			}
 		}
 	}
-	
+
 	sgLevel.saved = 0;
 	gDirtyLightmaps = 1;
 	gDirtyTexCoords = 1;
 }
 
-void changeMarkerArea(int incz, int incdzx, int incdzy) {
+void changeMarkerArea(int incz, int incdzx, int incdzy)
+{
 	int x;
 	int y;
 	int incx;
@@ -208,12 +226,14 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 
 	incx = -(gCurEnd.x - gCurStart.x) * incdzx;
 
-	for (x = gCurStart.x; x <= gCurEnd.x; x++) {
+	for (x = gCurStart.x; x <= gCurEnd.x; x++)
+	{
 		incy = -(gCurEnd.y - gCurStart.y) * incdzy;
 
-		for (y = gCurStart.y; y <= gCurEnd.y; y++) {
-			Plate* p = &sgLevel.field[x][y];
-  		int z = p->z;
+		for (y = gCurStart.y; y <= gCurEnd.y; y++)
+		{
+			Plate *p = &sgLevel.field[x][y];
+			int z = p->z;
 			int dzx = p->dzx;
 			int dzy = p->dzy;
 
@@ -221,7 +241,10 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 			dzx += incdzx;
 			dzy += incdzy;
 
-			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy))) <= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)  {
+			if (z - (abs(dzx) + abs(dzy)) >= 0
+					&& (z + (abs(dzx) + abs(dzy))) <= MAX_LEVEL_HEIGHT * HEIGHT_STEPS
+					&& abs(dzx) <= 5 && abs(dzy) <= 5)
+			{
 				p->z = z;
 				p->dzx = dzx;
 				p->dzy = dzy;
@@ -232,7 +255,7 @@ void changeMarkerArea(int incz, int incdzx, int incdzy) {
 
 		incx += 2 * incdzx;
 	}
-	
+
 	markerChanged();
 }
 
@@ -245,7 +268,7 @@ void flattenMarkerArea(void)
 	{
 		for (y = gCurStart.y; y <= gCurEnd.y; y++)
 		{
-			Plate* p = &sgLevel.field[x][y];
+			Plate *p = &sgLevel.field[x][y];
 
 			p->dzx = 0;
 			p->dzy = 0;
@@ -256,21 +279,29 @@ void flattenMarkerArea(void)
 }
 
 
-void modBetween(int* value, int mod, int min, int max) {
+void modBetween(int *value, int mod, int min, int max)
+{
 	*value += mod;
 
-	if (*value < min) {
+	if (*value < min)
+	{
 		*value = min;
-	} else if (*value >= max) {
+	}
+	else if (*value >= max)
+	{
 		*value = max - 1;
 	}
 }
 
-void moveMarker(int markermode, int dx, int dy) {
-	if (markermode) {
+void moveMarker(int markermode, int dx, int dy)
+{
+	if (markermode)
+	{
 		modBetween(&gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
 		modBetween(&gCurEnd.y, dy, gCurStart.y, sgLevel.size.y);
-	} else {
+	}
+	else
+	{
 		int sx = gCurEnd.x - gCurStart.x;
 		int sy = gCurEnd.y - gCurStart.y;
 
@@ -282,21 +313,24 @@ void moveMarker(int markermode, int dx, int dy) {
 	}
 }
 
-void moveMarkerLeft(int markermode) {
+void moveMarkerLeft(int markermode)
+{
 	moveMarker(markermode, -gCos[gCamAngle], -gSin[gCamAngle]);
 }
 
-void moveMarkerRight(int markermode) {
+void moveMarkerRight(int markermode)
+{
 	moveMarker(markermode, gCos[gCamAngle], gSin[gCamAngle]);
 }
 
-void moveMarkerUp(int markermode) {
+void moveMarkerUp(int markermode)
+{
 	moveMarker(markermode, -gSin[gCamAngle], gCos[gCamAngle]);
 }
 
 void moveMarkerDown(int markermode)
 {
-	moveMarker(markermode,  gSin[gCamAngle], -gCos[gCamAngle]);
+	moveMarker(markermode, gSin[gCamAngle], -gCos[gCamAngle]);
 }
 
 void animateEditor(float interval)
@@ -323,7 +357,7 @@ void animateEditor(float interval)
 	if (wasKeyPressed('w'))
 	{
 		changeMarkerArea(0, gSin[gCamAngle], -gCos[gCamAngle]);
-  }
+	}
 
 	if (wasKeyPressed('f'))
 	{
@@ -334,7 +368,7 @@ void animateEditor(float interval)
 	{
 		changeMarkerArea(1, 0, 0);
 	}
-	
+
 	if (wasKeyPressed('0'))
 	{
 		flattenMarkerArea();
@@ -356,7 +390,7 @@ void animateEditor(float interval)
 		{
 			sgLevel.finish.x = gCurStart.x;
 			sgLevel.finish.y = gCurStart.y;
-	  }
+		}
 	}
 
 	markermode = getModifiers() == GLUT_ACTIVE_SHIFT;
@@ -389,9 +423,9 @@ void enableTestMode(void)
 	resetBallCamera();
 	changeBall(BALL_LAYOUT_TEXTURE);
 	enableBallCamera();
-	
+
 	initGameField();
-	
+
 	gIsTestMode = 1;
 	gShowCursor = 0;
 }
@@ -400,13 +434,15 @@ void disableTestMode(void)
 {
 	destroyGameField();
 	disableBallCamera();
-	
+
 	gIsTestMode = 0;
 	gShowCursor = 1;
 }
 
-void updateEditor(float interval) {
-	if (!gIsEditorRunning) {
+void updateEditor(float interval)
+{
+	if (!gIsEditorRunning)
+	{
 		updateMenuManager(interval);
 	}
 	else if (gIsTestMode)
@@ -415,17 +451,18 @@ void updateEditor(float interval) {
 		{
 			disableTestMode();
 		}
-		
+
 		updateBall(interval);
 	}
 	else
 	{
 		Vector3 markerPos;
 
-		if (wasKeyPressed(KEY_ESC)) {
+		if (wasKeyPressed(KEY_ESC))
+		{
 			pauseEditor();
 		}
-		
+
 		if (wasKeyPressed(KEY_ENTER))
 		{
 			enableTestMode();
@@ -433,11 +470,12 @@ void updateEditor(float interval) {
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
+		markerPos.z =
+			(float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
-		
+
 		if (gDirtyTexCoords)
 		{
 			updateTexCoords();
@@ -446,74 +484,80 @@ void updateEditor(float interval) {
 	}
 }
 
-void drawEditorField(void) {
+void drawEditorField(void)
+{
 	int i;
 	int j;
 	FieldCoord cur;
 	Square square;
-	
-	float pos[4]  = { 0.0f, 0.0f, 1.0f, 0.0f };
-	
+
+	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
-		for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
+	for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
+	{
+		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 		{
-			for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
+
+			if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x
+					&& cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
 			{
-
-				if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
-				{
-					glColor3f(1.0f, 0.0f, 0.0f);
-				}
-				else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
-				{
-					glColor3f(0.0f, 1.0f, 0.0f);
-				}
-				else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
-				{
-					glColor3f(0.0f, 0.0f, 1.0f);
-				}
-				else
-				{
-					glColor3f(1.0f, 1.0f, 1.0f);
-				}
-
-				getRoofSquare(cur.x, cur.y, &square);
-
-				glBegin(GL_QUADS);
-					glNormal3fv(&square.normal.x);
-					for (i = 0; i < 4; i++) {
-						glTexCoord2fv(&square.texcoord[i].x);
-						glVertex3fv(&square.vertices[i].x);
-					}
-				glEnd();
-
-				glColor3f(1.0f, 1.0f, 1.0f);
-
-				glBegin(GL_QUADS);
-					for (j = 0; j < 4; j++) {
-						SideFace face;
-						int k;
-
-						getSideFace(cur.x, cur.y, j, &face);
-
-						for (k = 0; k < face.cntSquares; k++) {
-							glNormal3fv(&face.squares[k].normal.x);
-							for (i = 0; i < 4; i++) {
-								glTexCoord2fv(&face.squares[k].texcoord[i].x);
-								glVertex3fv(&face.squares[k].vertices[i].x);
-							}
-						}
-					}
-				glEnd();
+				glColor3f(1.0f, 0.0f, 0.0f);
 			}
+			else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
+			{
+				glColor3f(0.0f, 1.0f, 0.0f);
+			}
+			else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
+			{
+				glColor3f(0.0f, 0.0f, 1.0f);
+			}
+			else
+			{
+				glColor3f(1.0f, 1.0f, 1.0f);
+			}
+
+			getRoofSquare(cur.x, cur.y, &square);
+
+			glBegin(GL_QUADS);
+			glNormal3fv(&square.normal.x);
+			for (i = 0; i < 4; i++)
+			{
+				glTexCoord2fv(&square.texcoord[i].x);
+				glVertex3fv(&square.vertices[i].x);
+			}
+			glEnd();
+
+			glColor3f(1.0f, 1.0f, 1.0f);
+
+			glBegin(GL_QUADS);
+			for (j = 0; j < 4; j++)
+			{
+				SideFace face;
+				int k;
+
+				getSideFace(cur.x, cur.y, j, &face);
+
+				for (k = 0; k < face.cntSquares; k++)
+				{
+					glNormal3fv(&face.squares[k].normal.x);
+					for (i = 0; i < 4; i++)
+					{
+						glTexCoord2fv(&face.squares[k].texcoord[i].x);
+						glVertex3fv(&face.squares[k].vertices[i].x);
+					}
+				}
+			}
+			glEnd();
 		}
+	}
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_COLOR_MATERIAL);
@@ -530,17 +574,19 @@ void drawEditorField(void) {
 	}
 	glEnd();
 #endif
-	
+
 	if (gIsTestMode)
 	{
 		drawGameBall();
 	}
 }
 
-void drawEditor(void) {
+void drawEditor(void)
+{
 	drawEditorField();
 
-	if (!gIsEditorRunning)	{
+	if (!gIsEditorRunning)
+	{
 		drawMenuManager();
 	}
 }
@@ -548,12 +594,12 @@ void drawEditor(void) {
 int initEditor(void)
 {
 	gShowCursor = 0;
-	
+
 	initEditorMenu();
-	
+
 #if 0
 	pauseEditor();
 #endif
-	
+
 	return 1;
 }

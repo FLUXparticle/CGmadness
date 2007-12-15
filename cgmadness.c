@@ -44,26 +44,27 @@ void usage(void)
 	usageFeatures();
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	message();
 	usage();
 
 	assurePath(argv[0]);
 
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 
-  glutInitWindowSize(700, 500);
-  glutInitWindowPosition(0, 0);
+	glutInitWindowSize(700, 500);
+	glutInitWindowPosition(0, 0);
 
-  glutInit(&argc, argv);
+	glutInit(&argc, argv);
 
-  if (!glutCreateWindow("CG Madness")) {
+	if (!glutCreateWindow("CG Madness"))
+	{
 		printf("Could not create window :(\n");
-    return 1;
+		return 1;
 	}
 
-  glutFullScreen();
+	glutFullScreen();
 
 	/* ---- */
 
@@ -73,34 +74,34 @@ int main(int argc, char* argv[])
 
 	/* ---- */
 
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearStencil(0);
 
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_NORMALIZE);
 
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
-  {
-  	float ambient[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-  	
-  	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-  }
+	{
+		float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	}
 
 
 	/* ---- */
 
 	initMain();
 
-  startKeyboard();
-  startMouse();
+	startKeyboard();
+	startMouse();
 
-  startTimer();
-  startDisplay();
+	startTimer();
+	startDisplay();
 
-  glutMainLoop();
+	glutMainLoop();
 
-  return 0;
+	return 0;
 }

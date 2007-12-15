@@ -46,7 +46,8 @@ static Vector2 gPlaneTexCoords[NUM_OF_VERTS];
 static Color4 gPlaneColors[NUM_OF_VERTS];
 static GLuint gIndices[NUM_OF_INDICES];
 
-void initSkyplane(void) {
+void initSkyplane(void)
+{
 	float planeSize = 2.0f * PLANET_RADIUS / sqrt(2.0);
 	float delta = planeSize / DIVS;
 	float alpharadius_squared = sqr(planeSize * ALPHA * 0.5f);
@@ -58,8 +59,10 @@ void initSkyplane(void) {
 
 	texID = loadTexture("data/clouds.tga", 1);
 
-	for (i = 0; i <= DIVS; i++) {
-		for (j = 0; j <= DIVS; j++) {
+	for (i = 0; i <= DIVS; i++)
+	{
+		for (j = 0; j <= DIVS; j++)
+		{
 			int idx = i * (DIVS + 1) + j;
 
 			float xdist = (j * delta) - (0.5f * planeSize);
@@ -88,8 +91,10 @@ void initSkyplane(void) {
 		}
 	}
 
-	for (i = 0; i < DIVS; i++) {
-		for(j = 0; j < DIVS; j++) {
+	for (i = 0; i < DIVS; i++)
+	{
+		for (j = 0; j < DIVS; j++)
+		{
 			int startVert = i * (DIVS + 1) + j;
 
 			gIndices[index++] = startVert;
@@ -103,25 +108,26 @@ void initSkyplane(void) {
 	}
 }
 
-void drawSkyplane(void) {
+void drawSkyplane(void)
+{
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texID);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, 0, gPlaneVerts);
-		glTexCoordPointer(2, GL_FLOAT, 0, gPlaneTexCoords);
-		glColorPointer(4, GL_FLOAT, 0, gPlaneColors);
+	glVertexPointer(3, GL_FLOAT, 0, gPlaneVerts);
+	glTexCoordPointer(2, GL_FLOAT, 0, gPlaneTexCoords);
+	glColorPointer(4, GL_FLOAT, 0, gPlaneColors);
 
-			glDrawElements(GL_TRIANGLES, NUM_OF_INDICES, GL_UNSIGNED_INT, gIndices);
+	glDrawElements(GL_TRIANGLES, NUM_OF_INDICES, GL_UNSIGNED_INT, gIndices);
 
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);

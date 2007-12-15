@@ -26,47 +26,52 @@
 
 #include <stdio.h>
 
-int createFBuffer(int width, int height, unsigned int target, unsigned int color_tex, RenderTarget* context) {
+int createFBuffer(int width, int height, unsigned int target,
+									unsigned int color_tex, RenderTarget * context)
+{
 	GLuint fb;
 
-  glGenFramebuffersEXT(1, &fb);
+	glGenFramebuffersEXT(1, &fb);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
 
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, color_tex, 0);
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+														target, color_tex, 0);
 
 	{
 		GLenum status;
 		status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-		switch (status) {
-			case GL_FRAMEBUFFER_COMPLETE_EXT:
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-				printf("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT\n");
-				break;
-			case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-				printf("GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");
-				break;
-			default:
-				printf("unkown staus!\n");
-				break;
+		switch (status)
+		{
+		case GL_FRAMEBUFFER_COMPLETE_EXT:
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+			printf("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT\n");
+			break;
+		case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+			printf("GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");
+			break;
+		default:
+			printf("unkown staus!\n");
+			break;
 		}
 
-		if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+		{
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 			return 0;
 		}
@@ -82,13 +87,15 @@ int createFBuffer(int width, int height, unsigned int target, unsigned int color
 	return 1;
 }
 
-int initFBuffer(int width, int height, RenderTarget* context) {
+int initFBuffer(int width, int height, RenderTarget * context)
+{
 	unsigned int color_tex;
 
-  glGenTextures(1, &color_tex);
+	glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_2D, color_tex);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+							 GL_UNSIGNED_BYTE, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -96,36 +103,45 @@ int initFBuffer(int width, int height, RenderTarget* context) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	if (createFBuffer(width, height, GL_TEXTURE_2D, color_tex, context)) {
+	if (createFBuffer(width, height, GL_TEXTURE_2D, color_tex, context))
+	{
 		return color_tex;
-	}	else {
+	}
+	else
+	{
 		return 0;
 	}
 }
 
-int initFBufferCube(int width, int height, RenderTarget context[6]) {
+int initFBufferCube(int width, int height, RenderTarget context[6])
+{
 	GLuint color_tex;
 	int i;
 
-  glGenTextures(1, &color_tex);
+	glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, color_tex);
 
-	for (i = 0; i < 6; i++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	for (i = 0; i < 6; i++)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, width, height,
+								 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	}
 
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	if (!createFBuffer(width, height, GL_TEXTURE_CUBE_MAP_POSITIVE_X, color_tex, &context[0])) {
+	if (!createFBuffer
+			(width, height, GL_TEXTURE_CUBE_MAP_POSITIVE_X, color_tex, &context[0]))
+	{
 		return 0;
 	}
 
-	for (i = 1; i < 6; i++) {
+	for (i = 1; i < 6; i++)
+	{
 		context[i].width = width;
 		context[i].height = height;
 		context[i].framebuffer = context[0].framebuffer;

@@ -32,33 +32,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int isCGM(char* filename)
+static int isCGM(char *filename)
 {
 	return strcmp(filename + strlen(filename) - 4, ".cgm") == 0;
 }
 
-static const char* findLast(const char* str, char ch)
+static const char *findLast(const char *str, char ch)
 {
-	const char* tmp = str;
-	
-	const char* p = NULL;
-	
+	const char *tmp = str;
+
+	const char *p = NULL;
+
 	while ((tmp = strchr(tmp, ch)))
 	{
 		p = tmp;
 		tmp++;
 	}
-	
+
 	return p;
 }
 
-void findBasename(const char* path, int* start, int* end)
+void findBasename(const char *path, int *start, int *end)
 {
-	const char* s;
-	const char* e;
-	
+	const char *s;
+	const char *e;
+
 	s = findLast(path, '/');
-	
+
 	if (s)
 	{
 		s++;
@@ -67,53 +67,53 @@ void findBasename(const char* path, int* start, int* end)
 	{
 		s = path;
 	}
-	
+
 	e = findLast(path, '.');
-	
+
 	if (!e)
 	{
 		e = s + strlen(s);
 	}
-	
+
 	*start = s - path;
 	*end = e - path;
 }
 
-int lengthBasename(const char* path)
+int lengthBasename(const char *path)
 {
 	int start;
 	int end;
-	
+
 	findBasename(path, &start, &end);
-	
+
 	return end - start;
 }
 
-char* copyBasename(const char* path, char* dest)
+char *copyBasename(const char *path, char *dest)
 {
 	int start;
 	int end;
 	int len;
-	
+
 	findBasename(path, &start, &end);
-	
-	len = end - start; 
-	
+
+	len = end - start;
+
 	memcpy(dest, path + start, len);
 	dest[len] = 0;
-	
+
 	return dest + len + 1;
 }
 
-void createStringListFromDir(StringList* list, const char* dirname)
+void createStringListFromDir(StringList * list, const char *dirname)
 {
 	struct dirent *fileinfo;
-	char* p;
-	char** pp;
+	char *p;
+	char **pp;
 
 	int count = 0;
 	int size = 0;
-	DIR* dirinfo = opendir(dirname);
+	DIR *dirinfo = opendir(dirname);
 	int dirnamelen = strlen(dirname);
 
 	if (dirinfo)
@@ -122,10 +122,10 @@ void createStringListFromDir(StringList* list, const char* dirname)
 		{
 			struct stat filestat;
 
-			char* newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
-			
+			char *newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+
 			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
-			
+
 			if (isCGM(newdir))
 			{
 				stat(newdir, &filestat);
@@ -136,27 +136,27 @@ void createStringListFromDir(StringList* list, const char* dirname)
 					size += lengthBasename(newdir) + 1;
 				}
 			}
-			
+
 			free(newdir);
 		}
-		
+
 		rewinddir(dirinfo);
-		
+
 		list->count = count;
-		MALLOC(list->all, sizeof(char*) * size);
-		MALLOC(list->strings, sizeof(char*) * list->count);
-		
+		MALLOC(list->all, sizeof(char *) * size);
+		MALLOC(list->strings, sizeof(char *) * list->count);
+
 		p = list->all;
 		pp = list->strings;
-		
+
 		while ((fileinfo = readdir(dirinfo)))
 		{
 			struct stat filestat;
 
-			char* newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
-			
+			char *newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+
 			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
-			
+
 			if (isCGM(newdir))
 			{
 				stat(newdir, &filestat);
@@ -164,31 +164,31 @@ void createStringListFromDir(StringList* list, const char* dirname)
 				{
 					size = strlen(newdir) + 1;
 					memcpy(p, newdir, size);
-					
+
 					*pp = p;
-					
+
 					p += size;
-					
+
 					p = copyBasename(newdir, p);
-					
+
 					pp++;
 				}
 			}
-			
+
 			free(newdir);
 		}
-		
+
 		closedir(dirinfo);
 	}
-	
+
 	sortStringList(list);
 }
 
-void loadStringListFromFile(StringList* list, const char* filename)
+void loadStringListFromFile(StringList * list, const char *filename)
 {
-	char* s;
+	char *s;
 	int i;
-	
+
 	list->all = textFileRead(filename);
 
 	list->count = 0;
@@ -199,9 +199,9 @@ void loadStringListFromFile(StringList* list, const char* filename)
 			list->count++;
 		}
 	}
-	
-	MALLOC(list->strings, sizeof(char*) * list->count);
-	
+
+	MALLOC(list->strings, sizeof(char *) * list->count);
+
 	s = list->all;
 	for (i = 0; i < list->count; i++)
 	{
@@ -215,15 +215,15 @@ void loadStringListFromFile(StringList* list, const char* filename)
 	}
 }
 
-static int compar(const void* a, const void* b)
+static int compar(const void *a, const void *b)
 {
-	const char** pa = (const char**) a;
-	const char** pb = (const char**) b;
-	
+	const char **pa = (const char **) a;
+	const char **pb = (const char **) b;
+
 	return strcmp(*pa, *pb);
 }
 
-void sortStringList(StringList* list)
+void sortStringList(StringList * list)
 {
-	qsort(list->strings, list->count, sizeof(char*), compar);
+	qsort(list->strings, list->count, sizeof(char *), compar);
 }

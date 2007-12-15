@@ -25,28 +25,31 @@
 #include "vector.h"
 #include "types.h"
 
-typedef void (*funcDrawHUD)(float width, float height);
+typedef void (*funcDrawHUD) (float width, float height);
 
-typedef void (*funcDoMouseEvent)(const Vector3* position, const Vector3* direction, MouseEvent event);
+typedef void (*funcDoMouseEvent) (const Vector3 * position,
+																	const Vector3 * direction, MouseEvent event);
 
-typedef struct {
+typedef struct
+{
 	Matrix projection;
 	Matrix view;
 } Viewport;
 
-typedef struct {
+typedef struct
+{
 	int width;
 	int height;
 
 	int framebuffer;
-	Viewport* viewport;
+	Viewport *viewport;
 } RenderTarget;
 
 extern Viewport sgWindowViewport;
 
 void setPreDisplayFunc(funcDraw preDisplay);
 
-void centerMouse(int* x, int* y);
+void centerMouse(int *x, int *y);
 
 void startDisplay(void);
 

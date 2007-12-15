@@ -33,17 +33,20 @@
 #define SKY 1
 #define WATER 1
 
-void initEnvironment(void) {
- 	initSkysphere();
- 	initSkyplane();
+void initEnvironment(void)
+{
+	initSkysphere();
+	initSkyplane();
 	initWater();
 }
 
-void updateEnvironment(float interval) {
+void updateEnvironment(float interval)
+{
 	updateWater(interval);
 }
 
-void drawEnvironment(funcDraw reflection) {
+void drawEnvironment(funcDraw reflection)
+{
 #if (WATER)
 	if (useReflection())
 	{
@@ -51,26 +54,26 @@ void drawEnvironment(funcDraw reflection) {
 
 		glPushMatrix();
 
-			glScalef(1.0f, 1.0f, -1.0f);
-			glClipPlane(GL_CLIP_PLANE0, equation);
+		glScalef(1.0f, 1.0f, -1.0f);
+		glClipPlane(GL_CLIP_PLANE0, equation);
 
-			glEnable(GL_CLIP_PLANE0);
-			glCullFace(GL_FRONT);
+		glEnable(GL_CLIP_PLANE0);
+		glCullFace(GL_FRONT);
 
 #  if (SKY)
-				glDisable(GL_DEPTH_TEST);
-					drawSkysphere();
-					drawSkyplane();
-				glEnable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
+		drawSkysphere();
+		drawSkyplane();
+		glEnable(GL_DEPTH_TEST);
 #  endif
-				
-				if (reflection)
-				{
-					reflection();
-				}
 
-			glCullFace(GL_BACK);
-			glDisable(GL_CLIP_PLANE0);
+		if (reflection)
+		{
+			reflection();
+		}
+
+		glCullFace(GL_BACK);
+		glDisable(GL_CLIP_PLANE0);
 
 		glPopMatrix();
 	}
@@ -80,8 +83,8 @@ void drawEnvironment(funcDraw reflection) {
 
 #if (SKY)
 	glDisable(GL_DEPTH_TEST);
-		drawSkysphere();
-		drawSkyplane();
+	drawSkysphere();
+	drawSkyplane();
 	glEnable(GL_DEPTH_TEST);
 #endif
 }

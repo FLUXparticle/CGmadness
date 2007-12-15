@@ -20,7 +20,7 @@
 #ifndef _idle_h_
 #define _idle_h_
 
-typedef void (*funcIdle)(int step);
+typedef void (*funcIdle) (int step);
 
 extern float sgIdleProgress;
 extern int sgIdleWorking;

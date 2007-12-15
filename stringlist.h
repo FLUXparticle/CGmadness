@@ -23,15 +23,15 @@
 typedef struct
 {
 	int count;
-	char** strings;
-	
-	char* all;
+	char **strings;
+
+	char *all;
 } StringList;
 
-void createStringListFromDir(StringList* list, const char* dirname);
+void createStringListFromDir(StringList * list, const char *dirname);
 
-void loadStringListFromFile(StringList* list, const char* filename);
+void loadStringListFromFile(StringList * list, const char *filename);
 
-void sortStringList(StringList* list);
+void sortStringList(StringList * list);
 
 #endif

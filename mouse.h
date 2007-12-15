@@ -20,12 +20,13 @@
 #ifndef _mouse_h_
 #define _mouse_h_
 
-typedef enum {
+typedef enum
+{
 	MOUSE_MOTION,
 	MOUSE_CLICK
 } MouseEvent;
 
-typedef void (*funcDrag)(int dx, int dy);
+typedef void (*funcDrag) (int dx, int dy);
 
 void setDragFunc(funcDrag drag);
 

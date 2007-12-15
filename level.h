@@ -80,17 +80,17 @@ typedef struct
 
 typedef struct
 {
-	Plate** field;
+	Plate **field;
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
 	unsigned int borderTexture;
 	unsigned int colorMap;
 	unsigned int lightMap;
-	
-	const char* filename;
+
+	const char *filename;
 	unsigned int crc32;
-	
+
 	int cntScoreCols;
 	ScoreCol scores[MAX_SCORE_COLS];
 
@@ -111,15 +111,15 @@ void destroyLevel(void);
 void newLevel(void);
 
 int loadHighscoreFromFile(void);
-int loadLevelFromFile(const char* filename, int justLoad);
+int loadLevelFromFile(const char *filename, int justLoad);
 
 int saveHighscoreToFile(void);
 int saveLevelToFile(void);
 
 void updatePlate(int x, int y);
-void getRoofSquare(int x, int y, Square* square);
-void getSideFace(int x, int y, int side, SideFace* face);
+void getRoofSquare(int x, int y, Square * square);
+void getSideFace(int x, int y, int side, SideFace * face);
 
-float getMaxZValue(const Square* square);
+float getMaxZValue(const Square * square);
 
 #endif

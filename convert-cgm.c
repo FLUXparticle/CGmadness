@@ -27,15 +27,17 @@
 void usage(void)
 {
 	printf("usage: upgrade-cgm [parameters...] <cgm-files...>\n");
-	printf("  --size x y  resize all levels after this parameter to given size\n");
+	printf
+		("  --size x y  resize all levels after this parameter to given size\n");
 	printf("\n");
-	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
+	printf
+		("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
 	printf("\n");
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	char* file = NULL;
+	char *file = NULL;
 	int i;
 
 	message();
@@ -58,7 +60,9 @@ int main(int argc, char* argv[])
 		if (loadLevelFromFile(file, 0) && saveLevelToFile())
 		{
 			printf("'%s' processed successfully.\n", file);
-		} else {
+		}
+		else
+		{
 			printf("'%s' not processed!\n", file);
 		}
 	}
@@ -69,5 +73,5 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-  return 0;
+	return 0;
 }

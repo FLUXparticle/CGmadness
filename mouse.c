@@ -34,7 +34,8 @@ static int gButton;
 
 static funcDrag gDrag;
 
-typedef struct {
+typedef struct
+{
 	GLuint stackSize;
 	GLuint minDepth;
 	GLuint maxDepth;
@@ -47,10 +48,10 @@ void mouseButton(int button, int state, int x, int y)
 	gLastX = x;
 	gLastY = y;
 
-  if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-  {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
 		mouseEvent(x, y, MOUSE_CLICK);
-  }
+	}
 }
 
 void mouseMotion(int x, int y)
@@ -85,6 +86,6 @@ void setDragFunc(funcDrag drag)
 void startMouse(void)
 {
 	glSelectBuffer(SELECT_BUFFER_SIZE, gSelectBuffer);
-  glutMouseFunc(mouseButton);
+	glutMouseFunc(mouseButton);
 	glutPassiveMotionFunc(mouseMotion);
 }

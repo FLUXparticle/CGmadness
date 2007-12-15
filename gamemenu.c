@@ -37,9 +37,10 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct {
-	char* left;
-	char* right;
+typedef struct
+{
+	char *left;
+	char *right;
 } LeftRight;
 
 static Check gcBallShadow;
@@ -51,12 +52,12 @@ static SpinEdit gseBall;
  * help text
  */
 static LeftRight gTextHelp[] = {
-	{ "Cursor", "Move" },
-	{ "Space", "Jump" },
-	{ "W A S D", "Camera" },
-	{ "R F", "Zoom" },
-	{ "Enter", "Reset" },
-	{ "Esc", "Menu" },
+	{"Cursor", "Move"},
+	{"Space", "Jump"},
+	{"W A S D", "Camera"},
+	{"R F", "Zoom"},
+	{"Enter", "Reset"},
+	{"Esc", "Menu"},
 };
 
 static Screen gScreenMain1;
@@ -106,31 +107,36 @@ static void clickButtonResume(void)
 	resumeGame();
 }
 
-static void clickButtonBack(void) {
+static void clickButtonBack(void)
+{
 	popScreen();
 }
 
-static void changeBallEdit(const void* self) {
-	changeBall(gBallLayouts[((SpinEdit*) self)->value]);
+static void changeBallEdit(const void *self)
+{
+	changeBall(gBallLayouts[((SpinEdit *) self)->value]);
 }
 
-static void changeBallShadow(const void* self) {
-	const Check* check = self;
+static void changeBallShadow(const void *self)
+{
+	const Check *check = self;
 	setBallShadow(check->value);
 }
 
-static void changeReflection(const void* self) {
-	const Check* check = self;
+static void changeReflection(const void *self)
+{
+	const Check *check = self;
 	setReflection(check->value);
 }
 
-void showGameMenu(int menu) {
-	static Screen* screens[] = {
+void showGameMenu(int menu)
+{
+	static Screen *screens[] = {
 		&gScreenMain1,
 		&gScreenMain2,
 		&gScreenEnd
 	};
-	
+
 	pushScreen(screens[menu]);
 
 	setCheck(&gcBallShadow, useBallShadow());
@@ -138,7 +144,8 @@ void showGameMenu(int menu) {
 	changeBallEdit(&gseBall);
 }
 
-void initGameMenu(void) {
+void initGameMenu(void)
+{
 	static Button bStart;
 	static Button bResume;
 	static Button bQuit;
@@ -151,8 +158,7 @@ void initGameMenu(void) {
 
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
-	static MenuItem* itemsMain1[] =
-	{
+	static MenuItem *itemsMain1[] = {
 		&bStart.item,
 		&gseBall.item,
 		&gcBallShadow.item,
@@ -161,8 +167,7 @@ void initGameMenu(void) {
 		&bQuit.item
 	};
 
-	static MenuItem* itemsMain2[] =
-	{
+	static MenuItem *itemsMain2[] = {
 		&bResume.item,
 		&gseBall.item,
 		&gcBallShadow.item,
@@ -171,14 +176,13 @@ void initGameMenu(void) {
 		&bQuit.item
 	};
 
-	static MenuItem* itemsEnd[] =
-	{
+	static MenuItem *itemsEnd[] = {
 		&hsHighScore.item,
 		&bAgain.item,
 		&bQuit2.item
 	};
 
-	static MenuItem* itemsHelp[LENGTH(lTextHelp) + 1];
+	static MenuItem *itemsHelp[LENGTH(lTextHelp) + 1];
 
 	int i;
 
@@ -189,19 +193,23 @@ void initGameMenu(void) {
 
 	gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_DEFAULT;
 
-	if (hasBallTexture()) {
+	if (hasBallTexture())
+	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_TEXTURE;
 	}
 
-	if (hasCubeMap()) {
+	if (hasCubeMap())
+	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_METAL;
 	}
 
-	if (hasGolfballShader()) {
+	if (hasGolfballShader())
+	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL;
 	}
 
-	if (hasGolfballShader() && hasCubeMap()) {
+	if (hasGolfballShader() && hasCubeMap())
+	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL_METAL;
 	}
 
@@ -213,7 +221,8 @@ void initGameMenu(void) {
 	initButton(&bStart, 6.0f, clickButtonStart, "start", KEY_ENTER);
 	initButton(&bResume, 6.0f, clickButtonResume, "resume", KEY_ENTER);
 
-	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
+	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f,
+							 drawMenuBall, changeBallEdit);
 
 	initCheck(&gcBallShadow, 4.0f, changeBallShadow, "ball shadow");
 	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
@@ -231,21 +240,23 @@ void initGameMenu(void) {
 		int col = i % 2;
 		float z = 6.0f - row;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, 1.0f, col, col ? gTextHelp[row].right : gTextHelp[row].left);
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, 1.0f, col,
+							col ? gTextHelp[row].right : gTextHelp[row].left);
 
 		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back",
+						 KEY_ESC);
 
 	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
 	/* game complete menu */
-	
+
 	initHighScore(&hsHighScore, 3.0f);
-	
+
 	initButton(&bAgain, 2.0f, clickButtonAgain, "play again", KEY_ENTER);
 	initButton(&bQuit2, 1.0f, clickButtonQuit2, "change level", KEY_ESC);
 

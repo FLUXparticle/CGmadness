@@ -25,6 +25,7 @@
 #include "color.h"
 
 void initNoise(void);
-void genNoiseTexture(SubAtlas* subAtlas, Vector3 origin, Vector3 vx, Vector3 vy);
+void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,
+										 Vector3 vy);
 
 #endif

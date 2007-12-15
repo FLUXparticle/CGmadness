@@ -22,7 +22,8 @@
 
 #include "vector.h"
 
-typedef struct {
+typedef struct
+{
 	float s;
 	Vector3 v;
 } Quaternion;

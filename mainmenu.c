@@ -62,13 +62,14 @@ static void loadLevel(int index)
 			destroyLevel();
 			gLoadedLevel = -1;
 		}
-		
+
 		if (index >= 0 && loadLevelFromFile(sgLevels.strings[index], 1))
 		{
 			updateTexCoords();
 			gLoadedLevel = index;
-			
-			if (sgLevel.borderTexture == 0) {
+
+			if (sgLevel.borderTexture == 0)
+			{
 #if (NOISE_TEXTURE)
 				sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
 #else
@@ -76,20 +77,23 @@ static void loadLevel(int index)
 #endif
 			}
 
-			sgCurLevelname = sgLevels.strings[gLoadedLevel] + strlen(sgLevels.strings[gLoadedLevel]) + 1;
+			sgCurLevelname =
+				sgLevels.strings[gLoadedLevel] +
+				strlen(sgLevels.strings[gLoadedLevel]) + 1;
 		}
 	}
 }
 
-static void changeLevelChooser(const void* self)
+static void changeLevelChooser(const void *self)
 {
-	const SpinEdit* spinedit = self;
+	const SpinEdit *spinedit = self;
 
-	if (getCurScreen() == &gScreenChooseGame || getCurScreen() == &gScreenChooseEditor)
+	if (getCurScreen() == &gScreenChooseGame
+			|| getCurScreen() == &gScreenChooseEditor)
 	{
 		loadLevel(spinedit->value);
 	}
-	
+
 	sgLastPlayerIndex = MAX_SCORE_COLS;
 }
 
@@ -138,14 +142,14 @@ static void updateLevelInfo(float interval)
 
 static void drawLevelInfo(void)
 {
-	const char* lines[LEVELINFO_LINES];
+	const char *lines[LEVELINFO_LINES];
 	char size[20];
 	int i;
-	
+
 	float scale = 0.5f * LEVELINFO_HEIGHT / (LEVELINFO_LINES + 1);
-	
+
 	sprintf(size, "size: %d x %d", sgLevel.size.x, sgLevel.size.y);
-	
+
 	lines[0] = sgCurLevelname;
 	lines[1] = "";
 	lines[2] = "";
@@ -157,34 +161,36 @@ static void drawLevelInfo(void)
 	lines[8] = "";
 	lines[9] = "";
 	lines[10] = "";
-	
+
 	drawPanel(LEVELINFO_WIDTH, LEVELINFO_HEIGHT);
 
 	for (i = 0; i < LEVELINFO_LINES; i++)
 	{
 		glPushMatrix();
-	
-			glTranslatef(LEVELINFO_WIDTH / 2.0f, (float) (LEVELINFO_LINES - i) / (LEVELINFO_LINES + 1) * LEVELINFO_HEIGHT, 0.0f);
-		
-			glScalef(scale, scale, scale);
-	
-			glTranslatef(-widthStrokeText(lines[i]) / 2.0f, 0.0f, 0.0f);
-			
-			switch (i)
-			{
-			case 0:
-				glColor3f(0.0f, 0.0f, 1.0f);
-				break;
-			case 5:
-				glColor3f(1.0f, 1.0f, 0.0f);
-				break;
-			default:
-				glColor3f(1.0f, 1.0f, 1.0f);
-				break;
-			}
-			
-			drawStrokeThinText(lines[i]);
-		
+
+		glTranslatef(LEVELINFO_WIDTH / 2.0f,
+								 (float) (LEVELINFO_LINES - i) / (LEVELINFO_LINES +
+																									1) * LEVELINFO_HEIGHT, 0.0f);
+
+		glScalef(scale, scale, scale);
+
+		glTranslatef(-widthStrokeText(lines[i]) / 2.0f, 0.0f, 0.0f);
+
+		switch (i)
+		{
+		case 0:
+			glColor3f(0.0f, 0.0f, 1.0f);
+			break;
+		case 5:
+			glColor3f(1.0f, 1.0f, 0.0f);
+			break;
+		default:
+			glColor3f(1.0f, 1.0f, 1.0f);
+			break;
+		}
+
+		drawStrokeThinText(lines[i]);
+
 		glPopMatrix();
 	}
 
@@ -199,53 +205,53 @@ void initMainMenu(void)
 	static Button bChooseGame;
 	static Button bChooseEditor;
 	static Button bBack;
-	
+
 	static Canvas cLevelInfo;
 
 	static HighScore hsHighScore;
 
-	static MenuItem* itemsMain[] =
-	{
+	static MenuItem *itemsMain[] = {
 		&bCGMadness.item,
 		&bCGMEditor.item,
 		&bQuit.item
 	};
-	
-	static MenuItem* itemsChooseGame[] =
-	{
+
+	static MenuItem *itemsChooseGame[] = {
 		&gseLevel.item,
 		&hsHighScore.item,
 		&bChooseGame.item,
 		&bBack.item
 	};
-	
-	static MenuItem* itemsChooseEditor[] =
-	{
+
+	static MenuItem *itemsChooseEditor[] = {
 		&gseLevel.item,
 		&cLevelInfo.item,
 		&bChooseEditor.item,
 		&bBack.item
 	};
-	
+
 	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
 	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 'e');
-	initButton(&bQuit,      2.0f, clickButtonQuit, "Quit", 'q');
-	
+	initButton(&bQuit, 2.0f, clickButtonQuit, "Quit", 'q');
+
 	INIT_SCREEN(&gScreenMain, itemsMain);
 
-	initSpinEdit(&gseLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
+	initSpinEdit(&gseLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel,
+							 changeLevelChooser);
 
 	initHighScore(&hsHighScore, 3.0f);
 
-	initButton(&bChooseGame,    2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
-	initButton(&bBack,      1.0f, clickButtonBack, "back", KEY_ESC);
-	
+	initButton(&bChooseGame, 2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
+	initButton(&bBack, 1.0f, clickButtonBack, "back", KEY_ESC);
+
 	INIT_SCREEN(&gScreenChooseGame, itemsChooseGame);
-	
-	initCanvas(&cLevelInfo, 3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT, updateLevelInfo, drawLevelInfo);
-	
-	initButton(&bChooseEditor,    2.0f, clickButtonChooseEditor, "choose", KEY_ENTER);
-	
+
+	initCanvas(&cLevelInfo, 3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT,
+						 updateLevelInfo, drawLevelInfo);
+
+	initButton(&bChooseEditor, 2.0f, clickButtonChooseEditor, "choose",
+						 KEY_ENTER);
+
 	INIT_SCREEN(&gScreenChooseEditor, itemsChooseEditor);
 }
 
@@ -262,7 +268,8 @@ void updateMainMenu(float interval)
 
 void drawMainMenu(void)
 {
-	if (getCurScreen() == &gScreenChooseGame || getCurScreen() == &gScreenChooseEditor)
+	if (getCurScreen() == &gScreenChooseGame
+			|| getCurScreen() == &gScreenChooseEditor)
 	{
 		drawEnvironment(drawEditorField);
 		drawEditorField();
@@ -271,6 +278,6 @@ void drawMainMenu(void)
 	{
 		drawEnvironment(NULL);
 	}
-	
+
 	drawMenuManager();
 }

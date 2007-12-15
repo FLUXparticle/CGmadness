@@ -21,6 +21,6 @@
 #define _texture_h_
 
 unsigned int genTexture(void);
-int loadTexture(const char* filename, int mipmapping);
+int loadTexture(const char *filename, int mipmapping);
 
 #endif

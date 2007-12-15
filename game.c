@@ -65,19 +65,21 @@ static int gIsGameRunning;
 
 static float gGameTime;
 
-static const char* gHotSeatLevel = NULL;
+static const char *gHotSeatLevel = NULL;
 
-void pauseGame(void) {
+void pauseGame(void)
+{
 	disableBallCamera();
 	gIsGameRunning = 0;
 }
 
-void resumeGame(void) {
+void resumeGame(void)
+{
 	enableBallCamera();
 	gIsGameRunning = 1;
 }
 
-void setHotSeatLevel(const char* filename)
+void setHotSeatLevel(const char *filename)
 {
 	gHotSeatLevel = filename;
 }
@@ -85,28 +87,28 @@ void setHotSeatLevel(const char* filename)
 void stopWatch(void)
 {
 	int i;
-	
+
 	int tenthSecond = (int) (gGameTime * 10.0f);
 	int newIndex = sgLevel.cntScoreCols;
-	
+
 	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
 	{
 		newIndex--;
 	}
-	
+
 	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
-	
+
 	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
 	{
-		sgLevel.scores[i] = sgLevel.scores[i - 1]; 
+		sgLevel.scores[i] = sgLevel.scores[i - 1];
 	}
-	
+
 	if (newIndex < MAX_SCORE_COLS)
 	{
 		sgLevel.scores[newIndex].name[0] = '\0';
 		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
-	
+
 	sgLastPlayerIndex = newIndex;
 }
 
@@ -117,32 +119,39 @@ void finishedGame()
 	showGameMenu(2);
 }
 
-void updateGame(float interval) {
+void updateGame(float interval)
+{
 	updateEnvironment(interval);
-	if (gIsGameRunning) {
+	if (gIsGameRunning)
+	{
 		int i = 0;
 
-		if (wasKeyPressed(KEY_ESC)) {
+		if (wasKeyPressed(KEY_ESC))
+		{
 			pauseGame();
 			showGameMenu(1);
 		}
 
 		/* for some debug */
-		for (i = 0; i < 9; i++) {
-			if (wasKeyPressed('1' + i)) {
+		for (i = 0; i < 9; i++)
+		{
+			if (wasKeyPressed('1' + i))
+			{
 				sgRenderPass = i;
 			}
 		}
 
 		/* manually switch features */
-		if (wasFunctionPressed(1)) {
+		if (wasFunctionPressed(1))
+		{
 			setBallShadow(!useBallShadow());
 		}
 
-		if (wasFunctionPressed(2)) {
+		if (wasFunctionPressed(2))
+		{
 			setReflection(!useReflection());
 		}
-		
+
 		if (wasFunctionPressed(5))
 		{
 			pauseGame();
@@ -156,12 +165,14 @@ void updateGame(float interval) {
 		}
 
 		updateBall(interval);
-		
+
 		if (sgHasBallHitGoal)
 		{
 			finishedGame();
 		}
-	} else {
+	}
+	else
+	{
 #if NOISE_TEXTURE
 		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
 		{
@@ -170,7 +181,7 @@ void updateGame(float interval) {
 			resetBall();
 		}
 #endif
-		
+
 		updateMenuManager(interval);
 	}
 
@@ -187,7 +198,8 @@ void drawGameHUD(float widthWindow, float heightWindow)
 	float width;
 	float height;
 
-	sprintf(strTime, "%d:%02d.%01d",  tenthSecond / 600, tenthSecond / 10 % 60, tenthSecond % 10);
+	sprintf(strTime, "%d:%02d.%01d", tenthSecond / 600, tenthSecond / 10 % 60,
+					tenthSecond % 10);
 
 	width = widthStrokeText(strTime) * scale;
 	height = scale;
@@ -196,10 +208,11 @@ void drawGameHUD(float widthWindow, float heightWindow)
 
 	glPushMatrix();
 
-		glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height), 0.0f);
-		glScalef(scale, scale, scale);
+	glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height),
+							 0.0f);
+	glScalef(scale, scale, scale);
 
-		drawStrokeThickText(strTime);
+	drawStrokeThickText(strTime);
 
 	glPopMatrix();
 }
@@ -234,7 +247,8 @@ void resetGameTime(void)
 	gGameTime = 0.0f;
 }
 
-void startGame(void) {
+void startGame(void)
+{
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
@@ -254,7 +268,7 @@ void startGame(void) {
 }
 
 #if 0
-static const char* getNextLevelName(void)
+static const char *getNextLevelName(void)
 {
 	if (gHotSeatLevel)
 	{
@@ -271,7 +285,7 @@ static const char* getNextLevelName(void)
 	{
 		if (gNextLevelIndex < gLevelNames.count)
 		{
-			char* name = gLevelNames.strings[gNextLevelIndex];
+			char *name = gLevelNames.strings[gNextLevelIndex];
 			gNextLevelIndex++;
 			return name;
 		}
@@ -294,22 +308,24 @@ void stopGame(void)
 	destroyGameField();
 }
 
-void resetGame(void) {
+void resetGame(void)
+{
 	resetBall();
 	resetBallCamera();
-	
+
 	resetGameTime();
-	
+
 	updateGameField();
-	
+
 	pauseGame();
 	showGameMenu(0);
 }
 
-void initFog(void) {
+void initFog(void)
+{
 	int mode = GL_EXP;
 	float density = FOG_DENSITY;
-	float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
+	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);
@@ -317,7 +333,8 @@ void initFog(void) {
 	glFogfv(GL_FOG_COLOR, color);
 }
 
-void initGame(void) {
+void initGame(void)
+{
 	resetCamera();
 
 	initObjects();
@@ -332,7 +349,8 @@ void initGame(void) {
 
 #if 0
 	/* level (must be after menu) */
- 	if (!startGame(getNextLevelName())) {
+	if (!startGame(getNextLevelName()))
+	{
 		return 0;
 	}
 

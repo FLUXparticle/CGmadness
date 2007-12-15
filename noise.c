@@ -41,7 +41,9 @@ float randf(void)
 
 Vector3 randv(void)
 {
-	Vector3 a = vector3(randf() * 2.0f - 1.0f, randf() * 2.0f - 1.0f, randf() * 2.0f - 1.0f);
+	Vector3 a =
+		vector3(randf() * 2.0f - 1.0f, randf() * 2.0f - 1.0f,
+						randf() * 2.0f - 1.0f);
 
 	return norm(a);
 }
@@ -84,7 +86,9 @@ float noise(Vector3 p)
 		int iiz = iz + i / 4;
 		Vector3 v = sub(p, vector3(iix, iiy, iiz));
 
-		k[i] = dot(v, gGrid[(iix + iiz) % NOISE_GRID_SIZE][(iiy + iiz) % NOISE_GRID_SIZE]);
+		k[i] =
+			dot(v,
+					gGrid[(iix + iiz) % NOISE_GRID_SIZE][(iiy + iiz) % NOISE_GRID_SIZE]);
 	}
 
 	{
@@ -127,7 +131,8 @@ float perlinNoise(Vector3 v)
 	return value;
 }
 
-void genNoiseTexture(SubAtlas* subAtlas, Vector3 origin, Vector3 vx, Vector3 vy)
+void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,
+										 Vector3 vy)
 {
 	int x;
 	int y;
@@ -136,8 +141,12 @@ void genNoiseTexture(SubAtlas* subAtlas, Vector3 origin, Vector3 vx, Vector3 vy)
 	{
 		for (y = 0; y < subAtlas->sizeY * COLOR_MAP_SIZE; y++)
 		{
-			float sx = (x / COLOR_MAP_SIZE) + (float) (x % COLOR_MAP_SIZE) / (COLOR_MAP_SIZE - 1);
-			float sy = (y / COLOR_MAP_SIZE) + (float) (y % COLOR_MAP_SIZE) / (COLOR_MAP_SIZE - 1);
+			float sx =
+				(x / COLOR_MAP_SIZE) + (float) (x % COLOR_MAP_SIZE) / (COLOR_MAP_SIZE -
+																															 1);
+			float sy =
+				(y / COLOR_MAP_SIZE) + (float) (y % COLOR_MAP_SIZE) / (COLOR_MAP_SIZE -
+																															 1);
 
 			Vector3 off = add(scale(sx, vx), scale(sy, vy));
 			Vector3 v = add(origin, off);

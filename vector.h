@@ -22,12 +22,14 @@
 
 #include "types.h"
 
-typedef struct {
+typedef struct
+{
 	float x;
 	float y;
 } Vector2;
 
-typedef struct {
+typedef struct
+{
 	float x;
 	float y;
 	float z;
@@ -61,7 +63,7 @@ float dot(const Vector3 a, const Vector3 b);
 
 Vector3 cross(const Vector3 a, const Vector3 b);
 
-Vector3 midpoint(const Vector3* quad);
+Vector3 midpoint(const Vector3 * quad);
 
 void initProjectMat(Matrix m, float fov);
 

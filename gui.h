@@ -24,13 +24,14 @@
 #include "mouse.h"
 #include "types.h"
 
-typedef void (*funcClick)(void);
+typedef void (*funcClick) (void);
 
-typedef void (*funcChange)(const void* self);
+typedef void (*funcChange) (const void *self);
 
 /***/
 
-typedef enum {
+typedef enum
+{
 	MI_CANVAS,
 	MI_LABEL,
 	MI_PROGRESS_BAR,
@@ -39,7 +40,8 @@ typedef enum {
 	MI_SPIN_EDIT
 } MenuItemType;
 
-typedef struct {
+typedef struct
+{
 	MenuItemType type;
 
 	Vector2 position;
@@ -50,52 +52,59 @@ typedef struct {
 	float emphasize;
 } MenuItem;
 
-typedef struct Screen {
+typedef struct Screen
+{
 	int cntItems;
-	MenuItem** items;
+	MenuItem **items;
 
-	struct Screen* back;
+	struct Screen *back;
 } Screen;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
-	
+
 	funcUpdate customUpdate;
 	funcDraw customDraw;
 } Canvas;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
 
-	char* text;
+	char *text;
 	float size;
 } Label;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
 
-	float* progress;
+	float *progress;
 } ProgressBar;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
 
-	char* text;
+	char *text;
 	int shortcut;
 
 	funcClick click;
 } Button;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
 
-	char* text;
+	char *text;
 	int value;
 
 	funcChange change;
 } Check;
 
-typedef struct {
+typedef struct
+{
 	MenuItem item;
 
 	int value;
@@ -112,37 +121,41 @@ void initGUI(void);
 
 /* Canvas */
 
-void initCanvas(Canvas* canvas, float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw);
+void initCanvas(Canvas * canvas, float z, float width, float height,
+								funcUpdate customUpdate, funcDraw customDraw);
 
 /* Label */
 
-void initLabel(Label* label, float x, float z, float size, int alignRight, char* text);
+void initLabel(Label * label, float x, float z, float size, int alignRight,
+							 char *text);
 
 /* ProgressBar */
 
-void initProgressBar(ProgressBar* progressBar, float z, float* progress);
+void initProgressBar(ProgressBar * progressBar, float z, float *progress);
 
 /* Button */
 
-void initButton(Button* button, float z, funcClick click, char* text, int shortcut);
+void initButton(Button * button, float z, funcClick click, char *text,
+								int shortcut);
 
 /* Check */
 
-void setCheck(Check* check, int value);
-void initCheck(Check* check, float z, funcChange change, char* text);
+void setCheck(Check * check, int value);
+void initCheck(Check * check, float z, funcChange change, char *text);
 
 /* SpinEdit */
 
-void initSpinEdit(SpinEdit* spinedit, int value, int min, int max, float width, float z, funcDraw draw, funcChange change);
+void initSpinEdit(SpinEdit * spinedit, int value, int min, int max, float width,
+									float z, funcDraw draw, funcChange change);
 
 /* Screen */
 
 #define INIT_SCREEN(screen, items) initScreen((screen), LENGTH(items), (items))
 
-void initScreen(Screen* screen, int cntItems, MenuItem** items);
-void prepareScreen(Screen* screen);
-void updateScreen(Screen* screen, float interval);
-void drawScreen(const Screen* screen);
-void eventScreen(Screen* screen, float x, float y, MouseEvent event);
+void initScreen(Screen * screen, int cntItems, MenuItem ** items);
+void prepareScreen(Screen * screen);
+void updateScreen(Screen * screen, float interval);
+void drawScreen(const Screen * screen);
+void eventScreen(Screen * screen, float x, float y, MouseEvent event);
 
 #endif

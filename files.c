@@ -25,22 +25,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* textFileRead(const char* fn) {
-	FILE* fp;
-	char* content = NULL;
+char *textFileRead(const char *fn)
+{
+	FILE *fp;
+	char *content = NULL;
 
 	int count = 0;
 
-	if (fn != NULL) {
+	if (fn != NULL)
+	{
 		fp = fopen(fn, "rt");
 
-		if (fp != NULL) {
-      fseek(fp, 0, SEEK_END);
-      count = ftell(fp);
-      rewind(fp);
+		if (fp != NULL)
+		{
+			fseek(fp, 0, SEEK_END);
+			count = ftell(fp);
+			rewind(fp);
 
-			if (count > 0) {
-				MALLOC(content, sizeof(char) * (count+1));
+			if (count > 0)
+			{
+				MALLOC(content, sizeof(char) * (count + 1));
 				count = fread(content, sizeof(char), count, fp);
 				content[count] = '\0';
 			}
@@ -51,19 +55,24 @@ char* textFileRead(const char* fn) {
 	return content;
 }
 
-int textFileWrite(const char *fn, const char *s) {
+int textFileWrite(const char *fn, const char *s)
+{
 	FILE *fp;
 	int status = 0;
 
-	if (fn != NULL) {
-		fp = fopen(fn,"w");
+	if (fn != NULL)
+	{
+		fp = fopen(fn, "w");
 
-		if (fp != NULL) {
-			if (fwrite(s,sizeof(char),strlen(s),fp) == strlen(s)) {
+		if (fp != NULL)
+		{
+			if (fwrite(s, sizeof(char), strlen(s), fp) == strlen(s))
+			{
 				status = 1;
 			}
 
-			if (fclose(fp) != 0) {
+			if (fclose(fp) != 0)
+			{
 				return 0;
 			}
 		}
