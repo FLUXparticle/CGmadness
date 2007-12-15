@@ -44,7 +44,7 @@ SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl
+DEV     :=  mains.pl modules.pl indent.pro
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
