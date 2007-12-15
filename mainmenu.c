@@ -49,16 +49,60 @@ static Screen gScreenMain;
 static Screen gScreenChooseGame;
 static Screen gScreenChooseEditor;
 
+static SpinEdit gseLevel;
+
 static int gLoadedLevel = -1;
+
+static void loadLevel(int index)
+{
+	if (index != gLoadedLevel)
+	{
+		if (gLoadedLevel >= 0)
+		{
+			destroyLevel();
+			gLoadedLevel = -1;
+		}
+		
+		if (index >= 0 && loadLevelFromFile(sgLevels.strings[index], 1))
+		{
+			updateTexCoords();
+			gLoadedLevel = index;
+			
+			if (sgLevel.borderTexture == 0) {
+#if (NOISE_TEXTURE)
+				sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+#else
+				sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+#endif
+			}
+
+			sgCurLevelname = sgLevels.strings[gLoadedLevel] + strlen(sgLevels.strings[gLoadedLevel]) + 1;
+		}
+	}
+}
+
+static void changeLevelChooser(const void* self)
+{
+	const SpinEdit* spinedit = self;
+
+	if (getCurScreen() == &gScreenChooseGame || getCurScreen() == &gScreenChooseEditor)
+	{
+		loadLevel(spinedit->value);
+	}
+	
+	sgLastPlayerIndex = MAX_SCORE_COLS;
+}
 
 static void clickButtonCGMadness(void)
 {
 	pushScreen(&gScreenChooseGame);
+	changeLevelChooser(&gseLevel);
 }
 
 static void clickButtonCGMEditor(void)
 {
 	pushScreen(&gScreenChooseEditor);
+	changeLevelChooser(&gseLevel);
 }
 
 static void clickButtonQuit(void)
@@ -78,6 +122,7 @@ static void clickButtonChooseEditor(void)
 
 static void clickButtonBack(void)
 {
+	loadLevel(-1);
 	popScreen();
 }
 
@@ -146,38 +191,6 @@ static void drawLevelInfo(void)
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-static void changeLevelChooser(const void* self)
-{
-	const SpinEdit* spinedit = self;
-	
-	if (spinedit->value != gLoadedLevel)
-	{
-		if (gLoadedLevel >= 0)
-		{
-			destroyLevel();
-			gLoadedLevel = -1;
-		}
-		
-		if (loadLevelFromFile(sgLevels.strings[spinedit->value], 1))
-		{
-			updateTexCoords();
-			gLoadedLevel = spinedit->value;
-			
-			if (sgLevel.borderTexture == 0) {
-#if (NOISE_TEXTURE)
-				sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
-#else
-				sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
-#endif
-			}
-
-			sgCurLevelname = sgLevels.strings[gLoadedLevel] + strlen(sgLevels.strings[gLoadedLevel]) + 1;
-		}
-	}
-	
-	sgLastPlayerIndex = MAX_SCORE_COLS;
-}
-
 void initMainMenu(void)
 {
 	static Button bCGMadness;
@@ -186,8 +199,6 @@ void initMainMenu(void)
 	static Button bChooseGame;
 	static Button bChooseEditor;
 	static Button bBack;
-	
-	static SpinEdit seLevel;
 	
 	static Canvas cLevelInfo;
 
@@ -202,7 +213,7 @@ void initMainMenu(void)
 	
 	static MenuItem* itemsChooseGame[] =
 	{
-		&seLevel.item,
+		&gseLevel.item,
 		&hsHighScore.item,
 		&bChooseGame.item,
 		&bBack.item
@@ -210,7 +221,7 @@ void initMainMenu(void)
 	
 	static MenuItem* itemsChooseEditor[] =
 	{
-		&seLevel.item,
+		&gseLevel.item,
 		&cLevelInfo.item,
 		&bChooseEditor.item,
 		&bBack.item
@@ -222,7 +233,7 @@ void initMainMenu(void)
 	
 	INIT_SCREEN(&gScreenMain, itemsMain);
 
-	initSpinEdit(&seLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
+	initSpinEdit(&gseLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
 
 	initHighScore(&hsHighScore, 3.0f);
 
