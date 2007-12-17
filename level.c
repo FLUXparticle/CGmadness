@@ -22,7 +22,6 @@
 #include "common.h"
 #include "atlas.h"
 #include "crc32.h"
-#include "tools.h"
 
 #include "functions.h"
 #include "debug.h"
@@ -45,6 +44,18 @@ const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
 Level sgLevel;
+
+static char *addStrings(const char *a, const char *b)
+{
+	char *c;
+
+	MALLOC(c, strlen(a) + strlen(b) + 1);
+
+	strcpy(c, a);
+	strcat(c, b);
+
+	return c;
+}
 
 static void updateSquareAttributes(Square * square)
 {

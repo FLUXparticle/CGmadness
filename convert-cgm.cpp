@@ -22,12 +22,13 @@ extern "C"
 {
 #endif
 
-#include "tools.h"
 #include "level.h"
 
 #ifdef __cplusplus
 }
 #endif
+
+#include "tools.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>

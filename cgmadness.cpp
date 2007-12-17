@@ -31,13 +31,13 @@ extern "C"
 #include "keyboard.h"
 #include "mouse.h"
 
-#include "tools.h"
-
 #include "features.h"
 
 #ifdef __cplusplus
 }
 #endif
+
+#include "tools.hpp"
 
 #define GLUT_DISABLE_ATEXIT_HACK
 

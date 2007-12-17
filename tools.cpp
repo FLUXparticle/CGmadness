@@ -17,12 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tools.h"
-
-#include "debug.h"
+#include "tools.hpp"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -31,18 +28,6 @@ void message(void)
 	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>\n");
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
 	printf("\n");
-}
-
-char *addStrings(const char *a, const char *b)
-{
-	char *c;
-
-	MALLOC(c, strlen(a) + strlen(b) + 1);
-
-	strcpy(c, a);
-	strcat(c, b);
-
-	return c;
 }
 
 void assurePath(const char *progname)
@@ -62,20 +47,15 @@ void assurePath(const char *progname)
 	if (lastSlash)
 	{
 		int length = lastSlash - progname;
-		char *path;
+		char *path = new char[length + 1];
 
-		MALLOC(path, length + 1);
+		memcpy(path, progname, length);
+		path[length] = 0;
 
-		if (path)
-		{
-			memcpy(path, progname, length);
-			path[length] = 0;
+		printf("change dir: '%s'\n", path);
 
-			printf("change dir: '%s'\n", path);
+		chdir(path);
 
-			chdir(path);
-
-			FREE(path);
-		}
+		delete[] path;
 	}
 }
