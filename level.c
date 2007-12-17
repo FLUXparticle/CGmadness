@@ -21,7 +21,7 @@
 
 #include "common.h"
 #include "atlas.h"
-#include "crc32.h"
+#include "crc32.hpp"
 
 #include "functions.h"
 #include "debug.h"

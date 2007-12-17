@@ -17,13 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _crc32_h_
-#define _crc32_h_
+#ifndef _crc32_hpp_
+#define _crc32_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 void resetCRC32(void);
 void nextByte(unsigned char byte);
 
 unsigned int getCRC32(void);
 void setCRC32(unsigned int crc32);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

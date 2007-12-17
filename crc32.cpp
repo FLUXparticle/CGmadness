@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "crc32.h"
+#include "crc32.hpp"
 
 #define CRC32_POLYNOMIAL 0xEDB88320
 
