@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,46 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "idle.h"
+#ifndef _noise_hpp_
+#define _noise_hpp_
 
-#include <GL/glut.h>
-
-float sgIdleProgress;
-int sgIdleWorking = 0;
-
-static int gIdleStep;
-static int gMaxIdleSteps;
-static funcIdle gIdle;
-
-static void doIdle(void)
+#ifdef __cplusplus
+extern "C"
 {
-	gIdle(gIdleStep);
+#endif
 
-	gIdleStep++;
-	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
+#include "atlas.hpp"
 
-	if (gIdleStep >= gMaxIdleSteps)
-	{
-		stopIdle();
-	}
+#include "color.hpp"
+
+void initNoise(void);
+void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,
+										 Vector3 vy);
+
+#ifdef __cplusplus
 }
+#endif
 
-void startIdle(int steps, funcIdle idle)
-{
-	gIdleStep = 0;
-	gMaxIdleSteps = steps;
-	gIdle = idle;
-
-	sgIdleProgress = 0.0f;
-	sgIdleWorking = 1;
-
-	glutIdleFunc(doIdle);
-}
-
-void stopIdle(void)
-{
-	sgIdleProgress = 1.0f;
-	sgIdleWorking = 0;
-
-	glutIdleFunc(NULL);
-}
+#endif

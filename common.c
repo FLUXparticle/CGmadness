@@ -19,9 +19,9 @@
 
 #include "common.h"
 
-#include "atlas.h"
-#include "noise.h"
-#include "idle.h"
+#include "atlas.hpp"
+#include "noise.hpp"
+#include "idle.hpp"
 #include "lightmap.h"
 #include "level.h"
 

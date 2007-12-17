@@ -36,8 +36,8 @@
 #include "text.hpp"
 #include "texture.hpp"
 #include "environment.h"
-#include "noise.h"
-#include "atlas.h"
+#include "noise.hpp"
+#include "atlas.hpp"
 #include "main.h"
 
 #include "stringlist.h"

@@ -17,15 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _noise_h_
-#define _noise_h_
+#ifndef _macros_hpp_
+#define _macros_hpp_
 
-#include "atlas.h"
+#include <cstdio>
 
-#include "color.hpp"
-
-void initNoise(void);
-void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,
-										 Vector3 vy);
+#define PRINT_INT(i) printf(#i ": %d\n", (i))
+#define PRINT_FLOAT(f) printf(#f ": %f\n", (f))
+#define PRINT_VECTOR3(vector) printf(#vector ".x: %f, " #vector ".y: %f, " #vector ".z: %f\n", (vector).x, (vector).y, (vector).z)
 
 #endif

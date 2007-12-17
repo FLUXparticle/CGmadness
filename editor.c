@@ -29,7 +29,7 @@
 #include "camera.h"
 #include "keyboard.h"
 #include "texture.hpp"
-#include "atlas.h"
+#include "atlas.hpp"
 #include "common.h"
 
 #include "functions.hpp"

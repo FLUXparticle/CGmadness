@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _idle_h_
-#define _idle_h_
+#ifndef _idle_hpp_
+#define _idle_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef void (*funcIdle) (int step);
 
@@ -27,5 +32,9 @@ extern int sgIdleWorking;
 
 void startIdle(int steps, funcIdle idle);
 void stopIdle(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

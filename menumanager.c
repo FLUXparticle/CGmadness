@@ -20,7 +20,7 @@
 
 #include "menumanager.h"
 
-#include "idle.h"
+#include "idle.hpp"
 #include "keyboard.h"
 #include "callback.h"
 #include "texture.hpp"

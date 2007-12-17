@@ -20,7 +20,7 @@
 #include "level.h"
 
 #include "common.h"
-#include "atlas.h"
+#include "atlas.hpp"
 #include "crc32.hpp"
 
 #include "functions.hpp"

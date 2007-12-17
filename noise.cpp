@@ -17,13 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "noise.h"
+#include "noise.hpp"
 
 #include "texture.hpp"
 
 #include "vector.hpp"
-
-#include "debug.h"
 
 #include <stdlib.h>
 

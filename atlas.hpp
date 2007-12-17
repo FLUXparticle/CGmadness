@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _atlas_h_
-#define _atlas_h_
+#ifndef _atlas_hpp_
+#define _atlas_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include "vector.hpp"
 #include "color.hpp"
@@ -55,5 +60,9 @@ void setLightMap(SubAtlas * subAtlas, int x, int y, float value);
 void setColorMap(SubAtlas * subAtlas, int x, int y, Color3 col);
 
 Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

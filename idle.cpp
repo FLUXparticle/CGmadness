@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,15 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _lightmap_h_
-#define _lightmap_h_
+#include "idle.hpp"
 
-#include "atlas.hpp"
+#include <GL/glut.h>
 
-#include "vector.hpp"
+float sgIdleProgress;
+int sgIdleWorking = 0;
 
-float approximation(const Vector3 position, const Vector3 normal);
+static int gIdleStep;
+static int gMaxIdleSteps;
+static funcIdle gIdle;
 
-void genAmbientOcclusionTexture(SubAtlas * lightMap, Orientation orientation);
+static void doIdle(void)
+{
+	gIdle(gIdleStep);
 
-#endif
+	gIdleStep++;
+	sgIdleProgress = (float) gIdleStep / gMaxIdleSteps;
+
+	if (gIdleStep >= gMaxIdleSteps)
+	{
+		stopIdle();
+	}
+}
+
+void startIdle(int steps, funcIdle idle)
+{
+	gIdleStep = 0;
+	gMaxIdleSteps = steps;
+	gIdle = idle;
+
+	sgIdleProgress = 0.0f;
+	sgIdleWorking = 1;
+
+	glutIdleFunc(doIdle);
+}
+
+void stopIdle(void)
+{
+	sgIdleProgress = 1.0f;
+	sgIdleWorking = 0;
+
+	glutIdleFunc(NULL);
+}

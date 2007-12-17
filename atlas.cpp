@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "atlas.h"
+#include "atlas.hpp"
 
-#include "debug.h"
+#include "macros.hpp"
 
 #include <GL/gl.h>
 
@@ -71,14 +71,12 @@ void initAtlas(int cntSubTextures)
 	gLightMapSizeX = gCols * LIGHT_MAP_SIZE;
 	gLightMapSizeY = gRows * LIGHT_MAP_SIZE;
 
-	MALLOC(gLightMapData,
-				 gLightMapSizeX * gLightMapSizeY * sizeof(*gLightMapData));
+	gLightMapData = new float[gLightMapSizeX * gLightMapSizeY];
 
 	gColorMapSizeX = gCols * COLOR_MAP_SIZE;
 	gColorMapSizeY = gRows * COLOR_MAP_SIZE;
 
-	MALLOC(gColorMapData,
-				 gColorMapSizeX * gColorMapSizeY * sizeof(*gColorMapData));
+	gColorMapData = new Color3[gColorMapSizeX * gColorMapSizeY];
 
 #if 1
 	{
@@ -102,8 +100,8 @@ void initAtlas(int cntSubTextures)
 
 void destroyAtlas(void)
 {
-	FREE(gLightMapData);
-	FREE(gColorMapData);
+	delete[] gLightMapData;
+	delete[] gColorMapData;
 
 	gCols = 0;
 	gRows = 0;
