@@ -30,7 +30,7 @@
 #include "highscore.hpp"
 
 #include "menumanager.hpp"
-#include "gui.h"
+#include "gui.hpp"
 #include "text.hpp"
 
 #include "keyboard.hpp"

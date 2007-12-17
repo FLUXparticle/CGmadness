@@ -25,8 +25,6 @@
 #include "text.hpp"
 #include "camera.hpp"
 
-#include "debug.h"
-
 #include <GL/glew.h>
 #include <GL/glut.h>
 

@@ -23,7 +23,6 @@
 
 #include "vector.hpp"
 #include "types.hpp"
-#include "debug.h"
 
 #include <GL/gl.h>
 

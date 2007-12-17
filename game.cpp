@@ -40,14 +40,13 @@
 #include "atlas.hpp"
 #include "main.hpp"
 
-#include "stringlist.h"
+#include "stringlist.hpp"
 
 #include "color.hpp"
 
 #include "functions.hpp"
 
 #include "types.hpp"
-#include "debug.h"
 
 #include <GL/glew.h>
 #include <GL/glew.h>

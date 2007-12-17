@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "gui.h"
+#include "gui.hpp"
 
 typedef Canvas HighScore;
 

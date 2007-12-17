@@ -17,11 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "stringlist.h"
+#include "stringlist.hpp"
 
 #include "files.hpp"
-
-#include "debug.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -122,7 +120,7 @@ void createStringListFromDir(StringList * list, const char *dirname)
 		{
 			struct stat filestat;
 
-			char *newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+			char *newdir = new char[dirnamelen + 1 + strlen(fileinfo->d_name) + 1];
 
 			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
 
@@ -137,14 +135,14 @@ void createStringListFromDir(StringList * list, const char *dirname)
 				}
 			}
 
-			free(newdir);
+			delete[] newdir;
 		}
 
 		rewinddir(dirinfo);
 
 		list->count = count;
-		MALLOC(list->all, sizeof(char *) * size);
-		MALLOC(list->strings, sizeof(char *) * list->count);
+		list->all = new char[size];
+		list->strings = new char *[list->count];
 
 		p = list->all;
 		pp = list->strings;
@@ -153,7 +151,7 @@ void createStringListFromDir(StringList * list, const char *dirname)
 		{
 			struct stat filestat;
 
-			char *newdir = malloc(dirnamelen + 1 + strlen(fileinfo->d_name) + 1);
+			char *newdir = new char[dirnamelen + 1 + strlen(fileinfo->d_name) + 1];
 
 			sprintf(newdir, "%s/%s", dirname, fileinfo->d_name);
 
@@ -175,7 +173,7 @@ void createStringListFromDir(StringList * list, const char *dirname)
 				}
 			}
 
-			free(newdir);
+			delete[] newdir;
 		}
 
 		closedir(dirinfo);
@@ -200,7 +198,7 @@ void loadStringListFromFile(StringList * list, const char *filename)
 		}
 	}
 
-	MALLOC(list->strings, sizeof(char *) * list->count);
+	list->strings = new char *[list->count];
 
 	s = list->all;
 	for (i = 0; i < list->count; i++)

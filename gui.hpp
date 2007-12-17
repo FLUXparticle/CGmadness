@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _gui_h_
-#define _gui_h_
+#ifndef _gui_hpp_
+#define _gui_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include "vector.hpp"
 #include "mouse.hpp"
@@ -157,5 +162,9 @@ void prepareScreen(Screen * screen);
 void updateScreen(Screen * screen, float interval);
 void drawScreen(const Screen * screen);
 void eventScreen(Screen * screen, float x, float y, MouseEvent event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

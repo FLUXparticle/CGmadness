@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "gui.h"
+#include "gui.hpp"
 
 #include "vector.hpp"
 #include "mouse.hpp"

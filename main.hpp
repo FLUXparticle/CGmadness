@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "stringlist.h"
+#include "stringlist.hpp"
 
 typedef enum
 {

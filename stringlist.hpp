@@ -17,43 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "debug.h"
+#ifndef _stringlist_hpp_
+#define _stringlist_hpp_
 
-#include <stdio.h>
-#include <stdlib.h>
-
-void *dbgMalloc(int size, const char *pointername, const char *filename,
-								int line)
+#ifdef __cplusplus
+extern "C"
 {
-	void *p = malloc(size);
-	if (p)
-	{
-		fprintf(stderr, "%s : %d -- malloc %s:%d\n", pointername, size, filename,
-						line);
-	}
-	else
-	{
-		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size,
-						filename, line);
-	}
-	return p;
-}
+#endif
 
-void dbgFree(void *p, const char *pointername, const char *filename, int line)
+typedef struct
 {
-	fprintf(stderr, "%s -- free %s:%d\n", pointername, filename, line);
-	free(p);
-}
+	int count;
+	char **strings;
 
-void *saveMalloc(int size, const char *pointername, const char *filename,
-								 int line)
-{
-	void *p = malloc(size);
-	if (!p)
-	{
-		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size,
-						filename, line);
-		exit(1);
-	}
-	return p;
+	char *all;
+} StringList;
+
+void createStringListFromDir(StringList * list, const char *dirname);
+
+void loadStringListFromFile(StringList * list, const char *filename);
+
+void sortStringList(StringList * list);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif

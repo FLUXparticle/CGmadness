@@ -26,7 +26,7 @@ extern "C"
 {
 #endif
 
-#include "gui.h"
+#include "gui.hpp"
 
 typedef void (*funcCallback) (void);
 

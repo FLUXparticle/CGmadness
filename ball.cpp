@@ -35,7 +35,7 @@
 
 #include "functions.hpp"
 
-#include "debug.h"
+#include "debug.hpp"
 
 #include <GL/glew.h>
 #include <GL/glut.h>

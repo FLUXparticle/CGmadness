@@ -30,9 +30,7 @@
 #include "objects.hpp"
 
 #include "menumanager.hpp"
-#include "gui.h"
-
-#include "debug.h"
+#include "gui.hpp"
 
 #include <stdio.h>
 #include <string.h>

@@ -27,7 +27,7 @@
 #include "objects.hpp"
 #include "texture.hpp"
 #include "keyboard.hpp"
-#include "gui.h"
+#include "gui.hpp"
 
 #include <GL/glut.h>
 
