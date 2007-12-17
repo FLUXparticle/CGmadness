@@ -20,11 +20,6 @@
 #ifndef _gamemenu_hpp_
 #define _gamemenu_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "gui.hpp"
 
 #include "vector.hpp"
@@ -33,9 +28,5 @@ extern "C"
 void initGameMenu(void);
 
 void showGameMenu(int menu);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

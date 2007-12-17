@@ -20,11 +20,6 @@
 #ifndef _skyspere_h_
 #define _skyspere_h_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "shader.hpp"
 #include "types.hpp"
 #include <math.h>
@@ -32,9 +27,5 @@ extern "C"
 
 void initSkysphere(void);
 void drawSkysphere(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

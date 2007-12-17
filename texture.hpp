@@ -20,16 +20,7 @@
 #ifndef _texture_hpp_
 #define _texture_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 unsigned int genTexture(void);
 int loadTexture(const char *filename, int mipmapping);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

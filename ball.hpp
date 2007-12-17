@@ -20,11 +20,6 @@
 #ifndef _ball_hpp_
 #define _ball_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "quaternion.hpp"
 
 #define MAX_BALL_LAYOUTS 5
@@ -76,9 +71,5 @@ int hasBallTexture(void);
 int hasCubeMap(void);
 
 int useBallReflection(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

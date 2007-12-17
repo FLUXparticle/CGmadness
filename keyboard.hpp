@@ -20,11 +20,6 @@
 #ifndef _keyboard_hpp_
 #define _keyboard_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #define KEY_ESC 27
 #define KEY_ENTER 13
 
@@ -44,9 +39,5 @@ int isFunctionPressed(int index);
 int wasFunctionPressed(int index);
 
 void startKeyboard(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

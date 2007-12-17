@@ -20,11 +20,6 @@
 #ifndef _quaternion_hpp_
 #define _quaternion_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 
 typedef struct
@@ -52,9 +47,5 @@ Quaternion mkQuaternion(float alpha, Vector3 v);
 Quaternion interpolate(float t, Quaternion a, Quaternion b);
 
 void quaternionTransform(Quaternion a);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

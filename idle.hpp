@@ -20,11 +20,6 @@
 #ifndef _idle_hpp_
 #define _idle_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef void (*funcIdle) (int step);
 
 extern float sgIdleProgress;
@@ -32,9 +27,5 @@ extern int sgIdleWorking;
 
 void startIdle(int steps, funcIdle idle);
 void stopIdle(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,18 +20,9 @@
 #ifndef _shader_hpp_
 #define _shader_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include <GL/glew.h>
 
 GLhandleARB makeShader(const char *vertexShaderFilename,
 											 const char *fragmentShaderFilename);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,11 +20,6 @@
 #ifndef _stringlist_hpp_
 #define _stringlist_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef struct
 {
 	int count;
@@ -38,9 +33,5 @@ void createStringListFromDir(StringList * list, const char *dirname);
 void loadStringListFromFile(StringList * list, const char *filename);
 
 void sortStringList(StringList * list);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

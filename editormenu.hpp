@@ -20,19 +20,10 @@
 #ifndef _editormenu_hpp_
 #define _editormenu_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 
 void initEditorMenu(void);
 
 void showEditorScreen(int menu);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,11 +20,6 @@
 #ifndef _camera_hpp_
 #define _camera_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 
 extern Vector3 sgCamera;
@@ -32,9 +27,5 @@ extern Vector3 sgLookat;
 
 void resetCamera(void);
 void moveCamera(float interval, Vector3 camera, Vector3 lookat);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

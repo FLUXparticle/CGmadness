@@ -20,16 +20,7 @@
 #ifndef _varray_hpp_
 #define _varray_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void drawTrianglesVerticesNormals(int count, const float *vertices,
 																	const float *normals);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,11 +20,6 @@
 #ifndef _level_hpp_
 #define _level_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 
 #define MAX_LEVEL_HEIGHT 10
@@ -126,9 +121,5 @@ void getRoofSquare(int x, int y, Square * square);
 void getSideFace(int x, int y, int side, SideFace * face);
 
 float getMaxZValue(const Square * square);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

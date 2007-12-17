@@ -20,20 +20,11 @@
 #ifndef _common_hpp_
 #define _common_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void initCommon(void);
 void destroyCommon(void);
 
 void updateLightMap(int useProgressBar);
 void updateColorMap(void);
 void updateTexCoords(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

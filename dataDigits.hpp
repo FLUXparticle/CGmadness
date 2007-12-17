@@ -20,11 +20,6 @@
 #ifndef _dataDigits_hpp_
 #define _dataDigits_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "types.hpp"
 
 #include <GL/gl.h>
@@ -32,9 +27,5 @@ extern "C"
 extern float widthDigits[];
 
 extern funcDraw drawDigits[];
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

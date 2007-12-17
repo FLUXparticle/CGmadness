@@ -20,11 +20,6 @@
 #ifndef _highscore_hpp_
 #define _highscore_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "gui.hpp"
 
 typedef Canvas HighScore;
@@ -37,9 +32,5 @@ void initHighScore(HighScore * highScore, float z);
 void drawPanel(float width, float height);
 
 void acceptHighScoreName(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

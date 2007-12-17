@@ -20,11 +20,6 @@
 #ifndef _debug_hpp_
 #define _debug_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #define DEBUG_TIME 0
 
 #define GL_DEBUG(x) { int error, before = glGetError(); x; error = glGetError(); if (before || error) printf("0x%x -> %s: 0x%x\n", before, #x, error); }
@@ -33,10 +28,6 @@ extern "C"
 #  define TIME(x) { int after, before = glutGet(GLUT_ELAPSED_TIME); x; after = glutGet(GLUT_ELAPSED_TIME); if (after >= before + 10) printf("%s: %d ms\n", #x, after - before); }
 #else
 #  define TIME(x) x
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

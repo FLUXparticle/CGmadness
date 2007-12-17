@@ -17,16 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "level.hpp"
-
-#ifdef __cplusplus
-}
-#endif
 
 #include "tools.hpp"
 

@@ -20,11 +20,6 @@
 #ifndef _lightmap_hpp_
 #define _lightmap_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "atlas.hpp"
 
 #include "vector.hpp"
@@ -32,9 +27,5 @@ extern "C"
 float approximation(const Vector3 position, const Vector3 normal);
 
 void genAmbientOcclusionTexture(SubAtlas * lightMap, Orientation orientation);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

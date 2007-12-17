@@ -20,11 +20,6 @@
 #ifndef _vector_hpp_
 #define _vector_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "types.hpp"
 
 typedef struct
@@ -71,9 +66,5 @@ Vector3 cross(const Vector3 a, const Vector3 b);
 Vector3 midpoint(const Vector3 * quad);
 
 void initProjectMat(Matrix m, float fov);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

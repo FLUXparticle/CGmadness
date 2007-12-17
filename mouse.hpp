@@ -20,11 +20,6 @@
 #ifndef _mouse_hpp_
 #define _mouse_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef enum
 {
 	MOUSE_MOTION,
@@ -36,9 +31,5 @@ typedef void (*funcDrag) (int dx, int dy);
 void setDragFunc(funcDrag drag);
 
 void startMouse(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

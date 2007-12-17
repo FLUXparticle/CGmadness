@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "callback.hpp"
 
 #include "main.hpp"
@@ -32,10 +27,6 @@ extern "C"
 #include "mouse.hpp"
 
 #include "features.hpp"
-
-#ifdef __cplusplus
-}
-#endif
 
 #include "tools.hpp"
 

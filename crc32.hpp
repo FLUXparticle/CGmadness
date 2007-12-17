@@ -20,19 +20,10 @@
 #ifndef _crc32_hpp_
 #define _crc32_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void resetCRC32(void);
 void nextByte(unsigned char byte);
 
 unsigned int getCRC32(void);
 void setCRC32(unsigned int crc32);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

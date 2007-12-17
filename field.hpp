@@ -20,11 +20,6 @@
 #ifndef _field_hpp_
 #define _field_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "color.hpp"
 
 #include "vector.hpp"
@@ -42,9 +37,5 @@ void updateGameField(void);
 void drawGameField(int ballReflection);
 
 void getVertIndex(int x, int y, int *start, int *end);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

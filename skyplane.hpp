@@ -20,11 +20,6 @@
 #ifndef _skyplane_hpp_
 #define _skyplane_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "types.hpp"
 #include "texture.hpp"
 
@@ -36,9 +31,5 @@ extern "C"
 
 void initSkyplane(void);
 void drawSkyplane(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

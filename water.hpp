@@ -20,17 +20,8 @@
 #ifndef _water_hpp_
 #define _water_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void initWater(void);
 void updateWater(float interval);
 void drawWater(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

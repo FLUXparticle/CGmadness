@@ -20,11 +20,6 @@
 #ifndef _features_hpp_
 #define _features_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include <GL/glew.h>
 
 extern GLhandleARB sgBallShadowShader;
@@ -46,9 +41,5 @@ void setReflection(int use);
 
 int useBallShadow(void);
 int useReflection(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

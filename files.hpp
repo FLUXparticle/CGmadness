@@ -20,16 +20,7 @@
 #ifndef _files_hpp_
 #define _files_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 char *textFileRead(const char *fn);
 int textFileWrite(const char *fn, const char *s);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

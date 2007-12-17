@@ -20,11 +20,6 @@
 #ifndef _editor_hpp_
 #define _editor_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 int initEditor(void);
 
 void startEditor(void);
@@ -39,9 +34,5 @@ void drawEditorField(void);
 void drawEditor(void);
 
 void saveLevel(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

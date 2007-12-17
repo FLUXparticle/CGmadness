@@ -20,11 +20,6 @@
 #ifndef _main_hpp_
 #define _main_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "stringlist.hpp"
 
 typedef enum
@@ -44,9 +39,5 @@ void updateMain(float interval);
 
 void drawMain(void);
 void drawMainHUD(float width, float height);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

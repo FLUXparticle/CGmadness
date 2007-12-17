@@ -20,11 +20,6 @@
 #ifndef _game_hpp_
 #define _game_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 
 void initGame(void);
@@ -43,9 +38,5 @@ void drawGameBallReflection(void);
 void drawGameHUD(float widthWindow, float heightWindow);
 
 extern int sgRenderPass;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

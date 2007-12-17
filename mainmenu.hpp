@@ -21,11 +21,6 @@
 #ifndef _mainmenu_hpp_
 #define _mainmenu_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "gui.hpp"
 
 void initMainMenu(void);
@@ -35,9 +30,5 @@ void showMainMenu(void);
 void updateMainMenu(float interval);
 
 void drawMainMenu(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

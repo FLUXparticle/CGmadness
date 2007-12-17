@@ -20,16 +20,7 @@
 #ifndef _progress_hpp_
 #define _progress_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void resetProgress(void);
 void setProgress(float progress);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

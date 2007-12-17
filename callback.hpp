@@ -20,11 +20,6 @@
 #ifndef _callback_hpp_
 #define _callback_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "mouse.hpp"
 
 #include "vector.hpp"
@@ -62,9 +57,5 @@ void startTimer(void);
 void setUpdateFrequency(int callsPerSecond);
 
 void mouseEvent(int x, int y, MouseEvent event);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -21,11 +21,6 @@
 #ifndef _menumanager_hpp_
 #define _menumanager_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "gui.hpp"
 
 typedef void (*funcCallback) (void);
@@ -45,9 +40,5 @@ void pushWaitScreen(funcCallback callback);
 
 void pushScreen(Screen * menu);
 void popScreen(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,11 +20,6 @@
 #ifndef _color_hpp_
 #define _color_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef struct
 {
 	float r;
@@ -46,9 +41,5 @@ Color3 color3(float r, float g, float b);
 Color3 color3i(int r, int g, int b);
 
 Color3 interpolateColor(Color3 col1, Color3 col2, float t);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

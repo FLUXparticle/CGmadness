@@ -20,11 +20,6 @@
 #ifndef _gui_hpp_
 #define _gui_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "vector.hpp"
 #include "mouse.hpp"
 #include "types.hpp"
@@ -162,9 +157,5 @@ void prepareScreen(Screen * screen);
 void updateScreen(Screen * screen, float interval);
 void drawScreen(const Screen * screen);
 void eventScreen(Screen * screen, float x, float y, MouseEvent event);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -20,11 +20,6 @@
 #ifndef _types_hpp_
 #define _types_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 /*
  * namen conventions for variables:
  * type Object            o
@@ -46,9 +41,5 @@ typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
 
 typedef void (*funcUpdate) (float interval);
 typedef void (*funcDraw) (void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

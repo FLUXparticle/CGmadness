@@ -20,11 +20,6 @@
 #ifndef _dataSmallAlpha_hpp_
 #define _dataSmallAlpha_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "types.hpp"
 
 #include <GL/gl.h>
@@ -32,9 +27,5 @@ extern "C"
 extern float widthSmallAlpha[];
 
 extern funcDraw drawSmallAlpha[];
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

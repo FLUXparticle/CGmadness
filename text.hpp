@@ -20,11 +20,6 @@
 #ifndef _text_hpp_
 #define _text_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 void drawBitmapText(const char *str);
 
 float widthStrokeText(const char *str);
@@ -33,9 +28,5 @@ void drawStrokeThickText(const char *str);
 
 float widthFont3DText(const char *str);
 void drawFont3DText(const char *str);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

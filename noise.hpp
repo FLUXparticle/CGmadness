@@ -20,11 +20,6 @@
 #ifndef _noise_hpp_
 #define _noise_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "atlas.hpp"
 
 #include "color.hpp"
@@ -32,9 +27,5 @@ extern "C"
 void initNoise(void);
 void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,
 										 Vector3 vy);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

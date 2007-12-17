@@ -20,11 +20,6 @@
 #ifndef _environment_hpp_
 #define _environment_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "types.hpp"
 
 #define ENVIRONMENT_SIZE 400.0f
@@ -32,9 +27,5 @@ extern "C"
 void initEnvironment(void);
 void updateEnvironment(float interval);
 void drawEnvironment(funcDraw reflection);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

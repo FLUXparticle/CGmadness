@@ -20,11 +20,6 @@
 #ifndef _functions_hpp_
 #define _functions_hpp_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 float sqr(float x);
 
 float min(float a, float b);
@@ -35,9 +30,5 @@ float clamp(float x, float lo, float up);
 int clampi(int x, int lo, int up);
 
 int between(int x, int min, int max);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
