@@ -20,10 +20,19 @@
 #ifndef _fbuffer_
 #define _fbuffer_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "callback.h"
 
 int initFBuffer(int width, int height, RenderTarget * context);
 
 int initFBufferCube(int width, int height, RenderTarget context[6]);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

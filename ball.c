@@ -24,7 +24,7 @@
 #include "callback.h"
 #include "objects.h"
 #include "shader.h"
-#include "fbuffer.h"
+#include "fbuffer.hpp"
 #include "vector.h"
 #include "features.h"
 #include "keyboard.h"
