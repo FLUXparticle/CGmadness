@@ -20,7 +20,7 @@
 #ifndef _game_h_
 #define _game_h_
 
-#include "vector.h"
+#include "vector.hpp"
 
 void initGame(void);
 void resumeGame(void);

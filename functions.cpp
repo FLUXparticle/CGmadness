@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,33 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_h_
-#define _types_h_
+#include "functions.hpp"
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include <math.h>
 
-#define PI 3.14159265358979323846
+float sqr(float x)
+{
+	return x * x;
+}
 
-#ifndef NULL
-#define NULL ((void*) 0)
-#endif
+float min(float a, float b)
+{
+	return (a < b) ? a : b;
+}
 
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
+int mini(int a, int b)
+{
+	return (a < b) ? a : b;
+}
 
-#define FOV 60.0f
+float max(float a, float b)
+{
+	return (a > b) ? a : b;
+}
 
-#define MATRIX_SIZE 4
+int maxi(int a, int b)
+{
+	return (a > b) ? a : b;
+}
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+float clamp(float x, float lo, float up)
+{
+	return min(up, max(lo, x));
+}
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+int clampi(int x, int lo, int up)
+{
+	return mini(up, maxi(lo, x));
+}
 
-#endif
+int between(int x, int min, int max)
+{
+	return x >= min && x <= max;
+}

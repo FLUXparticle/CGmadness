@@ -22,7 +22,7 @@
 
 #include "gui.h"
 
-#include "vector.h"
+#include "vector.hpp"
 #include "mouse.h"
 
 void initGameMenu(void);

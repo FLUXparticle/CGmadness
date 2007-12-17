@@ -20,7 +20,7 @@
 #ifndef _camera_h_
 #define _camera_h_
 
-#include "vector.h"
+#include "vector.hpp"
 
 extern Vector3 sgCamera;
 extern Vector3 sgLookat;

@@ -25,7 +25,7 @@
 #include "objects.h"
 #include "shader.h"
 #include "fbuffer.hpp"
-#include "vector.h"
+#include "vector.hpp"
 #include "features.h"
 #include "keyboard.h"
 #include "texture.h"
@@ -33,7 +33,7 @@
 #include "lightmap.h"
 #include "camera.h"
 
-#include "functions.h"
+#include "functions.hpp"
 
 #include "debug.h"
 

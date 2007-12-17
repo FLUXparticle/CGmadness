@@ -20,8 +20,8 @@
 #include "skyplane.h"
 
 #include "features.h"
-#include "functions.h"
-#include "vector.h"
+#include "functions.hpp"
+#include "vector.hpp"
 #include "color.h"
 
 #include "debug.h"

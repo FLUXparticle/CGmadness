@@ -22,7 +22,7 @@
 
 #include "atlas.h"
 
-#include "vector.h"
+#include "vector.hpp"
 
 float approximation(const Vector3 position, const Vector3 normal);
 

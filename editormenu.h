@@ -20,7 +20,7 @@
 #ifndef _editormenu_h_
 #define _editormenu_h_
 
-#include "vector.h"
+#include "vector.hpp"
 
 void initEditorMenu(void);
 

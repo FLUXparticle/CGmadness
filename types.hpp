@@ -6,46 +6,53 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _quaternion_h_
-#define _quaternion_h_
+#ifndef _types_hpp_
+#define _types_hpp_
 
-#include "vector.h"
-
-typedef struct
+#ifdef __cplusplus
+extern "C"
 {
-	float s;
-	Vector3 v;
-} Quaternion;
+#endif
 
-float lenQuaternion(Quaternion q);
+/*
+ * namen conventions for variables:
+ * type Object            o
+ * global                 g
+ * globale Object         go
+ * super global           sg
+ * super globale Objecte  sgo
+ */
 
-Quaternion normQuaternion(Quaternion q);
+#define PI 3.14159265358979323846
 
-Quaternion scaleQuaternion(float s, Quaternion a);
+#ifndef NULL
+#define NULL ((void*) 0)
+#endif
 
-Quaternion addQuaternion(Quaternion a, Quaternion b);
+#define LENGTH(x) (sizeof(x) / sizeof(*x))
 
-Quaternion subQuaternion(Quaternion a, Quaternion b);
+#define FOV 60.0f
 
-float dotQuaternion(Quaternion a, Quaternion b);
+#define MATRIX_SIZE 4
 
-Quaternion mulQuaternion(Quaternion a, Quaternion b);
+typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
 
-Quaternion mkQuaternion(float alpha, Vector3 v);
+typedef void (*funcUpdate) (float interval);
+typedef void (*funcDraw) (void);
 
-Quaternion interpolate(float t, Quaternion a, Quaternion b);
-
-void quaternionTransform(Quaternion a);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

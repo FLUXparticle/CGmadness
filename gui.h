@@ -20,9 +20,9 @@
 #ifndef _gui_h_
 #define _gui_h_
 
-#include "vector.h"
+#include "vector.hpp"
 #include "mouse.h"
-#include "types.h"
+#include "types.hpp"
 
 typedef void (*funcClick) (void);
 

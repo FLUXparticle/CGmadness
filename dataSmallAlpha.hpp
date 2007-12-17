@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "types.h"
+#include "types.hpp"
 
 #include <GL/gl.h>
 

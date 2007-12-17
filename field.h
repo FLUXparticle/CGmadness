@@ -22,7 +22,7 @@
 
 #include "color.h"
 
-#include "vector.h"
+#include "vector.hpp"
 
 extern Vector3 *sgVertices;
 extern Vector3 *sgNormals;

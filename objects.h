@@ -20,7 +20,7 @@
 #ifndef _objects_h_
 #define _objects_h_
 
-#include "vector.h"
+#include "vector.hpp"
 
 void initObjects(void);
 

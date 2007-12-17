@@ -21,7 +21,7 @@
 
 #include "level.h"
 
-#include "functions.h"
+#include "functions.hpp"
 
 #include <math.h>
 

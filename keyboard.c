@@ -18,7 +18,7 @@
  */
 
 #include "keyboard.h"
-#include "types.h"
+#include "types.hpp"
 
 #include <GL/glut.h>
 

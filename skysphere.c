@@ -21,8 +21,8 @@
 
 #include "environment.h"
 
-#include "vector.h"
-#include "types.h"
+#include "vector.hpp"
+#include "types.hpp"
 
 #include <stdio.h>
 

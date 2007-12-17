@@ -23,7 +23,7 @@
 #include "atlas.h"
 #include "crc32.hpp"
 
-#include "functions.h"
+#include "functions.hpp"
 #include "debug.h"
 
 #include <GL/gl.h>

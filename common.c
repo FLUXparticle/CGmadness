@@ -27,7 +27,7 @@
 
 #include "progress.h"
 
-#include "functions.h"
+#include "functions.hpp"
 
 #include "debug.h"
 

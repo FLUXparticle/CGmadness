@@ -17,17 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "quaternion.h"
+#include "quaternion.hpp"
 
-#include "functions.h"
+#include "functions.hpp"
 
 #include <GL/gl.h>
 
 #include <math.h>
-
-/*
- * Dieses Modul führt Vektor rechenoberationen aus. Die einzelnen Funktionen sind selbst erklärend.
- */
 
 float lenQuaternion(Quaternion q)
 {

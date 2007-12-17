@@ -24,7 +24,7 @@
 #include "texture.h"
 #include "keyboard.h"
 
-#include "functions.h"
+#include "functions.hpp"
 #include "debug.h"
 
 #include <GL/glut.h>

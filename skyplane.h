@@ -20,7 +20,7 @@
 #ifndef _skyplane_h_
 #define _skyplane_h_
 
-#include "types.h"
+#include "types.hpp"
 #include "texture.h"
 
 #include <GL/glew.h>

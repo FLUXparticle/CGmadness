@@ -25,10 +25,10 @@
 #include "ball.h"
 #include "features.h"
 
-#include "vector.h"
-#include "functions.h"
+#include "vector.hpp"
+#include "functions.hpp"
 
-#include "types.h"
+#include "types.hpp"
 #include "debug.h"
 
 #include <GL/glew.h>

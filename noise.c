@@ -21,7 +21,7 @@
 
 #include "texture.h"
 
-#include "vector.h"
+#include "vector.hpp"
 
 #include "debug.h"
 

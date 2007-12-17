@@ -20,7 +20,7 @@
 #ifndef _ball_h_
 #define _ball_h_
 
-#include "quaternion.h"
+#include "quaternion.hpp"
 
 #define MAX_BALL_LAYOUTS 5
 

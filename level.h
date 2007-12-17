@@ -20,7 +20,7 @@
 #ifndef _level_h_
 #define _level_h_
 
-#include "vector.h"
+#include "vector.hpp"
 
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10

@@ -22,8 +22,8 @@
 
 #include "mouse.h"
 
-#include "vector.h"
-#include "types.h"
+#include "vector.hpp"
+#include "types.hpp"
 
 typedef void (*funcDrawHUD) (float width, float height);
 

@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "vector.h"
+#include "vector.hpp"
 
-#include "functions.h"
+#include "functions.hpp"
 
 #include <math.h>
 

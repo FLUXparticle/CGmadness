@@ -21,8 +21,8 @@
 
 #include "keyboard.h"
 
-#include "vector.h"
-#include "types.h"
+#include "vector.hpp"
+#include "types.hpp"
 #include "debug.h"
 
 #include <GL/gl.h>

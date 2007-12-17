@@ -32,9 +32,9 @@
 #include "atlas.h"
 #include "common.h"
 
-#include "functions.h"
+#include "functions.hpp"
 
-#include "types.h"
+#include "types.hpp"
 #include "debug.h"
 
 #include <GL/glew.h>

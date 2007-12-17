@@ -20,7 +20,7 @@
 #ifndef _environment_h_
 #define _environment_h_
 
-#include "types.h"
+#include "types.hpp"
 
 #define ENVIRONMENT_SIZE 400.0f
 

@@ -21,7 +21,7 @@
 #define _skyspere_h_
 
 #include "shader.h"
-#include "types.h"
+#include "types.hpp"
 #include <math.h>
 #include <GL/glut.h>
 
