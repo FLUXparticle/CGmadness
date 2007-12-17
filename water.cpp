@@ -20,7 +20,7 @@
 #include "water.hpp"
 
 #include "texture.hpp"
-#include "environment.h"
+#include "environment.hpp"
 
 #include <GL/glew.h>
 

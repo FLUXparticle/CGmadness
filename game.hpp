@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,35 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _game_hpp_
+#define _game_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "vector.hpp"
 
-#define PI 3.14159265358979323846
+void initGame(void);
+void resumeGame(void);
+void resetGame(void);
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+void startGame(void);
+void stopGame(void);
 
-#define FOV 60.0f
+void resetGameTime(void);
 
-#define MATRIX_SIZE 4
+void updateGame(float interval);
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+void drawGame(void);
+void drawGameBallReflection(void);
+void drawGameHUD(float widthWindow, float heightWindow);
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+extern int sgRenderPass;
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,38 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#include "progress.hpp"
 
-#ifdef __cplusplus
-extern "C"
+#include <stdio.h>
+#include <time.h>
+
+static float gCurProgress;
+static time_t gLastUpdate;
+
+void resetProgress(void)
 {
-#endif
-
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
-
-#define PI 3.14159265358979323846
-
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
-
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
-
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
-
-#ifdef __cplusplus
+	gCurProgress = 0.0f;
+	gLastUpdate = time(NULL);
 }
-#endif
 
-#endif
+void setProgress(float progress)
+{
+	time_t curTime = time(NULL);
+	if (curTime > gLastUpdate && progress > gCurProgress)
+	{
+		gCurProgress = progress;
+		gLastUpdate = curTime;
+
+		printf("%.1f%%\n", gCurProgress * 100.0f);
+	}
+
+}

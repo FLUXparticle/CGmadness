@@ -17,35 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _highscore_hpp_
+#define _highscore_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "gui.h"
 
-#define PI 3.14159265358979323846
+typedef Canvas HighScore;
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+extern int sgLastPlayerIndex;
+extern const char *sgCurLevelname;
 
-#define FOV 60.0f
+void initHighScore(HighScore * highScore, float z);
 
-#define MATRIX_SIZE 4
+void drawPanel(float width, float height);
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
-
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+void acceptHighScoreName(void);
 
 #ifdef __cplusplus
 }

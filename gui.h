@@ -21,7 +21,7 @@
 #define _gui_h_
 
 #include "vector.hpp"
-#include "mouse.h"
+#include "mouse.hpp"
 #include "types.hpp"
 
 typedef void (*funcClick) (void);

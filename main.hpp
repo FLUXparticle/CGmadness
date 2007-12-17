@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,35 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _main_hpp_
+#define _main_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "stringlist.h"
 
-#define PI 3.14159265358979323846
+typedef enum
+{
+	STATE_MAIN,
+	STATE_GAME,
+	STATE_EDITOR
+} MainState;
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+extern StringList sgLevels;
 
-#define FOV 60.0f
+void initMain(void);
 
-#define MATRIX_SIZE 4
+void setMainState(MainState newState);
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+void updateMain(float interval);
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+void drawMain(void);
+void drawMainHUD(float width, float height);
 
 #ifdef __cplusplus
 }

@@ -19,7 +19,7 @@
 
 #include "skyplane.hpp"
 
-#include "features.h"
+#include "features.hpp"
 #include "functions.hpp"
 #include "vector.hpp"
 #include "color.hpp"

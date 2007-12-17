@@ -17,35 +17,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _callback_hpp_
+#define _callback_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "mouse.hpp"
 
-#define PI 3.14159265358979323846
+#include "vector.hpp"
+#include "types.hpp"
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+typedef void (*funcDrawHUD) (float width, float height);
 
-#define FOV 60.0f
+typedef void (*funcDoMouseEvent) (const Vector3 * position,
+																	const Vector3 * direction, MouseEvent event);
 
-#define MATRIX_SIZE 4
+typedef struct
+{
+	Matrix projection;
+	Matrix view;
+} Viewport;
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+typedef struct
+{
+	int width;
+	int height;
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+	int framebuffer;
+	Viewport *viewport;
+} RenderTarget;
+
+extern Viewport sgWindowViewport;
+
+void setPreDisplayFunc(funcDraw preDisplay);
+
+void centerMouse(int *x, int *y);
+
+void startDisplay(void);
+
+void startTimer(void);
+void setUpdateFrequency(int callsPerSecond);
+
+void mouseEvent(int x, int y, MouseEvent event);
 
 #ifdef __cplusplus
 }

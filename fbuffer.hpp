@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "callback.h"
+#include "callback.hpp"
 
 int initFBuffer(int width, int height, RenderTarget * context);
 

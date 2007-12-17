@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ * Copyright (C) 2007  Sven Reinck
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -15,37 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _menumanager_hpp_
+#define _menumanager_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+#include "gui.h"
 
-#define PI 3.14159265358979323846
+typedef void (*funcCallback) (void);
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+void initMenuManager(void);
 
-#define FOV 60.0f
+const Screen *getCurScreen(void);
 
-#define MATRIX_SIZE 4
+void updateMenuManager(float interval);
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+void eventMenuManager(const Vector3 * position, const Vector3 * direction,
+											MouseEvent event);
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+void drawMenuManager(void);
+
+void pushWaitScreen(funcCallback callback);
+
+void pushScreen(Screen * menu);
+void popScreen(void);
 
 #ifdef __cplusplus
 }

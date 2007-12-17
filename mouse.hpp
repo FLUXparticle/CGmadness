@@ -17,35 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef _mouse_hpp_
+#define _mouse_hpp_
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/*
- * namen conventions for variables:
- * type Object            o
- * global                 g
- * globale Object         go
- * super global           sg
- * super globale Objecte  sgo
- */
+typedef enum
+{
+	MOUSE_MOTION,
+	MOUSE_CLICK
+} MouseEvent;
 
-#define PI 3.14159265358979323846
+typedef void (*funcDrag) (int dx, int dy);
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+void setDragFunc(funcDrag drag);
 
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
-
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
+void startMouse(void);
 
 #ifdef __cplusplus
 }

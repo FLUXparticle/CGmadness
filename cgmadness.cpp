@@ -22,16 +22,16 @@ extern "C"
 {
 #endif
 
-#include "callback.h"
+#include "callback.hpp"
 
-#include "main.h"
-#include "level.h"
-#include "game.h"
+#include "main.hpp"
+#include "level.hpp"
+#include "game.hpp"
 
 #include "keyboard.hpp"
-#include "mouse.h"
+#include "mouse.hpp"
 
-#include "features.h"
+#include "features.hpp"
 
 #ifdef __cplusplus
 }

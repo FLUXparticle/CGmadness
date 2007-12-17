@@ -22,7 +22,7 @@ extern "C"
 {
 #endif
 
-#include "level.h"
+#include "level.hpp"
 
 #ifdef __cplusplus
 }

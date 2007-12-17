@@ -19,7 +19,7 @@
 
 #include "skysphere.hpp"
 
-#include "environment.h"
+#include "environment.hpp"
 
 #include "vector.hpp"
 #include "types.hpp"
