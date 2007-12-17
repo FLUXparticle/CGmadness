@@ -19,7 +19,7 @@
 
 #include "noise.h"
 
-#include "texture.h"
+#include "texture.hpp"
 
 #include "vector.hpp"
 

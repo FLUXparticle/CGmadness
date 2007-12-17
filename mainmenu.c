@@ -23,7 +23,7 @@
 #include "main.h"
 #include "field.h"
 #include "level.h"
-#include "texture.h"
+#include "texture.hpp"
 #include "environment.h"
 #include "editor.h"
 #include "common.h"

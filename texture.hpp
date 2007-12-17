@@ -17,19 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _skyplane_h_
-#define _skyplane_h_
+#ifndef _texture_hpp_
+#define _texture_hpp_
 
-#include "types.hpp"
-#include "texture.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-#include <GL/glew.h>
-#include <GL/glut.h>
+unsigned int genTexture(void);
+int loadTexture(const char *filename, int mipmapping);
 
-#include <stdio.h>
-#include <stdlib.h>
-
-void initSkyplane(void);
-void drawSkyplane(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

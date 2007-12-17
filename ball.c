@@ -28,7 +28,7 @@
 #include "vector.hpp"
 #include "features.h"
 #include "keyboard.h"
-#include "texture.h"
+#include "texture.hpp"
 #include "field.h"
 #include "lightmap.h"
 #include "camera.h"

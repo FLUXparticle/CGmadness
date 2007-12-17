@@ -20,7 +20,7 @@
 #ifndef _field_h_
 #define _field_h_
 
-#include "color.h"
+#include "color.hpp"
 
 #include "vector.hpp"
 

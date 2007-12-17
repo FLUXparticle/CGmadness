@@ -23,7 +23,7 @@
 #include "idle.h"
 #include "keyboard.h"
 #include "callback.h"
-#include "texture.h"
+#include "texture.hpp"
 #include "camera.h"
 #include "objects.h"
 

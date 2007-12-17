@@ -25,7 +25,7 @@
 
 #include "text.hpp"
 #include "objects.h"
-#include "texture.h"
+#include "texture.hpp"
 #include "keyboard.h"
 #include "gui.h"
 

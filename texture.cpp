@@ -17,15 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "texture.h"
-
-#include "debug.h"
+#include "texture.hpp"
 
 #include <GL/glew.h>
 #include <GL/glu.h>
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #define LINEAR_FILTER 1
 
@@ -149,7 +146,7 @@ int loadTGA(FILE * file, Image * image, char **error)
 	pixels = image->width * image->height;
 	size = pixels * image->components;
 
-	MALLOC(image->data, size);
+	image->data = new GLubyte[size];
 
 	if (!image->data)
 	{
@@ -273,7 +270,7 @@ int loadTexture(const char *filename, int mipmapping)
 								 0, image.format, GL_UNSIGNED_BYTE, image.data);
 	}
 
-	FREE(image.data);
+	delete[] image.data;
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

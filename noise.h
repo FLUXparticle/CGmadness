@@ -22,7 +22,7 @@
 
 #include "atlas.h"
 
-#include "color.h"
+#include "color.hpp"
 
 void initNoise(void);
 void genNoiseTexture(SubAtlas * subAtlas, Vector3 origin, Vector3 vx,

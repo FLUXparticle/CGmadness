@@ -28,7 +28,7 @@
 #include "callback.h"
 #include "camera.h"
 #include "keyboard.h"
-#include "texture.h"
+#include "texture.hpp"
 #include "atlas.h"
 #include "common.h"
 

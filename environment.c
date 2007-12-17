@@ -20,9 +20,9 @@
 #include "environment.h"
 
 #include "features.h"
-#include "skysphere.h"
-#include "skyplane.h"
-#include "water.h"
+#include "skysphere.hpp"
+#include "skyplane.hpp"
+#include "water.hpp"
 
 #include "field.h"
 #include "ball.h"

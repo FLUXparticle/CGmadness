@@ -21,7 +21,7 @@
 #define _atlas_h_
 
 #include "vector.hpp"
-#include "color.h"
+#include "color.hpp"
 
 #define LIGHT_MAP_SIZE 8
 #define COLOR_MAP_SIZE 32

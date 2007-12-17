@@ -34,7 +34,7 @@
 #include "camera.h"
 #include "callback.h"
 #include "text.hpp"
-#include "texture.h"
+#include "texture.hpp"
 #include "environment.h"
 #include "noise.h"
 #include "atlas.h"
@@ -42,7 +42,7 @@
 
 #include "stringlist.h"
 
-#include "color.h"
+#include "color.hpp"
 
 #include "functions.hpp"
 
