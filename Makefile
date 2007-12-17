@@ -15,22 +15,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+BUILD := build
+DEPS  := .deps
+
 CC := gcc
-CFLAGS := -O3
+CFLAGS := -Wall -ansi -pedantic -O3
+
+CXX := g++
+CXXFLAGS := $(CFLAGS)
+
+LD := g++
 LDFLAGS :=
+LIBS := -lm
+
 PERL := perl
 
-BUILD := build
-
-CFLAGS += -ansi -pedantic -Wall
-
-LIBS := -lm
 PROJECT := cgmadness
 SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
+	CXXFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
 	BUILD = mingw
@@ -40,8 +46,10 @@ else
 	EXECSUFFIX :=
 endif
 
-SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
+SRC_C   :=  $(wildcard *.c)
+SRC_CPP :=  $(wildcard *.cpp)
+SRC     :=  $(SRC_C) $(SRC_CPP)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  mains.pl modules.pl indent.pro
@@ -49,8 +57,7 @@ DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))
-OBJS    :=  $(SRC:%.c=$(BUILD)/%.o)
-DEPS    :=  $(SRC:%=.deps/%.d) $(MAINS:%.c=.deps/%.o.d)
+DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%.c=$(DEPS)/%.o.d)
 CLEAN   :=  $(OBJS) $(EXEC)
 
 # main part
@@ -65,13 +72,17 @@ profile:
 debug:
 	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(LDFLAGS)"
 
-%$(EXECSUFFIX):
+%$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
-	@$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
+	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c | $(BUILD)/.
 	@echo "  CC $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
+
+$(BUILD)/%.o: %.cpp | $(BUILD)/.
+	@echo "  CXX $@"
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
 TAR := $(PROJECT).tar.bz2
@@ -113,15 +124,21 @@ clean:
 	@rm -f $(CLEAN)
 
 # dependancies
-include $(DEPS)
+include $(DEP)
 
-.deps/%.o.d: %.c modules.pl | .deps/.
+.DELETE_ON_ERROR:
+
+$(DEPS)/%.o.d: %.c modules.pl | $(DEPS)/.
 	@echo "  MODULES $@"
-	@$(PERL) modules.pl $* > $@
+	@$(PERL) modules.pl $< > $@
 
-.deps/%.c.d: %.c | .deps/.
+$(DEPS)/%.c.d: %.c | $(DEPS)/.
 	@echo "  DEP $@"
-	@$(CC) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CFLAGS) $< > $@ || rm $@
+	@$(CC) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
+
+$(DEPS)/%.cpp.d: %.cpp | $(DEPS)/.
+	@echo "  DEP $@"
+	@$(CXX) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
 
 # create necessary directories
 .PRECIOUS: %/.
