@@ -17,6 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "callback.h"
 
 #include "main.h"
@@ -29,6 +34,10 @@
 #include "tools.h"
 
 #include "features.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #define GLUT_DISABLE_ATEXIT_HACK
 

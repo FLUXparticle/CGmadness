@@ -30,7 +30,7 @@ LIBS := -lm
 
 PERL := perl
 
-PROJECT := cgmadness
+PROJECT := $(basename $(shell pwd))
 SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
@@ -56,9 +56,9 @@ DEV     :=  mains.pl modules.pl indent.pro
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
-EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))
-DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%.c=$(DEPS)/%.o.d)
-CLEAN   :=  $(OBJS) $(EXEC)
+EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
+DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
+CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
 .PHONY: all
@@ -96,14 +96,14 @@ src: $(SRC_TAR)
 
 $(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
+	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
 
 .PHONY: tar
 tar: $(TAR)
 
 $(TAR): $(EXEC) $(DATA) $(DOC)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
+	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
 
 .PHONY: zip
 zip: $(ZIP)
@@ -121,7 +121,7 @@ doc:
 .PHONY: clean
 clean:
 	@echo "  CLEAN"
-	@rm -f $(CLEAN)
+	@rm -rf $(CLEAN)
 
 # dependancies
 include $(DEP)
@@ -129,6 +129,10 @@ include $(DEP)
 .DELETE_ON_ERROR:
 
 $(DEPS)/%.o.d: %.c modules.pl | $(DEPS)/.
+	@echo "  MODULES $@"
+	@$(PERL) modules.pl $< > $@
+
+$(DEPS)/%.o.d: %.cpp modules.pl | $(DEPS)/.
 	@echo "  MODULES $@"
 	@$(PERL) modules.pl $< > $@
 
