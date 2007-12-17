@@ -19,7 +19,7 @@
 
 #include "gui.h"
 
-#include "text.h"
+#include "text.hpp"
 #include "objects.h"
 #include "texture.h"
 #include "keyboard.h"

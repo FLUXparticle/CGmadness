@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,21 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "varray.h"
+#ifndef _varray_hpp_
+#define _varray_hpp_
 
-#include <GL/gl.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 void drawTrianglesVerticesNormals(int count, const float *vertices,
-																	const float *normals)
-{
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+																	const float *normals);
 
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
-	glNormalPointer(GL_FLOAT, 0, normals);
-
-	glDrawArrays(GL_TRIANGLES, 0, count);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+#ifdef __cplusplus
 }
+#endif
+
+#endif

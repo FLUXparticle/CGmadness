@@ -31,7 +31,7 @@
 
 #include "menumanager.h"
 #include "gui.h"
-#include "text.h"
+#include "text.hpp"
 
 #include "keyboard.h"
 

@@ -17,15 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataBigAlpha_h_
-#define _dataBigAlpha_h_
+#ifndef _text_hpp_
+#define _text_hpp_
 
-#include "types.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-#include <GL/gl.h>
+void drawBitmapText(const char *str);
 
-extern float widthBigAlpha[];
+float widthStrokeText(const char *str);
+void drawStrokeThinText(const char *str);
+void drawStrokeThickText(const char *str);
 
-extern funcDraw drawBigAlpha[];
+float widthFont3DText(const char *str);
+void drawFont3DText(const char *str);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

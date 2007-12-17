@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataSmallAlpha_h_
-#define _dataSmallAlpha_h_
+#ifndef _dataSmallAlpha_hpp_
+#define _dataSmallAlpha_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include "types.h"
 
@@ -27,5 +32,9 @@
 extern float widthSmallAlpha[];
 
 extern funcDraw drawSmallAlpha[];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

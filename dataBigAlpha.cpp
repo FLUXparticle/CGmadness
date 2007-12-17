@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataBigAlpha.h"
+#include "dataBigAlpha.hpp"
 
-#include "varray.h"
+#include "varray.hpp"
 
 float verticesBigAlpha0[792 * 3] = {
 	5.851042, 1.055729, 1.000000, 5.904167, 1.239583, 1.000000, 5.851042,

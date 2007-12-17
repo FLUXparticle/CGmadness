@@ -17,14 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "text.h"
+#include "text.hpp"
 
-#include "dataBigAlpha.h"
-#include "dataSmallAlpha.h"
-#include "dataDigits.h"
-
-
-#include "debug.h"
+#include "dataBigAlpha.hpp"
+#include "dataSmallAlpha.hpp"
+#include "dataDigits.hpp"
 
 #include <GL/glut.h>
 

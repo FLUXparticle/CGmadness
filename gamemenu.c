@@ -20,7 +20,7 @@
 #include "gamemenu.h"
 
 #include "ball.h"
-#include "text.h"
+#include "text.hpp"
 #include "level.h"
 #include "game.h"
 #include "features.h"

@@ -22,7 +22,7 @@
 #include "main.h"
 #include "menumanager.h"
 
-#include "text.h"
+#include "text.hpp"
 #include "camera.h"
 
 #include "debug.h"

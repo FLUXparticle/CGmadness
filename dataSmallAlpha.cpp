@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataSmallAlpha.h"
+#include "dataSmallAlpha.hpp"
 
-#include "varray.h"
+#include "varray.hpp"
 
 float verticesSmallAlpha0[1176 * 3] = {
 	0.769792, 2.531771, 1.000000, 0.979167, 3.043750, 1.000000, 0.769792,

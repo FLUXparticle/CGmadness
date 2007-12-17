@@ -23,7 +23,7 @@
 #include "objects.h"
 
 #include "keyboard.h"
-#include "text.h"
+#include "text.hpp"
 
 #include <GL/gl.h>
 

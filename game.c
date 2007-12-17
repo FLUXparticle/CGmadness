@@ -33,7 +33,7 @@
 #include "keyboard.h"
 #include "camera.h"
 #include "callback.h"
-#include "text.h"
+#include "text.hpp"
 #include "texture.h"
 #include "environment.h"
 #include "noise.h"

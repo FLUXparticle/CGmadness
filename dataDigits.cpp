@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataDigits.h"
+#include "dataDigits.hpp"
 
-#include "varray.h"
+#include "varray.hpp"
 
 float verticesDigits0[912 * 3] = {
 	5.830729, 10.548958, 1.000000, 6.556250, 10.295833, 1.000000, 5.830729,

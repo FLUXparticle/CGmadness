@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataDigits_h_
-#define _dataDigits_h_
+#ifndef _dataDigits_hpp_
+#define _dataDigits_hpp_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include "types.h"
 
@@ -27,5 +32,9 @@
 extern float widthDigits[];
 
 extern funcDraw drawDigits[];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
