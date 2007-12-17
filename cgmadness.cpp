@@ -28,7 +28,7 @@ extern "C"
 #include "level.h"
 #include "game.h"
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "mouse.h"
 
 #include "features.h"

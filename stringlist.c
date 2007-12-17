@@ -19,7 +19,7 @@
 
 #include "stringlist.h"
 
-#include "files.h"
+#include "files.hpp"
 
 #include "debug.h"
 

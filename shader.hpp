@@ -17,65 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "files.h"
+#ifndef _shader_hpp_
+#define _shader_hpp_
 
-#include "debug.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-char *textFileRead(const char *fn)
+#ifdef __cplusplus
+extern "C"
 {
-	FILE *fp;
-	char *content = NULL;
+#endif
 
-	int count = 0;
+#include <GL/glew.h>
 
-	if (fn != NULL)
-	{
-		fp = fopen(fn, "rt");
+GLhandleARB makeShader(const char *vertexShaderFilename,
+											 const char *fragmentShaderFilename);
 
-		if (fp != NULL)
-		{
-			fseek(fp, 0, SEEK_END);
-			count = ftell(fp);
-			rewind(fp);
-
-			if (count > 0)
-			{
-				MALLOC(content, sizeof(char) * (count + 1));
-				count = fread(content, sizeof(char), count, fp);
-				content[count] = '\0';
-			}
-
-			fclose(fp);
-		}
-	}
-	return content;
+#ifdef __cplusplus
 }
+#endif
 
-int textFileWrite(const char *fn, const char *s)
-{
-	FILE *fp;
-	int status = 0;
-
-	if (fn != NULL)
-	{
-		fp = fopen(fn, "w");
-
-		if (fp != NULL)
-		{
-			if (fwrite(s, sizeof(char), strlen(s), fp) == strlen(s))
-			{
-				status = 1;
-			}
-
-			if (fclose(fp) != 0)
-			{
-				return 0;
-			}
-		}
-	}
-	return status;
-}
+#endif

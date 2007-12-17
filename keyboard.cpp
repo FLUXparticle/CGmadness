@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "types.hpp"
 
 #include <GL/glut.h>

@@ -20,9 +20,9 @@
 #include "highscore.h"
 
 #include "level.h"
-#include "objects.h"
+#include "objects.hpp"
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "text.hpp"
 
 #include <GL/gl.h>

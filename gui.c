@@ -20,9 +20,9 @@
 #include "gui.h"
 
 #include "text.hpp"
-#include "objects.h"
+#include "objects.hpp"
 #include "texture.hpp"
-#include "keyboard.h"
+#include "keyboard.hpp"
 
 #include "functions.hpp"
 #include "debug.h"

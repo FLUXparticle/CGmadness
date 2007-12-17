@@ -24,9 +24,9 @@
 #include "menumanager.h"
 
 #include "text.hpp"
-#include "objects.h"
+#include "objects.hpp"
 #include "texture.hpp"
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "gui.h"
 
 #include <GL/glut.h>

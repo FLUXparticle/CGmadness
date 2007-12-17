@@ -24,10 +24,10 @@
 #include "level.h"
 #include "game.h"
 #include "features.h"
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "highscore.h"
 #include "main.h"
-#include "objects.h"
+#include "objects.hpp"
 
 #include "menumanager.h"
 #include "gui.h"

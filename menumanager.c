@@ -21,11 +21,11 @@
 #include "menumanager.h"
 
 #include "idle.hpp"
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "callback.h"
 #include "texture.hpp"
 #include "camera.h"
-#include "objects.h"
+#include "objects.hpp"
 
 #include <GL/glut.h>
 

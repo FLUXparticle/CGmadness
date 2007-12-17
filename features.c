@@ -19,7 +19,7 @@
 
 #include "features.h"
 
-#include "shader.h"
+#include "shader.hpp"
 
 #include <stdio.h>
 #include <string.h>

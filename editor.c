@@ -27,7 +27,7 @@
 #include "field.h"
 #include "callback.h"
 #include "camera.h"
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "texture.hpp"
 #include "atlas.hpp"
 #include "common.h"

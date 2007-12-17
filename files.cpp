@@ -17,20 +17,62 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _objects_h_
-#define _objects_h_
+#include "files.hpp"
 
-#include "vector.hpp"
+#include <stdio.h>
+#include <string.h>
 
-void initObjects(void);
+char *textFileRead(const char *fn)
+{
+	FILE *fp;
+	char *content = NULL;
 
-void drawSquare(void);
+	int count = 0;
 
-void drawBallObject(int shader);
+	if (fn != NULL)
+	{
+		fp = fopen(fn, "rt");
 
-void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
-									 Vector3 endSpeed);
-int updateExplosion(float interval, Vector3 * speed, Vector3 * pos);
-void drawExplosion(int shader);
+		if (fp != NULL)
+		{
+			fseek(fp, 0, SEEK_END);
+			count = ftell(fp);
+			rewind(fp);
 
-#endif
+			if (count > 0)
+			{
+				content = new char[count + 1];
+				count = fread(content, sizeof(char), count, fp);
+				content[count] = '\0';
+			}
+
+			fclose(fp);
+		}
+	}
+	return content;
+}
+
+int textFileWrite(const char *fn, const char *s)
+{
+	FILE *fp;
+	int status = 0;
+
+	if (fn != NULL)
+	{
+		fp = fopen(fn, "w");
+
+		if (fp != NULL)
+		{
+			if (fwrite(s, sizeof(char), strlen(s), fp) == strlen(s))
+			{
+				status = 1;
+			}
+
+			if (fclose(fp) != 0)
+			{
+				return 0;
+			}
+		}
+	}
+	return status;
+}

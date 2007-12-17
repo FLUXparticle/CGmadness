@@ -33,7 +33,7 @@
 #include "gui.h"
 #include "text.hpp"
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 
 #include <GL/glut.h>
 

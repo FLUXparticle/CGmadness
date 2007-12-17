@@ -25,7 +25,7 @@ extern "C"
 {
 #endif
 
-#include "shader.h"
+#include "shader.hpp"
 #include "types.hpp"
 #include <math.h>
 #include <GL/glut.h>

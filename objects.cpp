@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.h"
+#include "objects.hpp"
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 
 #include "vector.hpp"
 #include "types.hpp"

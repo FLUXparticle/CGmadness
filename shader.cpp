@@ -17,11 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "shader.h"
+#include "shader.hpp"
 
-#include "files.h"
-
-#include "debug.h"
+#include "files.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,17 +31,18 @@ int printInfoLog(GLhandleARB obj, const char *text)
 {
 	int infologLength = 0;
 	int charsWritten = 0;
-	char *infoLog;
 
 	glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infologLength);
 
 	if (infologLength > 1)
 	{
-		MALLOC(infoLog, infologLength);
+		char *infoLog = new char[infologLength];
+		
 		glGetInfoLogARB(obj, infologLength, &charsWritten, infoLog);
 		printf("%s: %s\n", text, infoLog);
 		fflush(stdout);
-		FREE(infoLog);
+		
+		delete[] infoLog;
 
 		return 0;
 	}
@@ -84,8 +83,8 @@ GLhandleARB makeShader(const char *vertexShaderFilename,
 		glShaderSource(f, 1, &ff, NULL);
 	}
 
-	FREE(vs);
-	FREE(fs);
+	delete[] vs;
+	delete[] fs;
 
 	glCompileShader(v);
 	printInfoLog(v, vertexShaderFilename);

@@ -17,10 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _files_h_
-#define _files_h_
+#ifndef _objects_hpp_
+#define _objects_hpp_
 
-char *textFileRead(const char *fn);
-int textFileWrite(const char *fn, const char *s);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "vector.hpp"
+
+void initObjects(void);
+
+void drawSquare(void);
+
+void drawBallObject(int shader);
+
+void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
+									 Vector3 endSpeed);
+int updateExplosion(float interval, Vector3 * speed, Vector3 * pos);
+void drawExplosion(int shader);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

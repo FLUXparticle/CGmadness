@@ -40,7 +40,7 @@ extern "C"
 #define NULL ((void*) 0)
 #endif
 
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
+#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
 
 #define FOV 60.0f
 

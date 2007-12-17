@@ -24,8 +24,6 @@
 #include "vector.hpp"
 #include "color.hpp"
 
-#include "debug.h"
-
 #include <math.h>
 
 #define PLANET_RADIUS 2000.0f

@@ -17,12 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _shader_h_
-#define _shader_h_
+#ifndef _keyboard_hpp_
+#define _keyboard_hpp_
 
-#include <GL/glew.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-GLhandleARB makeShader(const char *vertexShaderFilename,
-											 const char *fragmentShaderFilename);
+#define KEY_ESC 27
+#define KEY_ENTER 13
+
+#define CURSOR_UP 0
+#define CURSOR_DOWN 1
+#define CURSOR_LEFT 2
+#define CURSOR_RIGHT 3
+
+int getModifiers(void);
+unsigned char getLastChar(void);
+
+int wasKeyPressed(unsigned char key);
+int isKeyPressed(unsigned char key);
+int isCursorPressed(int cursor);
+int wasCursorPressed(int cursor);
+int isFunctionPressed(int index);
+int wasFunctionPressed(int index);
+
+void startKeyboard(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -17,27 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _keyboard_h_
-#define _keyboard_h_
+#ifndef _files_hpp_
+#define _files_hpp_
 
-#define KEY_ESC 27
-#define KEY_ENTER 13
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-#define CURSOR_UP 0
-#define CURSOR_DOWN 1
-#define CURSOR_LEFT 2
-#define CURSOR_RIGHT 3
+char *textFileRead(const char *fn);
+int textFileWrite(const char *fn, const char *s);
 
-int getModifiers(void);
-unsigned char getLastChar(void);
-
-int wasKeyPressed(unsigned char key);
-int isKeyPressed(unsigned char key);
-int isCursorPressed(int cursor);
-int wasCursorPressed(int cursor);
-int isFunctionPressed(int index);
-int wasFunctionPressed(int index);
-
-void startKeyboard(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif
