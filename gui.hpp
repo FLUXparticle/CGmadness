@@ -126,7 +126,7 @@ void initCanvas(Canvas * canvas, float z, float width, float height,
 
 /* Label */
 
-void initLabel(Label * label, float x, float z, float size, int alignRight,
+void initLabel(Label * label, float x, float z, float size, bool alignRight,
 							 char *text);
 
 /* ProgressBar */

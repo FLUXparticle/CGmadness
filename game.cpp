@@ -28,7 +28,6 @@
 #include "field.hpp"
 #include "menumanager.hpp"
 #include "gamemenu.hpp"
-#include "files.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "camera.hpp"
@@ -37,7 +36,6 @@
 #include "texture.hpp"
 #include "environment.hpp"
 #include "noise.hpp"
-#include "atlas.hpp"
 #include "main.hpp"
 
 #include "stringlist.hpp"
@@ -57,8 +55,6 @@
 #include <math.h>
 
 #define FOG_DENSITY 0.003f
-
-int sgRenderPass = 8;
 
 static int gIsGameRunning;
 
@@ -95,7 +91,7 @@ void stopWatch(void)
 		newIndex--;
 	}
 
-	sgLevel.cntScoreCols = mini(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
+	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
 
 	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
 	{
@@ -123,21 +119,10 @@ void updateGame(float interval)
 	updateEnvironment(interval);
 	if (gIsGameRunning)
 	{
-		int i = 0;
-
 		if (wasKeyPressed(KEY_ESC))
 		{
 			pauseGame();
 			showGameMenu(1);
-		}
-
-		/* for some debug */
-		for (i = 0; i < 9; i++)
-		{
-			if (wasKeyPressed('1' + i))
-			{
-				sgRenderPass = i;
-			}
 		}
 
 		/* manually switch features */

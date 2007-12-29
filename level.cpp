@@ -155,7 +155,7 @@ void updatePlate(int x, int y)
 				int x2 = x + sgEdgeX[next];
 				int y2 = y + sgEdgeY[next];
 
-				int startHeight = mini(height3, height4);
+				int startHeight = min(height3, height4);
 
 				int minHeight;
 				int maxHeight;
@@ -185,7 +185,7 @@ void updatePlate(int x, int y)
 				for (bottom = startHeight; bottom < minHeight;)
 				{
 					int top =
-						mini(minHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
+						min(minHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
 
 					square = &face->squares[face->cntSquares++];
 
@@ -217,7 +217,7 @@ void updatePlate(int x, int y)
 				for (; bottom < maxHeight;)
 				{
 					int top =
-						mini(maxHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
+						min(maxHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
 
 					float t1 = (float) (bottom - minHeight) / (maxHeight - minHeight);
 					float t2 = (float) (top - minHeight) / (maxHeight - minHeight);
@@ -533,7 +533,7 @@ int loadHighscoreFromFile(void)
 	return result;
 }
 
-int loadLevelFromFile(const char *filename, int justLoad)
+int loadLevelFromFile(const char *filename, bool justLoad)
 {
 	FILE *file = fopen(filename, "rt");
 	int result = 1;

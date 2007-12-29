@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 
-int createFBuffer(int width, int height, unsigned int target,
+bool createFBuffer(int width, int height, unsigned int target,
 									unsigned int color_tex, RenderTarget * context)
 {
 	GLuint fb;
@@ -71,7 +71,7 @@ int createFBuffer(int width, int height, unsigned int target,
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		{
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-			return 0;
+			return false;
 		}
 	}
 
@@ -82,10 +82,10 @@ int createFBuffer(int width, int height, unsigned int target,
 	context->framebuffer = fb;
 	context->viewport = NULL;
 
-	return 1;
+	return true;
 }
 
-int initFBuffer(int width, int height, RenderTarget * context)
+unsigned int initFBuffer(int width, int height, RenderTarget * context)
 {
 	unsigned int color_tex;
 
@@ -111,7 +111,7 @@ int initFBuffer(int width, int height, RenderTarget * context)
 	}
 }
 
-int initFBufferCube(int width, int height, RenderTarget context[6])
+unsigned int initFBufferCube(int width, int height, RenderTarget context[6])
 {
 	GLuint color_tex;
 	int i;

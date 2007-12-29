@@ -22,7 +22,7 @@
 #include <GL/glut.h>
 
 float sgIdleProgress;
-int sgIdleWorking = 0;
+bool sgIdleWorking = 0;
 
 static int gIdleStep;
 static int gMaxIdleSteps;
@@ -48,7 +48,7 @@ void startIdle(int steps, funcIdle idle)
 	gIdle = idle;
 
 	sgIdleProgress = 0.0f;
-	sgIdleWorking = 1;
+	sgIdleWorking = true;
 
 	glutIdleFunc(doIdle);
 }
@@ -56,7 +56,7 @@ void startIdle(int steps, funcIdle idle)
 void stopIdle(void)
 {
 	sgIdleProgress = 1.0f;
-	sgIdleWorking = 0;
+	sgIdleWorking = false;
 
 	glutIdleFunc(NULL);
 }

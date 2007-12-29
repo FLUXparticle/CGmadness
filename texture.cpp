@@ -82,7 +82,7 @@ void nextPixel(TGAHeader * header, int *pos)
 	}
 }
 
-int loadTGA(FILE * file, Image * image, char **error)
+bool loadTGA(FILE * file, Image * image, char **error)
 {
 	TGAHeader header;
 	int compressed;
@@ -227,12 +227,12 @@ unsigned int genTexture(void)
 	return texID;
 }
 
-int loadTexture(const char *filename, int mipmapping)
+unsigned int loadTexture(const char *filename, bool mipmapping)
 {
 	GLuint id;
 	Image image;
 	FILE *file = fopen(filename, "rb");
-	int success = 0;
+	bool success = false;
 	char *error = NULL;
 
 	if (file)

@@ -20,8 +20,6 @@
 #ifndef _editormenu_hpp_
 #define _editormenu_hpp_
 
-#include "vector.hpp"
-
 void initEditorMenu(void);
 
 void showEditorScreen(int menu);

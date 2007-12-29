@@ -31,7 +31,7 @@ static float gWaterAnim;
 
 void initWater(void)
 {
-	gWaterTexture = loadTexture("data/water.tga", 1);
+	gWaterTexture = loadTexture("data/water.tga", true);
 	gWaterAnim = 0.0f;
 }
 

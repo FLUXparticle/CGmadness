@@ -22,8 +22,8 @@
 
 #include "callback.hpp"
 
-int initFBuffer(int width, int height, RenderTarget * context);
+unsigned int initFBuffer(int width, int height, RenderTarget * context);
 
-int initFBufferCube(int width, int height, RenderTarget context[6]);
+unsigned int initFBufferCube(int width, int height, RenderTarget context[6]);
 
 #endif

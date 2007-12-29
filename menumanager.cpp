@@ -48,7 +48,7 @@ void initMenuManager(void)
 
 	if (gTexLogo == 0)
 	{
-		gTexLogo = loadTexture("data/logo.tga", 0);
+		gTexLogo = loadTexture("data/logo.tga", false);
 	}
 
 	/* wait menu */

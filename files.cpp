@@ -52,10 +52,10 @@ char *textFileRead(const char *fn)
 	return content;
 }
 
-int textFileWrite(const char *fn, const char *s)
+bool textFileWrite(const char *fn, const char *s)
 {
 	FILE *fp;
-	int status = 0;
+	int status = false;
 
 	if (fn != NULL)
 	{
@@ -65,14 +65,15 @@ int textFileWrite(const char *fn, const char *s)
 		{
 			if (fwrite(s, sizeof(char), strlen(s), fp) == strlen(s))
 			{
-				status = 1;
+				status = true;
 			}
 
 			if (fclose(fp) != 0)
 			{
-				return 0;
+				return false;
 			}
 		}
 	}
+	
 	return status;
 }

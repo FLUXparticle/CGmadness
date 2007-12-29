@@ -19,8 +19,6 @@
 
 #include "noise.hpp"
 
-#include "texture.hpp"
-
 #include "vector.hpp"
 
 #include <stdlib.h>

@@ -43,9 +43,9 @@ typedef struct
 } Ball;
 
 extern Ball sgoBall;
-extern int sgIsBallInPieces;
-extern int sgHasBallHitGoal;
-extern int sgIsMouseControl;
+extern bool sgIsBallInPieces;
+extern bool sgHasBallHitGoal;
+extern bool sgIsMouseControl;
 
 extern Vector3 sgForward;
 extern Vector3 sgRight;

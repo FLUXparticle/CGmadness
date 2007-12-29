@@ -37,6 +37,4 @@ void drawGame(void);
 void drawGameBallReflection(void);
 void drawGameHUD(float widthWindow, float heightWindow);
 
-extern int sgRenderPass;
-
 #endif

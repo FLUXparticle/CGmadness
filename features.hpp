@@ -29,17 +29,17 @@ void usageFeatures(void);
 
 void initFeatures(int argc, char *argv[]);
 
-int hasShader(void);
-int hasFramebuffer(void);
-int hasVertexbuffer(void);
-int hasTwoSideStencil(void);
-int hasBallShadowShader(void);
-int hasGolfballShader(void);
+bool hasShader(void);
+bool hasFramebuffer(void);
+bool hasVertexbuffer(void);
+bool hasTwoSideStencil(void);
+bool hasBallShadowShader(void);
+bool hasGolfballShader(void);
 
-void setBallShadow(int use);
-void setReflection(int use);
+void setBallShadow(bool use);
+void setReflection(bool use);
 
-int useBallShadow(void);
-int useReflection(void);
+bool useBallShadow(void);
+bool useReflection(void);
 
 #endif

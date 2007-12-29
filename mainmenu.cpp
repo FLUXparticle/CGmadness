@@ -71,9 +71,9 @@ static void loadLevel(int index)
 			if (sgLevel.borderTexture == 0)
 			{
 #if (NOISE_TEXTURE)
-				sgLevel.borderTexture = loadTexture("data/boarder.tga", 1);
+				sgLevel.borderTexture = loadTexture("data/boarder.tga", true);
 #else
-				sgLevel.borderTexture = loadTexture("data/plate.tga", 1);
+				sgLevel.borderTexture = loadTexture("data/plate.tga", true);
 #endif
 			}
 

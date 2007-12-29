@@ -50,11 +50,11 @@ int gFunctions[] = {
 	GLUT_KEY_F12
 };
 
-int gKeys[MAX_KEYS];
+bool gKeys[MAX_KEYS];
 
-int gCursorKeys[MAX_CURSORS];
+bool gCursorKeys[MAX_CURSORS];
 
-int gFunctionKeys[MAX_FUNCTION];
+bool gFunctionKeys[MAX_FUNCTION];
 
 int gModifiers = 0;
 
@@ -70,12 +70,12 @@ unsigned char getLastChar(void)
 	return gLastChar;
 }
 
-int isPressed(const int *key)
+bool isPressed(const bool *key)
 {
 	return *key == GLUT_DOWN;
 }
 
-int wasPressed(int *key)
+bool wasPressed(bool *key)
 {
 	if (isPressed(key))
 	{
@@ -86,34 +86,34 @@ int wasPressed(int *key)
 	return 0;
 }
 
-int isKeyPressed(unsigned char key)
+bool isKeyPressed(unsigned char key)
 {
 	return isPressed(&gKeys[key]);
 }
 
-int wasKeyPressed(unsigned char key)
+bool wasKeyPressed(unsigned char key)
 {
 	return wasPressed(&gKeys[key]);
 }
 
-int isCursorPressed(int cursor)
+bool isCursorPressed(int cursor)
 {
 	return cursor >= 0 && cursor < MAX_CURSORS && isPressed(&gCursorKeys[cursor]);
 }
 
-int wasCursorPressed(int cursor)
+bool wasCursorPressed(int cursor)
 {
 	return cursor >= 0 && cursor < MAX_CURSORS
 		&& wasPressed(&gCursorKeys[cursor]);
 }
 
-int isFunctionPressed(int index)
+bool isFunctionPressed(int index)
 {
 	return index >= 1 && index <= MAX_FUNCTION
 		&& isPressed(&gFunctionKeys[index - 1]);
 }
 
-int wasFunctionPressed(int index)
+bool wasFunctionPressed(int index)
 {
 	return index >= 1 && index <= MAX_FUNCTION
 		&& wasPressed(&gFunctionKeys[index - 1]);
@@ -133,7 +133,7 @@ void keyboardUp(unsigned char key, int x, int y)
 	gModifiers = glutGetModifiers();
 }
 
-int *getSpecialKeyPtr(int key)
+bool *getSpecialKeyPtr(int key)
 {
 	int i;
 	for (i = 0; i < MAX_CURSORS; i++)
@@ -157,7 +157,7 @@ int *getSpecialKeyPtr(int key)
 
 void specialKeyDown(int key, int x, int y)
 {
-	int *ptr = getSpecialKeyPtr(key);
+	bool *ptr = getSpecialKeyPtr(key);
 
 	if (ptr)
 	{
@@ -168,7 +168,7 @@ void specialKeyDown(int key, int x, int y)
 
 void specialKeyUp(int key, int x, int y)
 {
-	int *ptr = getSpecialKeyPtr(key);
+	bool *ptr = getSpecialKeyPtr(key);
 
 	if (ptr)
 	{
@@ -179,16 +179,15 @@ void specialKeyUp(int key, int x, int y)
 
 void startKeyboard(void)
 {
-	int i;
-	for (i = 0; i < MAX_KEYS; i++)
+	for (int i = 0; i < MAX_KEYS; i++)
 	{
 		gKeys[i] = GLUT_UP;
 	}
-	for (i = 0; i < MAX_CURSORS; i++)
+	for (int i = 0; i < MAX_CURSORS; i++)
 	{
 		gCursorKeys[i] = GLUT_UP;
 	}
-	for (i = 0; i < MAX_FUNCTION; i++)
+	for (int i = 0; i < MAX_FUNCTION; i++)
 	{
 		gFunctionKeys[i] = GLUT_UP;
 	}

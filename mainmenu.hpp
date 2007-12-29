@@ -21,8 +21,6 @@
 #ifndef _mainmenu_hpp_
 #define _mainmenu_hpp_
 
-#include "gui.hpp"
-
 void initMainMenu(void);
 
 void showMainMenu(void);

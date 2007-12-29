@@ -111,7 +111,7 @@ void destroyLevel(void);
 void newLevel(void);
 
 int loadHighscoreFromFile(void);
-int loadLevelFromFile(const char *filename, int justLoad);
+int loadLevelFromFile(const char *filename, bool justLoad);
 
 int saveHighscoreToFile(void);
 int saveLevelToFile(void);

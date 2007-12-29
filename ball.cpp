@@ -57,14 +57,14 @@
 #define SHOW_COLLISION_QUADS 0
 
 Ball sgoBall;
-int sgIsBallInPieces;
-int sgHasBallHitGoal;
-int sgIsMouseControl = 0;
+bool sgIsBallInPieces;
+bool sgHasBallHitGoal;
+bool sgIsMouseControl = false;
 
 Vector3 sgForward;
 Vector3 sgRight;
 
-static int gIsBallCameraActive;
+static bool gIsBallCameraActive;
 
 static float gDistance;
 static float gLatitude;
@@ -78,7 +78,7 @@ static Viewport gViewportCube[6];
 
 static int gBallLayout = 0;
 
-static int gDirtyReflection = 1;
+static bool gIsReflectionDirty = true;
 
 static int gCubeMapBall;
 
@@ -141,7 +141,7 @@ void updateReflection(void)
 		{0.0f, -1.0f, 0.0f}
 	};
 
-	if (useBallReflection() && gDirtyReflection)
+	if (useBallReflection() && gIsReflectionDirty)
 	{
 		int i;
 
@@ -179,7 +179,7 @@ void updateReflection(void)
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
 
-		gDirtyReflection = 0;
+		gIsReflectionDirty = false;
 	}
 }
 
@@ -199,8 +199,8 @@ void resetBall(void)
 	sgoBall.angularRate.y = 0.0f;
 	sgoBall.angularRate.z = 0.0f;
 
-	sgIsBallInPieces = 0;
-	gDirtyReflection = 1;
+	sgIsBallInPieces = false;
+	gIsReflectionDirty = true;
 }
 
 void explodeBall(void)
@@ -217,8 +217,8 @@ void explodeBall(void)
 	sgoBall.pos = pos;
 	sgoBall.velocity = speed;
 
-	sgIsBallInPieces = 1;
-	gDirtyReflection = 1;
+	sgIsBallInPieces = true;
+	gIsReflectionDirty = true;
 }
 
 void initCubeMap(void)
@@ -246,7 +246,7 @@ void initBall(void)
 		initCubeMap();
 	}
 
-	gTextureBall = loadTexture("data/ball.tga", 0);
+	gTextureBall = loadTexture("data/ball.tga", false);
 
 	sgoBall.mass = 1.0f;
 	sgoBall.radius = 0.2f;
@@ -462,7 +462,7 @@ void animateBall(float interval)
 
 	normal = norm(normal);
 
-	sgHasBallHitGoal = 0;
+	sgHasBallHitGoal = false;
 
 	/* contact to surface? */
 	if (collision)
@@ -491,7 +491,7 @@ void animateBall(float interval)
 		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
 			/* hit goal */
-			sgHasBallHitGoal = 1;
+			sgHasBallHitGoal = true;
 		}
 	}
 
@@ -517,7 +517,7 @@ void animateBall(float interval)
 		explodeBall();
 	}
 
-	gDirtyReflection = 1;
+	gIsReflectionDirty = true;
 }
 
 void resetBallCamera(void)
@@ -536,14 +536,14 @@ void enableBallCamera(void)
 
 	glutSetCursor(GLUT_CURSOR_NONE);
 
-	gIsBallCameraActive = 1;
+	gIsBallCameraActive = true;
 }
 
 void disableBallCamera(void)
 {
 	setDragFunc(NULL);
 
-	gIsBallCameraActive = 0;
+	gIsBallCameraActive = false;
 }
 
 void updateBallCamera(float interval, Vector3 ball)
@@ -623,7 +623,7 @@ void updateBall(float interval)
 		updateBallCamera(interval, sgoBall.pos);
 	}
 
-	gDirtyReflection = 1;
+	gIsReflectionDirty = true;
 }
 
 void activateBallShader(void)

@@ -20,7 +20,7 @@
 #ifndef _editor_hpp_
 #define _editor_hpp_
 
-int initEditor(void);
+void initEditor(void);
 
 void startEditor(void);
 void stopEditor(void);

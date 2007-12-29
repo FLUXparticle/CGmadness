@@ -32,13 +32,13 @@
 #define NO_FRAMEBUFFER "--no-framebuffer"
 #define NO_VBO "--no-vbo"
 
-static int gFramebufferAvailable;
-static int gVertexbufferAvailable;
-static int gTwoSideStencilAvailable;
-static int gShaderAvailable;
+static bool gFramebufferAvailable;
+static bool gVertexbufferAvailable;
+static bool gTwoSideStencilAvailable;
+static bool gShaderAvailable;
 
-static int gUseBallShadow = 0;
-static int gUseReflection = 0;
+static bool gUseBallShadow = 0;
+static bool gUseReflection = 0;
 
 GLhandleARB sgBallShadowShader = 0;
 GLhandleARB sgGolfballShader = 0;
@@ -57,67 +57,67 @@ void initFeatures(int argc, char *argv[])
 {
 	int i;
 
-	int noFramebuffer = 0;
-	int noShader = 0;
-	int noVBO = 0;
+	bool noFramebuffer = false;
+	bool noShader = false;
+	bool noVBO = false;
 
 	for (i = 1; i < argc; i++)
 	{
 		if (strcmp(argv[i], NO_FRAMEBUFFER) == 0)
 		{
-			noFramebuffer = 1;
+			noFramebuffer = true;
 		}
 		else if (strcmp(argv[i], NO_SHADER) == 0)
 		{
-			noShader = 1;
+			noShader = true;
 		}
 		else if (strcmp(argv[i], NO_VBO) == 0)
 		{
-			noVBO = 1;
+			noVBO = true;
 		}
 	}
 
-	gFramebufferAvailable = 1;
+	gFramebufferAvailable = true;
 	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil)
 	{
 		printf("No framebuffer object available :(\n");
-		gFramebufferAvailable = 0;
+		gFramebufferAvailable = false;
 	}
 	else if (noFramebuffer)
 	{
 		printf("framebuffer object available, but deactivated :/\n");
-		gFramebufferAvailable = 0;
+		gFramebufferAvailable = false;
 	}
 
-	gShaderAvailable = 1;
+	gShaderAvailable = true;
 	if (!GLEW_ARB_vertex_shader || !GLEW_ARB_fragment_shader)
 	{
 		printf("No OpenGL 2.0 shader available :(\n");
-		gShaderAvailable = 0;
+		gShaderAvailable = false;
 	}
 	else if (noShader)
 	{
 		printf("OpenGL 2.0 shader available, but deactivated :/\n");
-		gShaderAvailable = 0;
+		gShaderAvailable = false;
 	}
 
-	gVertexbufferAvailable = 1;
+	gVertexbufferAvailable = true;
 	if (!GLEW_ARB_vertex_buffer_object)
 	{
 		printf("No vertex buffer object available :(\n");
-		gVertexbufferAvailable = 0;
+		gVertexbufferAvailable = false;
 	}
 	else if (noVBO)
 	{
 		printf("vertex buffer object available, but deactivated :/\n");
-		gVertexbufferAvailable = 0;
+		gVertexbufferAvailable = false;
 	}
 
-	gTwoSideStencilAvailable = 1;
+	gTwoSideStencilAvailable = true;
 	if (!GLEW_EXT_stencil_two_side || !GLEW_EXT_stencil_wrap)
 	{
 		printf("No two side stencil available :(\n");
-		gTwoSideStencilAvailable = 0;
+		gTwoSideStencilAvailable = false;
 	}
 
 	if (hasShader())
@@ -138,56 +138,56 @@ void initFeatures(int argc, char *argv[])
 
 /* has...? */
 
-int hasShader(void)
+bool hasShader(void)
 {
 	return gShaderAvailable;
 }
 
-int hasFramebuffer(void)
+bool hasFramebuffer(void)
 {
 	return gFramebufferAvailable;
 }
 
-int hasVertexbuffer(void)
+bool hasVertexbuffer(void)
 {
 	return gVertexbufferAvailable;
 }
 
-int hasTwoSideStencil(void)
+bool hasTwoSideStencil(void)
 {
 	return gTwoSideStencilAvailable;
 }
 
-int hasBallShadowShader(void)
+bool hasBallShadowShader(void)
 {
 	return hasShader() && sgBallShadowShader;
 }
 
-int hasGolfballShader(void)
+bool hasGolfballShader(void)
 {
 	return hasShader() && sgGolfballShader;
 }
 
 /* set */
 
-void setBallShadow(int use)
+void setBallShadow(bool use)
 {
 	gUseBallShadow = use;
 }
 
-void setReflection(int use)
+void setReflection(bool use)
 {
 	gUseReflection = use;
 }
 
 /* use...? */
 
-int useBallShadow(void)
+bool useBallShadow(void)
 {
 	return gUseBallShadow;
 }
 
-int useReflection(void)
+bool useReflection(void)
 {
 	return gUseReflection;
 }

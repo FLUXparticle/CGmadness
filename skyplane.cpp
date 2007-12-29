@@ -19,10 +19,17 @@
 
 #include "skyplane.hpp"
 
-#include "features.hpp"
 #include "functions.hpp"
 #include "vector.hpp"
 #include "color.hpp"
+
+#include "texture.hpp"
+
+#include <GL/glew.h>
+#include <GL/glut.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <math.h>
 
@@ -55,7 +62,7 @@ void initSkyplane(void)
 	int j;
 	int index = 0;
 
-	texID = loadTexture("data/clouds.tga", 1);
+	texID = loadTexture("data/clouds.tga", true);
 
 	for (i = 0; i <= DIVS; i++)
 	{

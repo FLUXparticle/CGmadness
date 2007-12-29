@@ -89,8 +89,8 @@ void initGUI()
 	if (!gInitialize)
 	{
 		/* loading arrow textures */
-		gTexLeft = loadTexture("data/left.tga", 0);
-		gTexRight = loadTexture("data/right.tga", 0);
+		gTexLeft = loadTexture("data/left.tga", false);
+		gTexRight = loadTexture("data/right.tga", false);
 
 		gInitialize = 1;
 	}
@@ -119,7 +119,7 @@ void drawCanvas(const Canvas * canvas)
 
 /*** Label ***/
 
-void initLabel(Label * label, float x, float z, float size, int alignRight,
+void initLabel(Label * label, float x, float z, float size, bool alignRight,
 							 char *text)
 {
 	label->text = text;
@@ -375,7 +375,7 @@ void drawSpinEdit(const SpinEdit * spinEdit)
 void changeSpinEdit(SpinEdit * spinEdit, int change)
 {
 	spinEdit->value =
-		clampi(spinEdit->value + change, spinEdit->minValue, spinEdit->maxValue);
+		clamp(spinEdit->value + change, spinEdit->minValue, spinEdit->maxValue);
 	spinEdit->change(spinEdit);
 }
 

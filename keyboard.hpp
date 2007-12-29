@@ -31,12 +31,12 @@
 int getModifiers(void);
 unsigned char getLastChar(void);
 
-int wasKeyPressed(unsigned char key);
-int isKeyPressed(unsigned char key);
-int isCursorPressed(int cursor);
-int wasCursorPressed(int cursor);
-int isFunctionPressed(int index);
-int wasFunctionPressed(int index);
+bool wasKeyPressed(unsigned char key);
+bool isKeyPressed(unsigned char key);
+bool isCursorPressed(int cursor);
+bool wasCursorPressed(int cursor);
+bool isFunctionPressed(int index);
+bool wasFunctionPressed(int index);
 
 void startKeyboard(void);
 

@@ -20,11 +20,6 @@
 #ifndef _gamemenu_hpp_
 #define _gamemenu_hpp_
 
-#include "gui.hpp"
-
-#include "vector.hpp"
-#include "mouse.hpp"
-
 void initGameMenu(void);
 
 void showGameMenu(int menu);

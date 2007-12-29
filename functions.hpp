@@ -20,15 +20,34 @@
 #ifndef _functions_hpp_
 #define _functions_hpp_
 
-float sqr(float x);
+template <class T>
+T sqr(T x)
+{
+	return x * x;
+}
 
-float min(float a, float b);
-int mini(int a, int b);
-float max(float a, float b);
-int maxi(int a, int b);
-float clamp(float x, float lo, float up);
-int clampi(int x, int lo, int up);
+template <class T>
+T min(T a, T b)
+{
+	return (a < b) ? a : b;
+}
 
-int between(int x, int min, int max);
+template <class T>
+T max(T a, T b)
+{
+	return (a > b) ? a : b;
+}
+
+template <class T>
+T clamp(T x, T lo, T up)
+{
+	return min(up, max(lo, x));
+}
+
+template <class T>
+bool between(T x, T min, T max)
+{
+	return x >= min && x <= max;
+}
 
 #endif

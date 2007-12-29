@@ -28,7 +28,6 @@
 #include "callback.hpp"
 #include "camera.hpp"
 #include "keyboard.hpp"
-#include "texture.hpp"
 #include "atlas.hpp"
 #include "common.hpp"
 
@@ -590,15 +589,9 @@ void drawEditor(void)
 	}
 }
 
-int initEditor(void)
+void initEditor(void)
 {
 	gShowCursor = 0;
 
 	initEditorMenu();
-
-#if 0
-	pauseEditor();
-#endif
-
-	return 1;
 }

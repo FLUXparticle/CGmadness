@@ -317,7 +317,7 @@ float smallestError(float x)
 /*
  * interpolate explosion's position to destination
  */
-int updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
+bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 {
 	int i;
 
