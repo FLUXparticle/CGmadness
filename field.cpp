@@ -30,6 +30,8 @@
 
 #include "types.hpp"
 
+#include "K2Tree.hpp"
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -63,7 +65,6 @@ static GLuint gWhiteTexture;
 static GLuint gBallShadow;
 
 static int gCntVertices;
-static int gMaxPlates;
 static int gMaxQuads;
 static int gMaxVertices;
 
@@ -73,7 +74,7 @@ static int *gCameraViewIndices;
 static int gCntBallReflectionIndices = 0;
 static int *gBallReflectionIndices;
 
-static int *gIndexVertices;
+static K2Tree* gK2Tree;
 
 static void setColor(Color4 col)
 {
@@ -131,17 +132,7 @@ void getVertIndex(int x, int y, int *start, int *end)
 {
 	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y)
 	{
-		int index = y * sgLevel.size.x + x;
-		*start = gIndexVertices[index];
-		index++;
-		if (index < gMaxPlates)
-		{
-			*end = gIndexVertices[index];
-		}
-		else
-		{
-			*end = gCntVertices;
-		}
+		gK2Tree->get(x, y, *start, *end);
 	}
 	else
 	{
@@ -243,7 +234,6 @@ void initGameField(void)
 	int x;
 	int y;
 	int i;
-	int index = 0;
 
 	glGenTextures(1, &gWhiteTexture);
 
@@ -254,7 +244,8 @@ void initGameField(void)
 	initBallShadow();
 
 	/* init level stuff */
-	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	gK2Tree = new K2Tree(sgLevel.size.x, sgLevel.size.y);
+	
 	gMaxQuads = 0;
 
 	for (y = 0; y < sgLevel.size.y; y++)
@@ -278,7 +269,6 @@ void initGameField(void)
 
 	sgVertices = new Vector3[gMaxVertices];
 	sgNormals = new Vector3[gMaxVertices];
-	gIndexVertices = new int[gMaxPlates];
 	gTexCoords = new Vector2[gMaxVertices];
 	gColorMapCoords = new Vector2[gMaxVertices];
 	gLightMapCoords = new Vector2[gMaxVertices];
@@ -295,8 +285,8 @@ void initGameField(void)
 		for (x = 0; x < sgLevel.size.x; x++)
 		{
 			Square square;
-
-			gIndexVertices[index++] = gCntVertices;
+			
+			int start = gCntVertices;
 
 			getRoofSquare(x, y, &square);
 
@@ -314,6 +304,8 @@ void initGameField(void)
 					addSquare(&face.squares[k]);
 				}
 			}
+			
+			gK2Tree->set(x, y, start, gCntVertices);
 		}
 	}
 
@@ -361,8 +353,9 @@ void destroyGameField(void)
 {
 	delete[] sgVertices;
 	delete[] sgNormals;
+	
+	delete gK2Tree;
 
-	delete[] gIndexVertices;
 	delete[] gCameraViewIndices;
 	delete[] gBallReflectionIndices;
 	delete[] gTexCoords;
