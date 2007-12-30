@@ -244,7 +244,7 @@ void initGameField(void)
 	initBallShadow();
 
 	/* init level stuff */
-	gK2Tree = new K2Tree(sgLevel.size.x, sgLevel.size.y);
+	gK2Tree = new K2Tree(sgLevel.origin, sgLevel.size.x, sgLevel.size.y);
 	
 	gMaxQuads = 0;
 

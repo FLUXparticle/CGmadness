@@ -1,10 +1,154 @@
 #include "K2Tree.hpp"
 
-K2Tree::K2Tree(int x, int y) :
+struct Range
+{
+	int startX;
+	int startY;
+	int sizeX;
+	int sizeY;
+	
+	int left;
+	int right;
+
+	Range(int startX, int startY, int sizeX, int sizeY)
+	{
+		this->startX = startX;
+		this->startY = startY;
+		this->sizeX = sizeX;
+		this->sizeY = sizeY;
+		
+		left = 0;
+		right = 0;
+	}
+};
+
+class K2Command
+{
+public:
+	K2Command()
+	{
+		// empty
+	}
+	
+	virtual ~K2Command()
+	{
+		// empty
+	}
+	
+	virtual int decide(int close, int far) = 0;
+	virtual int hit(int index) = 0;
+	virtual int miss(int index) = 0;
+	
+};
+
+class K2Get : public K2Command
+{
+private:
+	int mIndex;
+	
+public:
+	K2Get()
+	{
+		mIndex = -1;
+	}
+	
+	virtual ~K2Get()
+	{
+		// empty
+	}
+	
+	int decide(int close, int far)
+	{
+		return close;
+	}
+	
+	int hit(int index)
+	{
+		mIndex = index;
+		return -1;
+	}
+	
+	int miss(int index)
+	{
+		return -1;
+	}
+	
+	int index() const
+	{
+		return mIndex;
+	}
+	
+};
+
+class K2Set : public K2Command
+{
+private:
+	K2Tree& mTree;
+	
+	int mIndex;
+	
+public:
+	K2Set(K2Tree& tree) :
+		mTree(tree)
+	{
+		mIndex = -1;
+	}
+	
+	virtual ~K2Set()
+	{
+		// empty
+	}
+	
+	int decide(int close, int far)
+	{
+		return close;
+	}
+	
+	int hit(int index)
+	{
+		mIndex = index;
+		return -1;
+	}
+	
+	int miss(int index)
+	{
+		Range& cur = mTree.mRanges[index];
+		
+		Range left = cur; 
+		Range right = cur; 
+		
+		if (cur.sizeX > cur.sizeY)
+		{
+			left.sizeX = cur.sizeX / 2;
+			right.sizeX = cur.sizeX - left.sizeX;
+			right.startX = left.startX + left.sizeX;
+		}
+		else
+		{
+			left.sizeY = cur.sizeY / 2;
+			right.sizeY = cur.sizeY - left.sizeY;
+			right.startY = left.startY + left.sizeY;
+		}
+		
+		cur.left = mTree.newNode(left);
+		cur.right = mTree.newNode(right);
+		
+		return index;
+	}
+	
+	int index() const
+	{
+		return mIndex;
+	}
+	
+};
+
+K2Tree::K2Tree(Vector3 origin, int x, int y) :
+	mOrigin(origin),
 	mX(x),
 	mY(y)
 {
-	newNode();
+	newNode(Range(0, 0, mX, mY));
 }
 
 K2Tree::~K2Tree()
@@ -14,106 +158,72 @@ K2Tree::~K2Tree()
 
 void K2Tree::set(int x, int y, int start, int end)
 {
-	int index = find(x, y);
+	K2Set cmd(*this);
 	
-	mTree[index] = start;
-	mTree[index + 1] = end;
+	find(x, y, cmd);
+	
+	Range &range = mRanges[cmd.index()];
+	
+	range.left = start;
+	range.right = end;
 }
 
-void K2Tree::get(int x, int y, int &start, int &end)
+void K2Tree::get(int x, int y, int &start, int &end) const
 {
-	int index = find(x, y);
+	K2Get cmd;
 	
-	start = mTree[index];
-	end = mTree[index + 1];
+	find(x, y, cmd);
+	
+	const Range &range = mRanges[cmd.index()];
+	
+	start = range.left;
+	end = range.right;
 }
 
-int K2Tree::newNode()
+int K2Tree::newNode(const struct Range &range)
 {
-	int index = mTree.size();
+	int index = mRanges.size();
 		
-	mTree.push_back(0);
-	mTree.push_back(0);
+	mRanges.push_back(range);
 	
 	return index;
 }
 
-int K2Tree::find(int x, int y)
+void K2Tree::find(int x, int y, K2Command& cmd) const
 {
-	int startX = 0;
-	int startY = 0;
-	int sizeX = mX;
-	int sizeY = mY;
-	
 	int index = 0;
 	
-	while (true)
+	do
 	{
-		if (sizeX == 0 || sizeY == 0)
+		const Range& cur = mRanges[index];
+		
+		if (cur.sizeX == 0 || cur.sizeY == 0)
 		{
-			return -1;
+			return;
 		}
-		else if (sizeX == 1 && sizeY == 1)
+		else if (cur.sizeX == 1 && cur.sizeY == 1)
 		{
-			return index;
+			index = cmd.hit(index);
 		}
 		else
 		{
-			int startXL = startX;
-			int startYL = startY;
-			int sizeXL = sizeX;
-			int sizeYL = sizeY;
-	
-			int startXR = startX;
-			int startYR = startY;
-			int sizeXR = sizeX;
-			int sizeYR = sizeY;
-			
-			bool left;
-	
-			if (sizeX > sizeY)
+			if (cur.right == 0)
 			{
-				sizeXL = sizeX / 2;
-				sizeXR = sizeX - sizeXL;
-				startXR = startXL + sizeXL;
-				left = x < startXR;
+				index = cmd.miss(index);
 			}
 			else
 			{
-				sizeYL = sizeY / 2;
-				sizeYR = sizeY - sizeYL;
-				startYR = startYL + sizeYL;
-				left = y < startYR;
-			}
-			
-			int nextIndexRef;
-			
-			if (left)
-			{
-				startX = startXL;
-				startY = startYL;
-				sizeX = sizeXL;
-				sizeY = sizeYL;
+				const Range& right = mRanges[cur.right];
 				
-				nextIndexRef = index;
-			}
-			else
-			{
-				startX = startXR;
-				startY = startYR;
-				sizeX = sizeXR;
-				sizeY = sizeYR;
-				
-				nextIndexRef = index + 1;
-			}
-			
-			index = mTree[nextIndexRef];
-			
-			if (index == 0)
-			{
-				index = newNode();
-				mTree[nextIndexRef] = index;
+				if (x < right.startX || y < right.startY)
+				{
+					index = cmd.decide(cur.left, cur.right);
+				}
+				else
+				{
+					index = cmd.decide(cur.right, cur.left);
+				}
 			}
 		}
-	}
+	} while (index >= 0);
 }
