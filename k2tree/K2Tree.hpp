@@ -3,6 +3,8 @@
 
 #include "vector.hpp"
 
+#include "Range.hpp"
+
 #include <vector>
 
 class K2Tree {
@@ -12,6 +14,10 @@ public:
   
   void set(int x, int y, int start, int end);
   void get(int x, int y, int &start, int &end) const;
+  
+  int paintersAlgorithem(Vector3 viewer, int indices[]) const;
+  
+  const Range& getRange(int index) const;
 
 private:
 	Vector3 mOrigin;
@@ -19,14 +25,19 @@ private:
 	int mX;
 	int mY;
 	
-	std::vector<struct Range> mRanges;
+	std::vector<Range> mRanges;
 	
-	int newNode(const struct Range &range);
+	int newNode(const Range &range);
 	
 	void find(int x, int y, class K2Command& cmd) const;
 	
 	friend class K2Set;
 	
 };
+
+inline const Range& K2Tree::getRange(int index) const
+{
+	return mRanges[index];
+}
 
 #endif

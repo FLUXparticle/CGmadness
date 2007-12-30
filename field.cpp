@@ -512,8 +512,7 @@ void updateGameField(void)
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.pos, 1,
-						gBallReflectionIndices, &gCntBallReflectionIndices);
+				gCntBallReflectionIndices = gK2Tree->paintersAlgorithem(sgoBall.pos, gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;

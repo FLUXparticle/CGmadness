@@ -2,8 +2,11 @@
 
 #include "K2Get.hpp"
 #include "K2Set.hpp"
+#include "K2PaintersAlgorithem.hpp"
 
 #include "Range.hpp"
+
+#include <math.h>
 
 K2Tree::K2Tree(Vector3 origin, int x, int y) :
 	mOrigin(origin),
@@ -42,13 +45,27 @@ void K2Tree::get(int x, int y, int &start, int &end) const
 	end = range.right;
 }
 
-int K2Tree::newNode(const struct Range &range)
+int K2Tree::newNode(const Range &range)
 {
 	int index = mRanges.size();
 		
 	mRanges.push_back(range);
 	
 	return index;
+}
+
+int K2Tree::paintersAlgorithem(Vector3 viewer, int indices[]) const
+{
+	K2PaintersAlgorithem painter(*this, viewer, indices);
+	
+	Vector3 diff = sub(viewer, mOrigin);
+	
+	int vx = (int) floor(diff.x);
+	int vy = (int) floor(diff.y);
+	
+	find(vx, vy, painter);
+	
+	return painter.count();
 }
 
 void K2Tree::find(int x, int y, K2Command& cmd) const
@@ -77,7 +94,7 @@ void K2Tree::find(int x, int y, K2Command& cmd) const
 			{
 				const Range& right = mRanges[cur.right];
 				
-				if (x < right.startX || y < right.startY)
+				if ((cur.sizeX > cur.sizeY && x < right.startX) || (cur.sizeX <= cur.sizeY && y < right.startY))
 				{
 					index = cmd.decide(cur.left, cur.right);
 				}
