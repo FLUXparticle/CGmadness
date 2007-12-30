@@ -34,7 +34,7 @@ void destroyGameField(void);
 
 void updateGameField(void);
 
-void drawGameField(int ballReflection);
+void drawGameField(bool ballReflection);
 
 void getVertIndex(int x, int y, int *start, int *end);
 

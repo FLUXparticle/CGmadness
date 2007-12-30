@@ -529,7 +529,7 @@ void updateGameField(void)
 	}
 }
 
-void drawGameField(int ballReflection)
+void drawGameField(bool ballReflection)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);

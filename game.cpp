@@ -203,21 +203,21 @@ void drawGameHUD(float widthWindow, float heightWindow)
 
 void drawGameWaterReflection(void)
 {
-	drawGameField(0);
+	drawGameField(false);
 	drawGameBall();
 }
 
 void drawGameBallReflection(void)
 {
 	drawEnvironment(drawGameWaterReflection);
-	drawGameField(1);
+	drawGameField(true);
 }
 
 void drawGame(void)
 {
 	drawEnvironment(drawGameWaterReflection);
 
-	drawGameField(0);
+	drawGameField(false);
 	drawGameBall();
 
 	if (!gIsGameRunning)
