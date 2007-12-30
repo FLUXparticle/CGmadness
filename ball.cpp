@@ -84,23 +84,23 @@ static int gCubeMapBall;
 
 static int gTextureBall;
 
-int hasBallTexture(void)
+bool hasBallTexture(void)
 {
 	return gTextureBall >= 0;
 }
 
-int hasCubeMap(void)
+bool hasCubeMap(void)
 {
 	return gCubeMapBall != 0;
 }
 
-int useBallShader(void)
+bool useBallShader(void)
 {
 	return hasGolfballShader() && (gBallLayout == BALL_LAYOUT_GOLFBALL
 																 || gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
-int useBallReflection(void)
+bool useBallReflection(void)
 {
 	return hasFramebuffer() && (gBallLayout == BALL_LAYOUT_METAL
 															|| gBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
@@ -256,7 +256,7 @@ void initBall(void)
 	setPreDisplayFunc(updateReflection);
 }
 
-int collisionPoint(const Vector3 sphere, const Vector3 * quad,
+bool collisionPoint(const Vector3 sphere, const Vector3 * quad,
 									 const Vector3 normal, Vector3 * collision)
 {
 	float dToPlane = dot(sphere, normal) - dot(quad[0], normal);
@@ -266,7 +266,7 @@ int collisionPoint(const Vector3 sphere, const Vector3 * quad,
 
 	if (fabs(dToPlane) >= sgoBall.radius)
 	{
-		return 0;
+		return false;
 	}
 
 	for (i = 0; i < 4; i++)
@@ -289,7 +289,7 @@ int collisionPoint(const Vector3 sphere, const Vector3 * quad,
 
 				if (dToEdge >= sgoBall.radius)
 				{
-					return 0;
+					return false;
 				}
 
 				if (f <= 0.0f)
@@ -298,7 +298,7 @@ int collisionPoint(const Vector3 sphere, const Vector3 * quad,
 					{
 						*collision = quad[i];
 
-						return 1;
+						return true;
 					}
 				}
 				else if (f >= 1.0f)
@@ -307,14 +307,14 @@ int collisionPoint(const Vector3 sphere, const Vector3 * quad,
 					{
 						*collision = quad[j];
 
-						return 1;
+						return true;
 					}
 				}
 				else
 				{
 					*collision = sub(sphere, scale(dToEdge, nn));
 
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -324,10 +324,10 @@ int collisionPoint(const Vector3 sphere, const Vector3 * quad,
 	{
 		*collision = sub(sphere, scale(dToPlane, normal));
 
-		return 1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 void animateBall(float interval)
@@ -783,7 +783,7 @@ void drawMenuBall(void)
 
 void drawGameBall(void)
 {
-	int shader = useBallShader();
+	bool shader = useBallShader();
 
 	activateBallShader();
 

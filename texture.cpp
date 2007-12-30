@@ -26,12 +26,12 @@
 
 #define LINEAR_FILTER 1
 
-static int gUseTextures = 0;
+static bool gUseTextures = false;
 
 void initTextureEnvironment(void)
 {
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	gUseTextures = 1;
+	gUseTextures = true;
 }
 
 typedef struct

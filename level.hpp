@@ -96,8 +96,8 @@ typedef struct
 
 	Vector3 origin;
 
-	int saved;
-	int waiting;
+	bool saved;
+	bool waiting;
 } Level;
 
 extern const int sgEdgeX[4];
@@ -110,11 +110,11 @@ void destroyLevel(void);
 
 void newLevel(void);
 
-int loadHighscoreFromFile(void);
-int loadLevelFromFile(const char *filename, bool justLoad);
+bool loadHighscoreFromFile(void);
+bool loadLevelFromFile(const char *filename, bool justLoad);
 
-int saveHighscoreToFile(void);
-int saveLevelToFile(void);
+bool saveHighscoreToFile(void);
+bool saveLevelToFile(void);
 
 void updatePlate(int x, int y);
 void getRoofSquare(int x, int y, Square * square);

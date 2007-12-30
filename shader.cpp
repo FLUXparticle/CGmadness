@@ -24,10 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
- * Gibt ggf. Fehlermeldungen bei der Compilierung aus
- */
-int printInfoLog(GLhandleARB obj, const char *text)
+void printInfoLog(GLhandleARB obj, const char *text)
 {
 	int infologLength = 0;
 	int charsWritten = 0;
@@ -43,11 +40,7 @@ int printInfoLog(GLhandleARB obj, const char *text)
 		fflush(stdout);
 		
 		delete[] infoLog;
-
-		return 0;
 	}
-
-	return 1;
 }
 
 /*
@@ -58,8 +51,8 @@ GLhandleARB makeShader(const char *vertexShaderFilename,
 {
 	char *vs;
 	char *fs;
-	int compiled;
-	int linked;
+	GLint compiled;
+	GLint linked;
 
 	GLhandleARB v = glCreateShader(GL_VERTEX_SHADER);
 	GLhandleARB f = glCreateShader(GL_FRAGMENT_SHADER);

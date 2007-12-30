@@ -57,7 +57,7 @@ Line gLines[10 * 10 * LIGHT_MAP_SIZE * LIGHT_MAP_SIZE * 32 * 8];
 int gCntLines = 0;
 #endif
 
-static int gIsEditorRunning;
+static bool gIsEditorRunning;
 
 static int gShowCursor;
 
@@ -68,15 +68,15 @@ static int gCamAngle = 0;
 static int gSin[] = { 0, 1, 0, -1 };
 static int gCos[] = { 1, 0, -1, 0 };
 
-static int gDirtyTexCoords;
-static int gDirtyLightmaps;
+static bool gDirtyTexCoords;
+static bool gDirtyLightmaps;
 
-static int gIsTestMode;
+static bool gIsTestMode;
 
 void pauseEditor(void)
 {
 	showEditorScreen(0);
-	gIsEditorRunning = 0;
+	gIsEditorRunning = false;
 }
 
 void startEditor(void)
@@ -84,11 +84,11 @@ void startEditor(void)
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)
 	{
-		gDirtyLightmaps = 0;
+		gDirtyLightmaps = false;
 	}
 
 	updateTexCoords();
-	gDirtyTexCoords = 0;
+	gDirtyTexCoords = false;
 
 	gCurStart.x = 0;
 	gCurStart.y = 0;
@@ -109,12 +109,12 @@ void stopEditor(void)
 void resumeEditor(void)
 {
 	glutSetCursor(GLUT_CURSOR_NONE);
-	gIsEditorRunning = 1;
+	gIsEditorRunning = true;
 }
 
 void lightMapsReady(void)
 {
-	gDirtyLightmaps = 0;
+	gDirtyLightmaps = false;
 	saveLevel();
 }
 
@@ -133,7 +133,7 @@ void saveLevel(void)
 	{
 		if (saveLevelToFile())
 		{
-			sgLevel.saved = 1;
+			sgLevel.saved = true;
 			showEditorScreen(1);
 		}
 		else
@@ -210,9 +210,9 @@ void markerChanged(void)
 		}
 	}
 
-	sgLevel.saved = 0;
-	gDirtyLightmaps = 1;
-	gDirtyTexCoords = 1;
+	sgLevel.saved = false;
+	gDirtyLightmaps = true;
+	gDirtyTexCoords = true;
 }
 
 void changeMarkerArea(int incz, int incdzx, int incdzy)
@@ -477,7 +477,7 @@ void updateEditor(float interval)
 		if (gDirtyTexCoords)
 		{
 			updateTexCoords();
-			gDirtyTexCoords = 0;
+			gDirtyTexCoords = false;
 		}
 	}
 }

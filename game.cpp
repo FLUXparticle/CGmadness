@@ -56,7 +56,7 @@
 
 #define FOG_DENSITY 0.003f
 
-static int gIsGameRunning;
+static bool gIsGameRunning;
 
 static float gGameTime;
 
@@ -65,13 +65,13 @@ static const char *gHotSeatLevel = NULL;
 void pauseGame(void)
 {
 	disableBallCamera();
-	gIsGameRunning = 0;
+	gIsGameRunning = false;
 }
 
 void resumeGame(void)
 {
 	enableBallCamera();
-	gIsGameRunning = 1;
+	gIsGameRunning = true;
 }
 
 void setHotSeatLevel(const char *filename)

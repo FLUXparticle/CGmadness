@@ -45,7 +45,7 @@ static RenderTarget gTargetWindow;
 
 static funcDraw gPreDisplay = NULL;
 
-static int gSceneDirty = 1;
+static bool gSceneDirty = 1;
 
 void setPreDisplayFunc(funcDraw preDisplay)
 {
@@ -157,7 +157,7 @@ void display(void)
 	glutSwapBuffers();
 	framerate();
 
-	gSceneDirty = 0;
+	gSceneDirty = false;
 }
 
 void reshape(int w, int h)
@@ -222,7 +222,7 @@ void timer(int startTime)
 
 	if (!gSceneDirty)
 	{
-		gSceneDirty = 1;
+		gSceneDirty = true;
 		glutPostRedisplay();
 	}
 

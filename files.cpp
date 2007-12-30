@@ -55,7 +55,7 @@ char *textFileRead(const char *fn)
 bool textFileWrite(const char *fn, const char *s)
 {
 	FILE *fp;
-	int status = false;
+	bool status = false;
 
 	if (fn != NULL)
 	{

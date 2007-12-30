@@ -475,7 +475,7 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	setSubLightMap(index, dataFloat);
 }
 
-int loadHighscoreFromFile(void)
+bool loadHighscoreFromFile(void)
 {
 	int i;
 	unsigned int version;
@@ -483,12 +483,13 @@ int loadHighscoreFromFile(void)
 
 	char *filename = addStrings(sgLevel.filename, EXT_HIGHSCORE);
 	FILE *file = fopen(filename, "rt");
-	int result = 1;
 
 	delete[] filename;
 
 	if (!file)
-		return 0;
+	{
+		return false;
+	}
 
 	/* version number */
 	fscanf(file, "v%u", &version);
@@ -497,7 +498,7 @@ int loadHighscoreFromFile(void)
 	{
 		fprintf(stderr, "incompatible version number: %u\n", version);
 		fclose(file);
-		return 0;
+		return false;
 	}
 
 	fscanf(file, "%x\n", &crc32);
@@ -506,7 +507,7 @@ int loadHighscoreFromFile(void)
 	{
 		fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 		fclose(file);
-		return 0;
+		return false;
 	}
 
 	setCRC32(sgLevel.crc32);
@@ -525,18 +526,17 @@ int loadHighscoreFromFile(void)
 	{
 		fprintf(stderr, "2st checksum mismatch: %s\n", filename);
 		fclose(file);
-		return 0;
+		return false;
 	}
 
 	fclose(file);
 
-	return result;
+	return true;
 }
 
-int loadLevelFromFile(const char *filename, bool justLoad)
+bool loadLevelFromFile(const char *filename, bool justLoad)
 {
 	FILE *file = fopen(filename, "rt");
-	int result = 1;
 
 	int x, y;
 	FieldCoord fileCoords;
@@ -552,12 +552,12 @@ int loadLevelFromFile(const char *filename, bool justLoad)
 				&& between(sgLevel.size.y, 1, MAX_LEVEL_SIZE))
 		{
 			newLevel();
-			return 1;
+			return true;
 		}
 		else
 		{
 			fprintf(stderr, "can not open file: %s\n", filename);
-			return 0;
+			return false;
 		}
 	}
 
@@ -568,7 +568,7 @@ int loadLevelFromFile(const char *filename, bool justLoad)
 	{
 		fprintf(stderr, "incompatible version number: %u\n", version);
 		fclose(file);
-		return 0;
+		return false;
 	}
 
 	resetCRC32();
@@ -631,7 +631,7 @@ int loadLevelFromFile(const char *filename, bool justLoad)
 		{
 			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 			fclose(file);
-			return 0;
+			return false;
 		}
 
 		{
@@ -738,7 +738,7 @@ int loadLevelFromFile(const char *filename, bool justLoad)
 			{
 				fprintf(stderr, "2st checksum mismatch: %s\n", filename);
 				fclose(file);
-				return 0;
+				return false;
 			}
 		}
 	}
@@ -754,9 +754,9 @@ int loadLevelFromFile(const char *filename, bool justLoad)
 		sgLevel.cntScoreCols = 0;
 	}
 
-	sgLevel.saved = 1;
+	sgLevel.saved = true;
 
-	return result;
+	return true;
 }
 
 void writeByte(FILE * file, int value)
@@ -849,7 +849,7 @@ void writeRLE(FILE * file, const int data[SIZEOF_LIGHT_MAP])
 	fputc('\n', file);
 }
 
-int saveHighscoreToFile(void)
+bool saveHighscoreToFile(void)
 {
 	int i;
 
@@ -857,7 +857,9 @@ int saveHighscoreToFile(void)
 	FILE *file = fopen(filename, "wt");
 
 	if (!file)
-		return 0;
+	{
+		return false;
+	}
 
 	/* version number */
 	fprintf(file, "v%u\n", THIS_HIGHSCORE_VERSION);
@@ -884,20 +886,22 @@ int saveHighscoreToFile(void)
 
 	if (fclose(file) != 0)
 	{
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 }
 
-int saveLevelToFile(void)
+bool saveLevelToFile(void)
 {
 	FILE *file = fopen(sgLevel.filename, "wt");
 
 	int x, y;
 
 	if (!file)
-		return 0;
+	{
+		return false;
+	}
 
 	/* version number */
 	fprintf(file, "v%u\n", THIS_CGM_VERSION);
@@ -947,8 +951,8 @@ int saveLevelToFile(void)
 
 	if (fclose(file) != 0)
 	{
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 }

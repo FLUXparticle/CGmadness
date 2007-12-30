@@ -175,7 +175,7 @@ void initObjects(void)
 	}
 }
 
-void drawBallObject(int shader)
+void drawBallObject(bool shader)
 {
 	glVertexPointer(3, GL_FLOAT, 0, gBallVertices);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -380,7 +380,7 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 	return gExplosionTime >= gMaxExplosionTime;
 }
 
-void drawExplosion(int shader)
+void drawExplosion(bool shader)
 {
 	int i;
 	int j;

@@ -40,7 +40,7 @@ static float scaleText = 0.1f * SCALE_FONT;
 static unsigned int gTexLeft;
 static unsigned int gTexRight;
 
-static int gInitialize = 0;
+static bool gInitialized = false;
 
 void drawArrowLeft(void)
 {
@@ -86,13 +86,13 @@ void drawArrowRight(void)
 
 void initGUI()
 {
-	if (!gInitialize)
+	if (!gInitialized)
 	{
 		/* loading arrow textures */
 		gTexLeft = loadTexture("data/left.tga", false);
 		gTexRight = loadTexture("data/right.tga", false);
 
-		gInitialize = 1;
+		gInitialized = true;
 	}
 }
 
