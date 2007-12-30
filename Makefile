@@ -22,7 +22,7 @@ CC := gcc
 CFLAGS := -Wall -ansi -pedantic -O3
 
 CXX := g++
-CXXFLAGS := $(CFLAGS)
+CXXFLAGS := $(CFLAGS) -include cstdlib -I.
 
 LD := g++
 LDFLAGS :=
@@ -46,21 +46,25 @@ else
 	EXECSUFFIX :=
 endif
 
-MAINS   :=  $(shell $(PERL) mains.pl)
-SRC_C   :=  $(wildcard *.c)
-SRC_CPP :=  $(wildcard *.cpp)
-SRC     :=  $(SRC_C) $(SRC_CPP)
-DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
-DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl indent.pro
-DOC     :=  license.txt AUTHORS
-DOC_DEV :=  $(DOC) README
+MAINS    :=  $(shell $(PERL) mains.pl)
+SRC_DIRS :=  k2tree
+SRC_C    :=  $(wildcard *.c) $(shell find $(SRC_DIRS) -name '*.c')
+SRC_CPP  :=  $(wildcard *.cpp) $(shell find $(SRC_DIRS) -name '*.cpp')
+SRC      :=  $(SRC_C) $(SRC_CPP)
+DATA     :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
+DLL      :=  glut32.dll glew32.dll
+DEV      :=  mains.pl modules.pl indent.pro $(SRC_DIRS)
+DOC      :=  license.txt AUTHORS
+DOC_DEV  :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
 DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
+
+.SECONDEXPANSION:
+
 .PHONY: all
 all: $(EXEC)
 
@@ -76,11 +80,11 @@ debug:
 	@echo "  LINK $@"
 	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
-$(BUILD)/%.o: %.c | $(BUILD)/.
+$(BUILD)/%.o: %.c | $$(@D)/.
 	@echo "  CC $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
-$(BUILD)/%.o: %.cpp | $(BUILD)/.
+$(BUILD)/%.o: %.cpp | $$(@D)/.
 	@echo "  CXX $@"
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
@@ -128,19 +132,19 @@ include $(DEP)
 
 .DELETE_ON_ERROR:
 
-$(DEPS)/%.o.d: %.c modules.pl | $(DEPS)/.
+$(DEPS)/%.o.d: %.c modules.pl | $$(@D)/.
 	@echo "  MODULES $@"
 	@$(PERL) modules.pl $< > $@
 
-$(DEPS)/%.o.d: %.cpp modules.pl | $(DEPS)/.
+$(DEPS)/%.o.d: %.cpp modules.pl | $$(@D)/.
 	@echo "  MODULES $@"
 	@$(PERL) modules.pl $< > $@
 
-$(DEPS)/%.c.d: %.c | $(DEPS)/.
+$(DEPS)/%.c.d: %.c | $$(@D)/.
 	@echo "  DEP $@"
 	@$(CC) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
 
-$(DEPS)/%.cpp.d: %.cpp | $(DEPS)/.
+$(DEPS)/%.cpp.d: %.cpp | $$(@D)/.
 	@echo "  DEP $@"
 	@$(CXX) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
 

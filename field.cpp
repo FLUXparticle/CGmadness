@@ -30,7 +30,7 @@
 
 #include "types.hpp"
 
-#include "K2Tree.hpp"
+#include "k2tree/K2Tree.hpp"
 
 #include <GL/glew.h>
 #include <GL/gl.h>
