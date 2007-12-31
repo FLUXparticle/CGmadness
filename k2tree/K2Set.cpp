@@ -1,7 +1,5 @@
 #include "K2Set.hpp"
 
-#include "Range.hpp"
-
 K2Set::K2Set(K2Tree& tree) :
 	mTree(tree)
 {
@@ -18,7 +16,7 @@ int K2Set::decide(int close, int far)
 	return close;
 }
 
-int K2Set::hit(int index)
+int K2Set::hit(int index, const Range& range)
 {
 	mIndex = index;
 	return -1;

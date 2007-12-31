@@ -9,7 +9,7 @@ public:
   virtual ~K2Get();
 
 	int decide(int close, int far);
-	int hit(int index);
+	int hit(int index, const Range& range);
 	int miss(int index);
 	
 	int index() const;

@@ -16,6 +16,7 @@ public:
   void get(int x, int y, int &start, int &end) const;
   
   int paintersAlgorithem(Vector3 viewer, int indices[]) const;
+  int paintersAlgorithemReverse(Vector3 viewer, int indices[]) const;
   
   const Range& getRange(int index) const;
 

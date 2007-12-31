@@ -3,6 +3,7 @@
 #include "K2Get.hpp"
 #include "K2Set.hpp"
 #include "K2PaintersAlgorithem.hpp"
+#include "K2PaintersAlgorithemReverse.hpp"
 
 #include "Range.hpp"
 
@@ -56,7 +57,21 @@ int K2Tree::newNode(const Range &range)
 
 int K2Tree::paintersAlgorithem(Vector3 viewer, int indices[]) const
 {
-	K2PaintersAlgorithem painter(*this, viewer, indices);
+	K2PaintersAlgorithem painter(viewer, indices);
+	
+	Vector3 diff = sub(viewer, mOrigin);
+	
+	int vx = (int) floor(diff.x);
+	int vy = (int) floor(diff.y);
+	
+	find(vx, vy, painter);
+	
+	return painter.count();
+}
+
+int K2Tree::paintersAlgorithemReverse(Vector3 viewer, int indices[]) const
+{
+	K2PaintersAlgorithemReverse painter(viewer, indices);
 	
 	Vector3 diff = sub(viewer, mOrigin);
 	
@@ -82,26 +97,23 @@ void K2Tree::find(int x, int y, K2Command& cmd) const
 		}
 		else if (cur.sizeX == 1 && cur.sizeY == 1)
 		{
-			index = cmd.hit(index);
+			index = cmd.hit(index, cur);
+		}
+		else if (cur.right == 0)
+		{
+			index = cmd.miss(index);
 		}
 		else
 		{
-			if (cur.right == 0)
+			const Range& right = mRanges[cur.right];
+			
+			if ((cur.sizeX > cur.sizeY && x < right.startX) || (cur.sizeX <= cur.sizeY && y < right.startY))
 			{
-				index = cmd.miss(index);
+				index = cmd.decide(cur.left, cur.right);
 			}
 			else
 			{
-				const Range& right = mRanges[cur.right];
-				
-				if ((cur.sizeX > cur.sizeY && x < right.startX) || (cur.sizeX <= cur.sizeY && y < right.startY))
-				{
-					index = cmd.decide(cur.left, cur.right);
-				}
-				else
-				{
-					index = cmd.decide(cur.right, cur.left);
-				}
+				index = cmd.decide(cur.right, cur.left);
 			}
 		}
 	} while (index >= 0);

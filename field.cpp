@@ -465,8 +465,7 @@ void updateGameField(void)
 		gCntCameraViewIndices = 0;
 		if (gMaxVertices > 0)
 		{
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, sgCamera, 0,
-					gCameraViewIndices, &gCntCameraViewIndices);
+			gCntCameraViewIndices = gK2Tree->paintersAlgorithemReverse(sgCamera, gCameraViewIndices); 
 
 			lastMX = mx;
 			lastMY = my;

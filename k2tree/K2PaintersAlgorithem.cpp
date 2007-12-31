@@ -1,7 +1,6 @@
 #include "K2PaintersAlgorithem.hpp"
 
-K2PaintersAlgorithem::K2PaintersAlgorithem(const K2Tree& tree, Vector3 viewer, int indices[]) :
-	mTree(tree),
+K2PaintersAlgorithem::K2PaintersAlgorithem(Vector3 viewer, int indices[]) :
 	mViewer(viewer),
 	mIndices(indices),
 	mCount(0)
@@ -21,10 +20,8 @@ int K2PaintersAlgorithem::decide(int close, int far)
 	return far;
 }
 
-int K2PaintersAlgorithem::hit(int index)
+int K2PaintersAlgorithem::hit(int index, const Range& range)
 {
-	const Range& range = mTree.getRange(index);
-	
 	for (int i = range.left; i < range.right; i++)
 	{
 		mIndices[mCount++] = i;
