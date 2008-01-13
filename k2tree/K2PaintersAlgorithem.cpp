@@ -1,5 +1,7 @@
 #include "K2PaintersAlgorithem.hpp"
 
+#include "field.hpp"
+
 K2PaintersAlgorithem::K2PaintersAlgorithem(Vector3 viewer, int indices[]) :
 	mViewer(viewer),
 	mIndices(indices),
@@ -22,9 +24,24 @@ int K2PaintersAlgorithem::decide(int close, int far)
 
 int K2PaintersAlgorithem::hit(int index, const Range& range)
 {
-	for (int i = range.left; i < range.right; i++)
+	int start = range.left;
+	int end = range.right;
+	
+	for (int q = start; q < end; q += 4)
 	{
-		mIndices[mCount++] = i;
+		/*
+		 * the top square must always be drawn, because this function
+		 * is not called if only the height of the camera changes.
+		 * Fortunately it is always the first square in the array range.
+		 * WARNING: be aware of this if you change the order of sqaures.
+		 */
+		if (q == start || dot(sgNormals[q], sub(mViewer, sgVertices[q])) >= 0)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				mIndices[mCount++] = q + i;
+			}
+		}
 	}
 	
 	return pop();
