@@ -18,19 +18,22 @@
 BUILD := build
 DEPS  := .deps
 
-CC := gcc
-CFLAGS := -Wall -ansi -pedantic -O3
+CPREFIX :=
 
-CXX := g++
+CC := $(CPREFIX)gcc
+CFLAGS := -Wall -ansi -pedantic -O3 -s
+
+CXX := $(CPREFIX)g++
 CXXFLAGS := $(CFLAGS)
 
-LD := g++
+LD := $(CPREFIX)g++
 LDFLAGS :=
 LIBS := -lm
 
 PERL := perl
 
-PROJECT := $(basename $(shell pwd))
+PWD := $(notdir $(shell pwd))
+PROJECT := cgmadness
 SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
@@ -64,17 +67,27 @@ CLEAN   :=  $(BUILD) $(EXEC)
 .PHONY: all
 all: $(EXEC)
 
+.PHONY: release
+release: src tar mingw-zip
+
+.PHONY: mingw-%
+mingw-%:
+	@$(MAKE) $* COMSPEC=1 CPREFIX="i586-mingw32msvc-"
+
 .PHONY: profile
 profile:
-	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(LDFLAGS)"
+	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="$(filter-out -s,$(CFLAGS)) -pg -O0" LDFLAGS="-pg $(LDFLAGS)"
 
 .PHONY: debug
 debug:
-	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(LDFLAGS)"
+	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="$(filter-out -s,$(CFLAGS)) -g -O0" LDFLAGS="-g $(LDFLAGS)"
 
 %$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
 	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
+ifneq (,$(findstring -s,$(CFLAGS)))
+	@strip $@
+endif
 
 $(BUILD)/%.o: %.c | $(BUILD)/.
 	@echo "  CC $@"
@@ -85,9 +98,10 @@ $(BUILD)/%.o: %.cpp | $(BUILD)/.
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
-TAR := $(PROJECT).tar.bz2
-SRC_TAR := $(PROJECT)-src.tar.bz2
-ZIP := $(PROJECT).zip
+VERSION := $(shell date +%Y%m%d)
+SRC_TAR := $(PROJECT)-$(VERSION)-src.tar.bz2
+TAR := $(PROJECT)-$(VERSION).tar.bz2
+ZIP := $(PROJECT)-$(VERSION).zip
 CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
@@ -96,14 +110,14 @@ src: $(SRC_TAR)
 
 $(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
+	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 
 .PHONY: tar
 tar: $(TAR)
 
 $(TAR): $(EXEC) $(DATA) $(DOC)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
+	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 
 .PHONY: zip
 zip: $(ZIP)

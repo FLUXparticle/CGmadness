@@ -248,7 +248,7 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 	if (!success)
 	{
 		printf("%s: %s\n", filename, error);
-		return -1;
+		return 0;
 	}
 
 	if (!gUseTextures)
