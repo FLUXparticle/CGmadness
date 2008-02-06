@@ -21,7 +21,7 @@ DEPS  := .deps
 CPREFIX :=
 
 CC := $(CPREFIX)gcc
-CFLAGS := -Wall -ansi -pedantic -O3 -s
+CFLAGS := -Wall -ansi -pedantic -O3
 
 CXX := $(CPREFIX)g++
 CXXFLAGS := $(CFLAGS)
@@ -76,18 +76,15 @@ mingw-%:
 
 .PHONY: profile
 profile:
-	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="$(filter-out -s,$(CFLAGS)) -pg -O0" LDFLAGS="-pg $(LDFLAGS)"
+	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
 
 .PHONY: debug
 debug:
-	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="$(filter-out -s,$(CFLAGS)) -g -O0" LDFLAGS="-g $(LDFLAGS)"
+	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
 
 %$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
 	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
-ifneq (,$(findstring -s,$(CFLAGS)))
-	@strip $@
-endif
 
 $(BUILD)/%.o: %.c | $(BUILD)/.
 	@echo "  CC $@"
@@ -98,10 +95,9 @@ $(BUILD)/%.o: %.cpp | $(BUILD)/.
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
-VERSION := $(shell date +%Y%m%d)
-SRC_TAR := $(PROJECT)-$(VERSION)-src.tar.bz2
-TAR := $(PROJECT)-$(VERSION).tar.bz2
-ZIP := $(PROJECT)-$(VERSION).zip
+SRC_TAR := $(PROJECT)-src.tar.bz2
+TAR := $(PROJECT).tar.bz2
+ZIP := $(PROJECT).zip
 CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
@@ -124,7 +120,7 @@ zip: $(ZIP)
 
 $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
-	@zip $@ $^ > /dev/null
+	@zip "$@" $^ > /dev/null 2>&1
 
 # documentation
 .PHONY: doc
