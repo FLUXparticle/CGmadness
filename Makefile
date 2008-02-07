@@ -95,9 +95,10 @@ $(BUILD)/%.o: %.cpp | $(BUILD)/.
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
-SRC_TAR := $(PROJECT)-src.tar.bz2
-TAR := $(PROJECT).tar.bz2
-ZIP := $(PROJECT).zip
+BASENAME := $(PROJECT)
+SRC_TAR := $(BASENAME)-src.tar.bz2
+TAR := $(BASENAME).tar.bz2
+ZIP := $(BASENAME).zip
 CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
