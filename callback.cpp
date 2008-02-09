@@ -41,6 +41,8 @@ Viewport sgWindowViewport;
 
 static RenderTarget gTargetWindow;
 
+static Process* gProcess;
+
 /*** Scene ***/
 
 static funcDraw gPreDisplay = NULL;
@@ -114,7 +116,7 @@ void display(void)
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(&v->view[0][0]);
 
-		drawMain();
+		gProcess->draw();
 	}
 
 	/* draw framerate */
@@ -133,7 +135,7 @@ void display(void)
 
 	glMatrixMode(GL_MODELVIEW);
 
-	drawMainHUD(1.0f / aspect, 1.0f);
+	gProcess->drawHUD(1.0f / aspect, 1.0f);
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -233,7 +235,7 @@ void timer(int startTime)
 		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction,
 										 gLastMouseEvent.event);
 
-		updateMain(TIME_STEP / 1000.0f);
+		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
 }
@@ -254,6 +256,16 @@ void setUpdateFrequency(int callsPerSecond)
 	{
 		gMillis = TIME_STEP;
 	}
+}
+
+/*** Callback ***/
+
+void startCallback(Process* process)
+{
+	gProcess = process;
+	
+	startTimer();
+	startDisplay();
 }
 
 /*** Picking ***/

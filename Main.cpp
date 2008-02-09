@@ -24,19 +24,21 @@
 
 #include "menumanager.hpp"
 
+#include "Dispenser.hpp"
+
 #include "Main.hpp"
 #include "Game.hpp"
 #include "Editor.hpp"
 
 StringList sgLevels;
 
-static Process* gCurProcess;
+Dispenser gDispenser;
 
 static Main gMainProcess;
 static Game gGameProcess;
 static Editor gEditorProcess;
 
-void initMain(void)
+Process* initMain(void)
 {
 	createStringListFromDir(&sgLevels, "levels");
 
@@ -45,25 +47,12 @@ void initMain(void)
 	initMenuManager();
 	
 	gMainProcess.init();
-	setMainState(STATE_MAIN);
-
 	gGameProcess.init();
 	gEditorProcess.init();
-}
-
-void setProcess(Process* process)
-{
-	if (gCurProcess)
-	{
-		gCurProcess->stop();
-	}
 	
-	gCurProcess = process;
+	setMainState(STATE_MAIN);
 	
-	if (gCurProcess)
-	{
-		gCurProcess->start();
-	}
+	return &gDispenser;
 }
 
 void setMainState(MainState newState)
@@ -71,28 +60,13 @@ void setMainState(MainState newState)
 	switch (newState)
 	{
 	case STATE_MAIN:
-		setProcess(&gMainProcess);
+		gDispenser.setProcess(&gMainProcess);
 		break;
 	case STATE_GAME:
-		setProcess(&gGameProcess);
+		gDispenser.setProcess(&gGameProcess);
 		break;
 	case STATE_EDITOR:
-		setProcess(&gEditorProcess);
+		gDispenser.setProcess(&gEditorProcess);
 		break;
 	}
-}
-
-void updateMain(float interval)
-{
-	gCurProcess->update(interval);
-}
-
-void drawMain()
-{
-	gCurProcess->draw();
-}
-
-void drawMainHUD(float width, float height)
-{
-	gCurProcess->drawHUD(width, height);
 }

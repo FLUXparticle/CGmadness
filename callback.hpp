@@ -22,6 +22,8 @@
 
 #include "mouse.hpp"
 
+#include "Process.hpp"
+
 #include "vector.hpp"
 #include "types.hpp"
 
@@ -51,9 +53,8 @@ void setPreDisplayFunc(funcDraw preDisplay);
 
 void centerMouse(int *x, int *y);
 
-void startDisplay(void);
+void startCallback(Process* process);
 
-void startTimer(void);
 void setUpdateFrequency(int callsPerSecond);
 
 void mouseEvent(int x, int y, MouseEvent event);

@@ -22,6 +22,8 @@
 
 #include "stringlist.hpp"
 
+#include "Process.hpp"
+
 typedef enum
 {
 	STATE_MAIN,
@@ -31,13 +33,8 @@ typedef enum
 
 extern StringList sgLevels;
 
-void initMain(void);
+Process* initMain(void);
 
 void setMainState(MainState newState);
-
-void updateMain(float interval);
-
-void drawMain(void);
-void drawMainHUD(float width, float height);
 
 #endif

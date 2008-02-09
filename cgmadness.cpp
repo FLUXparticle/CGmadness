@@ -93,14 +93,13 @@ int main(int argc, char *argv[])
 
 	/* ---- */
 
-	initMain();
-
 	startKeyboard();
 	startMouse();
 
-	startTimer();
-	startDisplay();
+	Process* process = initMain();
 
+	startCallback(process);
+	
 	glutMainLoop();
 
 	return 0;
