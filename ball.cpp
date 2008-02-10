@@ -19,34 +19,15 @@
 
 #include "ball.hpp"
 
-#include "level.hpp"
-#include "game.hpp"
-#include "callback.hpp"
-#include "objects.hpp"
-#include "shader.hpp"
-#include "fbuffer.hpp"
-#include "vector.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
-#include "texture.hpp"
-#include "field.hpp"
-#include "lightmap.hpp"
 #include "camera.hpp"
 
 #include "functions.hpp"
 
-#include "debug.hpp"
-
-#include <GL/glew.h>
 #include <GL/glut.h>
 
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
-
-#include <assert.h>
-
-#define SHOW_COLLISION_QUADS 0
 
 Ball sgoBall;
 bool sgIsMouseControl = false;
