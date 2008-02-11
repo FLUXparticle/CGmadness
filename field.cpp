@@ -495,7 +495,7 @@ void updateGameField(void)
 			for (i = 0; i < 4; i++)
 			{
 				Vector3 vertex = sgVertices[q + i];
-				Vector3 d = sub(sgoBall.getPos(), vertex);
+				Vector3 d = sub(sgoBall.pos(), vertex);
 
 				float x = dot(vx, d) / MAX_XY + 0.5f;
 				float y = dot(vy, d) / MAX_XY + 0.5f;
@@ -511,15 +511,15 @@ void updateGameField(void)
 		static int lastBX = 0;
 		static int lastBY = 0;
 
-		int bx = (int) floor(sgoBall.getPos().x - sgLevel.origin.x);
-		int by = (int) floor(sgoBall.getPos().y - sgLevel.origin.y);
+		int bx = (int) floor(sgoBall.pos().x - sgLevel.origin.x);
+		int by = (int) floor(sgoBall.pos().y - sgLevel.origin.y);
 
 		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
 		{
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.getPos(), 1,
+				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.pos(), 1,
 						gBallReflectionIndices, &gCntBallReflectionIndices);
 
 				lastBX = bx;
@@ -609,7 +609,7 @@ void drawGameField(bool ballReflection)
 			glUseProgram(sgBallShadowShader);
 
 			glUniform3fv(glGetUniformLocation(sgBallShadowShader, "ball"), 1,
-									 &sgoBall.getPos().x);
+									 &sgoBall.pos().x);
 			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex0"), 0);
 			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex1"), 1);
 			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex2"), 2);

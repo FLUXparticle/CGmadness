@@ -219,7 +219,7 @@ void updateBall(float interval)
 
 	if (gIsBallCameraActive)
 	{
-		updateBallCamera(interval, sgoBall.getPos());
+		updateBallCamera(interval, sgoBall.pos());
 	}
 }
 
