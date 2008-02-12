@@ -22,7 +22,7 @@
 #include "ball.hpp"
 #include "text.hpp"
 #include "level.hpp"
-#include "game.hpp"
+#include "Game.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "highscore.hpp"

@@ -21,7 +21,6 @@
 
 #include "main.hpp"
 #include "level.hpp"
-#include "game.hpp"
 
 #include "keyboard.hpp"
 #include "mouse.hpp"

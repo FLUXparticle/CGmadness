@@ -25,7 +25,7 @@
 #include "level.hpp"
 #include "texture.hpp"
 #include "environment.hpp"
-#include "editor.hpp"
+#include "Editor.hpp"
 #include "common.hpp"
 #include "highscore.hpp"
 

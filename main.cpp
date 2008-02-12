@@ -26,7 +26,7 @@
 
 #include "Dispenser.hpp"
 
-#include "Main.hpp"
+#include "MainProcess.hpp"
 #include "Game.hpp"
 #include "Editor.hpp"
 
@@ -34,7 +34,7 @@ StringList sgLevels;
 
 Dispenser gDispenser;
 
-static Main gMainProcess;
+static MainProcess gMainProcess;
 static Game gGameProcess;
 static Editor gEditorProcess;
 

@@ -1,26 +1,24 @@
-/*
- * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
+#ifndef Game_hpp
+#define Game_hpp
 
-#ifndef _game_hpp_
-#define _game_hpp_
+#include "Process.hpp"
 
-#include "vector.hpp"
+class Game : public Process
+{
+public:
+  Game();
+  virtual ~Game();
+
+  void init();
+  void start();
+  
+  void update(float interval);
+  void draw(void);
+  void drawHUD(float width, float height);
+
+private:
+
+};
 
 void initGame(void);
 void resumeGame(void);

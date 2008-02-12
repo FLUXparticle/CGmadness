@@ -19,7 +19,7 @@
 
 #include "editormenu.hpp"
 
-#include "editor.hpp"
+#include "Editor.hpp"
 #include "main.hpp"
 #include "menumanager.hpp"
 

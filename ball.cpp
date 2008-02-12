@@ -20,7 +20,7 @@
 #include "ball.hpp"
 
 #include "level.hpp"
-#include "game.hpp"
+#include "Game.hpp"
 #include "callback.hpp"
 #include "objects.hpp"
 #include "shader.hpp"
