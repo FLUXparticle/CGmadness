@@ -35,7 +35,7 @@
 #include "text.hpp"
 #include "texture.hpp"
 #include "environment.hpp"
-#include "noise.hpp"
+#include "atlas.hpp"
 #include "main.hpp"
 
 #include "stringlist.hpp"
@@ -157,15 +157,6 @@ void updateGame(float interval)
 	}
 	else
 	{
-#if NOISE_TEXTURE
-		if (sgLevel.colorMap == 0 && !sgLevel.waiting)
-		{
-			sgLevel.colorMap = genTexture();
-			colorMapToTexture(sgLevel.colorMap);
-			resetBall();
-		}
-#endif
-
 		updateMenuManager(interval);
 	}
 
@@ -231,20 +222,24 @@ void resetGameTime(void)
 	gGameTime = 0.0f;
 }
 
+void lightMapToTexture(unsigned int texID)
+{
+	unsigned int sizeX;
+	unsigned int sizeY;
+	const float* data;
+	
+	getAtlasInfo(&sizeX, &sizeY, &data);
+	
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
+}
+
 void startGame(void)
 {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
 	updateTexCoords();
-
-#if (NOISE_TEXTURE)
-	updateColorMap();
-
-	pushWaitScreen();
-
-	sgLevel.colorMap = 0;
-#endif
 
 	initGameField();
 
@@ -285,9 +280,6 @@ static const char *getNextLevelName(void)
 void stopGame(void)
 {
 	glDeleteTextures(1, &sgLevel.lightMap);
-#if (NOISE_TEXTURE)
-	glDeleteTextures(1, &sgLevel.colorMap);
-#endif
 
 	destroyGameField();
 }

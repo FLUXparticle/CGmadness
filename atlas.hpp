@@ -24,7 +24,6 @@
 #include "color.hpp"
 
 #define LIGHT_MAP_SIZE 8
-#define COLOR_MAP_SIZE 32
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
@@ -41,18 +40,18 @@ int getCntAllocatedSubLightMaps(void);
 
 void destroyAtlas(void);
 
-void lightMapToTexture(unsigned int texID);
-void colorMapToTexture(unsigned int texID);
+void getAtlasInfo(unsigned int* sizeX, unsigned int* sizeY, const float** data);
 
 void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
 void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
 
+const float* getLightMapData();
+
 void allocSubAtlas(SubAtlas * subAtlas, int sizeX, int sizeY);
 
 void setLightMap(SubAtlas * subAtlas, int x, int y, float value);
-void setColorMap(SubAtlas * subAtlas, int x, int y, Color3 col);
 
 Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords);
 

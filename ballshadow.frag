@@ -23,7 +23,6 @@ varying vec3 vertex;
 uniform vec3 ball;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
-uniform sampler2D tex2;
 
 void main()
 {
@@ -39,7 +38,6 @@ void main()
 
 	vec4 texColor0 = texture2D(tex0, vec2(gl_TexCoord[0]));
 	vec4 texColor1 = texture2D(tex1, vec2(gl_TexCoord[1]));
-	vec4 texColor2 = texture2D(tex2, vec2(gl_TexCoord[2]));
 
-	gl_FragColor = gl_Color * texColor0 * texColor1 * texColor2 * shadow;
+	gl_FragColor = gl_Color * texColor0 * texColor1 * shadow;
 }
