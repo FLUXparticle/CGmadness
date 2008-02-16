@@ -7,8 +7,6 @@ public:
   Process();
   virtual ~Process();
   
-  virtual void init();
-  
   virtual void start();
   virtual void stop();
   

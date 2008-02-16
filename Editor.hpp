@@ -8,11 +8,12 @@
 class Editor : public Process
 {
 public:
+  static void init();
+  
+public:
   Editor();
   virtual ~Editor();
 
-  void init();
-  
   void start();
   void stop();
   

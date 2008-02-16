@@ -6,10 +6,12 @@
 class MainProcess : public Process
 {
 public:
+  static void init();
+
+public:
   MainProcess();
   virtual ~MainProcess();
 
-  void init();
   void start();
   
   void update(float interval);

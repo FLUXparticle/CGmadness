@@ -6,10 +6,12 @@
 class Game : public Process
 {
 public:
+  static void init();
+  
+public:
   Game();
   virtual ~Game();
 
-  void init();
   void start();
   void stop();
   

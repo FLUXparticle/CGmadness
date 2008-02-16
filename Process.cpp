@@ -12,11 +12,6 @@ Process::~Process()
   // empty
 }
 
-void Process::init()
-{
-  // empty
-}
-
 void Process::start()
 {
   // empty

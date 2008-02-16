@@ -50,9 +50,9 @@ Process* initMain(void)
 	
 	initMenuManager();
 	
-	gMainProcess.init();
-	gGameProcess.init();
-	gEditorProcess.init();
+	MainProcess::init();
+	Game::init();
+	Editor::init();
 	
 	setMainState(STATE_MAIN);
 	
