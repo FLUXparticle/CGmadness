@@ -86,7 +86,7 @@ Quaternion mulQuaternion(Quaternion a, Quaternion b)
 
 Quaternion mkQuaternion(float alpha, Vector3 v)
 {
-	float a = alpha * PI / 360.0f;
+	float a = alpha * M_PI / 360.0f;
 	float s = sin(a);
 	float c = cos(a);
 	Quaternion q;

@@ -116,7 +116,7 @@ float getSubLightMapPixel(int index, int sx, int sy)
 
 Vector2 transformSubCoords(int index, const Vector2 coords)
 {
-	return vector2(((index % gCols) + coords.x) / gCols,
+	return Vector2(((index % gCols) + coords.x) / gCols,
 								 ((index / gCols) + coords.y) / gRows);
 }
 
@@ -197,7 +197,7 @@ Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords)
 		int x = (int) floor(fx);
 		int y = (int) floor(fy);
 		int index = subAtlas->idxSubLightMap + y * subAtlas->sizeX + x;
-		Vector2 v = vector2(fx - x, fy - y);
+		Vector2 v = Vector2(fx - x, fy - y);
 
 		assert(coords.x >= 0.0f && coords.x <= subAtlas->sizeX);
 		assert(coords.y >= 0.0f && coords.y <= subAtlas->sizeY);

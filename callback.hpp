@@ -24,7 +24,7 @@
 
 #include "Process.hpp"
 
-#include "vector.hpp"
+#include "math/Vector3.hpp"
 #include "types.hpp"
 
 typedef void (*funcDrawHUD) (float width, float height);

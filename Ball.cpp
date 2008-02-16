@@ -23,6 +23,8 @@
 #include "keyboard.hpp"
 #include "camera.hpp"
 
+#include "math/vector.hpp"
+
 #include "functions.hpp"
 
 #include <GL/glut.h>
@@ -106,8 +108,8 @@ void disableBallCamera(void)
 void updateBallCamera(float interval, Vector3 ball)
 {
 	Vector3 diff;
-	Vector3 up = { 0.0f, 0.0f, 1.0f };
-	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
+	Vector3 up(0.0f, 0.0f, 1.0f);
+	static Vector3 dest(0.0f, 0.0f, 0.0f);
 
 	/* game controls for camera */
 
@@ -144,11 +146,11 @@ void updateBallCamera(float interval, Vector3 ball)
 
 	dest.x =
 		ball.x +
-		gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+		gDistance * sin(gLongitude * M_PI / 180.0f) * cos(gLatitude * M_PI / 180.0f);
 	dest.y =
 		ball.y -
-		gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
-	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
+		gDistance * cos(gLongitude * M_PI / 180.0f) * cos(gLatitude * M_PI / 180.0f);
+	dest.z = ball.z + gDistance * sin(gLatitude * M_PI / 180.0f);
 
 	moveCamera(interval, dest, ball);
 
@@ -165,7 +167,7 @@ void updateBallCamera(float interval, Vector3 ball)
 
 void updateBall(float interval)
 {
-	Vector3 force = { 0.0f, 0.0f, 0.0f };
+	Vector3 force(0.0f, 0.0f, 0.0f);
 
 	/* ball controls */
 	if (sgIsMouseControl)

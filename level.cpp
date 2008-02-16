@@ -55,6 +55,18 @@ static char *addStrings(const char *a, const char *b)
 	return c;
 }
 
+Vector3 midpoint(const Vector3 quad[4])
+{
+	Vector3 mid(0.0f, 0.0f, 0.0f);
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		mid = add(mid, scale(1.0f / 4.0f, quad[i]));
+	}
+
+	return mid;
+}
+
 static void updateSquareAttributes(Square * square)
 {
 	int i;

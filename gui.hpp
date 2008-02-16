@@ -20,7 +20,7 @@
 #ifndef _gui_hpp_
 #define _gui_hpp_
 
-#include "vector.hpp"
+#include "math/Vector2.hpp"
 #include "mouse.hpp"
 #include "types.hpp"
 

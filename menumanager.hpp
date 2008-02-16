@@ -23,6 +23,8 @@
 
 #include "gui.hpp"
 
+#include "math/Vector3.hpp"
+
 typedef void (*funcCallback) (void);
 
 void initMenuManager(void);

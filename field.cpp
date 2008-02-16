@@ -25,7 +25,7 @@
 #include "ball.hpp"
 #include "features.hpp"
 
-#include "vector.hpp"
+#include "math/Vector2.hpp"
 #include "functions.hpp"
 
 #include "types.hpp"
@@ -487,7 +487,7 @@ void updateGameField(void)
 				float y = dot(vy, d) / MAX_XY + 0.5f;
 				float z = dot(vz, d) / MAX_Z;
 
-				gBallShadowCoords[q + i] = vector3(x, y, z);
+				gBallShadowCoords[q + i] = Vector3(x, y, z);
 			}
 		}
 	}

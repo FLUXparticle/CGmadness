@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,26 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#include "vector.hpp"
+
+#include <math.h>
 
 /*
- * namen conventions for variables:
- * member                 m
- * static member          s
- * global                 g
- * super global           sg
+ * projection matrix without farplane
  */
+void initProjectMat(Matrix m, float fov)
+{
+	int x;
+	int y;
+	float f = 1.0f / tan(fov / 2.0f * M_PI / 180.0f);
+	static float near = 0.01f;
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+	for (x = 0; x < 4; x++)
+	{
+		for (y = 0; y < 4; y++)
+		{
+			m[x][y] = 0.0f;
+		}
+	}
 
-#define FOV 60.0f
+	m[0][0] = f;
 
-#define MATRIX_SIZE 4
+	m[1][1] = f;
 
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
+	m[2][2] = -1;
+	m[2][3] = -1;
 
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
-
-#endif
+	m[3][2] = -2 * near;
+}

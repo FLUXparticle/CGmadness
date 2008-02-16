@@ -66,8 +66,8 @@ const Screen *getCurScreen(void)
 
 void updateMenuManager(float interval)
 {
-	Vector3 camera = vector3(0.0f, -10.0f, 7.0f);
-	Vector3 lookat = vector3(0.0f, 0.0f, 5.0f);
+	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
+	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
 

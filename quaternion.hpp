@@ -20,7 +20,7 @@
 #ifndef _quaternion_hpp_
 #define _quaternion_hpp_
 
-#include "vector.hpp"
+#include "math/Vector3.hpp"
 
 typedef struct
 {

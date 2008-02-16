@@ -20,7 +20,7 @@
 #ifndef _atlas_hpp_
 #define _atlas_hpp_
 
-#include "vector.hpp"
+#include "math/Vector2.hpp"
 #include "color.hpp"
 
 #define LIGHT_MAP_SIZE 8

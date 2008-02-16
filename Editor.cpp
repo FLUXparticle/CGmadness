@@ -167,7 +167,7 @@ void updateEditorCamera(float interval, Vector3 marker)
 {
 	static float distance = 5.0f;
 	static float height = 2.0f;
-	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
+	static Vector3 dest(0.0f, 0.0f, 0.0f);
 	float angle;
 
 	/* camera controls for editor */
@@ -198,8 +198,8 @@ void updateEditorCamera(float interval, Vector3 marker)
 	angle = gCamAngle * 90.0f;
 
 	/* new camera position */
-	dest.x = sin(angle * PI / 180.0f) * distance + marker.x;
-	dest.y = -cos(angle * PI / 180.0f) * distance + marker.y;
+	dest.x = sin(angle * M_PI / 180.0f) * distance + marker.x;
+	dest.y = -cos(angle * M_PI / 180.0f) * distance + marker.y;
 	dest.z = height + marker.z;
 
 	moveCamera(interval, dest, marker);
