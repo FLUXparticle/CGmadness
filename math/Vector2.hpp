@@ -17,54 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _vector_hpp_
-#define _vector_hpp_
+#ifndef Vector2_hpp
+#define Vector2_hpp
 
-#include "types.hpp"
-
-typedef struct
+struct Vector2
 {
 	float x;
 	float y;
-} Vector2;
 
-typedef struct
-{
-	float x;
-	float y;
-	float z;
-} Vector3;
+  Vector2();
+  Vector2(float x, float y);
 
-typedef struct
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-} Orientation;
-
-Vector2 vector2(float x, float y);
-
-Vector3 vector3(float x, float y, float z);
-
-float len(const Vector3 v);
-
-Vector3 norm(const Vector3 v);
-
-Vector3 scale(float s, const Vector3 a);
-
-Vector3 add(const Vector3 a, const Vector3 b);
-
-Vector3 sub(const Vector3 a, const Vector3 b);
-
-Vector3 neg(const Vector3 a);
-
-float dot(const Vector3 a, const Vector3 b);
-
-Vector3 cross(const Vector3 a, const Vector3 b);
-
-Vector3 midpoint(const Vector3 * quad);
-
-void initProjectMat(Matrix m, float fov);
+};
 
 #endif

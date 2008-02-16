@@ -25,6 +25,8 @@
 #include "text.hpp"
 #include "camera.hpp"
 
+#include "math/vector.hpp"
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 
@@ -275,11 +277,11 @@ void mouseEvent(int mx, int my, MouseEvent event)
 	int width = gTargetWindow.width;
 	int height = gTargetWindow.height;
 	float aspect = (float) width / height;
-	float f = tan(FOV / 2.0f * PI / 180.0f);
+	float f = tan(FOV / 2.0f * M_PI / 180.0f);
 	float x = (float) mx / width * 2.0f - 1.0f;
 	float y = (float) my / height * 2.0f - 1.0f;
 
-	Vector3 dir = vector3(aspect * f * x, f * -y, -1.0f);
+	Vector3 dir = Vector3(aspect * f * x, f * -y, -1.0f);
 
 	Viewport *v = gTargetWindow.viewport;
 

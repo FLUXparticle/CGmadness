@@ -21,7 +21,7 @@
 
 #include "keyboard.hpp"
 
-#include "vector.hpp"
+#include "math/Vector3.hpp"
 #include "types.hpp"
 
 #include <GL/gl.h>
@@ -58,9 +58,18 @@ void drawSquare(void)
 #define Z 0.850650808352039932
 
 static Vector3 gIsokaederVertices[12] = {
-	{-X, 0.0, Z}, {X, 0.0, Z}, {-X, 0.0, -Z}, {X, 0.0, -Z},
-	{0.0, Z, X}, {0.0, Z, -X}, {0.0, -Z, X}, {0.0, -Z, -X},
-	{Z, X, 0.0}, {-Z, X, 0.0}, {Z, -X, 0.0}, {-Z, -X, 0.0}
+		Vector3(-X, 0.0, Z),
+		Vector3(X, 0.0, Z),
+		Vector3(-X, 0.0, -Z),
+		Vector3(X, 0.0, -Z),
+		Vector3(0.0, Z, X),
+		Vector3(0.0, Z, -X),
+		Vector3(0.0, -Z, X),
+		Vector3(0.0, -Z, -X),
+		Vector3(Z, X, 0.0),
+		Vector3(-Z, X, 0.0),
+		Vector3(Z, -X, 0.0),
+		Vector3(-Z, -X, 0.0)
 };
 
 static int gIsokaederIndices[20][3] = {
@@ -87,14 +96,14 @@ static Vector3 gBallTexCoordsShader[CNT_BALL_VERTICES];
 
 void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 {
-	Vector3 z = vector3(0.0f, 0.0f, 1.0f);
+	Vector3 z = Vector3(0.0f, 0.0f, 1.0f);
 	int i;
 	if (depth == 0)
 	{
-		float u0 = 0.5f * atan2(tri[0].x, tri[0].y) / PI + 0.5f;
+		float u0 = 0.5f * atan2(tri[0].x, tri[0].y) / M_PI + 0.5f;
 		for (i = 0; i < 3; i++)
 		{
-			float light = 1.0f - acos(dot(tri[i], z)) / PI;
+			float light = 1.0f - acos(dot(tri[i], z)) / M_PI;
 
 			Vector3 texCoordDefault;
 			Vector3 texCoordShader;
@@ -102,8 +111,8 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 
 			texCoordShader = norm(sub(tri[i], hole));
 
-			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / PI + 0.5f;
-			texCoordDefault.y = asin(tri[i].z) / PI + 0.5f;
+			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / M_PI + 0.5f;
+			texCoordDefault.y = asin(tri[i].z) / M_PI + 0.5f;
 			texCoordDefault.z = 0.0f;
 
 			if (texCoordDefault.x - u0 > 0.5f)
@@ -161,7 +170,7 @@ void initObjects(void)
 	for (i = 0; i < LENGTH(gIsokaederIndices); i++)
 	{
 		Vector3 tri[3];
-		Vector3 mid = { 0.0f, 0.0f, 0.0f };
+		Vector3 mid(0.0f, 0.0f, 0.0f);
 
 		for (j = 0; j < LENGTH(gIsokaederIndices[i]); j++)
 		{
@@ -267,7 +276,7 @@ void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
 	for (i = 0, v = 0; i < LENGTH(gFragments);
 			 i++, v += LENGTH(gFragments[i].vertices))
 	{
-		Vector3 mid = { 0.0f, 0.0f, 0.0f };
+		Vector3 mid(0.0f, 0.0f, 0.0f);
 
 		for (j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
@@ -372,8 +381,8 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 
 		for (i = 0; i < LENGTH(gFragments); i++)
 		{
-			gFragments[i].rotSpeed = vector3(0.0f, 0.0f, 0.0f);
-			gFragments[i].rotation = vector3(0.0f, 0.0f, 0.0f);
+			gFragments[i].rotSpeed = Vector3(0.0f, 0.0f, 0.0f);
+			gFragments[i].rotation = Vector3(0.0f, 0.0f, 0.0f);
 		}
 	}
 

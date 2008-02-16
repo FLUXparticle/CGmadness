@@ -29,8 +29,6 @@
  * super globale Objecte  sgo
  */
 
-#define PI 3.14159265358979323846
-
 #define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
 
 #define FOV 60.0f

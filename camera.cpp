@@ -40,7 +40,7 @@ void resetCamera(void)
 void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 {
 	Vector3 diff;
-	Vector3 up = { 0.0f, 0.0f, 1.0f };
+	Vector3 up(0.0f, 0.0f, 1.0f);
 	float error;
 
 	/* new values */

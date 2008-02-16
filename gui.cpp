@@ -109,7 +109,7 @@ void initCanvas(Canvas * canvas, float z, float width, float height,
 	canvas->item.width = width;
 	canvas->item.height = height;
 
-	canvas->item.position = vector2(-canvas->item.width / 2.0f, z);
+	canvas->item.position = Vector2(-canvas->item.width / 2.0f, z);
 }
 
 void drawCanvas(const Canvas * canvas)
@@ -132,11 +132,11 @@ void initLabel(Label * label, float x, float z, float size, bool alignRight,
 
 	if (alignRight)
 	{
-		label->item.position = vector2(x - label->item.width, z);
+		label->item.position = Vector2(x - label->item.width, z);
 	}
 	else
 	{
-		label->item.position = vector2(x, z);
+		label->item.position = Vector2(x, z);
 	}
 }
 
@@ -164,7 +164,7 @@ void initProgressBar(ProgressBar * progressBar, float z, float *progress)
 	progressBar->item.width = 8.0f;
 	progressBar->item.height = 0.9f;
 
-	progressBar->item.position = vector2(0.0f, z);
+	progressBar->item.position = Vector2(0.0f, z);
 }
 
 void drawProgressBar(const ProgressBar * progressBar)
@@ -202,7 +202,7 @@ void initButton(Button * button, float z, funcClick click, char *text,
 	button->item.width = widthFont3DText(button->text) * scaleText;
 	button->item.height = 0.5f;
 
-	button->item.position = vector2(-button->item.width / 2.0f, z);
+	button->item.position = Vector2(-button->item.width / 2.0f, z);
 }
 
 void eventButton(Button * button, MouseEvent event)
@@ -251,7 +251,7 @@ void initCheck(Check * check, float z, funcChange change, char *text)
 	check->item.width = widthFont3DText(check->text) * scaleText;
 	check->item.height = 0.5f;
 
-	check->item.position = vector2(-check->item.width / 2.0f, z);
+	check->item.position = Vector2(-check->item.width / 2.0f, z);
 
 	setCheck(check, 1);
 }
@@ -309,7 +309,7 @@ void initSpinEdit(SpinEdit * spinEdit, int value, int min, int max, float width,
 	spinEdit->item.width = width;
 	spinEdit->item.height = 1.0f;
 
-	spinEdit->item.position = vector2(-spinEdit->item.width / 2.0f, z - 0.5);
+	spinEdit->item.position = Vector2(-spinEdit->item.width / 2.0f, z - 0.5);
 
 	spinEdit->value = value;
 	spinEdit->minValue = min;

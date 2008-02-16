@@ -25,13 +25,15 @@
 #include "objects.hpp"
 #include "shader.hpp"
 #include "fbuffer.hpp"
-#include "vector.hpp"
+#include "math/Vector3.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "texture.hpp"
 #include "field.hpp"
 #include "lightmap.hpp"
 #include "camera.hpp"
+
+#include "math/vector.hpp"
 
 #include "functions.hpp"
 
@@ -120,25 +122,25 @@ void gameDrag(int dx, int dy)
 void updateReflection(void)
 {
 	static Vector3 lookat[] = {
-		{1.0f, 0.0f, 0.0f},
-		{-1.0f, 0.0f, 0.0f},
+			Vector3(1.0f, 0.0f, 0.0f),
+			Vector3(-1.0f, 0.0f, 0.0f),
 
-		{0.0f, 1.0f, 0.0f},
-		{0.0f, -1.0f, 0.0f},
+			Vector3(0.0f, 1.0f, 0.0f),
+			Vector3(0.0f, -1.0f, 0.0f),
 
-		{0.0f, 0.0f, 1.0f},
-		{0.0f, 0.0f, -1.0f}
+			Vector3(0.0f, 0.0f, 1.0f),
+			Vector3(0.0f, 0.0f, -1.0f)
 	};
 
 	static Vector3 up[] = {
-		{0.0f, -1.0f, 0.0f},
-		{0.0f, -1.0f, 0.0f},
+			Vector3(0.0f, -1.0f, 0.0f),
+			Vector3(0.0f, -1.0f, 0.0f),
 
-		{0.0f, 0.0f, 1.0f},
-		{0.0f, 0.0f, -1.0f},
+			Vector3(0.0f, 0.0f, 1.0f),
+			Vector3(0.0f, 0.0f, -1.0f),
 
-		{0.0f, -1.0f, 0.0f},
-		{0.0f, -1.0f, 0.0f}
+			Vector3(0.0f, -1.0f, 0.0f),
+			Vector3(0.0f, -1.0f, 0.0f)
 	};
 
 	if (useBallReflection() && gIsReflectionDirty)
@@ -251,7 +253,7 @@ void initBall(void)
 	sgoBall.mass = 1.0f;
 	sgoBall.radius = 0.2f;
 
-	sgoBall.orientation = mkQuaternion(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	sgoBall.orientation = mkQuaternion(0.0f, Vector3(0.0f, 0.0f, 1.0f));
 
 	setPreDisplayFunc(updateReflection);
 }
@@ -339,8 +341,8 @@ void animateBall(float interval)
 	int dx;
 	int dy;
 
-	Vector3 force = { 0.0f, 0.0f, 0.0f };
-	Vector3 normal = { 0.0f, 0.0f, 0.0f };
+	Vector3 force(0.0f, 0.0f, 0.0f);
+	Vector3 normal(0.0f, 0.0f, 0.0f);
 
 	Vector3 ball;
 	Vector3 step;
@@ -443,7 +445,7 @@ void animateBall(float interval)
 
 					sgoBall.angularRate =
 						scale(dot(sub(ball, sgoBall.pos), forward) /
-									(2.0f * PI * sgoBall.radius) * 360.0f / interval, right);
+									(2.0f * M_PI * sgoBall.radius) * 360.0f / interval, right);
 
 					ball = add(ball, move);
 
@@ -549,8 +551,8 @@ void disableBallCamera(void)
 void updateBallCamera(float interval, Vector3 ball)
 {
 	Vector3 diff;
-	Vector3 up = { 0.0f, 0.0f, 1.0f };
-	static Vector3 dest = { 0.0f, 0.0f, 0.0f };
+	Vector3 up(0.0f, 0.0f, 1.0f);
+	static Vector3 dest(0.0f, 0.0f, 0.0f);
 
 	/* game controls for camera */
 
@@ -587,11 +589,11 @@ void updateBallCamera(float interval, Vector3 ball)
 
 	dest.x =
 		ball.x +
-		gDistance * sin(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
+		gDistance * sin(gLongitude * M_PI / 180.0f) * cos(gLatitude * M_PI / 180.0f);
 	dest.y =
 		ball.y -
-		gDistance * cos(gLongitude * PI / 180.0f) * cos(gLatitude * PI / 180.0f);
-	dest.z = ball.z + gDistance * sin(gLatitude * PI / 180.0f);
+		gDistance * cos(gLongitude * M_PI / 180.0f) * cos(gLatitude * M_PI / 180.0f);
+	dest.z = ball.z + gDistance * sin(gLatitude * M_PI / 180.0f);
 
 	moveCamera(interval, dest, ball);
 
@@ -628,7 +630,7 @@ void updateBall(float interval)
 
 void activateBallShader(void)
 {
-	Vector3 normal = vector3(0.0f, 0.0f, 1.0f);
+	Vector3 normal = Vector3(0.0f, 0.0f, 1.0f);
 	float light = approximation(sgoBall.pos, normal);
 
 	glEnable(GL_COLOR_MATERIAL);

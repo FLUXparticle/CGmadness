@@ -21,7 +21,8 @@
 
 #include "environment.hpp"
 
-#include "vector.hpp"
+#include "math/Vector3.hpp"
+
 #include "types.hpp"
 
 #include <stdio.h>
@@ -35,12 +36,7 @@
 #define NUMVERTS ((SLICES + 1) * (SIDES + 1))
 #define NUMINDICES (SLICES * (SIDES + 1) * 2)
 
-#define SKY_TEXTURE 0
-
 static Vector3 gVertexBuffer[NUMVERTS];
-#if (SKY_TEXTURE)
-static Vector2 gTextureBuffer[NUMVERTS];
-#endif
 static GLuint gIndexBuffer[NUMINDICES];
 
 void initSkysphere(void)
@@ -57,11 +53,11 @@ void initSkysphere(void)
 	for (j = 0; j <= SLICES; j++)
 	{
 		/* deltaPhi */
-		angle1 = j * (PI / 2.0f) / SLICES;
+		angle1 = j * (M_PI / 2.0f) / SLICES;
 
 		for (i = 0; i <= SIDES; i++)
 		{
-			angle2 = i * (2.0f * PI) / SIDES;
+			angle2 = i * (2.0f * M_PI) / SIDES;
 
 			/* Calculate Vertexpositions */
 			vx = cos(angle2) * cos(angle1);
@@ -71,11 +67,6 @@ void initSkysphere(void)
 			gVertexBuffer[j * (SIDES + 1) + i].x = vx;
 			gVertexBuffer[j * (SIDES + 1) + i].z = vz;
 			gVertexBuffer[j * (SIDES + 1) + i].y = vy;
-
-#if (SKY_TEXTURE)
-			gTextureBuffer[j * (SIDES + 1) + i].x = (float) i / SIDES;
-			gTextureBuffer[j * (SIDES + 1) + i].y = (float) j / SLICES;
-#endif
 		}
 	}
 

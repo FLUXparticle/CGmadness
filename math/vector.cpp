@@ -1,51 +1,50 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _quaternion_hpp_
-#define _quaternion_hpp_
+#include "vector.hpp"
 
-#include "math/Vector3.hpp"
+#include <math.h>
 
-typedef struct
+/*
+ * projection matrix without farplane
+ */
+void initProjectMat(Matrix m, float fov)
 {
-	float s;
-	Vector3 v;
-} Quaternion;
+	int x;
+	int y;
+	float f = 1.0f / tan(fov / 2.0f * M_PI / 180.0f);
+	static float near = 0.01f;
 
-float lenQuaternion(Quaternion q);
+	for (x = 0; x < 4; x++)
+	{
+		for (y = 0; y < 4; y++)
+		{
+			m[x][y] = 0.0f;
+		}
+	}
 
-Quaternion normQuaternion(Quaternion q);
+	m[0][0] = f;
 
-Quaternion scaleQuaternion(float s, Quaternion a);
+	m[1][1] = f;
 
-Quaternion addQuaternion(Quaternion a, Quaternion b);
+	m[2][2] = -1;
+	m[2][3] = -1;
 
-Quaternion subQuaternion(Quaternion a, Quaternion b);
-
-float dotQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mulQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mkQuaternion(float alpha, Vector3 v);
-
-Quaternion interpolate(float t, Quaternion a, Quaternion b);
-
-void quaternionTransform(Quaternion a);
-
-#endif
+	m[3][2] = -2 * near;
+}
