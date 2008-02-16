@@ -25,6 +25,7 @@
 
 Vector3 sgCamera;
 Vector3 sgLookat;
+static Vector3 gUp(0.0f, 0.0f, 1.0f);
 
 void resetCamera(void)
 {
@@ -40,7 +41,6 @@ void resetCamera(void)
 void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 {
 	Vector3 diff;
-	Vector3 up(0.0f, 0.0f, 1.0f);
 	float error;
 
 	/* new values */
@@ -57,7 +57,7 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 	glLoadIdentity();
 
 	gluLookAt(sgCamera.x, sgCamera.y, sgCamera.z,
-						sgLookat.x, sgLookat.y, sgLookat.z, up.x, up.y, up.z);
+						sgLookat.x, sgLookat.y, sgLookat.z, gUp.x, gUp.y, gUp.z);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
 }
@@ -66,21 +66,13 @@ Vector3 rotateVector(const Vector3& dir)
 {
 	Vector3 direction;
 	
-#if 1
-	Viewport *v = &sgWindowViewport;
+	Vector3 f = (sgCamera - sgLookat).norm();
+	Vector3 s = gUp ^ f;
+	Vector3 u = f ^ s;
 	
-	direction.x =
-		dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
-	direction.y =
-		dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
-	direction.z =
-		dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
-#else
-	Matrix view;
-	
-	Vector3 f = sgLookat - sgCamera;
-	
-#endif
+	direction.x = dir.x * s.x + dir.y * u.x + dir.z * f.x;
+	direction.y = dir.x * s.y + dir.y * u.y + dir.z * f.y;
+	direction.z = dir.x * s.z + dir.y * u.z + dir.z * f.z;
 	
 	return direction;
 }
