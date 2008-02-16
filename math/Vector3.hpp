@@ -32,12 +32,12 @@ struct Vector3
   float len() const;
   Vector3 norm() const;
   
-  Vector3 scale(float s) const;
-  Vector3 add(const Vector3 b) const;
-  Vector3 sub(const Vector3 b) const;
-  Vector3 neg() const;
-  float dot(const Vector3 b) const;
-  Vector3 cross(const Vector3 b) const;
+  Vector3 operator*(float s) const;
+  Vector3 operator+(const Vector3 b) const;
+  Vector3 operator-(const Vector3 b) const;
+  Vector3 operator-() const;
+  float operator*(const Vector3 b) const;
+  Vector3 operator^(const Vector3 b) const;
   
 };
 
@@ -53,32 +53,32 @@ inline Vector3 norm(const Vector3 v)
 
 inline Vector3 neg(const Vector3 a)
 {
-	return a.neg();
+	return -a;
 }
 
 inline Vector3 scale(float s, const Vector3 a)
 {
-	return a.scale(s);
+	return a * s;
 }
 
 inline Vector3 add(const Vector3 a, const Vector3 b)
 {
-	return a.add(b);
+	return a + b;
 }
 
 inline Vector3 sub(const Vector3 a, const Vector3 b)
 {
-	return a.sub(b);
+	return a - b;
 }
 
 inline float dot(const Vector3 a, const Vector3 b)
 {
-	return a.dot(b);
+	return a * b;
 }
 
 inline Vector3 cross(const Vector3 a, const Vector3 b)
 {
-	return a.cross(b);
+	return a ^ b;
 }
 
 #endif
