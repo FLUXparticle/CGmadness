@@ -281,17 +281,8 @@ void mouseEvent(int mx, int my, MouseEvent event)
 
 	Vector3 dir = vector3(aspect * f * x, f * -y, -1.0f);
 
-	Viewport *v = gTargetWindow.viewport;
-
 	Vector3 position = sgCamera;
-	Vector3 direction;
-
-	direction.x =
-		dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
-	direction.y =
-		dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
-	direction.z =
-		dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
+	Vector3 direction = rotateVector(dir);
 
 	if (event == MOUSE_CLICK)
 	{

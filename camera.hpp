@@ -28,4 +28,6 @@ extern Vector3 sgLookat;
 void resetCamera(void);
 void moveCamera(float interval, Vector3 camera, Vector3 lookat);
 
+Vector3 rotateVector(const Vector3& dir);
+
 #endif
