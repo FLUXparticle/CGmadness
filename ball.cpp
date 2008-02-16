@@ -57,11 +57,6 @@ void gameDrag(int dx, int dy)
 	gDragY += dy;
 }
 
-void updateReflection(void)
-{
-	sgoBall.updateReflection();
-}
-
 void resetBall(void)
 {
 	sgoBall.reset();
@@ -69,14 +64,10 @@ void resetBall(void)
 
 void initBall(void)
 {
-	Ball::init();
-	
 	if (hasFramebuffer())
 	{
 		sgoBall.initCubeMap();
 	}
-
-	setPreDisplayFunc(updateReflection);
 }
 
 void resetBallCamera(void)

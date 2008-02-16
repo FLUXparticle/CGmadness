@@ -12,7 +12,9 @@ public:
 	void setProcess(Process* process);
 	
   void update(float interval);
-  void draw(void);
+
+  void preDisplay();
+  void draw();
   void drawHUD(float width, float height);
 
 private:

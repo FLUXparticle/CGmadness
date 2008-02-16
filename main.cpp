@@ -46,6 +46,8 @@ Process* initMain(void)
 	initObjects();
 	initEnvironment();
 
+	Ball::init();
+	
 	initMenuManager();
 	
 	gMainProcess.init();

@@ -47,14 +47,7 @@ static Process* gProcess;
 
 /*** Scene ***/
 
-static funcDraw gPreDisplay = NULL;
-
 static bool gSceneDirty = 1;
-
-void setPreDisplayFunc(funcDraw preDisplay)
-{
-	gPreDisplay = preDisplay;
-}
 
 /*** Display ***/
 
@@ -92,13 +85,12 @@ void display(void)
 	Viewport *v = gTargetWindow.viewport;
 	float aspect = (float) gTargetWindow.height / gTargetWindow.width;
 
-	if (gPreDisplay)
 	{
 #if(DEBUG_PREDISPLAY)
 		int after;
 		int before = glutGet(GLUT_ELAPSED_TIME);
 #endif
-		gPreDisplay();
+		gProcess->preDisplay();
 #if(DEBUG_PREDISPLAY)
 		after = glutGet(GLUT_ELAPSED_TIME);
 		sumPredisplayTime += after - before;

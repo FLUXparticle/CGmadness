@@ -15,7 +15,12 @@ void Dispenser::update(float interval)
 	mCurProcess->update(interval);
 }
 
-void Dispenser::draw(void)
+void Dispenser::preDisplay()
+{
+	mCurProcess->preDisplay();
+}
+
+void Dispenser::draw()
 {
 	mCurProcess->draw();
 }

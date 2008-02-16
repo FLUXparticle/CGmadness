@@ -1,5 +1,7 @@
 #include "Process.hpp"
 
+#include <stdio.h>
+
 Process::Process()
 {
   // empty
@@ -21,6 +23,11 @@ void Process::start()
 }
 
 void Process::stop()
+{
+  // empty
+}
+
+void Process::preDisplay()
 {
   // empty
 }

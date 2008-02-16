@@ -48,8 +48,6 @@ typedef struct
 
 extern Viewport sgWindowViewport;
 
-void setPreDisplayFunc(funcDraw preDisplay);
-
 void centerMouse(int *x, int *y);
 
 void startCallback(Process* process);

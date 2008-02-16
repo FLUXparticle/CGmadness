@@ -128,6 +128,11 @@ void Game::update(float interval)
 	updateGameField();
 }
 
+void Game::preDisplay()
+{
+	sgoBall.updateReflection();
+}
+
 void Game::drawHUD(float widthWindow, float heightWindow)
 {
 	int tenthSecond = (int) (gGameTime * 10.0f);
