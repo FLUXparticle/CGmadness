@@ -25,14 +25,6 @@
 #include "quaternion.hpp"
 #include "math/Vector3.hpp"
 
-#define MAX_BALL_LAYOUTS 5
-
-#define BALL_LAYOUT_DEFAULT 0
-#define BALL_LAYOUT_TEXTURE 1
-#define BALL_LAYOUT_METAL 2
-#define BALL_LAYOUT_GOLFBALL 3
-#define BALL_LAYOUT_GOLFBALL_METAL 4
-
 #define BALL_RADIUS 0.2f
 
 class Ball
@@ -50,34 +42,18 @@ public:
   bool hasHitGoal() const;
   bool isInPieces() const;
   
-	bool hasCubeMap() const;
-	bool useBallReflection() const;
-	
   void reset();
-	void initCubeMap();
   
-  void changeBall(int layout);
-
-  void updateReflection();
-
   void push(const Vector3& direction);
-  void update(float interval);
+  virtual void update(float interval);
   
   void drawGameBall() const;
   
-private:
+protected:
 	static int sTextureBall;
 
 protected:
-	int mCubeMapBall;
-	
-	bool useBallShader() const;
-
-  void activateBallShader() const;
-  void deactivateBallShader() const;
-  
-private:
-	float mMass;
+	const float mMass;
 	const float mRadius;
 
 	Vector3 mPos;
@@ -89,19 +65,18 @@ private:
 	bool mIsBallInPieces;
 	bool mHasBallHitGoal;
 	
-	bool mIsReflectionDirty;
-
-	int mBallLayout;
-
-	RenderTarget mTargetCube[6];
-	Viewport mViewportCube[6];
-	
 	Vector3 mPushDirection;
 
+  virtual void drawBall() const;
+  virtual void drawExplosion() const;
+  
 	void explodeBall();
 	
 	void animateBall(float interval);
 	
+  virtual void activateBallShader() const;
+  virtual void deactivateBallShader() const;
+  
 };
 
 inline const Vector3& Ball::pos() const

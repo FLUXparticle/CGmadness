@@ -19,7 +19,6 @@
 
 #include "main.hpp"
 
-#include "ballcamera.hpp"
 #include "objects.hpp"
 #include "environment.hpp"
 

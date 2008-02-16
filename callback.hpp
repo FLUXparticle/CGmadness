@@ -27,11 +27,6 @@
 #include "math/Vector3.hpp"
 #include "types.hpp"
 
-typedef void (*funcDrawHUD) (float width, float height);
-
-typedef void (*funcDoMouseEvent) (const Vector3 * position,
-																	const Vector3 * direction, MouseEvent event);
-
 typedef struct
 {
 	Matrix projection;

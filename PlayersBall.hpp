@@ -22,6 +22,14 @@
 
 #include "Ball.hpp"
 
+#define MAX_BALL_LAYOUTS 5
+
+#define BALL_LAYOUT_DEFAULT 0
+#define BALL_LAYOUT_TEXTURE 1
+#define BALL_LAYOUT_METAL 2
+#define BALL_LAYOUT_GOLFBALL 3
+#define BALL_LAYOUT_GOLFBALL_METAL 4
+
 class PlayersBall : public Ball
 {
 public:
@@ -30,12 +38,37 @@ public:
 	static void init();
 	
 public:
+	void initCubeMap();
+	
 	bool hasCubeMap() const;
+	bool useBallReflection() const;
+	
+  void changeBall(int layout);
+
+  void update(float interval);
+
+  void updateReflection();
 	void drawMenuBall() const;
 
 private:
+	int mCubeMapBall;
+	bool mIsReflectionDirty;
+	
+	int mBallLayout;
+
+	RenderTarget mTargetCube[6];
+	Viewport mViewportCube[6];
+	
   PlayersBall();
   virtual ~PlayersBall();
+
+  void drawBall() const;
+  void drawExplosion() const;
+  
+  void activateBallShader() const;
+  void deactivateBallShader() const;
+  
+	bool useBallShader() const;
 
 };
 

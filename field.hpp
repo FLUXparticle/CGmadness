@@ -20,7 +20,7 @@
 #ifndef _field_hpp_
 #define _field_hpp_
 
-#include "Ball.hpp"
+#include "PlayersBall.hpp"
 
 #include "math/Vector3.hpp"
 
@@ -34,7 +34,7 @@ void setSquareColor(int q, Color4 col);
 void initGameField(void);
 void destroyGameField(void);
 
-void updateGameField(const Ball& ball);
+void updateGameField(const PlayersBall& ball);
 
 void drawGameField(bool ballReflection);
 

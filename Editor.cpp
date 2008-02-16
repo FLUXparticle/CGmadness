@@ -399,7 +399,6 @@ void animateEditor(float interval)
 void Editor::enableTestMode()
 {
 	mBall.reset();
-	mBall.changeBall(BALL_LAYOUT_TEXTURE);
 	
 	resetBallCamera();
 	enableBallCamera();

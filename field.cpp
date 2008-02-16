@@ -447,7 +447,7 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
 	}
 }
 
-void updateGameField(const Ball& ball)
+void updateGameField(const PlayersBall& ball)
 {
 	gBallPosition = ball.pos();
 	

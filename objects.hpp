@@ -26,11 +26,14 @@ void initObjects(void);
 
 void drawSquare(void);
 
-void drawBallObject(bool shader);
+void drawBallObjectDefault();
+void drawBallObjectShader();
 
 void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
 									 Vector3 endSpeed);
 bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos);
-void drawExplosion(bool shader);
+
+void drawExplosionDefault();
+void drawExplosionShader();
 
 #endif

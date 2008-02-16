@@ -184,7 +184,7 @@ void initObjects(void)
 	}
 }
 
-void drawBallObject(bool shader)
+void drawBallObject(Vector3 ballTexCoords[CNT_BALL_VERTICES])
 {
 	glVertexPointer(3, GL_FLOAT, 0, gBallVertices);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -194,14 +194,8 @@ void drawBallObject(bool shader)
 	glEnableClientState(GL_COLOR_ARRAY);
 #endif
 
-	if (shader)
-	{
-		glTexCoordPointer(3, GL_FLOAT, 0, gBallTexCoordsShader);
-	}
-	else
-	{
-		glTexCoordPointer(3, GL_FLOAT, 0, gBallTexCoordsDefault);
-	}
+	glTexCoordPointer(3, GL_FLOAT, 0, ballTexCoords);
+	
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glNormalPointer(GL_FLOAT, 0, gBallVertices);
@@ -215,6 +209,16 @@ void drawBallObject(bool shader)
 #endif
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+}
+
+void drawBallObjectDefault()
+{
+	drawBallObject(gBallTexCoordsDefault);
+}
+
+void drawBallObjectShader()
+{
+	drawBallObject(gBallTexCoordsShader);
 }
 
 /* ball explosion */
@@ -389,7 +393,7 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 	return gExplosionTime >= gMaxExplosionTime;
 }
 
-void drawExplosion(bool shader)
+void drawExplosion(Vector3 ballTexCoords[CNT_BALL_VERTICES])
 {
 	int i;
 	int j;
@@ -413,16 +417,7 @@ void drawExplosion(bool shader)
 		for (j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
 			glNormal3fv(&gBallVertices[v + j].x);
-
-			if (shader)
-			{
-				glTexCoord3fv(&gBallTexCoordsShader[v + j].x);
-			}
-			else
-			{
-				glTexCoord3fv(&gBallTexCoordsDefault[v + j].x);
-			}
-
+			glTexCoord3fv(&ballTexCoords[v + j].x);
 			glVertex3fv(&gFragments[i].vertices[j].x);
 		}
 		glEnd();
@@ -432,4 +427,14 @@ void drawExplosion(bool shader)
 
 	glEnable(GL_CULL_FACE);
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
+}
+
+void drawExplosionDefault()
+{
+	drawExplosion(gBallTexCoordsDefault);
+}
+
+void drawExplosionShader()
+{
+	drawExplosion(gBallTexCoordsShader);
 }
