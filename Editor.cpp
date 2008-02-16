@@ -4,7 +4,7 @@
 #include "menumanager.hpp"
 
 #include "level.hpp"
-#include "ball.hpp"
+#include "ballcamera.hpp"
 #include "field.hpp"
 #include "camera.hpp"
 #include "keyboard.hpp"

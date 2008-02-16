@@ -6,7 +6,7 @@
 class Game : public Process
 {
 public:
-  static void init();
+	static void init();
   
 public:
   Game();

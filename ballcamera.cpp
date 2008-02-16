@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ball.hpp"
+#include "ballcamera.hpp"
 
 #include "features.hpp"
 #include "keyboard.hpp"
@@ -31,11 +31,10 @@
 
 #include <math.h>
 
-Ball sgoBall;
 static bool gIsMouseControl = false;
 
-Vector3 sgForward;
-Vector3 sgRight;
+static Vector3 gForward;
+static Vector3 gRight;
 
 static bool gIsBallCameraActive;
 
@@ -46,23 +45,10 @@ static float gLongitude;
 static int gDragX = 0;
 static int gDragY = 0;
 
-void changeBall(int layout)
-{
-	sgoBall.changeBall(layout);
-}
-
 void gameDrag(int dx, int dy)
 {
 	gDragX += dx;
 	gDragY += dy;
-}
-
-void initBall(void)
-{
-	if (hasFramebuffer())
-	{
-		sgoBall.initCubeMap();
-	}
 }
 
 void resetBallCamera(void)
@@ -147,8 +133,8 @@ void updateBallCamera(float interval, Vector3 ball)
 
 	diff = sub(sgLookat, sgCamera);
 	diff.z = 0.0f;
-	sgForward = norm(diff);
-	sgRight = norm(cross(sgForward, up));
+	gForward = norm(diff);
+	gRight = norm(cross(gForward, up));
 }
 
 void toggleMouseControl()
@@ -165,44 +151,44 @@ void updateBall(Ball& ball, float interval)
 	{
 		if (isKeyPressed('a'))
 		{
-			force = sub(force, sgRight);
+			force = sub(force, gRight);
 		}
 
 		if (isKeyPressed('d'))
 		{
-			force = add(force, sgRight);
+			force = add(force, gRight);
 		}
 
 		if (isKeyPressed('s'))
 		{
-			force = sub(force, sgForward);
+			force = sub(force, gForward);
 		}
 
 		if (isKeyPressed('w'))
 		{
-			force = add(force, sgForward);
+			force = add(force, gForward);
 		}
 	}
 	else
 	{
 		if (isCursorPressed(CURSOR_LEFT))
 		{
-			force = sub(force, sgRight);
+			force = sub(force, gRight);
 		}
 
 		if (isCursorPressed(CURSOR_RIGHT))
 		{
-			force = add(force, sgRight);
+			force = add(force, gRight);
 		}
 
 		if (isCursorPressed(CURSOR_DOWN))
 		{
-			force = sub(force, sgForward);
+			force = sub(force, gForward);
 		}
 
 		if (isCursorPressed(CURSOR_UP))
 		{
-			force = add(force, sgForward);
+			force = add(force, gForward);
 		}
 	}
 	
@@ -214,19 +200,4 @@ void updateBall(Ball& ball, float interval)
 	{
 		updateBallCamera(interval, ball.pos());
 	}
-}
-
-void drawMenuBall(void)
-{
-	sgoBall.drawMenuBall();
-}
-
-bool hasBallTexture()
-{
-	return Ball::hasBallTexture();
-}
-
-bool hasCubeMap()
-{
-	return sgoBall.hasCubeMap();
 }

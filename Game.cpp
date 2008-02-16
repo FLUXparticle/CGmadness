@@ -4,7 +4,8 @@
 #include "level.hpp"
 #include "highscore.hpp"
 
-#include "ball.hpp"
+#include "PlayersBall.hpp"
+#include "ballcamera.hpp"
 #include "field.hpp"
 #include "menumanager.hpp"
 #include "gamemenu.hpp"
@@ -20,7 +21,7 @@
 
 #include <stdio.h>
 
-void initGame(void);
+static PlayersBall& sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
 {
@@ -239,7 +240,7 @@ void Game::resetGame()
 void Game::init()
 {
 	/* ball */
-	initBall();
+	PlayersBall::init();
 
 	/* menu (must be after ball) */
 	initGameMenu();

@@ -17,32 +17,106 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _ball_hpp_
-#define _ball_hpp_
+#ifndef Ball_hpp
+#define Ball_hpp
 
-#include "Ball.hpp"
+#include "callback.hpp"
 
-extern Ball sgoBall;
+#include "quaternion.hpp"
+#include "math/Vector3.hpp"
 
-extern Vector3 sgForward;
-extern Vector3 sgRight;
+#define MAX_BALL_LAYOUTS 5
 
-void initBall(void);
+#define BALL_LAYOUT_DEFAULT 0
+#define BALL_LAYOUT_TEXTURE 1
+#define BALL_LAYOUT_METAL 2
+#define BALL_LAYOUT_GOLFBALL 3
+#define BALL_LAYOUT_GOLFBALL_METAL 4
 
-void resetBallCamera(void);
+#define BALL_RADIUS 0.2f
 
-void enableBallCamera(void);
-void disableBallCamera(void);
+class Ball
+{
+public:
+  static void init();
 
-void toggleMouseControl();
+	static bool hasBallTexture();
+	
+public:
+  Ball();
+  virtual ~Ball();
+  
+  const Vector3& pos() const;
+  bool hasHitGoal() const;
+  bool isInPieces() const;
+  
+	bool hasCubeMap() const;
+	bool useBallReflection() const;
+	
+  void reset();
+	void initCubeMap();
+  
+  void changeBall(int layout);
 
-void updateBall(Ball& ball, float interval);
-void changeBall(int layout);
+  void updateReflection();
 
-void drawMenuBall(void);
-void drawGameBall(void);
+  void push(const Vector3& direction);
+  void update(float interval);
+  
+  void drawGameBall() const;
+  
+private:
+	static int sTextureBall;
 
-bool hasBallTexture(void);
-bool hasCubeMap(void);
+protected:
+	int mCubeMapBall;
+	
+	bool useBallShader() const;
+
+  void activateBallShader() const;
+  void deactivateBallShader() const;
+  
+private:
+	float mMass;
+	const float mRadius;
+
+	Vector3 mPos;
+	Vector3 mVelocity;
+
+	Quaternion mOrientation;
+	Vector3 mAngularRate;
+
+	bool mIsBallInPieces;
+	bool mHasBallHitGoal;
+	
+	bool mIsReflectionDirty;
+
+	int mBallLayout;
+
+	RenderTarget mTargetCube[6];
+	Viewport mViewportCube[6];
+	
+	Vector3 mPushDirection;
+
+	void explodeBall();
+	
+	void animateBall(float interval);
+	
+};
+
+inline const Vector3& Ball::pos() const
+{
+	return mPos;
+}
+
+inline bool Ball::hasHitGoal() const
+{
+	return mHasBallHitGoal;
+}
+
+inline bool Ball::isInPieces() const
+{
+	return mIsBallInPieces;
+}
 
 #endif

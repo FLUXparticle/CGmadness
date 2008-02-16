@@ -25,7 +25,7 @@
 #include "water.hpp"
 
 #include "field.hpp"
-#include "ball.hpp"
+#include "ballcamera.hpp"
 
 #include <GL/gl.h>
 

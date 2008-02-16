@@ -19,7 +19,7 @@
 
 #include "gamemenu.hpp"
 
-#include "ball.hpp"
+#include "PlayersBall.hpp"
 #include "text.hpp"
 #include "level.hpp"
 #include "Game.hpp"
@@ -111,7 +111,7 @@ static void clickButtonBack(void)
 
 static void changeBallEdit(const void *self)
 {
-	changeBall(gBallLayouts[((SpinEdit *) self)->value]);
+	PlayersBall::sgoBall.changeBall(gBallLayouts[((SpinEdit *) self)->value]);
 }
 
 static void changeBallShadow(const void *self)
@@ -190,12 +190,12 @@ void initGameMenu(void)
 
 	gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_DEFAULT;
 
-	if (hasBallTexture())
+	if (Ball::hasBallTexture())
 	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_TEXTURE;
 	}
 
-	if (hasCubeMap())
+	if (PlayersBall::sgoBall.hasCubeMap())
 	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_METAL;
 	}
@@ -205,7 +205,7 @@ void initGameMenu(void)
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL;
 	}
 
-	if (hasGolfballShader() && hasCubeMap())
+	if (hasGolfballShader() && PlayersBall::sgoBall.hasCubeMap())
 	{
 		gBallLayouts[gCntBallLayouts++] = BALL_LAYOUT_GOLFBALL_METAL;
 	}

@@ -17,32 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _ball_hpp_
-#define _ball_hpp_
+#ifndef PlayersBall_hpp
+#define PlayersBall_hpp
 
 #include "Ball.hpp"
 
-extern Ball sgoBall;
+class PlayersBall : public Ball
+{
+public:
+	static PlayersBall sgoBall;
+	
+	static void init();
+	
+public:
+	bool hasCubeMap() const;
+	void drawMenuBall() const;
 
-extern Vector3 sgForward;
-extern Vector3 sgRight;
+private:
+  PlayersBall();
+  virtual ~PlayersBall();
 
-void initBall(void);
-
-void resetBallCamera(void);
-
-void enableBallCamera(void);
-void disableBallCamera(void);
-
-void toggleMouseControl();
-
-void updateBall(Ball& ball, float interval);
-void changeBall(int layout);
+};
 
 void drawMenuBall(void);
-void drawGameBall(void);
-
-bool hasBallTexture(void);
-bool hasCubeMap(void);
 
 #endif

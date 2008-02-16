@@ -19,7 +19,7 @@
 
 #include "main.hpp"
 
-#include "ball.hpp"
+#include "ballcamera.hpp"
 #include "objects.hpp"
 #include "environment.hpp"
 
