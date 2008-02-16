@@ -15,11 +15,12 @@ MainProcess::~MainProcess()
 void MainProcess::init()
 {
 	initMainMenu();
+	showMainMenu();
 }
 
 void MainProcess::start()
 {
-	showMainMenu();
+  // empty
 }
 
 void MainProcess::update(float interval)
