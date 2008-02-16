@@ -43,6 +43,8 @@ public:
 	bool hasCubeMap() const;
 	bool useBallReflection() const;
 	
+  void reset();
+  
   void changeBall(int layout);
 
   void update(float interval);

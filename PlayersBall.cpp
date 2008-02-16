@@ -83,6 +83,12 @@ bool PlayersBall::hasCubeMap() const
 	return mCubeMapBall != 0;
 }
 
+void PlayersBall::reset()
+{
+	Ball::reset();
+	mIsReflectionDirty = true;
+}
+
 void PlayersBall::changeBall(int layout)
 {
 	mBallLayout = layout;

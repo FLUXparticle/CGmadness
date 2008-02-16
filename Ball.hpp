@@ -42,7 +42,7 @@ public:
   bool hasHitGoal() const;
   bool isInPieces() const;
   
-  void reset();
+  virtual void reset();
   
   void push(const Vector3& direction);
   virtual void update(float interval);
