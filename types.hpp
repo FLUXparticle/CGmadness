@@ -22,11 +22,10 @@
 
 /*
  * namen conventions for variables:
- * type Object            o
+ * member                 m
+ * static member          s
  * global                 g
- * globale Object         go
  * super global           sg
- * super globale Objecte  sgo
  */
 
 #define PI 3.14159265358979323846

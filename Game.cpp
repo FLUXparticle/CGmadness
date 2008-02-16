@@ -159,14 +159,14 @@ void updateGame(float interval)
 			resumeGame();
 		}
 
-		if (!sgIsBallInPieces)
+		if (!sgoBall.isInPieces())
 		{
 			gGameTime += interval;
 		}
 
 		updateBall(interval);
 
-		if (sgHasBallHitGoal)
+		if (sgoBall.hasHitGoal())
 		{
 			finishedGame();
 		}
