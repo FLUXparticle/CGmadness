@@ -11,28 +11,29 @@ public:
 
   void init();
   void start();
+  void stop();
   
   void update(float interval);
   void draw(void);
   void drawHUD(float width, float height);
 
-private:
+  void resumeGame();
+  void resetGame();
 
+  void resetGameTime();
+  
+private:
+	bool gIsGameRunning;
+
+	float gGameTime;
+
+  void pauseGame();
+  
+	void stopWatch();
+	void finishedGame();
+	
 };
 
-void initGame(void);
-void resumeGame(void);
-void resetGame(void);
-
-void startGame(void);
-void stopGame(void);
-
-void resetGameTime(void);
-
-void updateGame(float interval);
-
-void drawGame(void);
 void drawGameBallReflection(void);
-void drawGameHUD(float widthWindow, float heightWindow);
 
 #endif

@@ -70,3 +70,18 @@ void setMainState(MainState newState)
 		break;
 	}
 }
+
+void resumeGame()
+{
+	gGameProcess.resumeGame();
+}
+
+void resetGame()
+{
+	gGameProcess.resetGame();
+}
+
+void resetGameTime()
+{
+	gGameProcess.resetGameTime();
+}

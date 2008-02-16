@@ -12,30 +12,18 @@
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "camera.hpp"
-#include "callback.hpp"
 #include "text.hpp"
 #include "texture.hpp"
 #include "environment.hpp"
 #include "atlas.hpp"
-#include "main.hpp"
-
-#include "stringlist.hpp"
-
-#include "color.hpp"
 
 #include "functions.hpp"
 
-#include "types.hpp"
-
-#include <GL/glew.h>
-#include <GL/glut.h>
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 #define FOG_DENSITY 0.003f
+
+void initGame(void);
 
 Game::Game()
 {
@@ -47,55 +35,19 @@ Game::~Game()
   // empty
 }
 
-void Game::init()
-{
-	initGame();
-}
-
-void Game::start()
-{
-	startGame();
-}
-
-void Game::update(float interval)
-{
-	updateGame(interval);
-}
-
-void Game::draw(void)
-{
-	drawGame();
-}
-
-void Game::drawHUD(float width, float height)
-{
-	drawGameHUD(width, height);
-}
-
-static bool gIsGameRunning;
-
-static float gGameTime;
-
-static const char *gHotSeatLevel = NULL;
-
-void pauseGame(void)
+void Game::pauseGame()
 {
 	disableBallCamera();
 	gIsGameRunning = false;
 }
 
-void resumeGame(void)
+void Game::resumeGame()
 {
 	enableBallCamera();
 	gIsGameRunning = true;
 }
 
-void setHotSeatLevel(const char *filename)
-{
-	gHotSeatLevel = filename;
-}
-
-void stopWatch(void)
+void Game::stopWatch()
 {
 	int i;
 
@@ -123,14 +75,14 @@ void stopWatch(void)
 	sgLastPlayerIndex = newIndex;
 }
 
-void finishedGame()
+void Game::finishedGame()
 {
 	stopWatch();
 	pauseGame();
 	showGameMenu(2);
 }
 
-void updateGame(float interval)
+void Game::update(float interval)
 {
 	updateEnvironment(interval);
 	if (gIsGameRunning)
@@ -179,7 +131,7 @@ void updateGame(float interval)
 	updateGameField();
 }
 
-void drawGameHUD(float widthWindow, float heightWindow)
+void Game::drawHUD(float widthWindow, float heightWindow)
 {
 	int tenthSecond = (int) (gGameTime * 10.0f);
 	float scale = 0.06f;
@@ -220,7 +172,7 @@ void drawGameBallReflection(void)
 	drawGameField(true);
 }
 
-void drawGame(void)
+void Game::draw()
 {
 	drawEnvironment(drawGameWaterReflection);
 
@@ -233,7 +185,7 @@ void drawGame(void)
 	}
 }
 
-void resetGameTime(void)
+void Game::resetGameTime()
 {
 	gGameTime = 0.0f;
 }
@@ -250,7 +202,7 @@ void lightMapToTexture(unsigned int texID)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
 }
 
-void startGame(void)
+void Game::start()
 {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
@@ -262,45 +214,14 @@ void startGame(void)
 	resetGame();
 }
 
-#if 0
-static const char *getNextLevelName(void)
-{
-	if (gHotSeatLevel)
-	{
-		if (gInGame)
-		{
-			return NULL;
-		}
-		else
-		{
-			return gHotSeatLevel;
-		}
-	}
-	else
-	{
-		if (gNextLevelIndex < gLevelNames.count)
-		{
-			char *name = gLevelNames.strings[gNextLevelIndex];
-			gNextLevelIndex++;
-			return name;
-		}
-		else
-		{
-			gNextLevelIndex = 0;
-			return NULL;
-		}
-	}
-}
-#endif
-
-void stopGame(void)
+void Game::stop(void)
 {
 	glDeleteTextures(1, &sgLevel.lightMap);
 
 	destroyGameField();
 }
 
-void resetGame(void)
+void Game::resetGame()
 {
 	resetBall();
 	resetBallCamera();
@@ -325,7 +246,7 @@ void initFog(void)
 	glFogfv(GL_FOG_COLOR, color);
 }
 
-void initGame(void)
+void Game::init()
 {
 	resetCamera();
 
@@ -338,18 +259,4 @@ void initGame(void)
 
 	/* menu (must be after ball) */
 	initGameMenu();
-
-#if 0
-	/* level (must be after menu) */
-	if (!startGame(getNextLevelName()))
-	{
-		return 0;
-	}
-
-	gIsGameRunning = 0;
-	showGameMenu(0);
-	resetBall();
-
-	updateGameField();
-#endif
 }

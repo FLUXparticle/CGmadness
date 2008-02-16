@@ -75,7 +75,6 @@ static void clickButtonHelp(void)
 
 static void clickButtonQuit(void)
 {
-	stopGame();
 	popScreen();
 	setMainState(STATE_MAIN);
 }
