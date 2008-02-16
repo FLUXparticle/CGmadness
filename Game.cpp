@@ -104,7 +104,7 @@ void Game::update(float interval)
 		if (wasFunctionPressed(5))
 		{
 			pauseGame();
-			sgIsMouseControl = !sgIsMouseControl;
+			toggleMouseControl();
 			resumeGame();
 		}
 

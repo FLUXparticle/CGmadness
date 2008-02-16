@@ -23,7 +23,6 @@
 #include "Ball.hpp"
 
 extern Ball sgoBall;
-extern bool sgIsMouseControl;
 
 extern Vector3 sgForward;
 extern Vector3 sgRight;
@@ -35,6 +34,8 @@ void resetBallCamera(void);
 
 void enableBallCamera(void);
 void disableBallCamera(void);
+
+void toggleMouseControl();
 
 void updateBall(Ball& ball, float interval);
 void changeBall(int layout);

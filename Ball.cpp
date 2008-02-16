@@ -32,7 +32,7 @@
 #include <math.h>
 
 Ball sgoBall;
-bool sgIsMouseControl = false;
+static bool gIsMouseControl = false;
 
 Vector3 sgForward;
 Vector3 sgRight;
@@ -79,7 +79,7 @@ void resetBallCamera(void)
 
 void enableBallCamera(void)
 {
-	if (sgIsMouseControl)
+	if (gIsMouseControl)
 	{
 		setDragFunc(gameDrag);
 	}
@@ -104,7 +104,7 @@ void updateBallCamera(float interval, Vector3 ball)
 
 	/* game controls for camera */
 
-	if (sgIsMouseControl)
+	if (gIsMouseControl)
 	{
 		gLongitude -= 5.0f * interval * gDragX;
 		gLatitude += 5.0f * interval * gDragY;
@@ -145,7 +145,7 @@ void updateBallCamera(float interval, Vector3 ball)
 
 	moveCamera(interval, dest, ball);
 
-	if (sgIsMouseControl)
+	if (gIsMouseControl)
 	{
 		sgCamera = dest;
 	}
@@ -156,12 +156,17 @@ void updateBallCamera(float interval, Vector3 ball)
 	sgRight = norm(cross(sgForward, up));
 }
 
+void toggleMouseControl()
+{
+	gIsMouseControl = !gIsMouseControl;
+}
+
 void updateBall(Ball& ball, float interval)
 {
 	Vector3 force(0.0f, 0.0f, 0.0f);
 
 	/* ball controls */
-	if (sgIsMouseControl)
+	if (gIsMouseControl)
 	{
 		if (isKeyPressed('a'))
 		{
