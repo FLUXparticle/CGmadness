@@ -3,6 +3,8 @@
 
 #include "Process.hpp"
 
+#include "Ball.hpp"
+
 class Editor : public Process
 {
 public:
@@ -10,27 +12,24 @@ public:
   virtual ~Editor();
 
   void init();
+  
   void start();
+  void stop();
   
   void update(float interval);
-  void draw(void);
+  void draw();
   
 private:
+	Ball mBall;
+	
+	void enableTestMode();
+	void disableTestMode();
 
 };
 
-void initEditor(void);
-
-void startEditor(void);
-void stopEditor(void);
-
 void resumeEditor(void);
 
-void updateEditor(float interval);
-
 void drawEditorField(void);
-
-void drawEditor(void);
 
 void saveLevel(void);
 

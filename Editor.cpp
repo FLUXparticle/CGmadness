@@ -6,24 +6,14 @@
 #include "level.hpp"
 #include "ball.hpp"
 #include "field.hpp"
-#include "callback.hpp"
 #include "camera.hpp"
 #include "keyboard.hpp"
-#include "atlas.hpp"
 #include "common.hpp"
 
-#include "functions.hpp"
-
-#include "types.hpp"
-
-#include <GL/glew.h>
 #include <GL/glut.h>
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <math.h>
-#include <float.h>
 
 Editor::Editor()
 {
@@ -35,35 +25,15 @@ Editor::~Editor()
   // empty
 }
 
-void Editor::init()
-{
-	initEditor();
-}
-
-void Editor::start()
-{
-	startEditor();
-}
-
-void Editor::update(float interval)
-{
-	updateEditor(interval);
-}
-
-void Editor::draw(void)
-{
-	drawEditor();
-}
-
 #define DRAW_DEBUG_LINES 0
 
+#if (DRAW_DEBUG_LINES)
 typedef struct
 {
 	Vector3 v1;
 	Vector3 v2;
 } Line;
 
-#if (DRAW_DEBUG_LINES)
 Line gLines[10 * 10 * LIGHT_MAP_SIZE * LIGHT_MAP_SIZE * 32 * 8];
 int gCntLines = 0;
 #endif
@@ -76,8 +46,8 @@ static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
 static int gCamAngle = 0;
 
-static int gSin[] = { 0, 1, 0, -1 };
-static int gCos[] = { 1, 0, -1, 0 };
+static const int gSin[] = { 0, 1, 0, -1 };
+static const int gCos[] = { 1, 0, -1, 0 };
 
 static bool gDirtyTexCoords;
 static bool gDirtyLightmaps;
@@ -90,7 +60,7 @@ void pauseEditor(void)
 	gIsEditorRunning = false;
 }
 
-void startEditor(void)
+void Editor::start()
 {
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)
@@ -112,7 +82,7 @@ void startEditor(void)
 	pauseEditor();
 }
 
-void stopEditor(void)
+void Editor::stop()
 {
 	gShowCursor = 0;
 }
@@ -426,11 +396,12 @@ void animateEditor(float interval)
 	}
 }
 
-void enableTestMode(void)
+void Editor::enableTestMode()
 {
-	resetBall();
+	mBall.reset();
+	mBall.changeBall(BALL_LAYOUT_TEXTURE);
+	
 	resetBallCamera();
-	changeBall(BALL_LAYOUT_TEXTURE);
 	enableBallCamera();
 
 	initGameField();
@@ -439,7 +410,7 @@ void enableTestMode(void)
 	gShowCursor = 0;
 }
 
-void disableTestMode(void)
+void Editor::disableTestMode()
 {
 	destroyGameField();
 	disableBallCamera();
@@ -448,7 +419,7 @@ void disableTestMode(void)
 	gShowCursor = 1;
 }
 
-void updateEditor(float interval)
+void Editor::update(float interval)
 {
 	if (!gIsEditorRunning)
 	{
@@ -461,7 +432,7 @@ void updateEditor(float interval)
 			disableTestMode();
 		}
 
-		updateBall(interval);
+		updateBall(mBall, interval);
 	}
 	else
 	{
@@ -583,14 +554,9 @@ void drawEditorField(void)
 	}
 	glEnd();
 #endif
-
-	if (gIsTestMode)
-	{
-		drawGameBall();
-	}
 }
 
-void drawEditor(void)
+void Editor::draw()
 {
 	drawEditorField();
 
@@ -598,9 +564,13 @@ void drawEditor(void)
 	{
 		drawMenuManager();
 	}
+	else if (gIsTestMode)
+	{
+		mBall.drawGameBall();
+	}
 }
 
-void initEditor(void)
+void Editor::init()
 {
 	gShowCursor = 0;
 

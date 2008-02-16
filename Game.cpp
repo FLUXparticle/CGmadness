@@ -113,7 +113,7 @@ void Game::update(float interval)
 			gGameTime += interval;
 		}
 
-		updateBall(interval);
+		updateBall(sgoBall, interval);
 
 		if (sgoBall.hasHitGoal())
 		{

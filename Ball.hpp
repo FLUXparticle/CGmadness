@@ -36,7 +36,7 @@ void resetBallCamera(void);
 void enableBallCamera(void);
 void disableBallCamera(void);
 
-void updateBall(float interval);
+void updateBall(Ball& ball, float interval);
 void changeBall(int layout);
 
 void drawMenuBall(void);

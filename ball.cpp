@@ -156,7 +156,7 @@ void updateBallCamera(float interval, Vector3 ball)
 	sgRight = norm(cross(sgForward, up));
 }
 
-void updateBall(float interval)
+void updateBall(Ball& ball, float interval)
 {
 	Vector3 force(0.0f, 0.0f, 0.0f);
 
@@ -206,13 +206,13 @@ void updateBall(float interval)
 		}
 	}
 	
-	sgoBall.push(force);
+	ball.push(force);
 	
-	sgoBall.update(interval);
+	ball.update(interval);
 
 	if (gIsBallCameraActive)
 	{
-		updateBallCamera(interval, sgoBall.pos());
+		updateBallCamera(interval, ball.pos());
 	}
 }
 
