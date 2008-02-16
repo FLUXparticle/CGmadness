@@ -125,7 +125,7 @@ void Game::update(float interval)
 		updateMenuManager(interval);
 	}
 
-	updateGameField();
+	updateGameField(sgoBall);
 }
 
 void Game::preDisplay()
@@ -165,7 +165,7 @@ void Game::drawHUD(float widthWindow, float heightWindow)
 void drawGameWaterReflection(void)
 {
 	drawGameField(false);
-	drawGameBall();
+	sgoBall.drawGameBall();
 }
 
 void drawGameBallReflection(void)
@@ -179,7 +179,7 @@ void Game::draw()
 	drawEnvironment(drawGameWaterReflection);
 
 	drawGameField(false);
-	drawGameBall();
+	sgoBall.drawGameBall();
 
 	if (!gIsGameRunning)
 	{
@@ -225,12 +225,12 @@ void Game::stop(void)
 
 void Game::resetGame()
 {
-	resetBall();
+	sgoBall.reset();
 	resetBallCamera();
 
 	resetGameTime();
 
-	updateGameField();
+	updateGameField(sgoBall);
 
 	pauseGame();
 	showGameMenu(0);

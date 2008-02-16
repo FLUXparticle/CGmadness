@@ -73,6 +73,8 @@ static int *gBallReflectionIndices;
 
 static int *gIndexVertices;
 
+static Vector3 gBallPosition;
+
 static void setColor(Color4 col)
 {
 	gDefaultColor = col;
@@ -445,8 +447,10 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
 	}
 }
 
-void updateGameField(void)
+void updateGameField(const Ball& ball)
 {
+	gBallPosition = ball.pos();
+	
 	static int lastMX = 0;
 	static int lastMY = 0;
 
@@ -481,7 +485,7 @@ void updateGameField(void)
 			for (i = 0; i < 4; i++)
 			{
 				Vector3 vertex = sgVertices[q + i];
-				Vector3 d = sub(sgoBall.pos(), vertex);
+				Vector3 d = sub(gBallPosition, vertex);
 
 				float x = dot(vx, d) / MAX_XY + 0.5f;
 				float y = dot(vy, d) / MAX_XY + 0.5f;
@@ -492,20 +496,20 @@ void updateGameField(void)
 		}
 	}
 
-	if (useBallReflection())
+	if (ball.useBallReflection())
 	{
 		static int lastBX = 0;
 		static int lastBY = 0;
 
-		int bx = (int) floor(sgoBall.pos().x - sgLevel.origin.x);
-		int by = (int) floor(sgoBall.pos().y - sgLevel.origin.y);
+		int bx = (int) floor(gBallPosition.x - sgLevel.origin.x);
+		int by = (int) floor(gBallPosition.y - sgLevel.origin.y);
 
 		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
 		{
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.pos(), 1,
+				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, gBallPosition, 1,
 						gBallReflectionIndices, &gCntBallReflectionIndices);
 
 				lastBX = bx;
@@ -577,7 +581,7 @@ void drawGameField(bool ballReflection)
 			glUseProgram(sgBallShadowShader);
 
 			glUniform3fv(glGetUniformLocation(sgBallShadowShader, "ball"), 1,
-									 &sgoBall.pos().x);
+									 &gBallPosition.x);
 			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex0"), 0);
 			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex1"), 1);
 		}

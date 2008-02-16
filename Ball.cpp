@@ -57,11 +57,6 @@ void gameDrag(int dx, int dy)
 	gDragY += dy;
 }
 
-void resetBall(void)
-{
-	sgoBall.reset();
-}
-
 void initBall(void)
 {
 	if (hasFramebuffer())
@@ -226,11 +221,6 @@ void drawMenuBall(void)
 	sgoBall.drawMenuBall();
 }
 
-void drawGameBall(void)
-{
-	sgoBall.drawGameBall();
-}
-
 bool hasBallTexture()
 {
 	return Ball::hasBallTexture();
@@ -239,9 +229,4 @@ bool hasBallTexture()
 bool hasCubeMap()
 {
 	return sgoBall.hasCubeMap();
-}
-
-bool useBallReflection()
-{
-	return sgoBall.useBallReflection();
 }

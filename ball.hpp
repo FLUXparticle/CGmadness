@@ -29,7 +29,6 @@ extern Vector3 sgRight;
 
 void initBall(void);
 
-void resetBall(void);
 void resetBallCamera(void);
 
 void enableBallCamera(void);
@@ -45,7 +44,5 @@ void drawGameBall(void);
 
 bool hasBallTexture(void);
 bool hasCubeMap(void);
-
-bool useBallReflection(void);
 
 #endif
