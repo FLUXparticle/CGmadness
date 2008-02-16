@@ -116,7 +116,8 @@ void display(void)
 		glScalef(aspect, 1.0f, 1.0f);
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(&v->view[0][0]);
+		glLoadIdentity();
+		setCamera();
 
 		gProcess->draw();
 	}
@@ -177,21 +178,7 @@ void startDisplay(void)
 	glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 	glGetFloatv(GL_PROJECTION_MATRIX, &gProjectionText[0][0]);
 
-	{
-		int x;
-		int y;
-		Viewport *v = &sgWindowViewport;
-
-		for (x = 0; x < 4; x++)
-		{
-			for (y = 0; y < 4; y++)
-			{
-				v->view[x][y] = (x == y);
-			}
-		}
-
-		initProjectMat(v->projection, FOV);
-	}
+	initProjectMat(sgWindowViewport.projection, FOV);
 
 	/* RenderTarget for main window */
 	gTargetWindow.framebuffer = 0;

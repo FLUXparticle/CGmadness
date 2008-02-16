@@ -51,15 +51,13 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 	diff = sub(lookat, sgLookat);
 	error = len(diff);
 	sgLookat = add(sgLookat, scale(5.0f * interval * error, norm(diff)));
+}
 
-	/* set camera */
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
+void setCamera()
+{
 	gluLookAt(sgCamera.x, sgCamera.y, sgCamera.z,
-						sgLookat.x, sgLookat.y, sgLookat.z, gUp.x, gUp.y, gUp.z);
-
-	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
+						sgLookat.x, sgLookat.y, sgLookat.z,
+						gUp.x, gUp.y, gUp.z);
 }
 
 Vector3 rotateVector(const Vector3& dir)

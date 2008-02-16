@@ -35,7 +35,6 @@ typedef void (*funcDoMouseEvent) (const Vector3 * position,
 typedef struct
 {
 	Matrix projection;
-	Matrix view;
 } Viewport;
 
 typedef struct
