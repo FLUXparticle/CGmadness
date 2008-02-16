@@ -4,7 +4,6 @@
 #include "level.hpp"
 #include "highscore.hpp"
 
-#include "objects.hpp"
 #include "ball.hpp"
 #include "field.hpp"
 #include "menumanager.hpp"
@@ -20,8 +19,6 @@
 #include "functions.hpp"
 
 #include <stdio.h>
-
-#define FOG_DENSITY 0.003f
 
 void initGame(void);
 
@@ -234,26 +231,8 @@ void Game::resetGame()
 	showGameMenu(0);
 }
 
-void initFog(void)
-{
-	int mode = GL_EXP;
-	float density = FOG_DENSITY;
-	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	glEnable(GL_FOG);
-	glFogiv(GL_FOG_MODE, &mode);
-	glFogfv(GL_FOG_DENSITY, &density);
-	glFogfv(GL_FOG_COLOR, color);
-}
-
 void Game::init()
 {
-	resetCamera();
-
-	initObjects();
-
-	initFog();
-
 	/* ball */
 	initBall();
 

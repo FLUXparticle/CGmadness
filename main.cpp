@@ -20,6 +20,7 @@
 #include "main.hpp"
 
 #include "ball.hpp"
+#include "objects.hpp"
 #include "environment.hpp"
 
 #include "menumanager.hpp"
@@ -42,6 +43,7 @@ Process* initMain(void)
 {
 	createStringListFromDir(&sgLevels, "levels");
 
+	initObjects();
 	initEnvironment();
 
 	initMenuManager();

@@ -23,20 +23,9 @@
 
 #include <GL/glu.h>
 
-Vector3 sgCamera;
-Vector3 sgLookat;
+Vector3 sgCamera(0.0f, 0.0f, 0.0f);
+Vector3 sgLookat(0.0f, 1.0f, 0.0f);
 static Vector3 gUp(0.0f, 0.0f, 1.0f);
-
-void resetCamera(void)
-{
-	sgCamera.x = 0.0f;
-	sgCamera.y = 0.0f;
-	sgCamera.z = 1.0f;
-
-	sgLookat.x = 0.0f;
-	sgLookat.y = 0.0f;
-	sgLookat.z = 0.0f;
-}
 
 void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 {

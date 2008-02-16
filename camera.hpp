@@ -25,7 +25,6 @@
 extern Vector3 sgCamera;
 extern Vector3 sgLookat;
 
-void resetCamera(void);
 void moveCamera(float interval, Vector3 camera, Vector3 lookat);
 
 void setCamera();

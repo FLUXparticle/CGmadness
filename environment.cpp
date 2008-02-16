@@ -33,8 +33,24 @@
 #define SKY 1
 #define WATER 1
 
+#define FOG_DENSITY 0.003f
+
+void initFog(void)
+{
+	int mode = GL_EXP;
+	float density = FOG_DENSITY;
+	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	glEnable(GL_FOG);
+	glFogiv(GL_FOG_MODE, &mode);
+	glFogfv(GL_FOG_DENSITY, &density);
+	glFogfv(GL_FOG_COLOR, color);
+}
+
 void initEnvironment(void)
 {
+	initFog();
+
 	initSkysphere();
 	initSkyplane();
 	initWater();
