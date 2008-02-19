@@ -262,6 +262,11 @@ void updateMainMenu(float interval)
 	updateMenuManager(interval);
 }
 
+void drawNothing()
+{
+}
+
+
 void drawMainMenu(void)
 {
 	if (getCurScreen() == &gScreenChooseGame
@@ -272,7 +277,7 @@ void drawMainMenu(void)
 	}
 	else
 	{
-		drawEnvironment(NULL);
+		drawEnvironment(drawNothing);
 	}
 
 	drawMenuManager();

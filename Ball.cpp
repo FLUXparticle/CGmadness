@@ -82,6 +82,7 @@ void Ball::reset()
 	mAngularRate = Vector3(0.0f, 0.0f, 0.0f);
 
 	mIsBallInPieces = false;
+	mHasBallHitGoal = false;
 }
 
 void Ball::push(const Vector3& direction)

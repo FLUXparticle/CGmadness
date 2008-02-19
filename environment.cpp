@@ -69,28 +69,27 @@ void drawEnvironment(funcDraw reflection)
 		GLdouble equation[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
 		glPushMatrix();
+		{
+			glScalef(1.0f, 1.0f, -1.0f);
+			glClipPlane(GL_CLIP_PLANE0, equation);
 
-		glScalef(1.0f, 1.0f, -1.0f);
-		glClipPlane(GL_CLIP_PLANE0, equation);
-
-		glEnable(GL_CLIP_PLANE0);
-		glCullFace(GL_FRONT);
+			glEnable(GL_CLIP_PLANE0);
+			glCullFace(GL_FRONT);
 
 #  if (SKY)
-		glDisable(GL_DEPTH_TEST);
-		drawSkysphere();
-		drawSkyplane();
-		glEnable(GL_DEPTH_TEST);
+			glDisable(GL_DEPTH_TEST);
+			{
+				drawSkysphere();
+				drawSkyplane();
+			}
+			glEnable(GL_DEPTH_TEST);
 #  endif
 
-		if (reflection)
-		{
 			reflection();
+
+			glCullFace(GL_BACK);
+			glDisable(GL_CLIP_PLANE0);
 		}
-
-		glCullFace(GL_BACK);
-		glDisable(GL_CLIP_PLANE0);
-
 		glPopMatrix();
 	}
 

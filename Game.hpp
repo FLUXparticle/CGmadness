@@ -3,6 +3,8 @@
 
 #include "Process.hpp"
 
+#include "PlayersBall.hpp"
+
 class Game : public Process
 {
 public:
@@ -19,25 +21,21 @@ public:
 
   void preDisplay();
   void draw();
-  void drawHUD(float width, float height);
 
   void resumeGame();
   void resetGame();
 
-  void resetGameTime();
+	void drawWaterReflection() const;
+	void drawGameBallReflection() const;
+	
+protected:
+  static PlayersBall& sgoBall;
   
-private:
+protected:
 	bool gIsGameRunning;
-
-	float gGameTime;
 
   void pauseGame();
   
-	void stopWatch();
-	void finishedGame();
-	
 };
-
-void drawGameBallReflection(void);
 
 #endif

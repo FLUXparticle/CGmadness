@@ -24,6 +24,7 @@
 #include "fbuffer.hpp"
 #include "Game.hpp"
 #include "lightmap.hpp"
+#include "main.hpp"
 
 #include "math/vector.hpp"
 

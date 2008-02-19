@@ -27,7 +27,7 @@
 #include "Dispenser.hpp"
 
 #include "MainProcess.hpp"
-#include "Game.hpp"
+#include "RaceTheClock.hpp"
 #include "Editor.hpp"
 
 StringList sgLevels;
@@ -35,7 +35,7 @@ StringList sgLevels;
 Dispenser gDispenser;
 
 static MainProcess gMainProcess;
-static Game gGameProcess;
+static RaceTheClock gGameProcess;
 static Editor gEditorProcess;
 
 Process* initMain(void)
@@ -88,3 +88,14 @@ void resetGameTime()
 {
 	gGameProcess.resetGameTime();
 }
+
+void drawGameWaterReflection()
+{
+	gGameProcess.drawWaterReflection();
+}
+
+void drawGameBallReflection()
+{
+	gGameProcess.drawGameBallReflection();
+}
+

@@ -2,9 +2,7 @@
 
 #include "common.hpp"
 #include "level.hpp"
-#include "highscore.hpp"
 
-#include "PlayersBall.hpp"
 #include "ballcamera.hpp"
 #include "field.hpp"
 #include "menumanager.hpp"
@@ -12,16 +10,14 @@
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "camera.hpp"
-#include "text.hpp"
 #include "texture.hpp"
 #include "environment.hpp"
 #include "atlas.hpp"
+#include "main.hpp"
 
 #include "functions.hpp"
 
-#include <stdio.h>
-
-static PlayersBall& sgoBall = PlayersBall::sgoBall;
+PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
 {
@@ -43,41 +39,6 @@ void Game::resumeGame()
 {
 	enableBallCamera();
 	gIsGameRunning = true;
-}
-
-void Game::stopWatch()
-{
-	int i;
-
-	int tenthSecond = (int) (gGameTime * 10.0f);
-	int newIndex = sgLevel.cntScoreCols;
-
-	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
-	{
-		newIndex--;
-	}
-
-	sgLevel.cntScoreCols = min(sgLevel.cntScoreCols + 1, MAX_SCORE_COLS);
-
-	for (i = sgLevel.cntScoreCols - 1; i > newIndex; i--)
-	{
-		sgLevel.scores[i] = sgLevel.scores[i - 1];
-	}
-
-	if (newIndex < MAX_SCORE_COLS)
-	{
-		sgLevel.scores[newIndex].name[0] = '\0';
-		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
-	}
-
-	sgLastPlayerIndex = newIndex;
-}
-
-void Game::finishedGame()
-{
-	stopWatch();
-	pauseGame();
-	showGameMenu(2);
 }
 
 void Game::update(float interval)
@@ -109,17 +70,7 @@ void Game::update(float interval)
 			resumeGame();
 		}
 
-		if (!sgoBall.isInPieces())
-		{
-			gGameTime += interval;
-		}
-
 		updateBall(sgoBall, interval);
-
-		if (sgoBall.hasHitGoal())
-		{
-			finishedGame();
-		}
 	}
 	else
 	{
@@ -134,42 +85,13 @@ void Game::preDisplay()
 	sgoBall.updateReflection();
 }
 
-void Game::drawHUD(float widthWindow, float heightWindow)
-{
-	int tenthSecond = (int) (gGameTime * 10.0f);
-	float scale = 0.06f;
-	float widthDefault = widthStrokeText("x:xx.x") * scale;
-
-	char strTime[10];
-	float width;
-	float height;
-
-	sprintf(strTime, "%d:%02d.%01d", tenthSecond / 600, tenthSecond / 10 % 60,
-					tenthSecond % 10);
-
-	width = widthStrokeText(strTime) * scale;
-	height = scale;
-
-	glColor3f(1.0f, 1.0f, 0.0f);
-
-	glPushMatrix();
-
-	glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height),
-							 0.0f);
-	glScalef(scale, scale, scale);
-
-	drawStrokeThickText(strTime);
-
-	glPopMatrix();
-}
-
-void drawGameWaterReflection(void)
+void Game::drawWaterReflection() const
 {
 	drawGameField(false);
 	sgoBall.drawGameBall();
 }
 
-void drawGameBallReflection(void)
+void Game::drawGameBallReflection() const
 {
 	drawEnvironment(drawGameWaterReflection);
 	drawGameField(true);
@@ -186,11 +108,6 @@ void Game::draw()
 	{
 		drawMenuManager();
 	}
-}
-
-void Game::resetGameTime()
-{
-	gGameTime = 0.0f;
 }
 
 void lightMapToTexture(unsigned int texID)
@@ -228,8 +145,6 @@ void Game::resetGame()
 {
 	sgoBall.reset();
 	resetBallCamera();
-
-	resetGameTime();
 
 	updateGameField(sgoBall);
 
