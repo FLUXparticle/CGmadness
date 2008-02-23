@@ -27,7 +27,7 @@ class RaceTheClock : public Game
 public:
   RaceTheClock();
   virtual ~RaceTheClock();
-
+  
   void resetGame();
   
   void update(float interval);

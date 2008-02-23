@@ -42,7 +42,7 @@ public:
   void draw();
 
   void resumeGame();
-  void resetGame();
+  virtual void resetGame();
 
 	void drawWaterReflection() const;
 	void drawGameBallReflection() const;
