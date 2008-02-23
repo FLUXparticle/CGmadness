@@ -1,5 +1,9 @@
 #include "MenuItem.hpp"
 
+#define SCALE_FONT 0.5f
+
+float MenuItem::scaleText = 0.1f * SCALE_FONT;
+
 MenuItem::MenuItem()
 {
   // empty

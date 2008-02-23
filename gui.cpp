@@ -117,42 +117,6 @@ void drawCanvas(const Canvas * canvas)
 	canvas->customDraw();
 }
 
-/*** Label ***/
-
-void initLabel(Label * label, float x, float z, float size, bool alignRight,
-							 char *text)
-{
-	label->text = text;
-	label->size = size;
-
-	label->item.type = MI_LABEL;
-
-	label->item.width = widthFont3DText(label->text) * scaleText * size;
-	label->item.height = 0.9f * size;
-
-	if (alignRight)
-	{
-		label->item.position = Vector2(x - label->item.width, z);
-	}
-	else
-	{
-		label->item.position = Vector2(x, z);
-	}
-}
-
-void drawLabel(const Label * label)
-{
-	float scale = scaleText * label->size;
-
-	glPushMatrix();
-
-	glScalef(scale, scale, scale);
-
-	drawFont3DText(label->text);
-
-	glPopMatrix();
-}
-
 /*** ProgressBar ***/
 
 void initProgressBar(ProgressBar * progressBar, float z, float *progress)
@@ -472,7 +436,7 @@ void drawMenuItem(const MenuItem * item)
 		drawCanvas((const Canvas *) item);
 		break;
 	case MI_LABEL:
-		drawLabel((const Label *) item);
+		item->draw();
 		break;
 	case MI_PROGRESS_BAR:
 		drawProgressBar((const ProgressBar *) item);

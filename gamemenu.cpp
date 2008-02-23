@@ -19,6 +19,8 @@
 
 #include "gamemenu.hpp"
 
+#include "gui/Label.hpp"
+
 #include "PlayersBall.hpp"
 #include "text.hpp"
 #include "level.hpp"
@@ -237,10 +239,10 @@ void initGameMenu(void)
 		int col = i % 2;
 		float z = 6.0f - row;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, 1.0f, col,
+		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, 1.0f, col,
 							col ? gTextHelp[row].right : gTextHelp[row].left);
 
-		itemsHelp[i] = &lTextHelp[i].item;
+		itemsHelp[i] = &lTextHelp[i];
 	}
 
 	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back",

@@ -23,6 +23,8 @@
 #include "main.hpp"
 #include "menumanager.hpp"
 
+#include "gui/Label.hpp"
+
 #include "text.hpp"
 #include "objects.hpp"
 #include "keyboard.hpp"
@@ -160,10 +162,10 @@ void initEditorMenu()
 		int col = i % 2;
 		float z = 6.0f - row * sizeHelp;
 
-		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, sizeHelp, col,
+		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, sizeHelp, col,
 							col ? gTextHelp[row].right : gTextHelp[row].left);
 
-		itemsHelp[i] = &lTextHelp[i].item;
+		itemsHelp[i] = &lTextHelp[i];
 	}
 
 	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack,

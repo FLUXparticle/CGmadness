@@ -31,6 +31,9 @@ public:
 	int hover;
 	float emphasize;
 
+protected:
+	static float scaleText;
+	
 private:
 
 };
