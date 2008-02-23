@@ -19,6 +19,8 @@
 
 #include "gui.hpp"
 
+#include "gui/SpinEdit.hpp"
+
 #include "text.hpp"
 #include "objects.hpp"
 #include "texture.hpp"
@@ -33,63 +35,9 @@
 
 /*** common ***/
 
-static unsigned int gTexLeft;
-static unsigned int gTexRight;
-
-static bool gInitialized = false;
-
-void drawArrowLeft(void)
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, gTexLeft);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glPushMatrix();
-
-	glScalef(0.5f, 0.5f, 1.0f);
-
-	drawSquare();
-
-	glPopMatrix();
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_TEXTURE_2D);
-}
-
-void drawArrowRight(void)
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, gTexRight);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glPushMatrix();
-
-	glScalef(0.5f, 0.5f, 1.0f);
-
-	drawSquare();
-
-	glPopMatrix();
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_TEXTURE_2D);
-}
-
 void initGUI()
 {
-	if (!gInitialized)
-	{
-		/* loading arrow textures */
-		gTexLeft = loadTexture("data/left.tga", false);
-		gTexRight = loadTexture("data/right.tga", false);
-
-		gInitialized = true;
-	}
+	SpinEdit::init();
 }
 
 /*** Canvas ***/
@@ -111,126 +59,6 @@ void initCanvas(Canvas * canvas, float z, float width, float height,
 void drawCanvas(const Canvas * canvas)
 {
 	canvas->customDraw();
-}
-
-/*** SpinEdit ***/
-
-/*
- * TODO split SpinEdit into two seperate MenuItems
- */
-
-void initSpinEdit(SpinEdit * spinEdit, int value, int min, int max, float width,
-									float z, funcDraw draw, funcChange change)
-{
-	spinEdit->item.type = MI_SPIN_EDIT;
-
-	spinEdit->item.width = width;
-	spinEdit->item.height = 1.0f;
-
-	spinEdit->item.position = Vector2(-spinEdit->item.width / 2.0f, z - 0.5);
-
-	spinEdit->value = value;
-	spinEdit->minValue = min;
-	spinEdit->maxValue = max;
-
-	/* object between arrows */
-	spinEdit->draw = draw;
-	spinEdit->change = change;
-
-	spinEdit->change(spinEdit);
-}
-
-void drawSpinEdit(const SpinEdit * spinEdit)
-{
-	float scale = 1.0f + 0.2f * spinEdit->item.emphasize;
-	float step = (spinEdit->item.width - 1.0f) / 2.0f;
-
-	glPushMatrix();
-
-	glTranslatef(0.5f, 0.5f, 0.0f);
-
-	glPushMatrix();
-
-	if (spinEdit->side == -1)
-	{
-		glScalef(scale, scale, 1.0f);
-	}
-
-	drawArrowLeft();
-
-	glPopMatrix();
-
-	glTranslatef(step, 0.0f, 0.0f);
-
-	glPushMatrix();
-
-	glScalef(0.5f, 0.5f, 0.5f);
-
-	glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
-
-	spinEdit->draw();
-
-	glPopAttrib();
-
-	glPopMatrix();
-
-	glTranslatef(step, 0.0f, 0.0f);
-
-	glPushMatrix();
-
-	if (spinEdit->side == 1)
-	{
-		glScalef(scale, scale, 1.0f);
-	}
-
-	drawArrowRight();
-
-	glPopMatrix();
-
-	glPopMatrix();
-}
-
-void changeSpinEdit(SpinEdit * spinEdit, int change)
-{
-	spinEdit->value =
-		clamp(spinEdit->value + change, spinEdit->minValue, spinEdit->maxValue);
-	spinEdit->change(spinEdit);
-}
-
-void eventSpinEdit(SpinEdit * spinEdit, float x, float y, MouseEvent event)
-{
-	int side;
-
-	float dist = spinEdit->item.width / 2.0f - 1.0f;
-
-	if (x < -dist)
-	{
-		side = -1;
-	}
-	else if (x > dist)
-	{
-		side = 1;
-	}
-	else
-	{
-		side = 0;
-	}
-
-	if (side != 0)
-	{
-		spinEdit->side = side;
-	}
-
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		changeSpinEdit(spinEdit, side);
-		break;
-	default:
-		spinEdit->item.hover = (side != 0);
-		break;
-	}
-
 }
 
 /*** MenuItem ***/
@@ -257,15 +85,7 @@ void updateMenuItem(MenuItem * item, float interval)
 	}
 	else if (item->type == MI_SPIN_EDIT)
 	{
-		SpinEdit *spinEdit = (SpinEdit *) item;
-		if (wasCursorPressed(CURSOR_LEFT))
-		{
-			changeSpinEdit(spinEdit, -1);
-		}
-		else if (wasCursorPressed(CURSOR_RIGHT))
-		{
-			changeSpinEdit(spinEdit, +1);
-		}
+		item->update(interval);
 	}
 	else if (item->type == MI_CANVAS)
 	{
@@ -298,7 +118,7 @@ void drawMenuItem(const MenuItem * item)
 		item->draw();
 		break;
 	case MI_SPIN_EDIT:
-		drawSpinEdit((const SpinEdit *) item);
+		item->draw();
 		break;
 	}
 
@@ -313,20 +133,7 @@ void eventMenuItem(MenuItem * item, float x, float y, MouseEvent event)
 			x <= item->position.x + item->width
 			&& y <= item->position.y + item->height)
 	{
-		switch (item->type)
-		{
-		case MI_BUTTON:
-			item->event(event);
-			break;
-		case MI_CHECK:
-			item->event(event);
-			break;
-		case MI_SPIN_EDIT:
-			eventSpinEdit((SpinEdit *) item, x, y, event);
-			break;
-		default:
-			break;
-		}
+		item->event(x, y, event);
 	}
 }
 

@@ -22,11 +22,32 @@
 
 #include "MenuItem.hpp"
 
+typedef void (*funcDraw) (void);
+
 class SpinEdit : public MenuItem
 {
 public:
+	static void init();
+
+public:
   SpinEdit();
+  SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change);
   virtual ~SpinEdit();
+
+  void change(int change);
+  
+  void event(float x, float y, MouseEvent event);
+  void update(float interval);
+  void draw() const;
+  
+	int value;
+	int minValue;
+	int maxValue;
+
+	int side;
+
+	funcDraw fDraw;
+	funcChange fChange;
 
 private:
 

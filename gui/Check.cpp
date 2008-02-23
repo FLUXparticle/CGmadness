@@ -54,7 +54,7 @@ void Check::set(bool value)
 	this->change(this);
 }
 
-void Check::event(MouseEvent event)
+void Check::event(float x, float y, MouseEvent event)
 {
 	switch (event)
 	{

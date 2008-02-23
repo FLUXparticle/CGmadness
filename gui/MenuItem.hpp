@@ -24,6 +24,8 @@
 
 #include "math/Vector2.hpp"
 
+typedef void (*funcChange) (const void *self);
+
 typedef enum
 {
 	MI_CANVAS,
@@ -40,7 +42,7 @@ public:
   MenuItem();
   virtual ~MenuItem();
   
-  virtual void event(MouseEvent event);
+  virtual void event(float x, float y, MouseEvent event);
   virtual void update(float interval);
   virtual void draw() const;
 

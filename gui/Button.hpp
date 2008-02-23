@@ -31,7 +31,7 @@ public:
   Button(float z, funcClick click, char *text, int shortcut);
   virtual ~Button();
 
-  void event(MouseEvent event);
+  void event(float x, float y, MouseEvent event);
   void update(float interval);
   void draw() const;
   

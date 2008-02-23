@@ -26,8 +26,6 @@
 #include "mouse.hpp"
 #include "types.hpp"
 
-typedef void (*funcChange) (const void *self);
-
 /***/
 
 typedef struct Screen
@@ -46,31 +44,12 @@ typedef struct
 	funcDraw customDraw;
 } Canvas;
 
-typedef struct
-{
-	MenuItem item;
-
-	int value;
-	int minValue;
-	int maxValue;
-
-	int side;
-
-	funcDraw draw;
-	funcChange change;
-} SpinEdit;
-
 void initGUI(void);
 
 /* Canvas */
 
 void initCanvas(Canvas * canvas, float z, float width, float height,
 								funcUpdate customUpdate, funcDraw customDraw);
-
-/* SpinEdit */
-
-void initSpinEdit(SpinEdit * spinedit, int value, int min, int max, float width,
-									float z, funcDraw draw, funcChange change);
 
 /* Screen */
 

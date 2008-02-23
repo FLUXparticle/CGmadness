@@ -47,6 +47,8 @@ Process* initMain(void)
 
 	Ball::init();
 	
+	initGUI();
+	
 	initMenuManager();
 	
 	MainProcess::init();

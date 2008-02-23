@@ -33,7 +33,7 @@ MenuItem::~MenuItem()
   // empty
 }
 
-void MenuItem::event(MouseEvent event)
+void MenuItem::event(float x, float y, MouseEvent event)
 {
   // empty
 }

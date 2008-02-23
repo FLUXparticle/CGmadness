@@ -142,8 +142,6 @@ void initEditorMenu()
 
 	int i;
 
-	initGUI();
-
 	/*
 	 * put all together
 	 */

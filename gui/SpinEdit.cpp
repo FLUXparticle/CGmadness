@@ -19,13 +19,199 @@
 
 #include "SpinEdit.hpp"
 
+#include "objects.hpp"
+#include "texture.hpp"
+#include "keyboard.hpp"
+
+#include "functions.hpp"
+
+#include <GL/gl.h>
+
+/*
+ * TODO split SpinEdit into two seperate MenuItems
+ */
+
+static unsigned int gTexLeft;
+static unsigned int gTexRight;
+
+void drawArrowLeft(void)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLeft);
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		{
+			glPushMatrix();
+			{
+				glScalef(0.5f, 0.5f, 1.0f);
+
+				drawSquare();
+			}
+			glPopMatrix();
+		}
+		glDisable(GL_BLEND);
+	}
+	glDisable(GL_TEXTURE_2D);
+}
+
+void drawArrowRight(void)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexRight);
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		{
+			glPushMatrix();
+			{
+				glScalef(0.5f, 0.5f, 1.0f);
+
+				drawSquare();
+			}
+			glPopMatrix();
+		}
+		glDisable(GL_BLEND);
+	}
+	glDisable(GL_TEXTURE_2D);
+}
+
+void SpinEdit::init()
+{
+	/* loading arrow textures */
+	gTexLeft = loadTexture("data/left.tga", false);
+	gTexRight = loadTexture("data/right.tga", false);
+}
+
 SpinEdit::SpinEdit()
 {
-  // empty
+	// empty
+}
+
+SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change)
+{
+	this->type = MI_SPIN_EDIT;
+
+	this->width = width;
+	this->height = 1.0f;
+
+	this->position = Vector2(-this->width / 2.0f, z - 0.5);
+
+	this->value = value;
+	this->minValue = min;
+	this->maxValue = max;
+
+	/* object between arrows */
+	this->fDraw = draw;
+	this->fChange = change;
+
+	this->fChange(this);
 }
 
 SpinEdit::~SpinEdit()
 {
-  // empty
+	// empty
 }
 
+void SpinEdit::change(int change)
+{
+	this->value = clamp(this->value + change, this->minValue, this->maxValue);
+	this->fChange(this);
+}
+
+void SpinEdit::event(float x, float y, MouseEvent event)
+{
+	int side;
+
+	float dist = this->width / 2.0f - 1.0f;
+
+	if (x < -dist)
+	{
+		side = -1;
+	}
+	else if (x > dist)
+	{
+		side = 1;
+	}
+	else
+	{
+		side = 0;
+	}
+
+	if (side != 0)
+	{
+		this->side = side;
+	}
+
+	switch (event)
+	{
+	case MOUSE_CLICK:
+		change(side);
+		break;
+	default:
+		this->hover = (side != 0);
+		break;
+	}
+}
+
+void SpinEdit::update(float interval)
+{
+	if (wasCursorPressed(CURSOR_LEFT))
+	{
+		this->change(-1);
+	}
+	else if (wasCursorPressed(CURSOR_RIGHT))
+	{
+		this->change(+1);
+	}
+}
+
+void SpinEdit::draw() const
+{
+	float scale = 1.0f + 0.2f * this->emphasize;
+	float step = (this->width - 1.0f) / 2.0f;
+
+	glPushMatrix();
+	{
+		glTranslatef(0.5f, 0.5f, 0.0f);
+
+		glPushMatrix();
+		{
+			if (this->side == -1)
+			{
+				glScalef(scale, scale, 1.0f);
+			}
+
+			drawArrowLeft();
+		}
+		glPopMatrix();
+
+		glTranslatef(step, 0.0f, 0.0f);
+
+		glPushMatrix();
+		{
+			glScalef(0.5f, 0.5f, 0.5f);
+
+			glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
+			{
+				this->fDraw();
+			}
+			glPopAttrib();
+		}
+		glPopMatrix();
+
+		glTranslatef(step, 0.0f, 0.0f);
+
+		glPushMatrix();
+		{
+			if (this->side == 1)
+			{
+				glScalef(scale, scale, 1.0f);
+			}
+
+			drawArrowRight();
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+}

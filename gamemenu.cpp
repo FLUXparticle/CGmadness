@@ -22,6 +22,7 @@
 #include "gui/Label.hpp"
 #include "gui/Button.hpp"
 #include "gui/Check.hpp"
+#include "gui/SpinEdit.hpp"
 
 #include "PlayersBall.hpp"
 #include "text.hpp"
@@ -161,7 +162,7 @@ void initGameMenu(void)
 
 	static MenuItem *itemsMain1[] = {
 		&bStart,
-		&gseBall.item,
+		&gseBall,
 		&gcBallShadow,
 		&gcReflection,
 		&bHelp,
@@ -170,7 +171,7 @@ void initGameMenu(void)
 
 	static MenuItem *itemsMain2[] = {
 		&bResume,
-		&gseBall.item,
+		&gseBall,
 		&gcBallShadow,
 		&gcReflection,
 		&bHelp,
@@ -222,8 +223,7 @@ void initGameMenu(void)
 	bStart = Button(6.0f, clickButtonStart, "start", KEY_ENTER);
 	bResume = Button(6.0f, clickButtonResume, "resume", KEY_ENTER);
 
-	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f,
-							 drawMenuBall, changeBallEdit);
+	gseBall = SpinEdit(gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 
 	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");
 	gcReflection = Check(3.0f, changeReflection, "reflection");

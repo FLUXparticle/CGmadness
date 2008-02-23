@@ -21,6 +21,7 @@
 #include "mainmenu.hpp"
 
 #include "gui/Button.hpp"
+#include "gui/SpinEdit.hpp"
 
 #include "main.hpp"
 #include "field.hpp"
@@ -215,14 +216,14 @@ void initMainMenu(void)
 	};
 
 	static MenuItem *itemsChooseGame[] = {
-		&gseLevel.item,
+		&gseLevel,
 		&hsHighScore.item,
 		&bChooseGame,
 		&bBack
 	};
 
 	static MenuItem *itemsChooseEditor[] = {
-		&gseLevel.item,
+		&gseLevel,
 		&cLevelInfo.item,
 		&bChooseEditor,
 		&bBack
@@ -234,8 +235,7 @@ void initMainMenu(void)
 
 	INIT_SCREEN(&gScreenMain, itemsMain);
 
-	initSpinEdit(&gseLevel, 0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel,
-							 changeLevelChooser);
+	gseLevel = SpinEdit(0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
 
 	initHighScore(&hsHighScore, 3.0f);
 

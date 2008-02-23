@@ -48,7 +48,7 @@ Button::~Button()
   // empty
 }
 
-void Button::event(MouseEvent event)
+void Button::event(float x, float y, MouseEvent event)
 {
 	switch (event)
 	{

@@ -46,8 +46,6 @@ void initMenuManager(void)
 		&pbProgress
 	};
 
-	initGUI();
-
 	if (gTexLogo == 0)
 	{
 		gTexLogo = loadTexture("data/logo.tga", false);

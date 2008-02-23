@@ -22,8 +22,6 @@
 
 #include "MenuItem.hpp"
 
-typedef void (*funcChange) (const void *self);
-
 class Check : public MenuItem
 {
 public:
@@ -33,7 +31,7 @@ public:
 
   void set(bool value);
 
-  void event(MouseEvent event);
+  void event(float x, float y, MouseEvent event);
   void draw() const;
   
   char *text;
