@@ -22,12 +22,24 @@
 
 #include "MenuItem.hpp"
 
+typedef void (*funcClick) (void);
+
 class Button : public MenuItem
 {
 public:
   Button();
+  Button(float z, funcClick click, char *text, int shortcut);
   virtual ~Button();
 
+  void event(MouseEvent event);
+  void update(float interval);
+  void draw() const;
+  
+	char *text;
+	int shortcut;
+
+	funcClick click;
+	
 private:
 
 };

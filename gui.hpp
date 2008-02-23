@@ -26,8 +26,6 @@
 #include "mouse.hpp"
 #include "types.hpp"
 
-typedef void (*funcClick) (void);
-
 typedef void (*funcChange) (const void *self);
 
 /***/
@@ -47,16 +45,6 @@ typedef struct
 	funcUpdate customUpdate;
 	funcDraw customDraw;
 } Canvas;
-
-typedef struct
-{
-	MenuItem item;
-
-	char *text;
-	int shortcut;
-
-	funcClick click;
-} Button;
 
 typedef struct
 {
@@ -88,11 +76,6 @@ void initGUI(void);
 
 void initCanvas(Canvas * canvas, float z, float width, float height,
 								funcUpdate customUpdate, funcDraw customDraw);
-
-/* Button */
-
-void initButton(Button * button, float z, funcClick click, char *text,
-								int shortcut);
 
 /* Check */
 

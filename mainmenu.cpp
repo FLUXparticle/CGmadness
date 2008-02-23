@@ -20,6 +20,8 @@
 
 #include "mainmenu.hpp"
 
+#include "gui/Button.hpp"
+
 #include "main.hpp"
 #include "field.hpp"
 #include "level.hpp"
@@ -207,28 +209,28 @@ void initMainMenu(void)
 	static HighScore hsHighScore;
 
 	static MenuItem *itemsMain[] = {
-		&bCGMadness.item,
-		&bCGMEditor.item,
-		&bQuit.item
+		&bCGMadness,
+		&bCGMEditor,
+		&bQuit
 	};
 
 	static MenuItem *itemsChooseGame[] = {
 		&gseLevel.item,
 		&hsHighScore.item,
-		&bChooseGame.item,
-		&bBack.item
+		&bChooseGame,
+		&bBack
 	};
 
 	static MenuItem *itemsChooseEditor[] = {
 		&gseLevel.item,
 		&cLevelInfo.item,
-		&bChooseEditor.item,
-		&bBack.item
+		&bChooseEditor,
+		&bBack
 	};
 
-	initButton(&bCGMadness, 6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
-	initButton(&bCGMEditor, 4.0f, clickButtonCGMEditor, "CGM Editor", 'e');
-	initButton(&bQuit, 2.0f, clickButtonQuit, "Quit", 'q');
+	bCGMadness = Button(6.0f, clickButtonCGMadness, "CG Madness", KEY_ENTER);
+	bCGMEditor = Button(4.0f, clickButtonCGMEditor, "CGM Editor", 'e');
+	bQuit = Button(2.0f, clickButtonQuit, "Quit", 'q');
 
 	INIT_SCREEN(&gScreenMain, itemsMain);
 
@@ -237,16 +239,15 @@ void initMainMenu(void)
 
 	initHighScore(&hsHighScore, 3.0f);
 
-	initButton(&bChooseGame, 2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
-	initButton(&bBack, 1.0f, clickButtonBack, "back", KEY_ESC);
+	bChooseGame = Button(2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
+	bBack = Button(1.0f, clickButtonBack, "back", KEY_ESC);
 
 	INIT_SCREEN(&gScreenChooseGame, itemsChooseGame);
 
 	initCanvas(&cLevelInfo, 3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT,
 						 updateLevelInfo, drawLevelInfo);
 
-	initButton(&bChooseEditor, 2.0f, clickButtonChooseEditor, "choose",
-						 KEY_ENTER);
+	bChooseEditor = Button(2.0f, clickButtonChooseEditor, "choose", KEY_ENTER);
 
 	INIT_SCREEN(&gScreenChooseEditor, itemsChooseEditor);
 }

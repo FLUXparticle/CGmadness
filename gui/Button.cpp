@@ -19,13 +19,69 @@
 
 #include "Button.hpp"
 
+#include "text.hpp"
+#include "keyboard.hpp"
+
+#include <GL/gl.h>
+
 Button::Button()
 {
   // empty
+}
+
+Button::Button(float z, funcClick click, char *text, int shortcut)
+{
+	this->click = click;
+	this->text = text;
+	this->shortcut = shortcut;
+
+	this->type = MI_BUTTON;
+
+	this->width = widthFont3DText(this->text) * scaleText;
+	this->height = 0.5f;
+
+	this->position = Vector2(-this->width / 2.0f, z);
 }
 
 Button::~Button()
 {
   // empty
 }
+
+void Button::event(MouseEvent event)
+{
+	switch (event)
+	{
+	case MOUSE_CLICK:
+		this->click();
+		break;
+	default:
+		this->hover = 1;
+		break;
+	}
+}
+
+void Button::update(float interval)
+{
+	if (wasKeyPressed(this->shortcut))
+	{
+		this->click();
+	}
+}
+
+void Button::draw() const
+{
+	float scale = scaleText * (1.0f + 0.1f * this->emphasize);
+
+	glPushMatrix();
+	{
+		glTranslatef(-0.5f * this->width * 0.1f * this->emphasize, 0.0f,
+				0.0f);
+		glScalef(scale, scale, scale);
+
+		drawFont3DText(this->text);
+	}
+	glPopMatrix();
+}
+
 

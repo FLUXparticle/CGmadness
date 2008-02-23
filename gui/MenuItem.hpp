@@ -20,6 +20,8 @@
 #ifndef MenuItem_hpp
 #define MenuItem_hpp
 
+#include "mouse.hpp"
+
 #include "math/Vector2.hpp"
 
 typedef enum
@@ -38,6 +40,7 @@ public:
   MenuItem();
   virtual ~MenuItem();
   
+  virtual void event(MouseEvent event);
   virtual void update(float interval);
   virtual void draw() const;
 

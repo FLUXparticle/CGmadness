@@ -20,6 +20,7 @@
 #include "gamemenu.hpp"
 
 #include "gui/Label.hpp"
+#include "gui/Button.hpp"
 
 #include "PlayersBall.hpp"
 #include "text.hpp"
@@ -158,27 +159,27 @@ void initGameMenu(void)
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
 	static MenuItem *itemsMain1[] = {
-		&bStart.item,
+		&bStart,
 		&gseBall.item,
 		&gcBallShadow.item,
 		&gcReflection.item,
-		&bHelp.item,
-		&bQuit.item
+		&bHelp,
+		&bQuit
 	};
 
 	static MenuItem *itemsMain2[] = {
-		&bResume.item,
+		&bResume,
 		&gseBall.item,
 		&gcBallShadow.item,
 		&gcReflection.item,
-		&bHelp.item,
-		&bQuit.item
+		&bHelp,
+		&bQuit
 	};
 
 	static MenuItem *itemsEnd[] = {
 		&hsHighScore.item,
-		&bAgain.item,
-		&bQuit2.item
+		&bAgain,
+		&bQuit2
 	};
 
 	static MenuItem *itemsHelp[LENGTH(lTextHelp) + 1];
@@ -217,8 +218,8 @@ void initGameMenu(void)
 	 */
 
 	/* main menu */
-	initButton(&bStart, 6.0f, clickButtonStart, "start", KEY_ENTER);
-	initButton(&bResume, 6.0f, clickButtonResume, "resume", KEY_ENTER);
+	bStart = Button(6.0f, clickButtonStart, "start", KEY_ENTER);
+	bResume = Button(6.0f, clickButtonResume, "resume", KEY_ENTER);
 
 	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f,
 							 drawMenuBall, changeBallEdit);
@@ -226,8 +227,8 @@ void initGameMenu(void)
 	initCheck(&gcBallShadow, 4.0f, changeBallShadow, "ball shadow");
 	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
 
-	initButton(&bHelp, 2.0f, clickButtonHelp, "help", 'h');
-	initButton(&bQuit, 1.0f, clickButtonQuit, "give up", KEY_ESC);
+	bHelp = Button(2.0f, clickButtonHelp, "help", 'h');
+	bQuit = Button(1.0f, clickButtonQuit, "give up", KEY_ESC);
 
 	INIT_SCREEN(&gScreenMain1, itemsMain1);
 	INIT_SCREEN(&gScreenMain2, itemsMain2);
@@ -245,10 +246,9 @@ void initGameMenu(void)
 		itemsHelp[i] = &lTextHelp[i];
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back",
-						 KEY_ESC);
+	bBack = Button(6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
 
-	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
+	itemsHelp[LENGTH(lTextHelp)] = &bBack;
 
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
@@ -256,8 +256,8 @@ void initGameMenu(void)
 
 	initHighScore(&hsHighScore, 3.0f);
 
-	initButton(&bAgain, 2.0f, clickButtonAgain, "play again", KEY_ENTER);
-	initButton(&bQuit2, 1.0f, clickButtonQuit2, "change level", KEY_ESC);
+	bAgain = Button(2.0f, clickButtonAgain, "play again", KEY_ENTER);
+	bQuit2 = Button(1.0f, clickButtonQuit2, "change level", KEY_ESC);
 
 	INIT_SCREEN(&gScreenEnd, itemsEnd);
 }

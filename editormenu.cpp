@@ -24,6 +24,7 @@
 #include "menumanager.hpp"
 
 #include "gui/Label.hpp"
+#include "gui/Button.hpp"
 
 #include "text.hpp"
 #include "objects.hpp"
@@ -121,20 +122,20 @@ void initEditorMenu()
 	static Label lTextHelp[2 * LENGTH(gTextHelp)];
 
 	static MenuItem *itemsEditor[] = {
-		&bEdit.item,
-		&bSave.item,
-		&bHelp.item,
-		&bQuit.item
+		&bEdit,
+		&bSave,
+		&bHelp,
+		&bQuit
 	};
 
 	static MenuItem *itemsHelp[LENGTH(lTextHelp) + 1];
 
 	static MenuItem *itemsSuccessful[] = {
-		&bSuccessful.item,
+		&bSuccessful,
 	};
 
 	static MenuItem *itemsFailed[] = {
-		&bFailed.item,
+		&bFailed,
 	};
 
 	static const float sizeHelp = 0.75f;
@@ -148,10 +149,10 @@ void initEditorMenu()
 	 */
 
 	/* main menu */
-	initButton(&bEdit, 6.0f, clickButtonEdit, "edit", KEY_ENTER);
-	initButton(&bSave, 5.0f, clickButtonSave, "save", 's');
-	initButton(&bHelp, 4.0f, clickButtonHelp, "help", 'h');
-	initButton(&bQuit, 3.0f, clickButtonQuit, "back", KEY_ESC);
+	bEdit = Button(6.0f, clickButtonEdit, "edit", KEY_ENTER);
+	bSave = Button(5.0f, clickButtonSave, "save", 's');
+	bHelp = Button(4.0f, clickButtonHelp, "help", 'h');
+	bQuit = Button(3.0f, clickButtonQuit, "back", KEY_ESC);
 
 	INIT_SCREEN(&gScreenEditor, itemsEditor);
 
@@ -168,19 +169,17 @@ void initEditorMenu()
 		itemsHelp[i] = &lTextHelp[i];
 	}
 
-	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack,
-						 "back", KEY_ESC);
+	bBack = Button(6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack, "back", KEY_ESC);
 
-	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
+	itemsHelp[LENGTH(lTextHelp)] = &bBack;
 
 	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
 	/* response */
 
-	initButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully",
-						 KEY_ENTER);
+	bSuccessful = Button(5.0, clickButtonBack, "level saved successfully", KEY_ENTER);
 	INIT_SCREEN(&gScreenSuccessful, itemsSuccessful);
 
-	initButton(&bFailed, 5.0, clickButtonBack, "operation failed", KEY_ENTER);
+	bFailed = Button(5.0, clickButtonBack, "operation failed", KEY_ENTER);
 	INIT_SCREEN(&gScreenFailed, itemsFailed);
 }

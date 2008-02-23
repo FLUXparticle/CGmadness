@@ -117,51 +117,6 @@ void drawCanvas(const Canvas * canvas)
 	canvas->customDraw();
 }
 
-/*** Button ***/
-
-void initButton(Button * button, float z, funcClick click, char *text,
-								int shortcut)
-{
-	button->click = click;
-	button->text = text;
-	button->shortcut = shortcut;
-
-	button->item.type = MI_BUTTON;
-
-	button->item.width = widthFont3DText(button->text) * scaleText;
-	button->item.height = 0.5f;
-
-	button->item.position = Vector2(-button->item.width / 2.0f, z);
-}
-
-void eventButton(Button * button, MouseEvent event)
-{
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		button->click();
-		break;
-	default:
-		button->item.hover = 1;
-		break;
-	}
-}
-
-void drawButton(const Button * button)
-{
-	float scale = scaleText * (1.0f + 0.1f * button->item.emphasize);
-
-	glPushMatrix();
-
-	glTranslatef(-0.5f * button->item.width * 0.1f * button->item.emphasize, 0.0f,
-							 0.0f);
-	glScalef(scale, scale, scale);
-
-	drawFont3DText(button->text);
-
-	glPopMatrix();
-}
-
 /*** Check ***/
 
 void setCheck(Check * check, int value)
@@ -364,11 +319,7 @@ void updateMenuItem(MenuItem * item, float interval)
 	 */
 	if (item->type == MI_BUTTON)
 	{
-		Button *button = (Button *) item;
-		if (wasKeyPressed(button->shortcut))
-		{
-			button->click();
-		}
+		item->update(interval);
 	}
 	else if (item->type == MI_SPIN_EDIT)
 	{
@@ -407,7 +358,7 @@ void drawMenuItem(const MenuItem * item)
 		item->draw();
 		break;
 	case MI_BUTTON:
-		drawButton((const Button *) item);
+		item->draw();
 		break;
 	case MI_CHECK:
 		drawCheck((const Check *) item);
@@ -431,7 +382,7 @@ void eventMenuItem(MenuItem * item, float x, float y, MouseEvent event)
 		switch (item->type)
 		{
 		case MI_BUTTON:
-			eventButton((Button *) item, event);
+			item->event(event);
 			break;
 		case MI_CHECK:
 			eventCheck((Check *) item, event);
