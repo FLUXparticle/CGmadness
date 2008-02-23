@@ -20,6 +20,8 @@
 #ifndef _gui_hpp_
 #define _gui_hpp_
 
+#include "gui/MenuItem.hpp"
+
 #include "math/Vector2.hpp"
 #include "mouse.hpp"
 #include "types.hpp"
@@ -29,28 +31,6 @@ typedef void (*funcClick) (void);
 typedef void (*funcChange) (const void *self);
 
 /***/
-
-typedef enum
-{
-	MI_CANVAS,
-	MI_LABEL,
-	MI_PROGRESS_BAR,
-	MI_BUTTON,
-	MI_CHECK,
-	MI_SPIN_EDIT
-} MenuItemType;
-
-typedef struct
-{
-	MenuItemType type;
-
-	Vector2 position;
-	float width;
-	float height;
-
-	int hover;
-	float emphasize;
-} MenuItem;
 
 typedef struct Screen
 {
