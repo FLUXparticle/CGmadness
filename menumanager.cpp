@@ -20,6 +20,8 @@
 
 #include "menumanager.hpp"
 
+#include "gui/ProgressBar.hpp"
+
 #include "idle.hpp"
 #include "keyboard.hpp"
 #include "callback.hpp"
@@ -41,7 +43,7 @@ void initMenuManager(void)
 	static ProgressBar pbProgress;
 
 	static MenuItem *itemsWait[] = {
-		&pbProgress.item
+		&pbProgress
 	};
 
 	initGUI();
@@ -52,7 +54,7 @@ void initMenuManager(void)
 	}
 
 	/* wait menu */
-	initProgressBar(&pbProgress, 5.0f, &sgIdleProgress);
+	pbProgress = ProgressBar(5.0f, &sgIdleProgress);
 
 	INIT_SCREEN(&gScreenWait, itemsWait);
 

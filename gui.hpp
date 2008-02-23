@@ -52,13 +52,6 @@ typedef struct
 {
 	MenuItem item;
 
-	float *progress;
-} ProgressBar;
-
-typedef struct
-{
-	MenuItem item;
-
 	char *text;
 	int shortcut;
 
@@ -95,10 +88,6 @@ void initGUI(void);
 
 void initCanvas(Canvas * canvas, float z, float width, float height,
 								funcUpdate customUpdate, funcDraw customDraw);
-
-/* ProgressBar */
-
-void initProgressBar(ProgressBar * progressBar, float z, float *progress);
 
 /* Button */
 

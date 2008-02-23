@@ -7,8 +7,13 @@ class ProgressBar : public MenuItem
 {
 public:
   ProgressBar();
+  ProgressBar(float z, float* progress);
   virtual ~ProgressBar();
 
+  void draw() const;
+  
+	float* progress;
+	
 private:
 
 };

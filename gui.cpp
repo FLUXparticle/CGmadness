@@ -117,41 +117,6 @@ void drawCanvas(const Canvas * canvas)
 	canvas->customDraw();
 }
 
-/*** ProgressBar ***/
-
-void initProgressBar(ProgressBar * progressBar, float z, float *progress)
-{
-	progressBar->progress = progress;
-
-	progressBar->item.type = MI_PROGRESS_BAR;
-
-	progressBar->item.width = 8.0f;
-	progressBar->item.height = 0.9f;
-
-	progressBar->item.position = Vector2(0.0f, z);
-}
-
-void drawProgressBar(const ProgressBar * progressBar)
-{
-	glPushMatrix();
-
-	glScalef(progressBar->item.width / 2.0f, progressBar->item.height / 2.0f,
-					 1.0f);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	drawSquare();
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-	glScalef(*progressBar->progress, 1.0f, 1.0f);
-
-	drawSquare();
-
-	glPopMatrix();
-}
-
 /*** Button ***/
 
 void initButton(Button * button, float z, funcClick click, char *text,
@@ -439,7 +404,7 @@ void drawMenuItem(const MenuItem * item)
 		item->draw();
 		break;
 	case MI_PROGRESS_BAR:
-		drawProgressBar((const ProgressBar *) item);
+		item->draw();
 		break;
 	case MI_BUTTON:
 		drawButton((const Button *) item);
