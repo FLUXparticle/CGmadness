@@ -23,7 +23,8 @@
 
 float MenuItem::scaleText = 0.1f * SCALE_FONT;
 
-MenuItem::MenuItem()
+MenuItem::MenuItem() :
+	hover(false)
 {
   // empty
 }

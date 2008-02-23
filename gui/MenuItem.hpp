@@ -41,7 +41,7 @@ public:
 	float width;
 	float height;
 
-	int hover;
+	bool hover;
 	float emphasize;
 
 protected:
