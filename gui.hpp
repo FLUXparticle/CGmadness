@@ -50,16 +50,6 @@ typedef struct
 {
 	MenuItem item;
 
-	char *text;
-	int value;
-
-	funcChange change;
-} Check;
-
-typedef struct
-{
-	MenuItem item;
-
 	int value;
 	int minValue;
 	int maxValue;
@@ -76,11 +66,6 @@ void initGUI(void);
 
 void initCanvas(Canvas * canvas, float z, float width, float height,
 								funcUpdate customUpdate, funcDraw customDraw);
-
-/* Check */
-
-void setCheck(Check * check, int value);
-void initCheck(Check * check, float z, funcChange change, char *text);
 
 /* SpinEdit */
 

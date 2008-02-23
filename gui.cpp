@@ -31,11 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SCALE_FONT 0.5f
-
 /*** common ***/
-
-static float scaleText = 0.1f * SCALE_FONT;
 
 static unsigned int gTexLeft;
 static unsigned int gTexRight;
@@ -115,68 +111,6 @@ void initCanvas(Canvas * canvas, float z, float width, float height,
 void drawCanvas(const Canvas * canvas)
 {
 	canvas->customDraw();
-}
-
-/*** Check ***/
-
-void setCheck(Check * check, int value)
-{
-	check->value = value;
-	check->change(check);
-}
-
-void initCheck(Check * check, float z, funcChange change, char *text)
-{
-	check->text = text;
-	check->change = change;
-
-	check->item.type = MI_CHECK;
-
-	check->item.width = widthFont3DText(check->text) * scaleText;
-	check->item.height = 0.5f;
-
-	check->item.position = Vector2(-check->item.width / 2.0f, z);
-
-	setCheck(check, 1);
-}
-
-void drawCheck(const Check * check)
-{
-	float scale = scaleText * (1.0f + 0.1f * check->item.emphasize);
-
-	glPushMatrix();
-
-	glTranslatef(-0.5f * check->item.width * 0.1f * check->item.emphasize, 0.0f,
-							 0.0f);
-	glScalef(scale, scale, scale);
-
-	if (check->value)
-	{
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
-	else
-	{
-		glColor3f(0.5f, 0.5f, 0.5f);
-	}
-
-	drawFont3DText(check->text);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glPopMatrix();
-}
-
-void eventCheck(Check * check, MouseEvent event)
-{
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		setCheck(check, !check->value);
-		break;
-	default:
-		check->item.hover = 1;
-		break;
-	}
 }
 
 /*** SpinEdit ***/
@@ -361,7 +295,7 @@ void drawMenuItem(const MenuItem * item)
 		item->draw();
 		break;
 	case MI_CHECK:
-		drawCheck((const Check *) item);
+		item->draw();
 		break;
 	case MI_SPIN_EDIT:
 		drawSpinEdit((const SpinEdit *) item);
@@ -385,7 +319,7 @@ void eventMenuItem(MenuItem * item, float x, float y, MouseEvent event)
 			item->event(event);
 			break;
 		case MI_CHECK:
-			eventCheck((Check *) item, event);
+			item->event(event);
 			break;
 		case MI_SPIN_EDIT:
 			eventSpinEdit((SpinEdit *) item, x, y, event);

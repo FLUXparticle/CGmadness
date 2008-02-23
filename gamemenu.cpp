@@ -21,6 +21,7 @@
 
 #include "gui/Label.hpp"
 #include "gui/Button.hpp"
+#include "gui/Check.hpp"
 
 #include "PlayersBall.hpp"
 #include "text.hpp"
@@ -139,8 +140,8 @@ void showGameMenu(int menu)
 
 	pushScreen(screens[menu]);
 
-	setCheck(&gcBallShadow, useBallShadow());
-	setCheck(&gcReflection, useReflection());
+	gcBallShadow.set(useBallShadow());
+	gcReflection.set(useReflection());
 	changeBallEdit(&gseBall);
 }
 
@@ -161,8 +162,8 @@ void initGameMenu(void)
 	static MenuItem *itemsMain1[] = {
 		&bStart,
 		&gseBall.item,
-		&gcBallShadow.item,
-		&gcReflection.item,
+		&gcBallShadow,
+		&gcReflection,
 		&bHelp,
 		&bQuit
 	};
@@ -170,8 +171,8 @@ void initGameMenu(void)
 	static MenuItem *itemsMain2[] = {
 		&bResume,
 		&gseBall.item,
-		&gcBallShadow.item,
-		&gcReflection.item,
+		&gcBallShadow,
+		&gcReflection,
 		&bHelp,
 		&bQuit
 	};
@@ -224,8 +225,8 @@ void initGameMenu(void)
 	initSpinEdit(&gseBall, gCntBallLayouts - 1, 0, gCntBallLayouts - 1, 4.3, 5.2f,
 							 drawMenuBall, changeBallEdit);
 
-	initCheck(&gcBallShadow, 4.0f, changeBallShadow, "ball shadow");
-	initCheck(&gcReflection, 3.0f, changeReflection, "reflection");
+	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");
+	gcReflection = Check(3.0f, changeReflection, "reflection");
 
 	bHelp = Button(2.0f, clickButtonHelp, "help", 'h');
 	bQuit = Button(1.0f, clickButtonQuit, "give up", KEY_ESC);

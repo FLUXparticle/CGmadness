@@ -22,11 +22,24 @@
 
 #include "MenuItem.hpp"
 
+typedef void (*funcChange) (const void *self);
+
 class Check : public MenuItem
 {
 public:
   Check();
+  Check(float z, funcChange change, char *text);
   virtual ~Check();
+
+  void set(bool value);
+
+  void event(MouseEvent event);
+  void draw() const;
+  
+  char *text;
+  bool value;
+
+	funcChange change;
 
 private:
 

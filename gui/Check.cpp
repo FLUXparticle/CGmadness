@@ -19,13 +19,76 @@
 
 #include "Check.hpp"
 
+#include "text.hpp"
+
+#include <GL/gl.h>
+
 Check::Check()
 {
-  // empty
+	// empty
+}
+
+Check::Check(float z, funcChange change, char* text)
+{
+	this->text = text;
+	this->change = change;
+
+	this->type = MI_CHECK;
+
+	this->width = widthFont3DText(this->text) * scaleText;
+	this->height = 0.5f;
+
+	this->position = Vector2(-this->width / 2.0f, z);
+
+	set(true);
 }
 
 Check::~Check()
 {
-  // empty
+	// empty
 }
 
+void Check::set(bool value)
+{
+	this->value = value;
+	this->change(this);
+}
+
+void Check::event(MouseEvent event)
+{
+	switch (event)
+	{
+	case MOUSE_CLICK:
+		set(!this->value);
+		break;
+	default:
+		this->hover = 1;
+		break;
+	}
+}
+
+void Check::draw() const
+{
+	float scale = scaleText * (1.0f + 0.1f * this->emphasize);
+
+	glPushMatrix();
+	{
+		glTranslatef(-0.5f * this->width * 0.1f * this->emphasize, 0.0f,
+				0.0f);
+		glScalef(scale, scale, scale);
+
+		if (this->value)
+		{
+			glColor3f(1.0f, 1.0f, 1.0f);
+		}
+		else
+		{
+			glColor3f(0.5f, 0.5f, 0.5f);
+		}
+
+		drawFont3DText(this->text);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
+	glPopMatrix();
+}
