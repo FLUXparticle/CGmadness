@@ -36,20 +36,7 @@ typedef struct Screen
 	struct Screen *back;
 } Screen;
 
-typedef struct
-{
-	MenuItem item;
-
-	funcUpdate customUpdate;
-	funcDraw customDraw;
-} Canvas;
-
 void initGUI(void);
-
-/* Canvas */
-
-void initCanvas(Canvas * canvas, float z, float width, float height,
-								funcUpdate customUpdate, funcDraw customDraw);
 
 /* Screen */
 

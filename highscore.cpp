@@ -187,8 +187,7 @@ void drawHighScore(void)
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void initHighScore(HighScore * highScore, float z)
+void initHighScore(HighScore* highScore, float z)
 {
-	initCanvas(highScore, z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, updateHighScore,
-						 drawHighScore);
+	*highScore = Canvas(z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, updateHighScore, drawHighScore);
 }

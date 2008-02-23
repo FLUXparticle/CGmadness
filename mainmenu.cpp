@@ -217,14 +217,14 @@ void initMainMenu(void)
 
 	static MenuItem *itemsChooseGame[] = {
 		&gseLevel,
-		&hsHighScore.item,
+		&hsHighScore,
 		&bChooseGame,
 		&bBack
 	};
 
 	static MenuItem *itemsChooseEditor[] = {
 		&gseLevel,
-		&cLevelInfo.item,
+		&cLevelInfo,
 		&bChooseEditor,
 		&bBack
 	};
@@ -244,8 +244,7 @@ void initMainMenu(void)
 
 	INIT_SCREEN(&gScreenChooseGame, itemsChooseGame);
 
-	initCanvas(&cLevelInfo, 3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT,
-						 updateLevelInfo, drawLevelInfo);
+	cLevelInfo = Canvas(3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT, updateLevelInfo, drawLevelInfo);
 
 	bChooseEditor = Button(2.0f, clickButtonChooseEditor, "choose", KEY_ENTER);
 

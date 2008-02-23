@@ -40,27 +40,6 @@ void initGUI()
 	SpinEdit::init();
 }
 
-/*** Canvas ***/
-
-void initCanvas(Canvas * canvas, float z, float width, float height,
-								funcUpdate customUpdate, funcDraw customDraw)
-{
-	canvas->customUpdate = customUpdate;
-	canvas->customDraw = customDraw;
-
-	canvas->item.type = MI_CANVAS;
-
-	canvas->item.width = width;
-	canvas->item.height = height;
-
-	canvas->item.position = Vector2(-canvas->item.width / 2.0f, z);
-}
-
-void drawCanvas(const Canvas * canvas)
-{
-	canvas->customDraw();
-}
-
 /*** MenuItem ***/
 
 #define EMPHASIZE_SPEED 10.0f
@@ -76,52 +55,17 @@ void updateMenuItem(MenuItem * item, float interval)
 		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
 	}
 
-	/*
-	 * TODO  needs rewrite of event-system
-	 */
-	if (item->type == MI_BUTTON)
-	{
-		item->update(interval);
-	}
-	else if (item->type == MI_SPIN_EDIT)
-	{
-		item->update(interval);
-	}
-	else if (item->type == MI_CANVAS)
-	{
-		Canvas *canvas = (Canvas *) item;
-		canvas->customUpdate(interval);
-	}
+	item->update(interval);
 }
 
 void drawMenuItem(const MenuItem * item)
 {
 	glPushMatrix();
-
-	glTranslatef(item->position.x, item->position.y, 0.0f);
-
-	switch (item->type)
 	{
-	case MI_CANVAS:
-		drawCanvas((const Canvas *) item);
-		break;
-	case MI_LABEL:
-		item->draw();
-		break;
-	case MI_PROGRESS_BAR:
-		item->draw();
-		break;
-	case MI_BUTTON:
-		item->draw();
-		break;
-	case MI_CHECK:
-		item->draw();
-		break;
-	case MI_SPIN_EDIT:
-		item->draw();
-		break;
-	}
+		glTranslatef(item->position.x, item->position.y, 0.0f);
 
+		item->draw();
+	}
 	glPopMatrix();
 }
 

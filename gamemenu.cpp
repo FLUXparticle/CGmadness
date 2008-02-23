@@ -179,7 +179,7 @@ void initGameMenu(void)
 	};
 
 	static MenuItem *itemsEnd[] = {
-		&hsHighScore.item,
+		&hsHighScore,
 		&bAgain,
 		&bQuit2
 	};

@@ -22,6 +22,8 @@
 
 #include "gui.hpp"
 
+#include "gui/Canvas.hpp"
+
 typedef Canvas HighScore;
 
 extern int sgLastPlayerIndex;

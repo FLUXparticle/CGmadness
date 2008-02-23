@@ -25,6 +25,7 @@
 #include "math/Vector2.hpp"
 
 typedef void (*funcChange) (const void *self);
+typedef void (*funcDraw) (void);
 
 typedef enum
 {

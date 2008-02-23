@@ -22,8 +22,6 @@
 
 #include "MenuItem.hpp"
 
-typedef void (*funcDraw) (void);
-
 class SpinEdit : public MenuItem
 {
 public:

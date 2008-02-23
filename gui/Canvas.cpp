@@ -24,8 +24,30 @@ Canvas::Canvas()
   // empty
 }
 
+Canvas::Canvas(float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw)
+{
+	this->customUpdate = customUpdate;
+	this->customDraw = customDraw;
+
+	this->type = MI_CANVAS;
+
+	this->width = width;
+	this->height = height;
+
+	this->position = Vector2(-this->width / 2.0f, z);
+}
+
 Canvas::~Canvas()
 {
   // empty
 }
 
+void Canvas::update(float interval)
+{
+	this->customUpdate(interval);
+}
+
+void Canvas::draw() const
+{
+	this->customDraw();
+}
