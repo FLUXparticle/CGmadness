@@ -35,8 +35,6 @@ Button::Button(float z, funcClick click, char *text, int shortcut)
 	this->text = text;
 	this->shortcut = shortcut;
 
-	this->type = MI_BUTTON;
-
 	this->width = widthFont3DText(this->text) * scaleText;
 	this->height = 0.5f;
 

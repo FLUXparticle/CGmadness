@@ -90,8 +90,6 @@ SpinEdit::SpinEdit()
 
 SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change)
 {
-	this->type = MI_SPIN_EDIT;
-
 	this->width = width;
 	this->height = 1.0f;
 

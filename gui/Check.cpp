@@ -33,8 +33,6 @@ Check::Check(float z, funcChange change, char* text)
 	this->text = text;
 	this->change = change;
 
-	this->type = MI_CHECK;
-
 	this->width = widthFont3DText(this->text) * scaleText;
 	this->height = 0.5f;
 

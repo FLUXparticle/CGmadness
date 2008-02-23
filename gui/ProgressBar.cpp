@@ -32,8 +32,6 @@ ProgressBar::ProgressBar(float z, float* progress)
 {
 	this->progress = progress;
 
-	this->type = MI_PROGRESS_BAR;
-
 	this->width = 8.0f;
 	this->height = 0.9f;
 

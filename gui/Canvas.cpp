@@ -29,8 +29,6 @@ Canvas::Canvas(float z, float width, float height, funcUpdate customUpdate, func
 	this->customUpdate = customUpdate;
 	this->customDraw = customDraw;
 
-	this->type = MI_CANVAS;
-
 	this->width = width;
 	this->height = height;
 

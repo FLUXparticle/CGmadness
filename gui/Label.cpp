@@ -33,8 +33,6 @@ Label::Label(float x, float z, float size, bool alignRight, char* text)
 	this->text = text;
 	this->size = size;
 
-	this->type = MI_LABEL;
-
 	this->width = widthFont3DText(this->text) * scaleText * size;
 	this->height = 0.9f * size;
 

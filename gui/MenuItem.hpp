@@ -27,16 +27,6 @@
 typedef void (*funcChange) (const void *self);
 typedef void (*funcDraw) (void);
 
-typedef enum
-{
-	MI_CANVAS,
-	MI_LABEL,
-	MI_PROGRESS_BAR,
-	MI_BUTTON,
-	MI_CHECK,
-	MI_SPIN_EDIT
-} MenuItemType;
-
 class MenuItem
 {
 public:
@@ -46,8 +36,6 @@ public:
   virtual void event(float x, float y, MouseEvent event);
   virtual void update(float interval);
   virtual void draw() const;
-
-	MenuItemType type;
 
 	Vector2 position;
 	float width;
