@@ -19,7 +19,7 @@
 
 #include "Check.hpp"
 
-#include "text.hpp"
+#include "font3d.hpp"
 
 #include <GL/gl.h>
 

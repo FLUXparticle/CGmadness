@@ -19,7 +19,7 @@
 
 #include "Button.hpp"
 
-#include "text.hpp"
+#include "font3d.hpp"
 #include "keyboard.hpp"
 
 #include <GL/gl.h>

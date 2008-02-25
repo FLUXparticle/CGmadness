@@ -21,7 +21,7 @@
 
 #include "gui/SpinEdit.hpp"
 
-#include "text.hpp"
+#include "font3d.hpp"
 #include "objects.hpp"
 #include "texture.hpp"
 #include "keyboard.hpp"

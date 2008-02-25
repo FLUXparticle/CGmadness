@@ -19,13 +19,7 @@
 
 #include "text.hpp"
 
-#include "dataBigAlpha.hpp"
-#include "dataSmallAlpha.hpp"
-#include "dataDigits.hpp"
-
 #include <GL/glut.h>
-
-#include <stdio.h>
 
 #define SCALE 0.1f
 
@@ -102,70 +96,4 @@ void drawStrokeThickText(const char *str)
 	glDisable(GL_LINE_SMOOTH);
 
 	glPopMatrix();
-}
-
-float widthFont3DText(const char *str)
-{
-	float width = 0.0f;
-
-	const char *s;
-
-	for (s = str; *s; s++)
-	{
-		if (*s >= 'A' && *s <= 'Z')
-		{
-			int i = *s - 'A';
-			width += widthBigAlpha[i];
-		}
-		if (*s >= 'a' && *s <= 'z')
-		{
-			int i = *s - 'a';
-			width += widthSmallAlpha[i];
-		}
-		if (*s >= '0' && *s <= '9')
-		{
-			int i = *s - '0';
-			width += widthDigits[i];
-		}
-		if (*s == ' ')
-		{
-			width += 5.0f;
-		}
-	}
-
-	return width;
-}
-
-void drawFont3DChar(funcDraw draw, float width)
-{
-	draw();
-	glTranslatef(width, 0.0f, 0.0f);
-}
-
-void drawFont3DText(const char *str)
-{
-	const char *s;
-
-	for (s = str; *s; s++)
-	{
-		if (*s >= 'A' && *s <= 'Z')
-		{
-			int i = *s - 'A';
-			drawFont3DChar(drawBigAlpha[i], widthBigAlpha[i]);
-		}
-		if (*s >= 'a' && *s <= 'z')
-		{
-			int i = *s - 'a';
-			drawFont3DChar(drawSmallAlpha[i], widthSmallAlpha[i]);
-		}
-		if (*s >= '0' && *s <= '9')
-		{
-			int i = *s - '0';
-			drawFont3DChar(drawDigits[i], widthDigits[i]);
-		}
-		if (*s == ' ')
-		{
-			glTranslatef(5.0f, 0.0f, 0.0f);
-		}
-	}
 }

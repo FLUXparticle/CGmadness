@@ -17,13 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _text_hpp_
-#define _text_hpp_
+#ifndef font3d_hpp
+#define font3d_hpp
 
-void drawBitmapText(const char *str);
-
-float widthStrokeText(const char *str);
-void drawStrokeThinText(const char *str);
-void drawStrokeThickText(const char *str);
+float widthFont3DText(const char *str);
+void drawFont3DText(const char *str);
 
 #endif
