@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ * Copyright (C) 2007  Sven Reinck
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -15,22 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
 
-#ifndef _highscore_hpp_
-#define _highscore_hpp_
+#ifndef _menumanager_hpp_
+#define _menumanager_hpp_
 
-#include "gui/Canvas.hpp"
+#include "gui.hpp"
 
-typedef Canvas HighScore;
+#include "math/Vector3.hpp"
 
-extern int sgLastPlayerIndex;
-extern const char *sgCurLevelname;
+typedef void (*funcCallback) (void);
 
-void initHighScore(HighScore * highScore, float z);
+void initMenuManager(void);
 
-void drawPanel(float width, float height);
+const Screen *getCurScreen(void);
 
-void acceptHighScoreName(void);
+void updateMenuManager(float interval);
+
+void eventMenuManager(const Vector3 * position, const Vector3 * direction,
+											MouseEvent event);
+
+void drawMenuManager(void);
+
+void pushWaitScreen(funcCallback callback);
+
+void pushScreen(Screen * menu);
+void popScreen(void);
 
 #endif

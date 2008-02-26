@@ -22,6 +22,8 @@
 
 #include <cstdio>
 
+#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
+
 #define PRINT_INT(i) printf(#i ": %d\n", (i))
 #define PRINT_FLOAT(f) printf(#f ": %f\n", (f))
 #define PRINT_VECTOR3(vector) printf(#vector ".x: %f, " #vector ".y: %f, " #vector ".z: %f\n", (vector).x, (vector).y, (vector).z)
