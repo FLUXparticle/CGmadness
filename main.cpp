@@ -30,13 +30,15 @@
 #include "RaceTheClock.hpp"
 #include "Editor.hpp"
 
+#include "Singleton.hpp"
+
 StringList sgLevels;
 
 Dispenser gDispenser;
 
-static MainProcess gMainProcess;
-static RaceTheClock gGameProcess;
-static Editor gEditorProcess;
+static Singleton<MainProcess> gMainProcess;
+static Singleton<RaceTheClock> gGameProcess;
+static Singleton<Editor> gEditorProcess;
 
 Process* initMain(void)
 {
@@ -65,39 +67,39 @@ void setMainState(MainState newState)
 	switch (newState)
 	{
 	case STATE_MAIN:
-		gDispenser.setProcess(&gMainProcess);
+		gDispenser.setProcess(gMainProcess);
 		break;
 	case STATE_GAME:
-		gDispenser.setProcess(&gGameProcess);
+		gDispenser.setProcess(gGameProcess);
 		break;
 	case STATE_EDITOR:
-		gDispenser.setProcess(&gEditorProcess);
+		gDispenser.setProcess(gEditorProcess);
 		break;
 	}
 }
 
 void resumeGame()
 {
-	gGameProcess.resumeGame();
+	gGameProcess->resumeGame();
 }
 
 void resetGame()
 {
-	gGameProcess.resetGame();
+	gGameProcess->resetGame();
 }
 
 void resetGameTime()
 {
-	gGameProcess.resetGameTime();
+	gGameProcess->resetGameTime();
 }
 
 void drawGameWaterReflection()
 {
-	gGameProcess.drawWaterReflection();
+	gGameProcess->drawWaterReflection();
 }
 
 void drawGameBallReflection()
 {
-	gGameProcess.drawGameBallReflection();
+	gGameProcess->drawGameBallReflection();
 }
 

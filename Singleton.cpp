@@ -17,23 +17,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Singleton_hpp
-#define Singleton_hpp
+#include "Singleton.hpp"
 
 template<class T>
-class Singleton
+T* Singleton<T>::sT;
+
+template<class T>
+int Singleton<T>::sCounter = 0;
+
+template<class T>
+Singleton<T>::Singleton()
 {
-private:
-	static T* sT;
-	static int sCounter;
+	if (sCounter == 0)
+	{
+		sT = new T();
+	}
+	sCounter++;
+}
 
-public:
-	Singleton();
-	virtual ~Singleton();
-	
-	T* operator-> ();
-	operator T* ();
-	
-};
+template<class T>
+Singleton<T>::~Singleton()
+{
+	sCounter--;
+	if (sCounter == 0)
+	{
+		delete sT;
+	}
+}
 
-#endif
+template<class T>
+Singleton<T>::operator T* ()
+{
+	return sT;
+}
+
+template<class T>
+T* Singleton<T>::operator-> ()
+{
+	return sT;
+}
