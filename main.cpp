@@ -30,7 +30,7 @@
 #include "RaceTheClock.hpp"
 #include "Editor.hpp"
 
-#include "Singleton.hpp"
+#include "utils/Singleton.hpp"
 
 StringList sgLevels;
 
