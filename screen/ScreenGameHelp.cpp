@@ -61,10 +61,10 @@ ScreenGameHelp::ScreenGameHelp() :
 
 		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, 1.0f, col,
 							col ? gTextHelp[row].right : gTextHelp[row].left);
+		mItems.push_back(&lTextHelp[i]);
 	}
 
 	bBack = Button(6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
-	
 	mItems.push_back(&bBack);
 }
 
