@@ -22,6 +22,4 @@
 
 void initGameMenu(void);
 
-void showGameMenu(int menu);
-
 #endif

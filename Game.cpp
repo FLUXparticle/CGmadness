@@ -19,6 +19,9 @@
 
 #include "Game.hpp"
 
+#include "screen/ScreenGameMain1.hpp"
+#include "screen/ScreenGameMain2.hpp"
+
 #include "MenuManager.hpp"
 
 #include "utils/Singleton.hpp"
@@ -38,6 +41,9 @@
 #include "main.hpp"
 
 #include "functions.hpp"
+
+static Singleton<ScreenGameMain1> gScreenMain1;
+static Singleton<ScreenGameMain2> gScreenMain2;
 
 static Singleton<MenuManager> gMenuManager;
 
@@ -73,7 +79,7 @@ void Game::update(float interval)
 		if (wasKeyPressed(KEY_ESC))
 		{
 			pauseGame();
-			showGameMenu(1);
+			gMenuManager->pushScreen(gScreenMain2);
 		}
 
 		/* manually switch features */
@@ -173,7 +179,7 @@ void Game::resetGame()
 	updateGameField(sgoBall);
 
 	pauseGame();
-	showGameMenu(0);
+	gMenuManager->pushScreen(gScreenMain1);
 }
 
 void Game::init()

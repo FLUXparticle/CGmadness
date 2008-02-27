@@ -1,5 +1,9 @@
 #include "Screen.hpp"
 
+#include "macros.hpp"
+
+#include <GL/gl.h>
+
 Screen::Screen()
 {
   // empty
@@ -27,10 +31,27 @@ void Screen::event(float x, float y, MouseEvent event)
 
 void Screen::update(float interval)
 {
-  // TODO
+  FOREACH(std::list<MenuItem*>, mItems, iter)
+  {
+  	(*iter)->update(interval);
+  }
+}
+
+static void drawMenuItem(const MenuItem* item)
+{
+	glPushMatrix();
+	{
+		glTranslatef(item->position.x, item->position.y, 0.0f);
+
+		item->draw();
+	}
+	glPopMatrix();
 }
 
 void Screen::draw() const
 {
-  // TODO
+  FOREACH(std::list<MenuItem*>, mItems, iter)
+  {
+  	drawMenuItem(*iter);
+  }
 }

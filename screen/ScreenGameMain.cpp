@@ -71,12 +71,19 @@ ScreenGameMain::ScreenGameMain()
 	}
 
 	gseBall = SpinEdit(gBallLayouts.size() - 1, 0, gBallLayouts.size() - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
+	mItems.push_back(&gseBall);
 
 	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");
+	mItems.push_back(&gcBallShadow);
+	
 	gcReflection = Check(3.0f, changeReflection, "reflection");
+	mItems.push_back(&gcReflection);
 
 	bHelp = Button(2.0f, clickButtonHelp, "help", 'h');
+	mItems.push_back(&bHelp);
+	
 	bQuit = Button(1.0f, clickButtonQuit, "give up", KEY_ESC);
+	mItems.push_back(&bQuit);
 }
 
 ScreenGameMain::~ScreenGameMain()

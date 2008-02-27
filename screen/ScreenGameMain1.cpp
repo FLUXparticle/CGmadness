@@ -18,6 +18,7 @@ static void clickButtonStart()
 ScreenGameMain1::ScreenGameMain1()
 {
 	bStart = Button(6.0f, clickButtonStart, "start", KEY_ENTER);
+	mItems.push_back(&bStart);
 }
 
 ScreenGameMain1::~ScreenGameMain1()
