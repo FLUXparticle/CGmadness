@@ -21,9 +21,9 @@
 #define MainProcess_hpp
 
 #include "Process.hpp"
-#include "Refectable.hpp"
+#include "reflection/WaterReflection.hpp"
 
-class MainProcess : public Process, public Refectable
+class MainProcess : public Process, public WaterReflection
 {
 public:
   static void init();
@@ -38,7 +38,6 @@ public:
   void draw(void);
 
 	void drawWaterReflection() const;
-	void drawBallReflection() const;
 	
 private:
 

@@ -20,12 +20,12 @@
 #ifndef _environment_hpp_
 #define _environment_hpp_
 
-#include "Refectable.hpp"
+#include "reflection/WaterReflection.hpp"
 
 #define ENVIRONMENT_SIZE 400.0f
 
 void initEnvironment();
 void updateEnvironment(float interval);
-void drawEnvironment(const Refectable* reflection);
+void drawEnvironment(const WaterReflection* reflection);
 
 #endif

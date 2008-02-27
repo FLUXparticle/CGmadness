@@ -58,8 +58,3 @@ void MainProcess::drawWaterReflection() const
 {
 	drawEditorField();
 }
-
-void MainProcess::drawBallReflection() const
-{
-	// empty
-}

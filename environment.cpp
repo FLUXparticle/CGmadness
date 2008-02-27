@@ -61,7 +61,7 @@ void updateEnvironment(float interval)
 	updateWater(interval);
 }
 
-void drawEnvironment(const Refectable* reflection)
+void drawEnvironment(const WaterReflection* reflection)
 {
 #if (WATER)
 	if (useReflection())

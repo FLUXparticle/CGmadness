@@ -21,7 +21,7 @@
 #ifndef _mainmenu_hpp_
 #define _mainmenu_hpp_
 
-#include "Refectable.hpp"
+#include "reflection/WaterReflection.hpp"
 
 void initMainMenu(void);
 
@@ -29,6 +29,6 @@ void showMainMenu(void);
 
 void updateMainMenu(float interval);
 
-void drawMainMenu(const Refectable* reflection);
+void drawMainMenu(const WaterReflection* reflection);
 
 #endif

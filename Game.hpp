@@ -21,11 +21,11 @@
 #define Game_hpp
 
 #include "Process.hpp"
-#include "Refectable.hpp"
+#include "reflection/WaterReflection.hpp"
 
 #include "PlayersBall.hpp"
 
-class Game : public Process, public Refectable
+class Game : public Process, public WaterReflection
 {
 public:
 	static void init();

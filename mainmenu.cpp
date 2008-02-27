@@ -262,7 +262,7 @@ void updateMainMenu(float interval)
 	updateMenuManager(interval);
 }
 
-void drawMainMenu(const Refectable* reflection)
+void drawMainMenu(const WaterReflection* reflection)
 {
 	if (getCurScreen() == &gScreenChooseGame
 			|| getCurScreen() == &gScreenChooseEditor)
