@@ -61,7 +61,7 @@ void updateEnvironment(float interval)
 	updateWater(interval);
 }
 
-void drawEnvironment(funcDraw reflection)
+void drawEnvironment(const WaterReflection* reflection)
 {
 #if (WATER)
 	if (useReflection())
@@ -84,8 +84,11 @@ void drawEnvironment(funcDraw reflection)
 			}
 			glEnable(GL_DEPTH_TEST);
 #  endif
-
-			reflection();
+			
+			if (reflection)
+			{
+				reflection->drawWaterReflection();
+			}
 
 			glCullFace(GL_BACK);
 			glDisable(GL_CLIP_PLANE0);

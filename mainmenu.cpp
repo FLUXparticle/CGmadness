@@ -262,22 +262,17 @@ void updateMainMenu(float interval)
 	updateMenuManager(interval);
 }
 
-void drawNothing()
-{
-}
-
-
-void drawMainMenu(void)
+void drawMainMenu(const WaterReflection* reflection)
 {
 	if (getCurScreen() == &gScreenChooseGame
 			|| getCurScreen() == &gScreenChooseEditor)
 	{
-		drawEnvironment(drawEditorField);
+		drawEnvironment(reflection);
 		drawEditorField();
 	}
 	else
 	{
-		drawEnvironment(drawNothing);
+		drawEnvironment(NULL);
 	}
 
 	drawMenuManager();

@@ -92,14 +92,3 @@ void resetGameTime()
 {
 	gGameProcess->resetGameTime();
 }
-
-void drawGameWaterReflection()
-{
-	gGameProcess->drawWaterReflection();
-}
-
-void drawGameBallReflection()
-{
-	gGameProcess->drawGameBallReflection();
-}
-

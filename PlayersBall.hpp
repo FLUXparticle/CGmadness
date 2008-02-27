@@ -22,6 +22,8 @@
 
 #include "Ball.hpp"
 
+#include "reflection/BallReflection.hpp"
+
 #define MAX_BALL_LAYOUTS 5
 
 #define BALL_LAYOUT_DEFAULT 0
@@ -49,7 +51,7 @@ public:
 
   void update(float interval);
 
-  void updateReflection();
+  void updateReflection(const BallReflection* reflection);
 	void drawMenuBall() const;
 
 private:

@@ -21,12 +21,14 @@
 #ifndef _mainmenu_hpp_
 #define _mainmenu_hpp_
 
+#include "reflection/WaterReflection.hpp"
+
 void initMainMenu(void);
 
 void showMainMenu(void);
 
 void updateMainMenu(float interval);
 
-void drawMainMenu(void);
+void drawMainMenu(const WaterReflection* reflection);
 
 #endif

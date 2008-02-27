@@ -101,7 +101,7 @@ void PlayersBall::update(float interval)
 	mIsReflectionDirty = true;
 }
 
-void PlayersBall::updateReflection()
+void PlayersBall::updateReflection(const BallReflection* reflection)
 {
 	static Vector3 lookat[] = {
 			Vector3(1.0f, 0.0f, 0.0f),
@@ -158,7 +158,7 @@ void PlayersBall::updateReflection()
 								mPos.x + lookat[i].x, mPos.y + lookat[i].y, mPos.z + lookat[i].z,
 								up[i].x, up[i].y, up[i].z);
 
-			TIME(drawGameBallReflection());
+			TIME(reflection->drawBallReflection());
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));

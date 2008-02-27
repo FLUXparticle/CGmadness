@@ -21,8 +21,9 @@
 #define MainProcess_hpp
 
 #include "Process.hpp"
+#include "reflection/WaterReflection.hpp"
 
-class MainProcess : public Process
+class MainProcess : public Process, public WaterReflection
 {
 public:
   static void init();
@@ -34,6 +35,8 @@ public:
   void update(float interval);
   void draw(void);
 
+	void drawWaterReflection() const;
+	
 private:
 
 };

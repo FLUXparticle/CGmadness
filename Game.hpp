@@ -21,10 +21,12 @@
 #define Game_hpp
 
 #include "Process.hpp"
+#include "reflection/WaterReflection.hpp"
+#include "reflection/BallReflection.hpp"
 
 #include "PlayersBall.hpp"
 
-class Game : public Process
+class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
 	static void init();
@@ -45,7 +47,7 @@ public:
   virtual void resetGame();
 
 	void drawWaterReflection() const;
-	void drawGameBallReflection() const;
+	void drawBallReflection() const;
 	
 protected:
   static PlayersBall& sgoBall;
