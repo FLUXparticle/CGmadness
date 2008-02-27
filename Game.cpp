@@ -19,12 +19,15 @@
 
 #include "Game.hpp"
 
+#include "MenuManager.hpp"
+
+#include "utils/Singleton.hpp"
+
 #include "common.hpp"
 #include "level.hpp"
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "menumanager.hpp"
 #include "gamemenu.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
@@ -35,6 +38,8 @@
 #include "main.hpp"
 
 #include "functions.hpp"
+
+static Singleton<MenuManager> gMenuManager;
 
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
@@ -93,7 +98,7 @@ void Game::update(float interval)
 	}
 	else
 	{
-		updateMenuManager(interval);
+		gMenuManager->update(interval);
 	}
 
 	updateGameField(sgoBall);
@@ -125,7 +130,7 @@ void Game::draw()
 
 	if (!gIsGameRunning)
 	{
-		drawMenuManager();
+		gMenuManager->draw();
 	}
 }
 
