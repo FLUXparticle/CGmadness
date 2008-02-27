@@ -37,11 +37,6 @@ void MainProcess::init()
 	showMainMenu();
 }
 
-void MainProcess::start()
-{
-  // empty
-}
-
 void MainProcess::update(float interval)
 {
 	updateMainMenu(interval);

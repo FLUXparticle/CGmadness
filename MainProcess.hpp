@@ -31,8 +31,6 @@ public:
   MainProcess();
   virtual ~MainProcess();
 
-  void start();
-  
   void update(float interval);
   void draw(void);
 
