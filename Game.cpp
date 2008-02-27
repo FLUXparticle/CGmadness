@@ -110,15 +110,15 @@ void Game::drawWaterReflection() const
 	sgoBall.drawGameBall();
 }
 
-void Game::drawGameBallReflection() const
+void Game::drawBallReflection() const
 {
-	drawEnvironment(drawGameWaterReflection);
+	drawEnvironment(this);
 	drawGameField(true);
 }
 
 void Game::draw()
 {
-	drawEnvironment(drawGameWaterReflection);
+	drawEnvironment(this);
 
 	drawGameField(false);
 	sgoBall.drawGameBall();

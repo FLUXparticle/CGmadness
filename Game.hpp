@@ -21,10 +21,11 @@
 #define Game_hpp
 
 #include "Process.hpp"
+#include "Refectable.hpp"
 
 #include "PlayersBall.hpp"
 
-class Game : public Process
+class Game : public Process, public Refectable
 {
 public:
 	static void init();
@@ -45,7 +46,7 @@ public:
   virtual void resetGame();
 
 	void drawWaterReflection() const;
-	void drawGameBallReflection() const;
+	void drawBallReflection() const;
 	
 protected:
   static PlayersBall& sgoBall;

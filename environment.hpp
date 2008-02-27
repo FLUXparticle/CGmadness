@@ -20,12 +20,12 @@
 #ifndef _environment_hpp_
 #define _environment_hpp_
 
-#include "types.hpp"
+#include "Refectable.hpp"
 
 #define ENVIRONMENT_SIZE 400.0f
 
-void initEnvironment(void);
+void initEnvironment();
 void updateEnvironment(float interval);
-void drawEnvironment(funcDraw reflection);
+void drawEnvironment(const Refectable* reflection);
 
 #endif

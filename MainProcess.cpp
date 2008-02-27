@@ -19,6 +19,8 @@
 
 #include "MainProcess.hpp"
 
+#include "Editor.hpp"
+
 #include "mainmenu.hpp"
 
 MainProcess::MainProcess()
@@ -49,5 +51,15 @@ void MainProcess::update(float interval)
 
 void MainProcess::draw(void)
 {
-	drawMainMenu();
+	drawMainMenu(this);
+}
+
+void MainProcess::drawWaterReflection() const
+{
+	drawEditorField();
+}
+
+void MainProcess::drawBallReflection() const
+{
+	// empty
 }

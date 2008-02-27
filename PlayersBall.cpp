@@ -158,7 +158,7 @@ void PlayersBall::updateReflection()
 								mPos.x + lookat[i].x, mPos.y + lookat[i].y, mPos.z + lookat[i].z,
 								up[i].x, up[i].y, up[i].z);
 
-			TIME(drawGameBallReflection());
+			TIME(drawBallReflection());
 		}
 
 		TIME(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));

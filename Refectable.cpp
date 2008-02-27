@@ -17,31 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MainProcess_hpp
-#define MainProcess_hpp
-
-#include "Process.hpp"
 #include "Refectable.hpp"
 
-class MainProcess : public Process, public Refectable
+Refectable::Refectable()
 {
-public:
-  static void init();
+  // empty
+}
 
-public:
-  MainProcess();
-  virtual ~MainProcess();
+Refectable::~Refectable()
+{
+  // empty
+}
 
-  void start();
-  
-  void update(float interval);
-  void draw(void);
-
-	void drawWaterReflection() const;
-	void drawBallReflection() const;
-	
-private:
-
-};
-
-#endif
