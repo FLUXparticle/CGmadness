@@ -18,6 +18,7 @@ static void clickButtonResume()
 ScreenGameMain2::ScreenGameMain2()
 {
 	bResume = Button(6.0f, clickButtonResume, "resume", KEY_ENTER);
+	mItems.push_back(&bResume);
 }
 
 ScreenGameMain2::~ScreenGameMain2()
