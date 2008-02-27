@@ -26,9 +26,13 @@ static void clickButtonQuit2()
 ScreenGameEnd::ScreenGameEnd()
 {
 	initHighScore(&hsHighScore, 3.0f);
+	mItems.push_back(&hsHighScore);
 
 	bAgain = Button(2.0f, clickButtonAgain, "play again", KEY_ENTER);
+	mItems.push_back(&bAgain);
+	
 	bQuit2 = Button(1.0f, clickButtonQuit2, "change level", KEY_ESC);
+	mItems.push_back(&bQuit2);
 }
 
 ScreenGameEnd::~ScreenGameEnd()
