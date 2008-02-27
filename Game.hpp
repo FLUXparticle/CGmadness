@@ -22,10 +22,11 @@
 
 #include "Process.hpp"
 #include "reflection/WaterReflection.hpp"
+#include "reflection/BallReflection.hpp"
 
 #include "PlayersBall.hpp"
 
-class Game : public Process, public WaterReflection
+class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
 	static void init();

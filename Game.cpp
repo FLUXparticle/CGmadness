@@ -101,7 +101,7 @@ void Game::update(float interval)
 
 void Game::preDisplay()
 {
-	sgoBall.updateReflection();
+	sgoBall.updateReflection(this);
 }
 
 void Game::drawWaterReflection() const

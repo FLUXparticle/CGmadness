@@ -90,9 +90,3 @@ void resetGameTime()
 {
 	gGameProcess.resetGameTime();
 }
-
-void drawBallReflection()
-{
-	gGameProcess.drawBallReflection();
-}
-

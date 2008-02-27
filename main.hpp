@@ -42,6 +42,4 @@ void resetGame();
 
 void resetGameTime();
 
-void drawBallReflection();
-
 #endif
