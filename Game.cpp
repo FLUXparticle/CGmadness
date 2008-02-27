@@ -186,6 +186,8 @@ void Game::init()
 {
 	/* ball */
 	PlayersBall::init();
+	
+	MenuManager::init();
 
 	/* menu (must be after ball) */
 	initGameMenu();

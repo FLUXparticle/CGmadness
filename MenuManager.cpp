@@ -25,13 +25,9 @@
 #include "idle.hpp"
 #include "keyboard.hpp"
 #include "callback.hpp"
-#include "texture.hpp"
 #include "camera.hpp"
-#include "objects.hpp"
 
 #include <GL/glut.h>
-
-static GLuint gTexLogo = 0;
 
 static Screen *gCurScreen = NULL;
 
@@ -45,11 +41,6 @@ void initMenuManager(void)
 	static MenuItem *itemsWait[] = {
 		&pbProgress
 	};
-
-	if (gTexLogo == 0)
-	{
-		gTexLogo = loadTexture("data/logo.tga", false);
-	}
 
 	/* wait menu */
 	pbProgress = ProgressBar(5.0f, &sgIdleProgress);
@@ -109,28 +100,6 @@ void eventMenuManager(const Vector3 * position, const Vector3 * direction,
 	}
 }
 
-static void drawLogo(void)
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, gTexLogo);
-	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		{
-			glPushMatrix();
-			{
-				glTranslatef(0.0f, 8.0f, 0.0f);
-				glScalef(4.0f, 1.0f, 1.0f);
-
-				drawSquare();
-			}
-			glPopMatrix();
-		}
-		glDisable(GL_BLEND);
-	}
-	glDisable(GL_TEXTURE_2D);
-}
-
 void drawMenuManager(void)
 {
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
@@ -148,7 +117,6 @@ void drawMenuManager(void)
 	glPushMatrix();
 	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-	drawLogo();
 	drawScreen(gCurScreen);
 	glPopMatrix();
 
