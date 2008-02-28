@@ -28,8 +28,6 @@
 
 #include "utils/Singleton.hpp"
 
-#include <vector>
-
 class ScreenGameMain : public Screen
 {
 public:
@@ -39,7 +37,6 @@ public:
   void show();
 
 protected:
-	std::vector<int> gBallLayouts;
 
 	Button bQuit;
 	Button bHelp;

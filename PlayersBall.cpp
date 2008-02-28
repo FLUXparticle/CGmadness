@@ -36,7 +36,7 @@
 
 PlayersBall PlayersBall::sgoBall;
 
-void drawMenuBall(void)
+void drawMenuBall()
 {
 	PlayersBall::sgoBall.drawMenuBall();
 }
@@ -58,6 +58,28 @@ void PlayersBall::init()
 	if (hasFramebuffer())
 	{
 		sgoBall.initCubeMap();
+	}
+
+	sgoBall.gBallLayouts.push_back(BALL_LAYOUT_DEFAULT);
+
+	if (Ball::hasBallTexture())
+	{
+		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_TEXTURE);
+	}
+
+	if (sgoBall.hasCubeMap())
+	{
+		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_METAL);
+	}
+
+	if (hasGolfballShader())
+	{
+		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL);
+	}
+
+	if (hasGolfballShader() && PlayersBall::sgoBall.hasCubeMap())
+	{
+		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL_METAL);
 	}
 }
 

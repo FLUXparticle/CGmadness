@@ -48,8 +48,8 @@ static void clickButtonQuit()
 static void changeBallEdit(const void *self)
 {
 	// TODO
-#if 0
-	PlayersBall::sgoBall.changeBall(gBallLayouts[((SpinEdit *) self)->value]);
+#if 1
+	PlayersBall::sgoBall.changeBall(PlayersBall::sgoBall.layouts()[((SpinEdit *) self)->value]);
 #endif
 }
 
@@ -67,29 +67,9 @@ static void changeReflection(const void *self)
 
 ScreenGameMain::ScreenGameMain()
 {
-	gBallLayouts.push_back(BALL_LAYOUT_DEFAULT);
-
-	if (Ball::hasBallTexture())
-	{
-		gBallLayouts.push_back(BALL_LAYOUT_TEXTURE);
-	}
-
-	if (PlayersBall::sgoBall.hasCubeMap())
-	{
-		gBallLayouts.push_back(BALL_LAYOUT_METAL);
-	}
-
-	if (hasGolfballShader())
-	{
-		gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL);
-	}
-
-	if (hasGolfballShader() && PlayersBall::sgoBall.hasCubeMap())
-	{
-		gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL_METAL);
-	}
-
-	gseBall = SpinEdit(gBallLayouts.size() - 1, 0, gBallLayouts.size() - 1, 4.3, 5.2f, drawMenuBall, changeBallEdit);
+	int maxLayout = PlayersBall::sgoBall.layouts().size() - 1;
+	
+	gseBall = SpinEdit(maxLayout, 0, maxLayout, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 	mItems.push_back(&gseBall);
 
 	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");

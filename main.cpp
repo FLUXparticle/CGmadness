@@ -40,6 +40,7 @@ void initMain()
 	
 	initMenuManager();
 
+	Ball::init();
 	PlayersBall::init();
 }
 

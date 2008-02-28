@@ -24,6 +24,8 @@
 
 #include "reflection/BallReflection.hpp"
 
+#include <vector>
+
 #define MAX_BALL_LAYOUTS 5
 
 #define BALL_LAYOUT_DEFAULT 0
@@ -45,6 +47,8 @@ public:
 	bool hasCubeMap() const;
 	bool useBallReflection() const;
 	
+	const std::vector<int>& layouts() const;
+	
   void reset();
   
   void changeBall(int layout);
@@ -63,6 +67,8 @@ private:
 	RenderTarget mTargetCube[6];
 	Viewport mViewportCube[6];
 	
+	std::vector<int> gBallLayouts;
+	
   PlayersBall();
   virtual ~PlayersBall();
 
@@ -76,6 +82,12 @@ private:
 
 };
 
-void drawMenuBall(void);
+void drawMenuBall();
+
+inline const std::vector<int>& PlayersBall::layouts() const
+{
+	return gBallLayouts;
+}
+
 
 #endif
