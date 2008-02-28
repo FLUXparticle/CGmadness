@@ -26,10 +26,10 @@
 #include "keyboard.hpp"
 #include "main.hpp"
 
-static Singleton<MenuManager> gMenuManager;
-
 static void clickButtonAgain()
 {
+	static Singleton<MenuManager> gMenuManager;
+	
 	acceptHighScoreName();
 	gMenuManager->popScreen();
 	resetGame();
@@ -37,6 +37,8 @@ static void clickButtonAgain()
 
 static void clickButtonQuit2()
 {
+	static Singleton<MenuManager> gMenuManager;
+
 	acceptHighScoreName();
 	gMenuManager->popScreen();
 	setMainState(STATE_MAIN);

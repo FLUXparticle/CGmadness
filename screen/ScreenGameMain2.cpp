@@ -26,10 +26,10 @@
 #include "keyboard.hpp"
 #include "main.hpp"
 
-static Singleton<MenuManager> gMenuManager;
-
 static void clickButtonResume()
 {
+	Singleton<MenuManager> gMenuManager;
+	
 	gMenuManager->popScreen();
 	resumeGame();
 }

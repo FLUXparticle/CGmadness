@@ -43,10 +43,10 @@ static LeftRight gTextHelp[] =
 	{"Esc", "Menu"},
 };
 
-static Singleton<MenuManager> gMenuManager;
-
 static void clickButtonBack()
 {
+	static Singleton<MenuManager> gMenuManager;
+	
 	gMenuManager->popScreen();
 }
 
