@@ -57,6 +57,9 @@ protected:
 protected:
 	bool gIsGameRunning;
 
+	Singleton<class ScreenGameMain1> gScreenMain1;
+	Singleton<class ScreenGameMain2> gScreenMain2;
+
 	Singleton<class MenuManager> gMenuManager;
 	
   void pauseGame();

@@ -40,9 +40,6 @@
 
 #include "functions.hpp"
 
-static Singleton<ScreenGameMain1> gScreenMain1;
-static Singleton<ScreenGameMain2> gScreenMain2;
-
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()

@@ -19,6 +19,10 @@
 
 #include "callback.hpp"
 
+#include "Main.hpp"
+
+#include "utils/Singleton.hpp"
+
 #include "main.hpp"
 #include "level.hpp"
 
@@ -28,8 +32,6 @@
 #include "features.hpp"
 
 #include "tools.hpp"
-
-#define GLUT_DISABLE_ATEXIT_HACK
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -95,9 +97,13 @@ int main(int argc, char *argv[])
 	startKeyboard();
 	startMouse();
 
-	Process* process = initMain();
+	initMain();
+	
+	Singleton<Main> main;
 
-	startCallback(process);
+	main->setState(STATE_MAIN);
+	
+	startCallback(main);
 	
 	glutMainLoop();
 

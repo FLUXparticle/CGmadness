@@ -19,7 +19,10 @@
 
 #include "Dispenser.hpp"
 
-Dispenser::Dispenser()
+#include <stdlib.h>
+
+Dispenser::Dispenser() :
+	mCurProcess(NULL)
 {
   // empty
 }
