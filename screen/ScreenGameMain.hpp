@@ -26,6 +26,8 @@
 #include "gui/Check.hpp"
 #include "gui/SpinEdit.hpp"
 
+#include "utils/Singleton.hpp"
+
 #include <vector>
 
 class ScreenGameMain : public Screen
@@ -47,6 +49,9 @@ protected:
 
 	SpinEdit gseBall;
 	
+	Singleton<class MenuManager> gMenuManager;
+	Singleton<class ScreenGameHelp> gScreenHelp;
+
 };
 
 #endif

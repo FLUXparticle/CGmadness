@@ -25,22 +25,22 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
-
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "main.hpp"
 
-static Singleton<MenuManager> gMenuManager;
-static Singleton<ScreenGameHelp> gScreenHelp;
-
 static void clickButtonHelp()
 {
+	Singleton<ScreenGameHelp> gScreenHelp;
+	Singleton<MenuManager> gMenuManager;
+	
 	gMenuManager->pushScreen(gScreenHelp);
 }
 
 static void clickButtonQuit()
 {
+	Singleton<MenuManager> gMenuManager;
+	
 	gMenuManager->popScreen();
 	setMainState(STATE_MAIN);
 }
