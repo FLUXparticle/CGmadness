@@ -29,7 +29,6 @@
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "gamemenu.hpp"
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "camera.hpp"
@@ -173,15 +172,4 @@ void Game::resetGame()
 
 	pauseGame();
 	gMenuManager->pushScreen(gScreenMain1);
-}
-
-void Game::init()
-{
-	/* ball */
-	PlayersBall::init();
-	
-	MenuManager::init();
-
-	/* menu (must be after ball) */
-	initGameMenu();
 }

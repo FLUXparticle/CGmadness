@@ -31,9 +31,6 @@
 class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
-	static void init();
-  
-public:
   Game();
   virtual ~Game();
 

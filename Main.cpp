@@ -20,6 +20,7 @@
 #include "main.hpp"
 
 #include "RaceTheClock.hpp"
+#include "PlayersBall.hpp"
 
 #include "objects.hpp"
 #include "environment.hpp"
@@ -38,6 +39,8 @@ void initMain()
 	initGUI();
 	
 	initMenuManager();
+
+	PlayersBall::init();
 }
 
 void setMainState(MainState newState)

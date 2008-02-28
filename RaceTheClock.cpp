@@ -25,7 +25,6 @@
 
 #include "level.hpp"
 #include "highscore.hpp"
-#include "gamemenu.hpp"
 #include "text.hpp"
 
 #include "functions.hpp"
