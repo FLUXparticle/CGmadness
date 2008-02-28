@@ -47,10 +47,7 @@ static void clickButtonQuit()
 
 static void changeBallEdit(const void *self)
 {
-	// TODO
-#if 1
 	PlayersBall::sgoBall.changeBall(PlayersBall::sgoBall.layouts()[((SpinEdit *) self)->value]);
-#endif
 }
 
 static void changeBallShadow(const void *self)
@@ -63,6 +60,11 @@ static void changeReflection(const void *self)
 {
 	const Check *check = (const Check *) self;
 	setReflection(check->value);
+}
+
+static void drawMenuBall()
+{
+	PlayersBall::sgoBall.drawMenuBall();
 }
 
 ScreenGameMain::ScreenGameMain()

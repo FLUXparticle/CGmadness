@@ -82,8 +82,6 @@ private:
 
 };
 
-void drawMenuBall();
-
 inline const std::vector<int>& PlayersBall::layouts() const
 {
 	return gBallLayouts;

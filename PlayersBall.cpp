@@ -36,11 +36,6 @@
 
 PlayersBall PlayersBall::sgoBall;
 
-void drawMenuBall()
-{
-	PlayersBall::sgoBall.drawMenuBall();
-}
-
 PlayersBall::PlayersBall() :
 	mIsReflectionDirty(true),
 	mBallLayout(BALL_LAYOUT_DEFAULT)
