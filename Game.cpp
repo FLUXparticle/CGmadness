@@ -24,8 +24,6 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
-
 #include "common.hpp"
 #include "level.hpp"
 
@@ -44,8 +42,6 @@
 
 static Singleton<ScreenGameMain1> gScreenMain1;
 static Singleton<ScreenGameMain2> gScreenMain2;
-
-static Singleton<MenuManager> gMenuManager;
 
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 

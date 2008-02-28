@@ -44,48 +44,15 @@ sub scan {
 				push @files, $file;
 				@files = &scan($file, @files);
 			}
-		} elsif (/^(\s*static)?\s*([A-Z]\w*)\<([^, ]*\*?)\>\s/ || /^(\s*typedef)\s+([A-Z]\w*)\<([^, ]*\*?)\>\s/) {
+		} elsif (/^(\s*static)?\s*([A-Z]\w*)\<(class )?([^, ]*\*?)\>\s/ || /^(\s*typedef)\s+([A-Z]\w*)\<(class )?([^, ]*\*?)\>\s/) {
 			local $classtemplate = $2;
-			local $templateparam = $3;
+			local $templateparam = $4;
+
 			local $templatefile = "template.$classtemplate.$templateparam";
 			$templatefile =~ s/\*/@/g;
 
 			if (!grep $_ eq $templatefile, @templates) {
-				local $file1;
-				local $file2;
-
 				push @templates, "$templatefile";
-
-				($file1) = grep /^(.*\/)?$classtemplate.hpp$/,@files;
-				if (!$file1) {
-					print STDERR "filename: $filename\n";
-					print STDERR "classtemplate: $classtemplate\n";
-					print STDERR "files: @files\n";
-					exit 1;
-				}
-				$file1 =~ s/\.hpp$/\.cpp/;
-				($file2) = grep /^(.*\/)?$templateparam.hpp$/,@files;
-
-				if (!defined $file1) {
-					print STDERR "$filename\n";
-					exit 1;
-				}
-
-				if (!defined $file2 && $filename =~ /\.hpp$/) {
-					$file2 = $filename;
-				}
-
-				local $include = "-include $file1";
-				local @elsefiles = &scan($file1);
-
-				if (defined $file2) {
-					$include .= " -include $file2";
-					@elsefiles = ($file2, &scan($file2, @elsefiles));
-				}
-
-				print "\$(BUILD)/$templatefile.o:: $file1 @elsefiles\n";
-				print "\t\@echo \"  TEMPLATE \$\@\"\n";
-				print "\t\@echo \"template class $classtemplate<$templateparam>;\" | \$(CXX) \$(CXXFLAGS) $include -x c++ -c -o '\$\@' -\n";
 			}
 		}
 	}
@@ -130,6 +97,46 @@ push @source, @modules;
 foreach (@modules) {
 	s/\.[^.]*$/.o/;
 	s/^/\$(BUILD)\//;
+}
+
+for $templatefile (@templates) {
+	local $file1;
+	local $file2;
+
+	($classtemplate,$templateparam) = ($templatefile =~ /template\.([^.]*)\.([^.]*)/);
+
+	$templateparam =~ s/@//;
+
+	($file1) = grep /^(.*\/)?$classtemplate.hpp$/,@source;
+	if (!$file1) {
+		print STDERR "filename: $filename\n";
+		print STDERR "classtemplate: $classtemplate\n";
+		print STDERR "files: @source\n";
+		exit 1;
+	}
+	$file1 =~ s/\.hpp$/\.cpp/;
+	($file2) = grep /^(.*\/)?$templateparam.hpp$/,@source;
+
+	if (!defined $file1) {
+		print STDERR "$filename\n";
+		exit 1;
+	}
+
+	if (!defined $file2 && $filename =~ /\.hpp$/) {
+		$file2 = $filename;
+	}
+
+	local $include = "-include $file1";
+	local @elsefiles = &scan($file1);
+
+	if (defined $file2) {
+		$include .= " -include $file2";
+		@elsefiles = ($file2, &scan($file2, @elsefiles));
+	}
+
+	print "\$(BUILD)/$templatefile.o:: $file1 @elsefiles\n";
+	print "\t\@echo \"  TEMPLATE \$\@\"\n";
+	print "\t\@echo \"template class $classtemplate<$templateparam>;\" | \$(CXX) \$(CXXFLAGS) $include -x c++ -c -o '\$\@' -\n";
 }
 
 foreach (@templates) {

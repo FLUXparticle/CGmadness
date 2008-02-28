@@ -23,8 +23,6 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
-
 #include "level.hpp"
 #include "highscore.hpp"
 #include "gamemenu.hpp"
@@ -35,10 +33,6 @@
 #include <GL/gl.h>
 
 #include <stdio.h>
-
-static Singleton<ScreenGameEnd> gScreenEnd;
-
-static Singleton<MenuManager> gMenuManager;
 
 RaceTheClock::RaceTheClock()
 {

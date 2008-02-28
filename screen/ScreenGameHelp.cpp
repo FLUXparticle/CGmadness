@@ -45,7 +45,7 @@ static LeftRight gTextHelp[] =
 
 static void clickButtonBack()
 {
-	static Singleton<MenuManager> gMenuManager;
+	Singleton<MenuManager> gMenuManager;
 	
 	gMenuManager->popScreen();
 }

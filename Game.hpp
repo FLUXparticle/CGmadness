@@ -26,6 +26,8 @@
 
 #include "PlayersBall.hpp"
 
+#include "utils/Singleton.hpp"
+
 class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
@@ -55,6 +57,8 @@ protected:
 protected:
 	bool gIsGameRunning;
 
+	Singleton<class MenuManager> gMenuManager;
+	
   void pauseGame();
   
 };

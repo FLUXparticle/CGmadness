@@ -22,6 +22,8 @@
 
 #include "Game.hpp"
 
+#include "utils/Singleton.hpp"
+
 class RaceTheClock : public Game
 {
 public:
@@ -37,6 +39,8 @@ public:
   
 private:
 	float gGameTime;
+	
+	Singleton<class ScreenGameEnd> gScreenEnd;
 
 	void stopWatch();
 	void finishedGame();

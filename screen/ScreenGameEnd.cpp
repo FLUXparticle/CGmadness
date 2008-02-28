@@ -28,7 +28,7 @@
 
 static void clickButtonAgain()
 {
-	static Singleton<MenuManager> gMenuManager;
+	Singleton<MenuManager> gMenuManager;
 	
 	acceptHighScoreName();
 	gMenuManager->popScreen();
@@ -37,7 +37,7 @@ static void clickButtonAgain()
 
 static void clickButtonQuit2()
 {
-	static Singleton<MenuManager> gMenuManager;
+	Singleton<MenuManager> gMenuManager;
 
 	acceptHighScoreName();
 	gMenuManager->popScreen();
