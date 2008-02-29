@@ -20,6 +20,10 @@
 #ifndef Process_hpp
 #define Process_hpp
 
+#include "math/Vector3.hpp"
+
+#include "mouse.hpp"
+
 class Process
 {
 public:
@@ -29,6 +33,7 @@ public:
   virtual void start();
   virtual void stop();
   
+  virtual void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   virtual void update(float interval) = 0;
   
   virtual void preDisplay();

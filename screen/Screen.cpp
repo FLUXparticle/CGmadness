@@ -21,7 +21,7 @@
 
 #include "macros.hpp"
 
-#include <GL/gl.h>
+#include <GL/glut.h>
 
 Screen::Screen()
 {
@@ -35,17 +35,34 @@ Screen::~Screen()
 
 void Screen::prepare()
 {
-  // TODO
+  FOREACH(std::list<MenuItem*>, mItems, iter)
+	{
+		(*iter)->emphasize = 0.0f;
+	}
 }
 
 void Screen::show()
 {
-  // empty
+	prepare();
+
+	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
 void Screen::event(float x, float y, MouseEvent event)
 {
-  // TODO
+  FOREACH(std::list<MenuItem*>, mItems, iter)
+  {
+  	MenuItem* item = *iter;
+  	
+  	item->hover = 0;
+
+  	if (x >= item->position.x && y >= item->position.y &&
+  			x <= item->position.x + item->width &&
+  			y <= item->position.y + item->height)
+  	{
+  		item->event(x, y, event);
+  	}
+  }
 }
 
 void Screen::update(float interval)

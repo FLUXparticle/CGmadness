@@ -94,6 +94,8 @@ ScreenGameMain::~ScreenGameMain()
 
 void ScreenGameMain::show()
 {
+	Screen::show();
+	
 	gcBallShadow.set(useBallShadow());
 	gcReflection.set(useReflection());
 	changeBallEdit(&gseBall);

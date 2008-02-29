@@ -31,6 +31,7 @@ public:
 	void setProcess(Process* process);
 	
   void update(float interval);
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
 
   void preDisplay();
   void draw();

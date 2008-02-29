@@ -69,7 +69,7 @@ void drawMenuItem(const MenuItem * item)
 	glPopMatrix();
 }
 
-void eventMenuItem(MenuItem * item, float x, float y, MouseEvent event)
+static void eventMenuItem(MenuItem* item, float x, float y, MouseEvent event)
 {
 	item->hover = 0;
 

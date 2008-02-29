@@ -213,9 +213,7 @@ void timer(int startTime)
 
 	while (simulationTime < realTime)
 	{
-		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction,
-										 gLastMouseEvent.event);
-
+		gProcess->event(gLastMouseEvent.position, gLastMouseEvent.direction, gLastMouseEvent.event);
 		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
@@ -267,7 +265,7 @@ void mouseEvent(int mx, int my, MouseEvent event)
 
 	if (event == MOUSE_CLICK)
 	{
-		eventMenuManager(&position, &direction, event);
+		gProcess->event(position, direction, event);
 	}
 
 	gLastMouseEvent.position = position;

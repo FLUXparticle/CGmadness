@@ -41,6 +41,10 @@ void Process::stop()
   // empty
 }
 
+void Process::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+{
+}
+
 void Process::preDisplay()
 {
   // empty
