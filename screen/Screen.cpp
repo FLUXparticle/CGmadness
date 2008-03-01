@@ -91,3 +91,8 @@ void Screen::draw() const
   	drawMenuItem(*iter);
   }
 }
+
+void Screen::drawBackground() const
+{
+	// empty
+}

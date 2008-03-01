@@ -21,11 +21,15 @@
 
 #include "Editor.hpp"
 
-#include "mainmenu.hpp"
+#include "screen/ScreenMain.hpp"
+
+#include "MenuManager.hpp"
+
+#include "environment.hpp"
 
 MainProcess::MainProcess()
 {
-  // empty
+	gMenuManager->pushScreen(gScreenMain);
 }
 
 MainProcess::~MainProcess()
@@ -33,23 +37,20 @@ MainProcess::~MainProcess()
   // empty
 }
 
-void MainProcess::init()
-{
-	initMainMenu();
-	showMainMenu();
-}
-
 void MainProcess::update(float interval)
 {
-	updateMainMenu(interval);
+	updateEnvironment(interval);
+	gMenuManager->update(interval);
 }
 
 void MainProcess::draw(void)
 {
-	drawMainMenu(this);
+	drawEnvironment(this);
+	gMenuManager->draw();
 }
 
 void MainProcess::drawWaterReflection() const
 {
-	drawEditorField();
+	Screen* screen = gMenuManager->curScreen(); 
+	screen->drawBackground();
 }

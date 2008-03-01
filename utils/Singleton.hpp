@@ -31,7 +31,7 @@ public:
 	Singleton();
 	virtual ~Singleton();
 	
-	T* operator-> ();
+	T* operator-> () const;
 	operator T* ();
 	
 };

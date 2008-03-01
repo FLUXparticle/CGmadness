@@ -22,6 +22,10 @@
 
 #include "gui/MenuItem.hpp"
 
+#include "MenuManager.hpp"
+
+#include "utils/Singleton.hpp"
+
 #include <list>
 
 class Screen
@@ -38,8 +42,11 @@ public:
   void update(float interval);
   
   void draw() const;
+  virtual void drawBackground() const;
 
 protected:
+	Singleton<MenuManager> gMenuManager;
+	
 	std::list<MenuItem*> mItems;
 	
 };

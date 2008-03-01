@@ -17,31 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MainProcess_hpp
-#define MainProcess_hpp
+#ifndef ScreenMain_hpp
+#define ScreenMain_hpp
 
-#include "Process.hpp"
+#include "Screen.hpp"
 
-#include "reflection/WaterReflection.hpp"
+#include "gui/Button.hpp"
 
-#include "utils/Singleton.hpp"
-
-class MainProcess : public Process, public WaterReflection
+class ScreenMain : public Screen
 {
 public:
-  MainProcess();
-  virtual ~MainProcess();
-
-  void update(float interval);
-  void draw(void);
-
-	void drawWaterReflection() const;
-	
+  ScreenMain();
+  virtual ~ScreenMain();
+  
 private:
-	Singleton<class MenuManager> gMenuManager;
+	Button bCGMadness;
+	Button bCGMEditor;
+	Button bQuit;
 	
-	Singleton<class ScreenMain> gScreenMain;
-	
+	Singleton<class ScreenChooseGame> gScreenChooseGame;
+	Singleton<class ScreenChooseEditor> gScreenChooseEditor;
+
+	void clickButtonCGMadness();
+	void clickButtonCGMEditor();
+	void clickButtonQuit();
+
 };
 
 #endif

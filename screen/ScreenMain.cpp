@@ -17,31 +17,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MainProcess_hpp
-#define MainProcess_hpp
+#include "ScreenMain.hpp"
 
-#include "Process.hpp"
+#include "ScreenChooseGame.hpp"
+#include "ScreenChooseEditor.hpp"
 
-#include "reflection/WaterReflection.hpp"
+#include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
+#include "utils/Callback.hpp"
 
-class MainProcess : public Process, public WaterReflection
+#include "keyboard.hpp"
+
+ScreenMain::ScreenMain()
 {
-public:
-  MainProcess();
-  virtual ~MainProcess();
-
-  void update(float interval);
-  void draw(void);
-
-	void drawWaterReflection() const;
+	bCGMadness = Button(6.0f, CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
+	mItems.push_back(&bCGMadness);
 	
-private:
-	Singleton<class MenuManager> gMenuManager;
+	bCGMEditor = Button(4.0f, CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
+	mItems.push_back(&bCGMEditor);
 	
-	Singleton<class ScreenMain> gScreenMain;
-	
-};
+	bQuit = Button(2.0f, CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
+	mItems.push_back(&bQuit);
+}
 
-#endif
+ScreenMain::~ScreenMain()
+{
+  // empty
+}
+
+void ScreenMain::clickButtonCGMadness()
+{
+	gMenuManager->pushScreen(gScreenChooseGame);
+}
+
+void ScreenMain::clickButtonCGMEditor()
+{
+	gMenuManager->pushScreen(gScreenChooseEditor);
+}
+
+void ScreenMain::clickButtonQuit()
+{
+	exit(0);
+}

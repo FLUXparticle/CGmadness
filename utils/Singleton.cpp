@@ -52,7 +52,7 @@ Singleton<T>::operator T* ()
 }
 
 template<class T>
-T* Singleton<T>::operator-> ()
+T* Singleton<T>::operator-> () const
 {
 	return sT;
 }

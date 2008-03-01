@@ -17,31 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MainProcess_hpp
-#define MainProcess_hpp
+#include "ScreenChooseGame.hpp"
 
-#include "Process.hpp"
+#include "main.hpp"
 
-#include "reflection/WaterReflection.hpp"
+#include "keyboard.hpp"
 
-#include "utils/Singleton.hpp"
-
-class MainProcess : public Process, public WaterReflection
+static void clickButtonChooseGame()
 {
-public:
-  MainProcess();
-  virtual ~MainProcess();
+	setMainState(STATE_GAME);
+}
 
-  void update(float interval);
-  void draw(void);
+ScreenChooseGame::ScreenChooseGame()
+{
+	bChooseGame = Button(2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
+	mItems.push_back(&bChooseGame);
+	
+	initHighScore(&hsHighScore, 3.0f);
+	mItems.push_back(&hsHighScore);
+}
 
-	void drawWaterReflection() const;
-	
-private:
-	Singleton<class MenuManager> gMenuManager;
-	
-	Singleton<class ScreenMain> gScreenMain;
-	
-};
+ScreenChooseGame::~ScreenChooseGame()
+{
+  // empty
+}
 
-#endif

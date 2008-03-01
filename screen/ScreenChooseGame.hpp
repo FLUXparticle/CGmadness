@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,20 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
 
-#ifndef _mainmenu_hpp_
-#define _mainmenu_hpp_
+#ifndef ScreenChooseGame_hpp
+#define ScreenChooseGame_hpp
 
-#include "reflection/WaterReflection.hpp"
+#include "ScreenChoose.hpp"
 
-void initMainMenu(void);
+#include "gui/Button.hpp"
 
-void showMainMenu(void);
+#include "highscore.hpp"
 
-void updateMainMenu(float interval);
+class ScreenChooseGame : public ScreenChoose
+{
+public:
+  ScreenChooseGame();
+  virtual ~ScreenChooseGame();
 
-void drawMainMenu(const WaterReflection* reflection);
+private:
+	Button bChooseGame;
+
+	HighScore hsHighScore;
+
+};
 
 #endif
