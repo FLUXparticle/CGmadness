@@ -21,29 +21,75 @@
 
 #include "Function.hpp"
 
+#include <stdlib.h>
+
+struct FunctorRef
+{
+	Functor* mF;
+	int mCounter;
+	
+	FunctorRef(Functor* f) :
+		mF(f),
+		mCounter(1)
+	{
+		// empty
+	}
+	~FunctorRef()
+	{
+		delete mF;
+	}
+};
+
 Caller::Caller()
 {
-	// empty
+	assign(new FunctorRef(NULL));
 }
 
-Caller::Caller(Functor* f) :
-	mF(f)
+Caller::Caller(const Caller& other)
 {
-	// empty
+	assign(other.mRef);
 }
 
-Caller::Caller(void (*f) ()) :
-	mF(new Function(f))
+Caller::Caller(Functor* f)
 {
-	// empty
+	assign(new FunctorRef(f));
+}
+
+Caller::Caller(void (*f) ())
+{
+	assign(new FunctorRef(new Function(f)));
 }
 
 Caller::~Caller()
 {
-  // empty
+	release();
 }
 
 void Caller::operator() ()
 {
-	(*mF) ();
+	(*mRef->mF) ();
+}
+
+void Caller::operator= (const Caller& other)
+{
+	if (mRef != other.mRef)
+	{
+		release();
+		assign(other.mRef);
+	}
+}
+
+void Caller::release()
+{
+	mRef->mCounter--;
+	if (mRef->mCounter == 0)
+	{
+		delete mRef;
+	}
+}
+
+void Caller::assign(struct FunctorRef* ref)
+{
+	mRef = ref;
+	mRef->mCounter++;
 }

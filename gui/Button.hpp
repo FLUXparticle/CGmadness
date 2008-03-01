@@ -28,7 +28,7 @@ class Button : public MenuItem
 {
 public:
   Button();
-  Button(float z, Caller click, char *text, int shortcut);
+  Button(float z, const Caller& click, char *text, int shortcut);
   virtual ~Button();
 
   void event(float x, float y, MouseEvent event);

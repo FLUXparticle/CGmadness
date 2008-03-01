@@ -29,7 +29,7 @@ Button::Button()
   // empty
 }
 
-Button::Button(float z, Caller click, char *text, int shortcut) :
+Button::Button(float z, const Caller& click, char *text, int shortcut) :
 	mClick(click)
 {
 	this->text = text;

@@ -26,15 +26,21 @@ class Caller
 {
 public:
   Caller();
+  Caller(const Caller& other);
   Caller(Functor* f);
   Caller(void (*f) ());
+  
   virtual ~Caller();
 
   void operator() ();
-
+  
+  void operator= (const Caller& other);
+  
 private:
-	Functor* mF;
+	struct FunctorRef* mRef;
 
+	void release();
+	void assign(struct FunctorRef* ref);
 };
 
 #endif
