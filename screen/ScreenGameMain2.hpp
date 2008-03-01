@@ -31,6 +31,8 @@ public:
 private:
 	Button bResume;
 
+	void clickButtonResume();
+	
 };
 
 #endif

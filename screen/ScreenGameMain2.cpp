@@ -26,17 +26,15 @@
 #include "keyboard.hpp"
 #include "main.hpp"
 
-static void clickButtonResume()
+void ScreenGameMain2::clickButtonResume()
 {
-	Singleton<MenuManager> gMenuManager;
-	
 	gMenuManager->popScreen();
 	resumeGame();
 }
 
 ScreenGameMain2::ScreenGameMain2()
 {
-	bResume = Button(6.0f, clickButtonResume, "resume", KEY_ENTER);
+	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
 	mItems.push_back(&bResume);
 }
 

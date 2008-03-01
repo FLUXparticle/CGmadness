@@ -22,13 +22,15 @@
 
 #include "MenuItem.hpp"
 
+#include "utils/Callback.hpp"
+
 typedef void (*funcClick) (void);
 
 class Button : public MenuItem
 {
 public:
   Button();
-  Button(float z, funcClick click, char *text, int shortcut);
+  Button(float z, Caller click, char *text, int shortcut);
   virtual ~Button();
 
   void event(float x, float y, MouseEvent event);
@@ -38,7 +40,7 @@ public:
 	char *text;
 	int shortcut;
 
-	funcClick click;
+	Caller mClick;
 	
 private:
 

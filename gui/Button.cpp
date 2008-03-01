@@ -29,9 +29,9 @@ Button::Button()
   // empty
 }
 
-Button::Button(float z, funcClick click, char *text, int shortcut)
+Button::Button(float z, Caller click, char *text, int shortcut) :
+	mClick(click)
 {
-	this->click = click;
 	this->text = text;
 	this->shortcut = shortcut;
 
@@ -51,7 +51,7 @@ void Button::event(float x, float y, MouseEvent event)
 	switch (event)
 	{
 	case MOUSE_CLICK:
-		this->click();
+		mClick();
 		break;
 	default:
 		this->hover = 1;
@@ -63,7 +63,7 @@ void Button::update(float interval)
 {
 	if (wasKeyPressed(this->shortcut))
 	{
-		this->click();
+		mClick();
 	}
 }
 
