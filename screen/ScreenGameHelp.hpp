@@ -25,6 +25,8 @@
 #include "gui/Label.hpp"
 #include "gui/Button.hpp"
 
+#include "utils/Singleton.hpp"
+
 #include <vector>
 
 class ScreenGameHelp : public Screen
@@ -36,7 +38,11 @@ public:
 private:
 	Button bBack;
 	std::vector<Label> lTextHelp;
+	
+	Singleton<class MenuManager> gMenuManager;
 
+	void clickButtonBack();
+	
 };
 
 #endif

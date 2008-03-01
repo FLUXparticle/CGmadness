@@ -23,27 +23,13 @@
 
 #include "screen/ScreenGameHelp.hpp"
 
+#include "utils/Callback.hpp"
+
 #include "MenuManager.hpp"
 
 #include "features.hpp"
 #include "keyboard.hpp"
 #include "main.hpp"
-
-static void clickButtonHelp()
-{
-	Singleton<ScreenGameHelp> gScreenHelp;
-	Singleton<MenuManager> gMenuManager;
-	
-	gMenuManager->pushScreen(gScreenHelp);
-}
-
-static void clickButtonQuit()
-{
-	Singleton<MenuManager> gMenuManager;
-	
-	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
-}
 
 static void changeBallEdit(const void *self)
 {
@@ -80,10 +66,10 @@ ScreenGameMain::ScreenGameMain()
 	gcReflection = Check(3.0f, changeReflection, "reflection");
 	mItems.push_back(&gcReflection);
 
-	bHelp = Button(2.0f, clickButtonHelp, "help", 'h');
+	bHelp = Button(2.0f, CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
 	mItems.push_back(&bHelp);
 	
-	bQuit = Button(1.0f, clickButtonQuit, "give up", KEY_ESC);
+	bQuit = Button(1.0f, CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
 	mItems.push_back(&bQuit);
 }
 
@@ -99,4 +85,15 @@ void ScreenGameMain::show()
 	gcBallShadow.set(useBallShadow());
 	gcReflection.set(useReflection());
 	changeBallEdit(&gseBall);
+}
+
+void ScreenGameMain::clickButtonHelp()
+{
+	gMenuManager->pushScreen(gScreenHelp);
+}
+
+void ScreenGameMain::clickButtonQuit()
+{
+	gMenuManager->popScreen();
+	setMainState(STATE_MAIN);
 }

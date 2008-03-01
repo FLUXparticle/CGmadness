@@ -21,27 +21,25 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
+#include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
 #include "main.hpp"
 
-static void clickButtonStart()
-{
-	Singleton<MenuManager> gMenuManager;
-	
-	gMenuManager->popScreen();
-	resumeGame();
-}
-
 ScreenGameMain1::ScreenGameMain1()
 {
-	bStart = Button(6.0f, clickButtonStart, "start", KEY_ENTER);
+	bStart = Button(6.0f, CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
 	mItems.push_back(&bStart);
 }
 
 ScreenGameMain1::~ScreenGameMain1()
 {
   // empty
+}
+
+void ScreenGameMain1::clickButtonStart()
+{
+	gMenuManager->popScreen();
+	resumeGame();
 }
 

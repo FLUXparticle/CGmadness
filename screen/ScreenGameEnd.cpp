@@ -21,38 +21,20 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
+#include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
 #include "main.hpp"
-
-static void clickButtonAgain()
-{
-	Singleton<MenuManager> gMenuManager;
-	
-	acceptHighScoreName();
-	gMenuManager->popScreen();
-	resetGame();
-}
-
-static void clickButtonQuit2()
-{
-	Singleton<MenuManager> gMenuManager;
-
-	acceptHighScoreName();
-	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
-}
 
 ScreenGameEnd::ScreenGameEnd()
 {
 	initHighScore(&hsHighScore, 3.0f);
 	mItems.push_back(&hsHighScore);
 
-	bAgain = Button(2.0f, clickButtonAgain, "play again", KEY_ENTER);
+	bAgain = Button(2.0f, CALLBACK(ScreenGameEnd, clickButtonAgain), "play again", KEY_ENTER);
 	mItems.push_back(&bAgain);
 	
-	bQuit2 = Button(1.0f, clickButtonQuit2, "change level", KEY_ESC);
+	bQuit2 = Button(1.0f, CALLBACK(ScreenGameEnd, clickButtonQuit2), "change level", KEY_ESC);
 	mItems.push_back(&bQuit2);
 }
 
@@ -61,3 +43,16 @@ ScreenGameEnd::~ScreenGameEnd()
   // empty
 }
 
+void ScreenGameEnd::clickButtonAgain()
+{
+	acceptHighScoreName();
+	gMenuManager->popScreen();
+	resetGame();
+}
+
+void ScreenGameEnd::clickButtonQuit2()
+{
+	acceptHighScoreName();
+	gMenuManager->popScreen();
+	setMainState(STATE_MAIN);
+}

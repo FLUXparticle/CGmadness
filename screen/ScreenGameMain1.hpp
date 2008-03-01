@@ -31,6 +31,7 @@ public:
 private:
 	Button bStart;
 
+	void clickButtonStart();
 };
 
 #endif

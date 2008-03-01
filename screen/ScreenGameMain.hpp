@@ -49,6 +49,10 @@ protected:
 	Singleton<class MenuManager> gMenuManager;
 	Singleton<class ScreenGameHelp> gScreenHelp;
 
+private:
+	void clickButtonHelp();
+	void clickButtonQuit();
+	
 };
 
 #endif

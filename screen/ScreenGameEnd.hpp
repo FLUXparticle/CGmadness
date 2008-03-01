@@ -26,6 +26,8 @@
 
 #include "gui/Button.hpp"
 
+#include "utils/Singleton.hpp"
+
 class ScreenGameEnd : public Screen
 {
 public:
@@ -36,7 +38,12 @@ private:
 	HighScore hsHighScore;
 	Button bAgain;
 	Button bQuit2;
+	
+	Singleton<class MenuManager> gMenuManager;
 
+	void clickButtonAgain();
+	void clickButtonQuit2();
+	
 };
 
 #endif

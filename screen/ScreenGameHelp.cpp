@@ -21,7 +21,7 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
+#include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
 
@@ -43,13 +43,6 @@ static LeftRight gTextHelp[] =
 	{"Esc", "Menu"},
 };
 
-static void clickButtonBack()
-{
-	Singleton<MenuManager> gMenuManager;
-	
-	gMenuManager->popScreen();
-}
-
 ScreenGameHelp::ScreenGameHelp() :
 	lTextHelp(2 * LENGTH(gTextHelp))
 {
@@ -64,7 +57,7 @@ ScreenGameHelp::ScreenGameHelp() :
 		mItems.push_back(&lTextHelp[i]);
 	}
 
-	bBack = Button(6.0f - LENGTH(gTextHelp), clickButtonBack, "back", KEY_ESC);
+	bBack = Button(6.0f - LENGTH(gTextHelp), CALLBACK(ScreenGameHelp, clickButtonBack), "back", KEY_ESC);
 	mItems.push_back(&bBack);
 }
 
@@ -73,3 +66,7 @@ ScreenGameHelp::~ScreenGameHelp()
   // empty
 }
 
+void ScreenGameHelp::clickButtonBack()
+{
+	gMenuManager->popScreen();
+}

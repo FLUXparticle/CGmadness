@@ -21,17 +21,10 @@
 
 #include "MenuManager.hpp"
 
-#include "utils/Singleton.hpp"
 #include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
 #include "main.hpp"
-
-void ScreenGameMain2::clickButtonResume()
-{
-	gMenuManager->popScreen();
-	resumeGame();
-}
 
 ScreenGameMain2::ScreenGameMain2()
 {
@@ -44,3 +37,8 @@ ScreenGameMain2::~ScreenGameMain2()
   // empty
 }
 
+void ScreenGameMain2::clickButtonResume()
+{
+	gMenuManager->popScreen();
+	resumeGame();
+}
