@@ -17,29 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#include "Functor.hpp"
 
-#include "MenuManager.hpp"
-
-#include "utils/Singleton.hpp"
-#include "utils/Callback.hpp"
-
-#include "keyboard.hpp"
-#include "main.hpp"
-
-void ScreenGameMain2::clickButtonResume()
+Functor::Functor()
 {
-	gMenuManager->popScreen();
-	resumeGame();
+  // empty
 }
 
-ScreenGameMain2::ScreenGameMain2()
-{
-	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	mItems.push_back(&bResume);
-}
-
-ScreenGameMain2::~ScreenGameMain2()
+Functor::~Functor()
 {
   // empty
 }

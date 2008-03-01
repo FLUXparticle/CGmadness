@@ -17,30 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#include "Caller.hpp"
 
-#include "MenuManager.hpp"
+#include "Function.hpp"
 
-#include "utils/Singleton.hpp"
-#include "utils/Callback.hpp"
-
-#include "keyboard.hpp"
-#include "main.hpp"
-
-void ScreenGameMain2::clickButtonResume()
+Caller::Caller()
 {
-	gMenuManager->popScreen();
-	resumeGame();
+	// empty
 }
 
-ScreenGameMain2::ScreenGameMain2()
+Caller::Caller(Functor* f) :
+	mF(f)
 {
-	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	mItems.push_back(&bResume);
+	// empty
 }
 
-ScreenGameMain2::~ScreenGameMain2()
+Caller::Caller(void (*f) ()) :
+	mF(new Function(f))
+{
+	// empty
+}
+
+Caller::~Caller()
 {
   // empty
 }
 
+void Caller::operator() ()
+{
+	(*mF) ();
+}

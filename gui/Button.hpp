@@ -22,9 +22,7 @@
 
 #include "MenuItem.hpp"
 
-#include "utils/Callback.hpp"
-
-typedef void (*funcClick) (void);
+#include "utils/Caller.hpp"
 
 class Button : public MenuItem
 {
