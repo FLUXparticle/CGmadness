@@ -44,7 +44,7 @@ sub scan {
 				push @files, $file;
 				@files = &scan($file, @files);
 			}
-		} elsif (/^(\s*static)?\s*([A-Z]\w*)\<(class )?([^, ]*\*?)\>\s/ || /^(\s*typedef)\s+([A-Z]\w*)\<(class )?([^, ]*\*?)\>\s/) {
+		} elsif (/^\s*(static|typedef)?\s*([A-Z]\w+)\<(class )?([^, ]*\*?)\>\s/) {
 			local $classtemplate = $2;
 			local $templateparam = $4;
 
