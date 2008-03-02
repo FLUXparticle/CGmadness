@@ -17,27 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Caller_hpp
-#define Caller_hpp
+#ifndef SmartPointer_hpp
+#define SmartPointer_hpp
 
-#include "Functor.hpp"
-
-#include "SmartPointer.hpp"
-
-class Caller
+template<class T>
+class SmartPointer
 {
 public:
-  Caller();
-  Caller(Functor* f);
-  Caller(void (*f) ());
-  
-  virtual ~Caller();
+  SmartPointer();
+  SmartPointer(T* ptr);
+  SmartPointer(const SmartPointer<T>& other);
+  virtual ~SmartPointer();
 
-  void operator() ();
+  void operator= (const SmartPointer<T>& other);
+
+  T& operator* ();
   
 private:
-	SmartPointer<Functor> mF;
+	T* mPtr;
+	unsigned int* mCounter;
 
+	void release();
+	void assign(T* ptr);
+	
 };
 
 #endif
