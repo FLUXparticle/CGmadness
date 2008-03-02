@@ -38,7 +38,7 @@ private:
 	unsigned int* mCounter;
 
 	void release();
-	void assign(T* ptr);
+	void assign(const SmartPointer& other);
 	
 };
 

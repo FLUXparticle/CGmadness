@@ -24,28 +24,27 @@
 template<class T>
 SmartPointer<T>::SmartPointer()
 {
-	mCounter = new unsigned int(0);
+	mCounter = new unsigned int(1);
 	mPtr = NULL;
 }
 
 template<class T>
 SmartPointer<T>::SmartPointer(T* ptr)
 {
-	mCounter = new unsigned int(0);
-	assign(ptr);
+	mCounter = new unsigned int(1);
+	mPtr = ptr;
 }
 
 template<class T>
 SmartPointer<T>::SmartPointer(const SmartPointer<T>& other)
 {
-	mCounter = new unsigned int(0);
-	assign(other.mPtr);
+	assign(other);
 }
 
 template<class T>
 SmartPointer<T>::~SmartPointer()
 {
-  // empty
+	release();
 }
 
 template<class T>
@@ -71,12 +70,14 @@ void SmartPointer<T>::release()
 	if (*mCounter == 0)
 	{
 		delete mPtr;
+		delete mCounter;
 	}
 }
 
 template<class T>
-void SmartPointer<T>::assign(T* ptr)
+void SmartPointer<T>::assign(const SmartPointer& other)
 {
-	mPtr = ptr;
+	mPtr = other.mPtr;
+	mCounter = other.mCounter;
 	*mCounter++;
 }
