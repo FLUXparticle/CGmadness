@@ -24,6 +24,8 @@
 
 #include "highscore.hpp"
 
+#include "Game.hpp"
+
 #include "gui/Button.hpp"
 
 #include "utils/Singleton.hpp"
@@ -31,7 +33,7 @@
 class ScreenGameEnd : public Screen
 {
 public:
-  ScreenGameEnd();
+  ScreenGameEnd(Game* parent);
   virtual ~ScreenGameEnd();
 
 private:
@@ -39,6 +41,8 @@ private:
 	Button bAgain;
 	Button bQuit2;
 	
+	Game* mParent;
+
 	Singleton<class MenuManager> gMenuManager;
 
 	void clickButtonAgain();

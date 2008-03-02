@@ -27,6 +27,7 @@
 #include "PlayersBall.hpp"
 
 #include "utils/Singleton.hpp"
+#include "utils/SmartPointer.hpp"
 
 class Game : public Process, public WaterReflection, public BallReflection
 {
@@ -54,8 +55,8 @@ protected:
 protected:
 	bool gIsGameRunning;
 
-	Singleton<class ScreenGameMain1> gScreenMain1;
-	Singleton<class ScreenGameMain2> gScreenMain2;
+	SmartPointer<class ScreenGameMain1> gScreenMain1;
+	SmartPointer<class ScreenGameMain2> gScreenMain2;
 
 	Singleton<class MenuManager> gMenuManager;
 	

@@ -22,14 +22,18 @@
 
 #include "ScreenGameMain.hpp"
 
+#include "Game.hpp"
+
 class ScreenGameMain2 : public ScreenGameMain
 {
 public:
-  ScreenGameMain2();
+  ScreenGameMain2(Game* parent);
   virtual ~ScreenGameMain2();
 
 private:
 	Button bResume;
+
+	Game* mParent;
 
 	void clickButtonResume();
 	

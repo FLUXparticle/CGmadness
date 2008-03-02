@@ -24,9 +24,9 @@
 #include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
-#include "main.hpp"
 
-ScreenGameMain2::ScreenGameMain2()
+ScreenGameMain2::ScreenGameMain2(Game* parent) :
+	mParent(parent)
 {
 	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
 	mItems.push_back(&bResume);
@@ -40,5 +40,5 @@ ScreenGameMain2::~ScreenGameMain2()
 void ScreenGameMain2::clickButtonResume()
 {
 	gMenuManager->popScreen();
-	resumeGame();
+	mParent->resumeGame();
 }

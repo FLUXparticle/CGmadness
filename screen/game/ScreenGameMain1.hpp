@@ -22,16 +22,21 @@
 
 #include "ScreenGameMain.hpp"
 
+#include "Game.hpp"
+
 class ScreenGameMain1 : public ScreenGameMain
 {
 public:
-  ScreenGameMain1();
+  ScreenGameMain1(Game* parent);
   virtual ~ScreenGameMain1();
 
 private:
 	Button bStart;
+	
+	Game* mParent;
 
 	void clickButtonStart();
+	
 };
 
 #endif

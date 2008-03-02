@@ -30,9 +30,6 @@ void initMain();
 
 void setMainState(MainState newState);
 
-void resumeGame();
-void resetGame();
-
 void resetGameTime();
 
 #endif

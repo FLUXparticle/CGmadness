@@ -22,7 +22,7 @@
 
 #include "Game.hpp"
 
-#include "utils/Singleton.hpp"
+#include "utils/SmartPointer.hpp"
 
 class RaceTheClock : public Game
 {
@@ -40,7 +40,7 @@ public:
 private:
 	float gGameTime;
 	
-	Singleton<class ScreenGameEnd> gScreenEnd;
+	SmartPointer<class ScreenGameEnd> gScreenEnd;
 
 	void stopWatch();
 	void finishedGame();

@@ -48,20 +48,6 @@ void setMainState(MainState newState)
 	gDispenser->setState(newState);
 }
 
-void resumeGame()
-{
-	Singleton<RaceTheClock> gGameProcess;
-
-	gGameProcess->resumeGame();
-}
-
-void resetGame()
-{
-	Singleton<RaceTheClock> gGameProcess;
-
-	gGameProcess->resetGame();
-}
-
 void resetGameTime()
 {
 	Singleton<RaceTheClock> gGameProcess;

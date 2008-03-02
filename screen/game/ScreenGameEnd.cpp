@@ -26,7 +26,8 @@
 #include "keyboard.hpp"
 #include "main.hpp"
 
-ScreenGameEnd::ScreenGameEnd()
+ScreenGameEnd::ScreenGameEnd(Game* parent) :
+	mParent(parent)
 {
 	initHighScore(&hsHighScore, 3.0f);
 	mItems.push_back(&hsHighScore);
@@ -47,7 +48,7 @@ void ScreenGameEnd::clickButtonAgain()
 {
 	acceptHighScoreName();
 	gMenuManager->popScreen();
-	resetGame();
+	mParent->resetGame();
 }
 
 void ScreenGameEnd::clickButtonQuit2()

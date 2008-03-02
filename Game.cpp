@@ -43,7 +43,8 @@ PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
 {
-  // empty
+  gScreenMain1 = new ScreenGameMain1(this);
+  gScreenMain2 = new ScreenGameMain2(this);
 }
 
 Game::~Game()

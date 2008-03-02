@@ -35,7 +35,7 @@
 
 RaceTheClock::RaceTheClock()
 {
-  // empty
+	gScreenEnd = new ScreenGameEnd(this);
 }
 
 RaceTheClock::~RaceTheClock()
