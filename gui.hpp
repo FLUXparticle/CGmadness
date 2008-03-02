@@ -20,32 +20,6 @@
 #ifndef _gui_hpp_
 #define _gui_hpp_
 
-#include "gui/MenuItem.hpp"
-
-#include "math/Vector2.hpp"
-#include "mouse.hpp"
-#include "types.hpp"
-
-/***/
-
-typedef struct Screen
-{
-	int cntItems;
-	MenuItem **items;
-
-	struct Screen *back;
-} Screen;
-
 void initGUI(void);
-
-/* Screen */
-
-#define INIT_SCREEN(screen, items) initScreen((screen), LENGTH(items), (items))
-
-void initScreen(Screen * screen, int cntItems, MenuItem ** items);
-void prepareScreen(Screen * screen);
-void updateScreen(Screen * screen, float interval);
-void drawScreen(const Screen * screen);
-void eventScreen(Screen * screen, float x, float y, MouseEvent event);
 
 #endif
