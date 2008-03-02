@@ -19,15 +19,11 @@
 
 #include "callback.hpp"
 
-#include "main.hpp"
-#include "menumanager.hpp"
-
 #include "text.hpp"
 #include "camera.hpp"
 
 #include "math/vector.hpp"
 
-#include <GL/glew.h>
 #include <GL/glut.h>
 
 #include <stdio.h>
@@ -214,6 +210,8 @@ void timer(int startTime)
 	while (simulationTime < realTime)
 	{
 		gProcess->event(gLastMouseEvent.position, gLastMouseEvent.direction, gLastMouseEvent.event);
+		gLastMouseEvent.event = MOUSE_MOTION;
+
 		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
@@ -263,14 +261,9 @@ void mouseEvent(int mx, int my, MouseEvent event)
 	Vector3 position = sgCamera;
 	Vector3 direction = rotateVector(dir);
 
-	if (event == MOUSE_CLICK)
-	{
-		gProcess->event(position, direction, event);
-	}
-
 	gLastMouseEvent.position = position;
 	gLastMouseEvent.direction = direction;
-	gLastMouseEvent.event = MOUSE_MOTION;
+	gLastMouseEvent.event = event;
 }
 
 void centerMouse(int *x, int *y)
