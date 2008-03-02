@@ -38,7 +38,7 @@ PlayersBall PlayersBall::sgoBall;
 
 PlayersBall::PlayersBall() :
 	mIsReflectionDirty(true),
-	mBallLayout(BALL_LAYOUT_DEFAULT)
+	mBallLayout(0)
 {
   // empty
 }
@@ -105,11 +105,6 @@ void PlayersBall::reset()
 {
 	Ball::reset();
 	mIsReflectionDirty = true;
-}
-
-void PlayersBall::changeBall(int layout)
-{
-	mBallLayout = layout;
 }
 
 void PlayersBall::update(float interval)
@@ -231,7 +226,7 @@ void PlayersBall::activateBallShader() const
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(light, light, light);
 
-	switch (mBallLayout)
+	switch (ballLayout())
 	{
 	case BALL_LAYOUT_DEFAULT:
 		{
@@ -331,7 +326,7 @@ void PlayersBall::deactivateBallShader() const
 {
 	glDisable(GL_COLOR_MATERIAL);
 
-	switch (mBallLayout)
+	switch (ballLayout())
 	{
 	case BALL_LAYOUT_DEFAULT:
 		glDisable(GL_LIGHTING);
@@ -373,12 +368,17 @@ void PlayersBall::deactivateBallShader() const
 
 bool PlayersBall::useBallShader(void) const
 {
-	return hasGolfballShader() && (mBallLayout == BALL_LAYOUT_GOLFBALL
-																 || mBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasGolfballShader() && (ballLayout() == BALL_LAYOUT_GOLFBALL
+																 || ballLayout() == BALL_LAYOUT_GOLFBALL_METAL);
 }
 
 bool PlayersBall::useBallReflection(void) const
 {
-	return hasFramebuffer() && (mBallLayout == BALL_LAYOUT_METAL
-															|| mBallLayout == BALL_LAYOUT_GOLFBALL_METAL);
+	return hasFramebuffer() && (ballLayout() == BALL_LAYOUT_METAL
+															|| ballLayout() == BALL_LAYOUT_GOLFBALL_METAL);
+}
+
+int PlayersBall::ballLayout() const
+{
+	return gBallLayouts[mBallLayout];
 }

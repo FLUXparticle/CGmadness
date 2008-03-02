@@ -33,7 +33,8 @@
 
 static void changeBallEdit(const void *self)
 {
-	PlayersBall::sgoBall.changeBall(PlayersBall::sgoBall.layouts()[((SpinEdit *) self)->value]);
+	const SpinEdit* spinedit = (const SpinEdit*) self;
+	PlayersBall::sgoBall.layout() = spinedit->value;
 }
 
 static void changeBallShadow(const void *self)
@@ -55,7 +56,7 @@ static void drawMenuBall()
 
 ScreenGameMain::ScreenGameMain()
 {
-	int maxLayout = PlayersBall::sgoBall.layouts().size() - 1;
+	int maxLayout = PlayersBall::sgoBall.cntLayouts() - 1;
 	
 	gseBall = SpinEdit(maxLayout, 0, maxLayout, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 	mItems.push_back(&gseBall);
@@ -84,7 +85,7 @@ void ScreenGameMain::show()
 	
 	gcBallShadow.set(useBallShadow());
 	gcReflection.set(useReflection());
-	changeBallEdit(&gseBall);
+	gseBall.value = PlayersBall::sgoBall.layout();
 }
 
 void ScreenGameMain::clickButtonHelp()

@@ -47,11 +47,12 @@ public:
 	bool hasCubeMap() const;
 	bool useBallReflection() const;
 	
-	const std::vector<int>& layouts() const;
+	int cntLayouts() const;
 	
   void reset();
   
-  void changeBall(int layout);
+  int& layout();
+  int layout() const;
 
   void update(float interval);
 
@@ -79,13 +80,24 @@ private:
   void deactivateBallShader() const;
   
 	bool useBallShader() const;
+	
+	int ballLayout() const;
 
 };
 
-inline const std::vector<int>& PlayersBall::layouts() const
+inline int PlayersBall::cntLayouts() const
 {
-	return gBallLayouts;
+	return gBallLayouts.size();
 }
 
+inline int& PlayersBall::layout()
+{
+	return mBallLayout;
+}
+
+inline int PlayersBall::layout() const
+{
+	return mBallLayout;
+}
 
 #endif
