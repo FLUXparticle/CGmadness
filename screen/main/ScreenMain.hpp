@@ -17,39 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenGameMain_hpp
-#define ScreenGameMain_hpp
+#ifndef ScreenMain_hpp
+#define ScreenMain_hpp
 
-#include "Screen.hpp"
+#include "screen/Screen.hpp"
 
 #include "gui/Button.hpp"
-#include "gui/Check.hpp"
-#include "gui/SpinEdit.hpp"
 
-class ScreenGameMain : public Screen
+class ScreenMain : public Screen
 {
 public:
-  ScreenGameMain();
-  virtual ~ScreenGameMain();
+  ScreenMain();
+  virtual ~ScreenMain();
   
-  void show();
-
-protected:
-
-	Button bQuit;
-	Button bHelp;
-
-	Check gcBallShadow;
-	Check gcReflection;
-
-	SpinEdit gseBall;
-	
-	Singleton<class ScreenGameHelp> gScreenHelp;
-
 private:
-	void clickButtonHelp();
-	void clickButtonQuit();
+	Button bCGMadness;
+	Button bCGMEditor;
+	Button bQuit;
 	
+	Singleton<class ScreenChooseGame> gScreenChooseGame;
+	Singleton<class ScreenChooseEditor> gScreenChooseEditor;
+
+	void clickButtonCGMadness();
+	void clickButtonCGMEditor();
+	void clickButtonQuit();
+
 };
 
 #endif

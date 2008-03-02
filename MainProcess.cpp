@@ -21,7 +21,7 @@
 
 #include "Editor.hpp"
 
-#include "screen/ScreenMain.hpp"
+#include "screen/main/ScreenMain.hpp"
 
 #include "MenuManager.hpp"
 

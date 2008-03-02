@@ -19,9 +19,9 @@
 
 #include "ScreenGameMain.hpp"
 
-#include "PlayersBall.hpp"
+#include "ScreenGameHelp.hpp"
 
-#include "screen/ScreenGameHelp.hpp"
+#include "PlayersBall.hpp"
 
 #include "utils/Callback.hpp"
 

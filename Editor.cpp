@@ -19,7 +19,7 @@
 
 #include "Editor.hpp"
 
-#include "screen/ScreenEditorMain.hpp"
+#include "screen/editor/ScreenEditorMain.hpp"
 #include "screen/ScreenWait.hpp"
 #include "screen/ScreenInfo.hpp"
 

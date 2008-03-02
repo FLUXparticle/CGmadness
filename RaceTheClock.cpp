@@ -19,7 +19,7 @@
 
 #include "RaceTheClock.hpp"
 
-#include "screen/ScreenGameEnd.hpp"
+#include "screen/game/ScreenGameEnd.hpp"
 
 #include "MenuManager.hpp"
 

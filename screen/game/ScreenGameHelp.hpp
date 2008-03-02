@@ -20,7 +20,7 @@
 #ifndef ScreenGameHelp_hpp
 #define ScreenGameHelp_hpp
 
-#include "ScreenHelp.hpp"
+#include "screen/ScreenHelp.hpp"
 
 class ScreenGameHelp : public ScreenHelp
 {

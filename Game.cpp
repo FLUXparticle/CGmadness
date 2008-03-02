@@ -19,8 +19,8 @@
 
 #include "Game.hpp"
 
-#include "screen/ScreenGameMain1.hpp"
-#include "screen/ScreenGameMain2.hpp"
+#include "screen/game/ScreenGameMain1.hpp"
+#include "screen/game/ScreenGameMain2.hpp"
 
 #include "MenuManager.hpp"
 

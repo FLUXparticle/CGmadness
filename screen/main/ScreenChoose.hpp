@@ -20,7 +20,7 @@
 #ifndef ScreenChoose_hpp
 #define ScreenChoose_hpp
 
-#include "Screen.hpp"
+#include "screen/Screen.hpp"
 
 #include "gui/SpinEdit.hpp"
 #include "gui/Button.hpp"

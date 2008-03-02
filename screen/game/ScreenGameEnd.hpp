@@ -17,31 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenMain_hpp
-#define ScreenMain_hpp
+#ifndef ScreenGameEnd_hpp
+#define ScreenGameEnd_hpp
 
-#include "Screen.hpp"
+#include "screen/Screen.hpp"
+
+#include "highscore.hpp"
 
 #include "gui/Button.hpp"
 
-class ScreenMain : public Screen
+#include "utils/Singleton.hpp"
+
+class ScreenGameEnd : public Screen
 {
 public:
-  ScreenMain();
-  virtual ~ScreenMain();
-  
+  ScreenGameEnd();
+  virtual ~ScreenGameEnd();
+
 private:
-	Button bCGMadness;
-	Button bCGMEditor;
-	Button bQuit;
+	HighScore hsHighScore;
+	Button bAgain;
+	Button bQuit2;
 	
-	Singleton<class ScreenChooseGame> gScreenChooseGame;
-	Singleton<class ScreenChooseEditor> gScreenChooseEditor;
+	Singleton<class MenuManager> gMenuManager;
 
-	void clickButtonCGMadness();
-	void clickButtonCGMEditor();
-	void clickButtonQuit();
-
+	void clickButtonAgain();
+	void clickButtonQuit2();
+	
 };
 
 #endif

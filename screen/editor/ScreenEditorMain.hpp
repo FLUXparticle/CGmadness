@@ -17,19 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenEditorHelp_hpp
-#define ScreenEditorHelp_hpp
+#ifndef ScreenEditorMain_hpp
+#define ScreenEditorMain_hpp
 
-#include "ScreenHelp.hpp"
+#include "screen/Screen.hpp"
 
-class ScreenEditorHelp : public ScreenHelp
+#include "gui/Button.hpp"
+
+#include "utils/Singleton.hpp"
+
+#include "Editor.hpp"
+
+class ScreenEditorMain : public Screen
 {
 public:
-  ScreenEditorHelp();
-  virtual ~ScreenEditorHelp();
+  ScreenEditorMain(Editor* editor);
+  virtual ~ScreenEditorMain();
 
 private:
+	Button bEdit;
+	Button bSave;
+	Button bHelp;
+	Button bQuit;
+	
+	Editor* mParent;
 
+	Singleton<class ScreenEditorHelp> gScreenEditorHelp;
+	
+	void clickButtonEdit();
+	void clickButtonSave();
+	void clickButtonHelp();
+	void clickButtonQuit();
+	
 };
 
 #endif
