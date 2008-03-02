@@ -41,17 +41,6 @@ void Dispenser::update(float interval)
 	mCurProcess->update(interval);
 }
 
-void Dispenser::event(const Vector3& position, const Vector3& direction, MouseEvent event)
-{
-#if 0
-	mCurProcess->event(position, direction, event);
-#else
-	Singleton<MenuManager> menuManager;
-	
-	menuManager->event(position, direction, event);
-#endif
-}
-
 void Dispenser::preDisplay()
 {
 	mCurProcess->preDisplay();
