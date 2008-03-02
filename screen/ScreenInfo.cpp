@@ -17,31 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#include "ScreenInfo.hpp"
 
-#include "MenuItem.hpp"
+#include "utils/Callback.hpp"
 
-#include "utils/Caller.hpp"
+#include "keyboard.hpp"
 
-class Button : public MenuItem
+ScreenInfo::ScreenInfo(const char* message)
 {
-public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+	bAccept = Button(5.0, CALLBACK(ScreenInfo, clickButtonAccept), message, KEY_ENTER);
+	mItems.push_back(&bAccept);
+}
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
+ScreenInfo::~ScreenInfo()
+{
+  // empty
+}
 
-	Caller mClick;
-	
-private:
+void ScreenInfo::clickButtonAccept()
+{
+	gMenuManager->popScreen();
+}
 
-};
-
-#endif

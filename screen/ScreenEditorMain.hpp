@@ -17,31 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#ifndef ScreenEditorMain_hpp
+#define ScreenEditorMain_hpp
 
-#include "MenuItem.hpp"
+#include "Screen.hpp"
 
-#include "utils/Caller.hpp"
+#include "gui/Button.hpp"
 
-class Button : public MenuItem
+#include "utils/Singleton.hpp"
+
+#include "Editor.hpp"
+
+class ScreenEditorMain : public Screen
 {
 public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+  ScreenEditorMain(Editor* editor);
+  virtual ~ScreenEditorMain();
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
-
-	Caller mClick;
-	
 private:
+	Button bEdit;
+	Button bSave;
+	Button bHelp;
+	Button bQuit;
+	
+	Editor* mParent;
 
+	Singleton<class ScreenEditorHelp> gScreenEditorHelp;
+	
+	void clickButtonEdit();
+	void clickButtonSave();
+	void clickButtonHelp();
+	void clickButtonQuit();
+	
 };
 
 #endif

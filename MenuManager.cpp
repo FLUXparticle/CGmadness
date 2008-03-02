@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,93 +15,94 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
 
-#include "menumanager.hpp"
+#include "MenuManager.hpp"
 
-#include "gui/ProgressBar.hpp"
+#include "screen/Screen.hpp"
 
-#include "idle.hpp"
-#include "keyboard.hpp"
-#include "callback.hpp"
+#include "math/Vector3.hpp"
+
 #include "camera.hpp"
+#include "objects.hpp"
+#include "texture.hpp"
 
-#include <GL/glut.h>
+#include <GL/gl.h>
 
-static Screen *gCurScreen = NULL;
-
-static Screen gScreenWait;
-static funcCallback gWaitCallback = NULL;
-
-void initMenuManager(void)
+MenuManager::MenuManager()
 {
-	static ProgressBar pbProgress;
-
-	static MenuItem *itemsWait[] = {
-		&pbProgress
-	};
-
-	/* wait menu */
-	pbProgress = ProgressBar(5.0f, &sgIdleProgress);
-
-	INIT_SCREEN(&gScreenWait, itemsWait);
-
-	gCurScreen = NULL;
+	gTexLogo = loadTexture("data/logo.tga", false);
 }
 
-const Screen *getCurScreen(void)
+MenuManager::~MenuManager()
 {
-	return gCurScreen;
+  // empty
 }
 
-void updateMenuManager(float interval)
+void MenuManager::pushScreen(Screen* screen)
+{
+	mScreenStack.push(screen);
+	screen->show();
+}
+
+void MenuManager::popScreen()
+{
+	mScreenStack.pop();
+	
+	if (!mScreenStack.empty())
+	{
+		mScreenStack.top()->show();
+	}
+}
+
+void MenuManager::update(float interval)
 {
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
 
-	updateScreen(gCurScreen, interval);
+	mScreenStack.top()->update(interval);
+}
 
-	if (gCurScreen == &gScreenWait)
+void MenuManager::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+{
+	if (position.y < 0.0f && direction.y > 0.0f)
 	{
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
-		{
-			stopIdle();
-			setUpdateFrequency(0);
-			popScreen();
-		}
-		else if (!sgIdleWorking)
-		{
-			setUpdateFrequency(0);
-			popScreen();
+		float t = -position.y / direction.y;
+		float x = position.x + t * direction.x;
+		float y = position.z + t * direction.z;
 
-			if (gWaitCallback)
+		mScreenStack.top()->event(x, y, event);
+	}
+}
+
+void MenuManager::drawLogo()
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gTexLogo);
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		{
+			glPushMatrix();
 			{
-				gWaitCallback();
+				glTranslatef(0.0f, 8.0f, 0.0f);
+				glScalef(4.0f, 1.0f, 1.0f);
+
+				drawSquare();
 			}
+			glPopMatrix();
 		}
+		glDisable(GL_BLEND);
 	}
+	glDisable(GL_TEXTURE_2D);
 }
 
-void eventMenuManager(const Vector3 * position, const Vector3 * direction,
-											MouseEvent event)
+void MenuManager::draw()
 {
-	Vector3 newPosition = *position;
-
-	if (gCurScreen && newPosition.y < 0.0f && direction->y > 0.0f)
-	{
-		float t = -newPosition.y / direction->y;
-		float x = newPosition.x + t * direction->x;
-		float y = newPosition.z + t * direction->z;
-
-		eventScreen(gCurScreen, x, y, event);
-	}
-}
-
-void drawMenuManager(void)
-{
+	mScreenStack.top()->drawBackground();
+	
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
 	glEnable(GL_LIGHT0);
@@ -111,55 +112,21 @@ void drawMenuManager(void)
 	glEnable(GL_COLOR_MATERIAL);
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	{
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 
-	glPushMatrix();
-	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+		glPushMatrix();
+		{
+			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-	drawScreen(gCurScreen);
-	glPopMatrix();
-
+			drawLogo();
+			mScreenStack.top()->draw();
+		}
+		glPopMatrix();
+	}
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
-}
 
-void showScreen(Screen * newScreen)
-{
-	prepareScreen(gCurScreen);
-
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-}
-
-void pushWaitScreen(funcCallback callback)
-{
-	gWaitCallback = callback;
-	pushScreen(&gScreenWait);
-}
-
-void pushScreen(Screen * newScreen)
-{
-	if (gCurScreen == &gScreenWait)
-	{
-		newScreen->back = gCurScreen->back;
-		gCurScreen->back = newScreen;
-	}
-	else
-	{
-		newScreen->back = gCurScreen;
-		gCurScreen = newScreen;
-	}
-
-	showScreen(gCurScreen);
-}
-
-void popScreen(void)
-{
-	gCurScreen = gCurScreen->back;
-
-	if (gCurScreen)
-	{
-		showScreen(gCurScreen);
-	}
 }

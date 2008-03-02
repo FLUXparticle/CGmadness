@@ -22,10 +22,9 @@
 #include "RaceTheClock.hpp"
 #include "PlayersBall.hpp"
 
+#include "gui.hpp"
 #include "objects.hpp"
 #include "environment.hpp"
-
-#include "menumanager.hpp"
 
 StringList sgLevels;
 
@@ -38,8 +37,6 @@ void initMain()
 
 	initGUI();
 	
-	initMenuManager();
-
 	Ball::init();
 	PlayersBall::init();
 }

@@ -84,6 +84,13 @@ void Screen::update(float interval)
 
   	item->update(interval);
   }
+  
+  customUpdate(interval);
+}
+
+void Screen::customUpdate(float interval)
+{
+	// empty
 }
 
 static void drawMenuItem(const MenuItem* item)

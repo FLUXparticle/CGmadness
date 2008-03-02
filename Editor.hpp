@@ -24,11 +24,11 @@
 
 #include "Ball.hpp"
 
+#include "utils/Singleton.hpp"
+#include "utils/SmartPointer.hpp"
+
 class Editor : public Process
 {
-public:
-  static void init();
-  
 public:
   Editor();
   virtual ~Editor();
@@ -45,12 +45,23 @@ private:
 	void enableTestMode();
 	void disableTestMode();
 
+	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
+	SmartPointer<class ScreenWait> gScreenWait;
+	SmartPointer<class ScreenInfo> gScreenInfo;
+
+	Singleton<class MenuManager> gMenuManager;
+
+	void pause();
+	
+	void lightMapsReady();
+	void saveLevel();
+	
+	friend class ScreenEditorMain;
+	
 };
 
 void resumeEditor(void);
 
 void drawEditorField(void);
-
-void saveLevel(void);
 
 #endif

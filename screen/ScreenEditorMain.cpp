@@ -1,0 +1,73 @@
+/*
+ * CG Madness - a Marble Madness clone
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "ScreenEditorMain.hpp"
+
+#include "ScreenEditorHelp.hpp"
+
+#include "Editor.hpp"
+
+#include "utils/Callback.hpp"
+
+#include "main.hpp"
+
+#include "keyboard.hpp"
+
+ScreenEditorMain::ScreenEditorMain(Editor* editor) :
+	mParent(editor)
+{
+	bEdit = Button(6.0f, CALLBACK(ScreenEditorMain, clickButtonEdit), "edit", KEY_ENTER);
+	mItems.push_back(&bEdit);
+	
+	bSave = Button(5.0f, CALLBACK(ScreenEditorMain, clickButtonSave), "save", 's');
+	mItems.push_back(&bSave);
+
+	bHelp = Button(4.0f, CALLBACK(ScreenEditorMain, clickButtonHelp), "help", 'h');
+	mItems.push_back(&bHelp);
+
+	bQuit = Button(3.0f, CALLBACK(ScreenEditorMain, clickButtonQuit), "back", KEY_ESC);
+	mItems.push_back(&bQuit);
+}
+
+ScreenEditorMain::~ScreenEditorMain()
+{
+  // empty
+}
+
+void ScreenEditorMain::clickButtonEdit()
+{
+	gMenuManager->popScreen();
+	resumeEditor();
+}
+
+void ScreenEditorMain::clickButtonSave()
+{
+	mParent->saveLevel();
+}
+
+void ScreenEditorMain::clickButtonHelp()
+{
+	gMenuManager->pushScreen(gScreenEditorHelp);
+}
+
+void ScreenEditorMain::clickButtonQuit()
+{
+	gMenuManager->popScreen();
+	setMainState(STATE_MAIN);
+}

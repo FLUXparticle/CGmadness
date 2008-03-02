@@ -19,19 +19,7 @@
 
 #include "ScreenGameHelp.hpp"
 
-#include "MenuManager.hpp"
-
-#include "utils/Callback.hpp"
-
-#include "keyboard.hpp"
-
 #include "macros.hpp"
-
-typedef struct
-{
-	char* left;
-	char* right;
-} LeftRight;
 
 static LeftRight gTextHelp[] =
 {
@@ -44,29 +32,12 @@ static LeftRight gTextHelp[] =
 };
 
 ScreenGameHelp::ScreenGameHelp() :
-	lTextHelp(2 * LENGTH(gTextHelp))
+	ScreenHelp(LENGTH(gTextHelp), gTextHelp)
 {
-	for (unsigned int i = 0; i < lTextHelp.size(); i++)
-	{
-		int row = i / 2;
-		int col = i % 2;
-		float z = 6.0f - row;
-
-		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, 1.0f, col,
-							col ? gTextHelp[row].right : gTextHelp[row].left);
-		mItems.push_back(&lTextHelp[i]);
-	}
-
-	bBack = Button(6.0f - LENGTH(gTextHelp), CALLBACK(ScreenGameHelp, clickButtonBack), "back", KEY_ESC);
-	mItems.push_back(&bBack);
+  // empty
 }
 
 ScreenGameHelp::~ScreenGameHelp()
 {
   // empty
-}
-
-void ScreenGameHelp::clickButtonBack()
-{
-	gMenuManager->popScreen();
 }

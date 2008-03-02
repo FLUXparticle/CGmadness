@@ -17,30 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#ifndef ScreenHelp_hpp
+#define ScreenHelp_hpp
 
-#include "MenuItem.hpp"
+#include "Screen.hpp"
 
-#include "utils/Caller.hpp"
+#include "gui/Label.hpp"
+#include "gui/Button.hpp"
 
-class Button : public MenuItem
+#include <vector>
+
+typedef struct
+{
+	char* left;
+	char* right;
+} LeftRight;
+
+class ScreenHelp : public Screen
 {
 public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+  ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size = 1.0f);
+  virtual ~ScreenHelp();
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
-
-	Caller mClick;
-	
 private:
+	Button bBack;
+	std::vector<Label> lTextHelp;
+	
+	void clickButtonBack();
 
 };
 

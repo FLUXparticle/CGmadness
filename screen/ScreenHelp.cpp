@@ -17,31 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#include "ScreenHelp.hpp"
 
-#include "MenuItem.hpp"
+#include "utils/Callback.hpp"
 
-#include "utils/Caller.hpp"
+#include "keyboard.hpp"
 
-class Button : public MenuItem
+ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
+	lTextHelp(2 * length)
 {
-public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+	for (unsigned int i = 0; i < lTextHelp.size(); i++)
+	{
+		int row = i / 2;
+		int col = i % 2;
+		float z = 6.0f - row * size;
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
+		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, size, col,
+							col ? gTextHelp[row].right : gTextHelp[row].left);
+		mItems.push_back(&lTextHelp[i]);
+	}
 
-	Caller mClick;
-	
-private:
+	bBack = Button(6.0f - length * size, CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
+	mItems.push_back(&bBack);
+}
 
-};
+ScreenHelp::~ScreenHelp()
+{
+  // empty
+}
 
-#endif
+void ScreenHelp::clickButtonBack()
+{
+	gMenuManager->popScreen();
+}

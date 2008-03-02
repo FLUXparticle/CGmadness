@@ -64,6 +64,12 @@ T& SmartPointer<T>::operator* ()
 }
 
 template<class T>
+SmartPointer<T>::operator T* ()
+{
+	return mPtr;
+}
+
+template<class T>
 void SmartPointer<T>::release()
 {
 	*mCounter--;

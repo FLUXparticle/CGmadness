@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,32 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
 
-#ifndef _menumanager_hpp_
-#define _menumanager_hpp_
+#ifndef ScreenInfo_hpp
+#define ScreenInfo_hpp
 
-#include "gui.hpp"
+#include "Screen.hpp"
 
-#include "math/Vector3.hpp"
+#include "gui/Button.hpp"
 
-typedef void (*funcCallback) (void);
+class ScreenInfo : public Screen
+{
+public:
+  ScreenInfo(const char* message);
+  virtual ~ScreenInfo();
 
-void initMenuManager(void);
+private:
+	Button bAccept;
 
-const Screen *getCurScreen(void);
-
-void updateMenuManager(float interval);
-
-void eventMenuManager(const Vector3 * position, const Vector3 * direction,
-											MouseEvent event);
-
-void drawMenuManager(void);
-
-void pushWaitScreen(funcCallback callback);
-
-void pushScreen(Screen * menu);
-void popScreen(void);
+	void clickButtonAccept();
+};
 
 #endif

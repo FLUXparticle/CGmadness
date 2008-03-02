@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,32 +15,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
 
-#ifndef _menumanager_hpp_
-#define _menumanager_hpp_
+#ifndef MenuManager_hpp
+#define MenuManager_hpp
 
-#include "gui.hpp"
+#include "Process.hpp"
 
-#include "math/Vector3.hpp"
+#include <stack>
 
-typedef void (*funcCallback) (void);
+class Screen;
 
-void initMenuManager(void);
+class MenuManager : public Process
+{
+public:
+  MenuManager();
+  virtual ~MenuManager();
 
-const Screen *getCurScreen(void);
+  void pushScreen(Screen* screen);
+  void popScreen();
+  
+  Screen* curScreen() const;
 
-void updateMenuManager(float interval);
+  void update(float interval);
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
+  
+  void draw();
+  
+private:
+	unsigned int gTexLogo;
+	
+	std::stack<Screen*> mScreenStack;
 
-void eventMenuManager(const Vector3 * position, const Vector3 * direction,
-											MouseEvent event);
+	void drawLogo();
+};
 
-void drawMenuManager(void);
-
-void pushWaitScreen(funcCallback callback);
-
-void pushScreen(Screen * menu);
-void popScreen(void);
+inline Screen* MenuManager::curScreen() const
+{
+	return mScreenStack.top();
+}
 
 #endif

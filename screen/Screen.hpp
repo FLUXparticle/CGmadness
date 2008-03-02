@@ -40,6 +40,7 @@ public:
   
   void event(float x, float y, MouseEvent event);
   void update(float interval);
+  virtual void customUpdate(float interval);
   
   void draw() const;
   virtual void drawBackground() const;

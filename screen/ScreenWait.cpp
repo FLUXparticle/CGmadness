@@ -17,31 +17,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#include "ScreenWait.hpp"
 
-#include "MenuItem.hpp"
+#include "idle.hpp"
 
-#include "utils/Caller.hpp"
+#include "keyboard.hpp"
+#include "callback.hpp"
 
-class Button : public MenuItem
+ScreenWait::ScreenWait(const Caller& callback) :
+	gWaitCallback(callback)
 {
-public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+	pbProgress = ProgressBar(5.0f, &sgIdleProgress);
+	mItems.push_back(&pbProgress);
+}
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
+ScreenWait::~ScreenWait()
+{
+  // empty
+}
 
-	Caller mClick;
-	
-private:
+void ScreenWait::customUpdate(float interval)
+{
+	if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
+	{
+		stopIdle();
+		
+		setUpdateFrequency(0);
+		gMenuManager->popScreen();
+	}
+	else if (!sgIdleWorking)
+	{
+		setUpdateFrequency(0);
+		gMenuManager->popScreen();
 
-};
-
-#endif
+		gWaitCallback();
+	}
+}

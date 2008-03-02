@@ -17,29 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#ifndef ScreenEditorHelp_hpp
+#define ScreenEditorHelp_hpp
 
-#include "MenuItem.hpp"
+#include "ScreenHelp.hpp"
 
-#include "utils/Caller.hpp"
-
-class Button : public MenuItem
+class ScreenEditorHelp : public ScreenHelp
 {
 public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+  ScreenEditorHelp();
+  virtual ~ScreenEditorHelp();
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
-
-	Caller mClick;
-	
 private:
 
 };

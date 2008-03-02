@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _editormenu_hpp_
-#define _editormenu_hpp_
+#include "ScreenEditorHelp.hpp"
 
-void initEditorMenu(void);
+#include "macros.hpp"
 
-void showEditorScreen(int menu);
+static LeftRight gTextHelp[] =
+{
+	{"Cursor", "move"},
+	{"Shift", "multi select"},
+	{"W A S D", "pitch"},
+	{"R F", "hight"},
+	{"0", "flatten"},
+	{"Enter", "test"},
+	{"Y X C V B N", "camera"},
+	{"1 2", "start finish"},
+	{"Esc", "menu"},
+};
 
-#endif
+ScreenEditorHelp::ScreenEditorHelp() :
+	ScreenHelp(LENGTH(gTextHelp), gTextHelp, 0.75f)
+{
+  // empty
+}
+
+ScreenEditorHelp::~ScreenEditorHelp()
+{
+  // empty
+}
+

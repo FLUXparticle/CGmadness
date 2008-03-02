@@ -17,30 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Button_hpp
-#define Button_hpp
+#ifndef ScreenWait_hpp
+#define ScreenWait_hpp
 
-#include "MenuItem.hpp"
+#include "Screen.hpp"
+
+#include "gui/ProgressBar.hpp"
 
 #include "utils/Caller.hpp"
 
-class Button : public MenuItem
+class ScreenWait : public Screen
 {
 public:
-  Button();
-  Button(float z, const Caller& click, const char* text, int shortcut);
-  virtual ~Button();
+  ScreenWait(const Caller& callback);
+  virtual ~ScreenWait();
 
-  void event(float x, float y, MouseEvent event);
-  void update(float interval);
-  void draw() const;
-  
-  const char* text;
-	int shortcut;
+  void customUpdate(float interval);
 
-	Caller mClick;
-	
 private:
+	ProgressBar pbProgress;
+	
+	Caller gWaitCallback;
 
 };
 

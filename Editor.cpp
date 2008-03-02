@@ -19,8 +19,11 @@
 
 #include "Editor.hpp"
 
-#include "editormenu.hpp"
-#include "menumanager.hpp"
+#include "screen/ScreenEditorMain.hpp"
+#include "screen/ScreenWait.hpp"
+#include "screen/ScreenInfo.hpp"
+
+#include "utils/Callback.hpp"
 
 #include "level.hpp"
 #include "ballcamera.hpp"
@@ -33,16 +36,6 @@
 
 #include <stdlib.h>
 #include <math.h>
-
-Editor::Editor()
-{
-  // empty
-}
-
-Editor::~Editor()
-{
-  // empty
-}
 
 #define DRAW_DEBUG_LINES 0
 
@@ -59,7 +52,7 @@ int gCntLines = 0;
 
 static bool gIsEditorRunning;
 
-static int gShowCursor;
+static int gShowCursor = 0;
 
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
@@ -73,9 +66,19 @@ static bool gDirtyLightmaps;
 
 static bool gIsTestMode;
 
-void pauseEditor(void)
+Editor::Editor()
 {
-	showEditorScreen(0);
+	gScreenEditorMain = new ScreenEditorMain(this);
+}
+
+Editor::~Editor()
+{
+  // empty
+}
+
+void Editor::pause()
+{
+	gMenuManager->pushScreen(gScreenEditorMain);
 	gIsEditorRunning = false;
 }
 
@@ -98,7 +101,7 @@ void Editor::start()
 	gIsTestMode = 0;
 	gShowCursor = 1;
 
-	pauseEditor();
+	pause();
 }
 
 void Editor::stop()
@@ -112,21 +115,23 @@ void resumeEditor(void)
 	gIsEditorRunning = true;
 }
 
-void lightMapsReady(void)
+void Editor::lightMapsReady()
 {
 	gDirtyLightmaps = false;
 	saveLevel();
 }
 
-void saveLevel(void)
+void Editor::saveLevel()
 {
 	if (gDirtyLightmaps)
 	{
 		destroyCommon();
-
+		
+		gScreenWait = new ScreenWait(CALLBACK(Editor, lightMapsReady));
+		
 		initCommon();
 		setUpdateFrequency(10);
-		pushWaitScreen(lightMapsReady);
+		gMenuManager->pushScreen(gScreenWait);
 		updateLightMap(1);
 	}
 	else
@@ -134,11 +139,13 @@ void saveLevel(void)
 		if (saveLevelToFile())
 		{
 			sgLevel.saved = true;
-			showEditorScreen(1);
+			gScreenInfo = new ScreenInfo("level saved successfully");
+			gMenuManager->pushScreen(gScreenInfo);
 		}
 		else
 		{
-			showEditorScreen(2);
+			gScreenInfo = new ScreenInfo("operation failed");
+			gMenuManager->pushScreen(gScreenInfo);
 		}
 	}
 }
@@ -441,7 +448,7 @@ void Editor::update(float interval)
 {
 	if (!gIsEditorRunning)
 	{
-		updateMenuManager(interval);
+		gMenuManager->update(interval);
 	}
 	else if (gIsTestMode)
 	{
@@ -458,7 +465,7 @@ void Editor::update(float interval)
 
 		if (wasKeyPressed(KEY_ESC))
 		{
-			pauseEditor();
+			pause();
 		}
 
 		if (wasKeyPressed(KEY_ENTER))
@@ -580,17 +587,10 @@ void Editor::draw()
 
 	if (!gIsEditorRunning)
 	{
-		drawMenuManager();
+		gMenuManager->draw();
 	}
 	else if (gIsTestMode)
 	{
 		mBall.drawGameBall();
 	}
-}
-
-void Editor::init()
-{
-	gShowCursor = 0;
-
-	initEditorMenu();
 }
