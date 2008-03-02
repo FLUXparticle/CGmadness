@@ -23,6 +23,8 @@
 
 #include <GL/glut.h>
 
+#define EMPHASIZE_SPEED 10.0f
+
 Screen::Screen()
 {
   // empty
@@ -69,7 +71,18 @@ void Screen::update(float interval)
 {
   FOREACH(std::list<MenuItem*>, mItems, iter)
   {
-  	(*iter)->update(interval);
+  	MenuItem* item = *iter;
+  	
+  	if (item->hover)
+  	{
+  		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
+  	}
+  	else
+  	{
+  		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
+  	}
+
+  	item->update(interval);
   }
 }
 
