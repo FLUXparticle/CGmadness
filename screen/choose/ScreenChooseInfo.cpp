@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenChooseEditor.hpp"
+#include "ScreenChooseInfo.hpp"
 
 #include "level.hpp"
 #include "highscore.hpp"
@@ -96,22 +96,16 @@ static void drawLevelInfo()
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-static void clickButtonChooseEditor(void)
-{
-	setMainState(STATE_EDITOR);
-}
-
-ScreenChooseEditor::ScreenChooseEditor()
+ScreenChooseInfo::ScreenChooseInfo(const Caller& choose)
 {
 	cLevelInfo = Canvas(3.0f, LEVELINFO_WIDTH, LEVELINFO_HEIGHT, updateLevelInfo, drawLevelInfo);
 	mItems.push_back(&cLevelInfo);
 
-	bChooseEditor = Button(2.0f, clickButtonChooseEditor, "choose", KEY_ENTER);
+	bChooseEditor = Button(2.0f, choose, "choose", KEY_ENTER);
 	mItems.push_back(&bChooseEditor);
 }
 
-ScreenChooseEditor::~ScreenChooseEditor()
+ScreenChooseInfo::~ScreenChooseInfo()
 {
   // empty
 }
-

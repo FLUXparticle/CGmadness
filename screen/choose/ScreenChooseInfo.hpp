@@ -17,19 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenChooseEditor_hpp
-#define ScreenChooseEditor_hpp
+#ifndef ScreenChooseInfo_hpp
+#define ScreenChooseInfo_hpp
 
 #include "ScreenChoose.hpp"
 
 #include "gui/Button.hpp"
 #include "gui/Canvas.hpp"
 
-class ScreenChooseEditor : public ScreenChoose
+#include "utils/Caller.hpp"
+
+class ScreenChooseInfo : public ScreenChoose
 {
 public:
-  ScreenChooseEditor();
-  virtual ~ScreenChooseEditor();
+  ScreenChooseInfo(const Caller& choose);
+  virtual ~ScreenChooseInfo();
 
 private:
 	Button bChooseEditor;

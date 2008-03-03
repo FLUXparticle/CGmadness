@@ -19,17 +19,25 @@
 
 #include "ScreenMain.hpp"
 
-#include "ScreenChooseGame.hpp"
-#include "ScreenChooseEditor.hpp"
+#include "screen/choose/ScreenChooseGame.hpp"
+#include "screen/choose/ScreenChooseInfo.hpp"
 
 #include "MenuManager.hpp"
 
 #include "utils/Callback.hpp"
 
 #include "keyboard.hpp"
+#include "main.hpp"
+
+static void clickButtonChooseEditor()
+{
+	setMainState(STATE_EDITOR);
+}
 
 ScreenMain::ScreenMain()
 {
+	gScreenChooseInfo = new ScreenChooseInfo(clickButtonChooseEditor);
+
 	bCGMadness = Button(6.0f, CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
 	mItems.push_back(&bCGMadness);
 	
@@ -52,7 +60,7 @@ void ScreenMain::clickButtonCGMadness()
 
 void ScreenMain::clickButtonCGMEditor()
 {
-	gMenuManager->pushScreen(gScreenChooseEditor);
+	gMenuManager->pushScreen(gScreenChooseInfo);
 }
 
 void ScreenMain::clickButtonQuit()
