@@ -17,36 +17,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "main.hpp"
+#include "LevelLoader.hpp"
 
-#include "RaceTheClock.hpp"
-#include "PlayersBall.hpp"
+#include "level.hpp"
+#include "common.hpp"
 
-#include "gui.hpp"
-#include "objects.hpp"
-#include "environment.hpp"
+#include "texture.hpp"
 
-void initMain()
+#include <string.h>
+
+LevelLoader::LevelLoader() :
+	gLoadedLevel(-1)
 {
-	initObjects();
-	initEnvironment();
-
-	initGUI();
-	
-	Ball::init();
-	PlayersBall::init();
+	createStringListFromDir(&sgLevels, "levels");
 }
 
-void setMainState(MainState newState)
+LevelLoader::~LevelLoader()
 {
-	Singleton<Main> gDispenser;
-	
-	gDispenser->setState(newState);
+  // empty
 }
 
-void resetGameTime()
+int LevelLoader::maxID() const
 {
-	Singleton<RaceTheClock> gGameProcess;
+	return sgLevels.count - 1;
+}
 
-	gGameProcess->resetGameTime();
+void LevelLoader::loadLevelByID(int id)
+{
+	if (id != gLoadedLevel)
+	{
+		if (gLoadedLevel >= 0)
+		{
+			destroyLevel();
+			gLoadedLevel = -1;
+		}
+
+		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id], true))
+		{
+			updateTexCoords();
+			gLoadedLevel = id;
+
+			if (sgLevel.borderTexture == 0)
+			{
+				sgLevel.borderTexture = loadTexture("data/plate.tga", true);
+			}
+
+			sgCurLevelname =
+				sgLevels.strings[gLoadedLevel] +
+				strlen(sgLevels.strings[gLoadedLevel]) + 1;
+		}
+	}
 }

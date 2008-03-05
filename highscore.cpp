@@ -19,6 +19,9 @@
 
 #include "highscore.hpp"
 
+#include "LevelLoader.hpp"
+#include "utils/Singleton.hpp"
+
 #include "level.hpp"
 #include "objects.hpp"
 
@@ -35,7 +38,6 @@
 #define HIGHSCORE_HEIGHT 4.0f
 
 int sgLastPlayerIndex;
-const char *sgCurLevelname;
 
 static int gShowCursor;
 
@@ -106,9 +108,11 @@ void drawPanel(float width, float height)
 	glPopMatrix();
 }
 
-void drawHighScore(void)
+void drawHighScore()
 {
-	int i;
+	Singleton<LevelLoader> gLevelLoader;
+	
+	const char* name = gLevelLoader->name();
 
 	float scale = 0.5f * HIGHSCORE_HEIGHT / (MAX_SCORE_COLS + 2);
 
@@ -122,15 +126,15 @@ void drawHighScore(void)
 
 	glScalef(scale, scale, scale);
 
-	glTranslatef(-widthStrokeText(sgCurLevelname) / 2.0f, 0.0f, 0.0f);
+	glTranslatef(-widthStrokeText(name) / 2.0f, 0.0f, 0.0f);
 
 	glColor3f(0.0f, 0.0f, 1.0f);
 
-	drawStrokeThinText(sgCurLevelname);
+	drawStrokeThinText(name);
 
 	glPopMatrix();
 
-	for (i = 0; i < sgLevel.cntScoreCols; i++)
+	for (int i = 0; i < sgLevel.cntScoreCols; i++)
 	{
 		char strName[MAX_NAME_LENGTH + 4];
 		char strTime[10];

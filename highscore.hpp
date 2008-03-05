@@ -25,7 +25,6 @@
 typedef Canvas HighScore;
 
 extern int sgLastPlayerIndex;
-extern const char *sgCurLevelname;
 
 void initHighScore(HighScore * highScore, float z);
 

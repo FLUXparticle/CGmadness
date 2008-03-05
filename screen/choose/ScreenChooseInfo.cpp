@@ -19,6 +19,10 @@
 
 #include "ScreenChooseInfo.hpp"
 
+#include "LevelLoader.hpp"
+
+#include "utils/Singleton.hpp"
+
 #include "level.hpp"
 #include "highscore.hpp"
 #include "main.hpp"
@@ -41,6 +45,8 @@ static void updateLevelInfo(float interval)
 
 static void drawLevelInfo()
 {
+	Singleton<LevelLoader> gLevelLoader;
+	
 	const char *lines[LEVELINFO_LINES];
 	char size[20];
 	int i;
@@ -49,7 +55,7 @@ static void drawLevelInfo()
 
 	sprintf(size, "size: %d x %d", sgLevel.size.x, sgLevel.size.y);
 
-	lines[0] = sgCurLevelname;
+	lines[0] = gLevelLoader->name();
 	lines[1] = "";
 	lines[2] = "";
 	lines[3] = "";

@@ -22,6 +22,8 @@
 
 #include "screen/Screen.hpp"
 
+#include "LevelLoader.hpp"
+
 #include "gui/SpinEdit.hpp"
 #include "gui/Button.hpp"
 
@@ -41,6 +43,8 @@ private:
 	SpinEdit gseLevel;
 
 	Button bBack;
+	
+	Singleton<LevelLoader> mLevelLoader;
 	
 	void clickButtonBack();
 

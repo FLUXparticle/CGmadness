@@ -23,50 +23,19 @@
 
 #include "main.hpp"
 #include "level.hpp"
-#include "common.hpp"
 #include "Editor.hpp"
 
 #include "highscore.hpp"
 
-#include "texture.hpp"
 #include "keyboard.hpp"
-
-#include <cstring>
-
-static int gLoadedLevel = -1;
-
-static void loadLevel(int index)
-{
-	if (index != gLoadedLevel)
-	{
-		if (gLoadedLevel >= 0)
-		{
-			destroyLevel();
-			gLoadedLevel = -1;
-		}
-
-		if (index >= 0 && loadLevelFromFile(sgLevels.strings[index], 1))
-		{
-			updateTexCoords();
-			gLoadedLevel = index;
-
-			if (sgLevel.borderTexture == 0)
-			{
-				sgLevel.borderTexture = loadTexture("data/plate.tga", true);
-			}
-
-			sgCurLevelname =
-				sgLevels.strings[gLoadedLevel] +
-				strlen(sgLevels.strings[gLoadedLevel]) + 1;
-		}
-	}
-}
 
 static void changeLevelChooser(const void *self)
 {
+	Singleton<LevelLoader> gLevelLoader;
+	
 	const SpinEdit *spinedit = (const SpinEdit *) self;
 
-	loadLevel(spinedit->value);
+	gLevelLoader->loadLevelByID(spinedit->value);
 
 	sgLastPlayerIndex = MAX_SCORE_COLS;
 }
@@ -78,7 +47,7 @@ static void drawMenuLevel()
 
 ScreenChoose::ScreenChoose()
 {
-	gseLevel = SpinEdit(0, 0, sgLevels.count - 1, 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
+	gseLevel = SpinEdit(0, 0, mLevelLoader->maxID(), 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
 	mItems.push_back(&gseLevel);
 
 	bBack = Button(1.0f, CALLBACK(ScreenChoose, clickButtonBack), "back", KEY_ESC);
@@ -108,6 +77,6 @@ void ScreenChoose::drawWaterReflection() const
 
 void ScreenChoose::clickButtonBack()
 {
-	loadLevel(-1);
+	mLevelLoader->loadLevelByID(-1);
 	gMenuManager->popScreen();
 }

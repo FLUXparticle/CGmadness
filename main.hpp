@@ -20,11 +20,7 @@
 #ifndef _main_hpp_
 #define _main_hpp_
 
-#include "stringlist.hpp"
-
 #include "Main.hpp"
-
-extern StringList sgLevels;
 
 void initMain();
 

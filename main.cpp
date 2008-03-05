@@ -26,12 +26,8 @@
 #include "objects.hpp"
 #include "environment.hpp"
 
-StringList sgLevels;
-
 void initMain()
 {
-	createStringListFromDir(&sgLevels, "levels");
-
 	initObjects();
 	initEnvironment();
 

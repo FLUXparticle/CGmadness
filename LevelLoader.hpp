@@ -17,36 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "main.hpp"
+#ifndef LevelLoader_hpp
+#define LevelLoader_hpp
 
-#include "RaceTheClock.hpp"
-#include "PlayersBall.hpp"
+#include "stringlist.hpp"
 
-#include "gui.hpp"
-#include "objects.hpp"
-#include "environment.hpp"
-
-void initMain()
+class LevelLoader
 {
-	initObjects();
-	initEnvironment();
+public:
+  LevelLoader();
+  virtual ~LevelLoader();
+  
+  int maxID() const;
+  const char* name() const;
 
-	initGUI();
-	
-	Ball::init();
-	PlayersBall::init();
+  void loadLevelByID(int id);
+  
+private:
+	int gLoadedLevel;
+	StringList sgLevels;
+	const char* sgCurLevelname;
+
+};
+
+inline const char* LevelLoader::name() const
+{
+	return sgCurLevelname;
 }
 
-void setMainState(MainState newState)
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->setState(newState);
-}
-
-void resetGameTime()
-{
-	Singleton<RaceTheClock> gGameProcess;
-
-	gGameProcess->resetGameTime();
-}
+#endif
