@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,20 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "field.h"
 
-#include "common.h"
+#include "level.h"
 #include "camera.h"
-#include "game.h"
 
 #include "ball.h"
 #include "features.h"
 
+#include "vector.h"
 #include "functions.h"
 
 #include "types.h"
@@ -39,96 +36,133 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define WITHOUT_DEPTH_TEST 0
 #define WITH_STENCIL_TEST 0
 #define TWO_PASS 0
 
+Vector3 *sgVertices;
+Vector3 *sgNormals;
+
 static Vector2 gDefaultTexCoord;
+static Vector2 gDefaultColorMapCoord;
 static Vector2 gDefaultLightMapCoord;
 static Vector3 gDefaultNormal;
 static Color4 gDefaultColor;
 
-static Vector2* gTexCoords;
-static Vector2* gLightMapCoords;
-static Color4* gColors;
-static GLuint gVBuffers[5];
+static Vector2 *gTexCoords;
+static Vector2 *gColorMapCoords;
+static Vector2 *gLightMapCoords;
+static Color4 *gColors;
+static GLuint gVBuffers[7];
 
-static int gCntIndices = 0;
-static int* gIndices;
+static Vector3 *gBallShadowCoords;
+
+static GLuint gWhiteTexture;
+static GLuint gBallShadow;
+
+static int gCntVertices;
+static int gMaxPlates;
+static int gMaxQuads;
+static int gMaxVertices;
+
+static int gCntCameraViewIndices = 0;
+static int *gCameraViewIndices;
 
 static int gCntBallReflectionIndices = 0;
-static int* gBallReflectionIndices;
+static int *gBallReflectionIndices;
 
-static int gCntSpotlightIndices;
-static int* gSpotlightIndices;
+static int *gIndexVertices;
 
-static int* gIndexVertices;
-
-void setColor(Color4 col) {
+static void setColor(Color4 col)
+{
 	gDefaultColor = col;
 }
 
-void setTexCoord(Vector2 uv) {
+static void setTexCoord(Vector2 uv)
+{
 	gDefaultTexCoord = uv;
 }
 
-void setLightMapCoord(Vector2 uv) {
+static void setColorMapCoord(Vector2 uv)
+{
+	gDefaultColorMapCoord = uv;
+}
+
+static void setLightMapCoord(Vector2 uv)
+{
 	gDefaultLightMapCoord = uv;
 }
 
-void setNormal(Vector3 n) {
+static void setNormal(Vector3 n)
+{
 	gDefaultNormal = n;
 }
 
-void addVertex(Vector3 v) {
-	gTexCoords[sgCntVertices] = gDefaultTexCoord;
-	gLightMapCoords[sgCntVertices] = gDefaultLightMapCoord;
-	sgNormals[sgCntVertices] = gDefaultNormal;
-	gColors[sgCntVertices] = gDefaultColor;
+static void addVertex(Vector3 v)
+{
+	gTexCoords[gCntVertices] = gDefaultTexCoord;
+	gColorMapCoords[gCntVertices] = gDefaultColorMapCoord;
+	gLightMapCoords[gCntVertices] = gDefaultLightMapCoord;
+	sgNormals[gCntVertices] = gDefaultNormal;
+	gColors[gCntVertices] = gDefaultColor;
 
-	sgVertices[sgCntVertices] = v;
+	sgVertices[gCntVertices] = v;
 
-	sgCntVertices++;
+	gCntVertices++;
 }
 
-void addSquare(const Square* square) {
+void addSquare(const Square * square)
+{
 	int i;
 	setNormal(square->normal);
 
-	for (i = 0; i < 4; i++) {
-		setTexCoord(square->texcoords[i]);
+	for (i = 0; i < 4; i++)
+	{
+		setTexCoord(square->texcoord[i]);
+		setColorMapCoord(square->colormap[i]);
 		setLightMapCoord(square->lightmap[i]);
 		addVertex(square->vertices[i]);
 	}
 }
 
-void getVertIndex(int x, int y, int* start, int* end) {
-	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y) {
+void getVertIndex(int x, int y, int *start, int *end)
+{
+	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y)
+	{
 		int index = y * sgLevel.size.x + x;
 		*start = gIndexVertices[index];
 		index++;
-		if (index < sgMaxPlates) {
+		if (index < gMaxPlates)
+		{
 			*end = gIndexVertices[index];
-		} else {
-			*end = sgCntVertices;
 		}
-	} else {
+		else
+		{
+			*end = gCntVertices;
+		}
+	}
+	else
+	{
 		*start = 0;
 		*end = 0;
 	}
 }
 
-void setSquareColor(int q, Color4 col) {
+void setSquareColor(int q, Color4 col)
+{
 	int i;
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++)
+	{
 		gColors[q + i] = col;
 	}
 }
 
-void setRoofColor(int x, int y, Color4 col) {
+void setRoofColor(int x, int y, Color4 col)
+{
 	int start;
 	int end;
 
@@ -137,41 +171,148 @@ void setRoofColor(int x, int y, Color4 col) {
 	setSquareColor(start, col);
 }
 
-#define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * sgCntVertices, (x), GL_STATIC_DRAW_ARB);
+#define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * gCntVertices, (x), GL_STATIC_DRAW_ARB);
 
-void initGameField(void) {
+#define MAX_XY 1.0f
+#define MAX_Z 1.0f
+
+#define SAMPLES_XY 64
+#define SAMPLES_Z 64
+
+void initBallShadow(void)
+{
+	GLfloat ballShadowData[SAMPLES_Z][SAMPLES_XY][SAMPLES_XY];
+
+	int x;
+	int y;
+	int z;
+
+	float fx;
+	float fy;
+	float fz;
+
+	float d;
+
+	for (y = 0; y < SAMPLES_XY; y++)
+	{
+		for (x = 0; x < SAMPLES_XY; x++)
+		{
+			ballShadowData[0][y][x] = 1.0f;
+		}
+	}
+
+	for (z = 1; z < SAMPLES_Z; z++)
+	{
+		fz = ((float) z / SAMPLES_Z) * MAX_Z;
+
+		for (y = 0; y < SAMPLES_XY; y++)
+		{
+			fy = (((float) y / SAMPLES_XY) - 0.5f) * MAX_XY;
+
+			for (x = 0; x < SAMPLES_XY; x++)
+			{
+				fx = (((float) x / SAMPLES_XY) - 0.5f) * MAX_XY;
+
+				d = sqrt(sqr(fx) + sqr(fy) + sqr(fz));
+
+				ballShadowData[z][y][x] =
+					1.0f - (fz / d) / (1.0f + sqr(d) / sqr(sgoBall.radius));
+			}
+		}
+	}
+
+	glGenTextures(1, &gBallShadow);
+	glBindTexture(GL_TEXTURE_3D, gBallShadow);
+
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, SAMPLES_XY, SAMPLES_XY,
+							 SAMPLES_Z, 0, GL_LUMINANCE, GL_FLOAT, &ballShadowData[0][0][0]);
+
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
+
+void initGameField(void)
+{
 	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
-	static Color4 blue  = { 0.0f, 0.0f, 1.0f, 1.0f };
+	static Color4 blue = { 0.0f, 0.0f, 1.0f, 1.0f };
 	static Color4 white = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	int x;
 	int y;
 	int i;
-	int k;
 	int index = 0;
 
-	MALLOC(gIndexVertices, sgMaxPlates * sizeof(int));
-  MALLOC(gTexCoords, sgMaxVertices * sizeof(Vector2));
-  MALLOC(gLightMapCoords, sgMaxVertices * sizeof(Vector2));
-	MALLOC(gColors, sgMaxVertices * sizeof(Color4));
+	glGenTextures(1, &gWhiteTexture);
+
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 1, 1, 0, GL_LUMINANCE, GL_FLOAT,
+							 &white.r);
+
+	initBallShadow();
+
+	/* init level stuff */
+	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	gMaxQuads = 0;
+
+	for (y = 0; y < sgLevel.size.y; y++)
+	{
+		for (x = 0; x < sgLevel.size.x; x++)
+		{
+			gMaxQuads++;
+
+			for (i = 0; i < 4; i++)
+			{
+				SideFace face;
+
+				getSideFace(x, y, i, &face);
+
+				gMaxQuads += face.cntSquares;
+			}
+		}
+	}
+
+	gMaxVertices = 4 * gMaxQuads;
+
+	MALLOC(sgVertices, gMaxVertices * sizeof(Vector3));
+	MALLOC(sgNormals, gMaxVertices * sizeof(Vector3));
+	MALLOC(gIndexVertices, gMaxPlates * sizeof(int));
+	MALLOC(gTexCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gColorMapCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gLightMapCoords, gMaxVertices * sizeof(Vector2));
+	MALLOC(gColors, gMaxVertices * sizeof(Color4));
+
+	MALLOC(gBallShadowCoords, gMaxVertices * sizeof(Vector3));
+
+	gCntVertices = 0;
 
 	setColor(white);
 
-	for (y = 0; y < sgLevel.size.y; y++) {
-		for (x = 0; x < sgLevel.size.x; x++) {
+	for (y = 0; y < sgLevel.size.y; y++)
+	{
+		for (x = 0; x < sgLevel.size.x; x++)
+		{
 			Square square;
 
-			gIndexVertices[index++] = sgCntVertices;
+			gIndexVertices[index++] = gCntVertices;
 
 			getRoofSquare(x, y, &square);
 
 			addSquare(&square);
 
-			for (i = 0; i < 4; i++) {
-				Square* squares;
-				int cnt = getSideSquares(x, y, i, &squares);
-				for (k = 0; k < cnt; k++) {
-					addSquare(&squares[k]);
+			for (i = 0; i < 4; i++)
+			{
+				SideFace face;
+				int k;
+
+				getSideFace(x, y, i, &face);
+
+				for (k = 0; k < face.cntSquares; k++)
+				{
+					addSquare(&face.squares[k]);
 				}
 			}
 		}
@@ -180,7 +321,8 @@ void initGameField(void) {
 	setRoofColor(sgLevel.start.x, sgLevel.start.y, green);
 	setRoofColor(sgLevel.finish.x, sgLevel.finish.y, blue);
 
-	if (hasVertexbuffer()) {
+	if (hasVertexbuffer())
+	{
 		glGenBuffersARB(LENGTH(gVBuffers), gVBuffers);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
@@ -190,60 +332,90 @@ void initGameField(void) {
 		bufferdata(sgNormals);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
-		bufferdata(gTexCoords);
+		bufferdata(gColorMapCoords);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
 		bufferdata(gLightMapCoords);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[4]);
+		bufferdata(gTexCoords);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[5]);
 		bufferdata(gColors);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+		glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(Vector3) * gCntVertices,
+										(gBallShadowCoords), GL_DYNAMIC_DRAW);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
-	printf("sgMaxVertices: %d\n", sgMaxVertices);
-	printf("sgCntVertices: %d\n", sgCntVertices);
+	printf("gMaxVertices: %d\n", gMaxVertices);
+	printf("gCntVertices: %d\n", gCntVertices);
 
-	gCntIndices = 0;
-	MALLOC(gIndices, sgCntVertices * sizeof(int));
-	MALLOC(gBallReflectionIndices, sgCntVertices * sizeof(int));
-
-	if (hasSpotlight()) {
-		gCntSpotlightIndices = 0;
-		MALLOC(gSpotlightIndices, sgCntVertices * sizeof(int));
-	}
+	gCntCameraViewIndices = 0;
+	MALLOC(gCameraViewIndices, gCntVertices * sizeof(int));
+	MALLOC(gBallReflectionIndices, gCntVertices * sizeof(int));
 }
 
-void destroyGameField(void) {
-	if (hasSpotlight()) {
-  	FREE(gSpotlightIndices);
-	}
+void destroyGameField(void)
+{
+	FREE(sgVertices);
+	FREE(sgNormals);
 
 	FREE(gIndexVertices);
-  FREE(gIndices);
-  FREE(gBallReflectionIndices);
+	FREE(gCameraViewIndices);
+	FREE(gBallReflectionIndices);
 	FREE(gTexCoords);
+	FREE(gColorMapCoords);
 	FREE(gLightMapCoords);
 	FREE(gColors);
+
+	FREE(gBallShadowCoords);
+
+	gMaxVertices = 0;
+	gCameraViewIndices = 0;
+	gCntBallReflectionIndices = 0;
 }
 
 /*
  * render from close to far
  */
-void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int farToClose, int* indices, int* index) {
-	if (sizeX == 0 || sizeY == 0) {
+void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
+				 Vector3 camera, int farToClose, int *indices, int *index)
+{
+	if (sizeX == 0 || sizeY == 0)
+	{
 		return;
-	} else if (sizeX == 1 && sizeY == 1) {
+	}
+	else if (sizeX == 1 && sizeY == 1)
+	{
 		int start;
 		int end;
 		int q;
+		int i;
 
 		getVertIndex(startX, startY, &start, &end);
 
-		for (q = start; q < end; q++) {
-			indices[(*index)++] = q;
+		for (q = start; q < end; q += 4)
+		{
+			/*
+			 * the top square must always be drawn, because this function
+			 * is not called if only the height of the camera changes.
+			 * Fortunately it is always the first square in the array range.
+			 * WARNING: be aware of this if you change the order of sqaures.
+			 */
+			if (q == start || dot(sgNormals[q], sub(camera, sgVertices[q])) >= 0)
+			{
+				for (i = 0; i < 4; i++)
+				{
+					indices[(*index)++] = q + i;
+				}
+			}
 		}
-	} else {
+	}
+	else
+	{
 		int startX1 = startX;
 		int startY1 = startY;
 		int sizeX1 = sizeX;
@@ -256,221 +428,288 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY, int
 
 		int closer;
 
-		if (sizeX > sizeY) {
+		if (sizeX > sizeY)
+		{
 			sizeX1 = sizeX / 2;
 			sizeX2 = sizeX - sizeX1;
 			startX2 = startX1 + sizeX1;
 			closer = viewX < startX2;
-		} else {
+		}
+		else
+		{
 			sizeY1 = sizeY / 2;
 			sizeY2 = sizeY - sizeY1;
 			startY2 = startY1 + sizeY1;
 			closer = viewY < startY2;
 		}
 
-		if (farToClose ^ closer) {
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
-		} else {
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, farToClose, indices, index);
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, farToClose, indices, index);
+		if (farToClose ^ closer)
+		{
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
+					indices, index);
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
+					indices, index);
+		}
+		else
+		{
+			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
+					indices, index);
+			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
+					indices, index);
 		}
 	}
 }
 
-void updateGameField(void) {
+void updateGameField(void)
+{
 	static int lastMX = 0;
 	static int lastMY = 0;
 
-	int mx = floor(sgCamera.x);
-	int my = floor(sgCamera.y);
+	int mx = floor(sgCamera.x - sgLevel.origin.x);
+	int my = floor(sgCamera.y - sgLevel.origin.y);
 
-	if (gCntIndices == 0 || !(mx == lastMX && my == lastMY)) {
-		gCntIndices = 0;
-		bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, 0, gIndices, &gCntIndices);
+	if (gCntCameraViewIndices == 0 || !(mx == lastMX && my == lastMY))
+	{
+		gCntCameraViewIndices = 0;
+		if (gMaxVertices > 0)
+		{
+			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, sgCamera, 0,
+					gCameraViewIndices, &gCntCameraViewIndices);
 
-		lastMX = mx;
-		lastMY = my;
+			lastMX = mx;
+			lastMY = my;
+		}
 	}
 
-	if (useBallReflection()) {
+	if (!hasBallShadowShader() && useBallShadow())
+	{
+		int q;
+
+		for (q = 0; q < gCntVertices; q += 4)
+		{
+			Vector3 vz = sgNormals[q];
+			Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q]));
+			Vector3 vy = norm(cross(vx, vz));
+
+			int i;
+
+			for (i = 0; i < 4; i++)
+			{
+				Vector3 vertex = sgVertices[q + i];
+				Vector3 d = sub(sgoBall.pos, vertex);
+
+				float x = dot(vx, d) / MAX_XY + 0.5f;
+				float y = dot(vy, d) / MAX_XY + 0.5f;
+				float z = dot(vz, d) / MAX_Z;
+
+				gBallShadowCoords[q + i] = vector3(x, y, z);
+			}
+		}
+	}
+
+	if (useBallReflection())
+	{
 		static int lastBX = 0;
 		static int lastBY = 0;
 
-		int bx = floor(sgoBall.pos.x);
-		int by = floor(sgoBall.pos.y);
+		int bx = floor(sgoBall.pos.x - sgLevel.origin.x);
+		int by = floor(sgoBall.pos.y - sgLevel.origin.y);
 
-		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY)) {
+		if (gCntBallReflectionIndices == 0 || !(bx == lastBX && by == lastBY))
+		{
 			gCntBallReflectionIndices = 0;
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, 1, gBallReflectionIndices, &gCntBallReflectionIndices);
+			if (gMaxVertices > 0)
+			{
+				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, sgoBall.pos, 1,
+						gBallReflectionIndices, &gCntBallReflectionIndices);
 
-			lastBX = bx;
-			lastBY = by;
-		}
-	}
-
-#if 0
-	if (useSpotlight())	{
-		static int mxSpot = 0;
-		static int mySpot = 0;
-		static int maxSpot = 0;
-
-		int mx = floor(sgLight[sgGameSpotLight].pos.x);
-		int my = floor(sgLight[sgGameSpotLight].pos.y);
-		int max = ceil(sgLight[sgGameSpotLight].pos.z * tan(sgLight[sgGameSpotLight].cutoff * PI / 180.0f));
-
-		if (mx != mxSpot || my != mySpot || max != maxSpot) {
-			int dx;
-			int dy;
-
-			gCntSpotlightIndices = 0;
-			for (dx = -max; dx <= max; dx++ ) {
-				for (dy = -max; dy <= max; dy++) {
-					int start;
-					int end;
-					int q;
-
-					getVertIndex(mx + dx, my + dy, &start, &end);
-
-					for (q = start; q < end; q++) {
-						gSpotlightIndices[gCntSpotlightIndices++] = q;
-					}
-				}
+				lastBX = bx;
+				lastBY = by;
 			}
-
-			mxSpot = mx;
-			mySpot = my;
-			maxSpot = max;
 		}
 	}
-#endif
 }
 
-void drawGameField(int ballReflection) {
+void drawGameField(int ballReflection)
+{
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 
-  glClientActiveTextureARB(GL_TEXTURE0);
+	glClientActiveTextureARB(GL_TEXTURE0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	if (useShadows())
-	{
-		glClientActiveTextureARB(GL_TEXTURE1);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
+	glClientActiveTextureARB(GL_TEXTURE1);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glClientActiveTextureARB(GL_TEXTURE2);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	if (hasVertexbuffer()) {
+	if (hasVertexbuffer())
+	{
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
 		glNormalPointer(GL_FLOAT, 0, NULL);
 
-	  glClientActiveTextureARB(GL_TEXTURE0);
+		glClientActiveTextureARB(GL_TEXTURE0);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
-		if (useShadows())
-		{
-			glClientActiveTextureARB(GL_TEXTURE1);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
-			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-		}
+		glClientActiveTextureARB(GL_TEXTURE1);
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[3]);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
+		glClientActiveTextureARB(GL_TEXTURE2);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[4]);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[5]);
 		glColorPointer(4, GL_FLOAT, 0, NULL);
-	} else {
+	}
+	else
+	{
 		glVertexPointer(3, GL_FLOAT, 0, sgVertices);
 
 		glNormalPointer(GL_FLOAT, 0, sgNormals);
 
-	  glClientActiveTextureARB(GL_TEXTURE0);
-		glTexCoordPointer(2, GL_FLOAT, 0, gTexCoords);
+		glClientActiveTextureARB(GL_TEXTURE0);
+		glTexCoordPointer(2, GL_FLOAT, 0, gColorMapCoords);
 
-		if (useShadows())
-		{
-			glClientActiveTextureARB(GL_TEXTURE1);
-			glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
-		}
+		glClientActiveTextureARB(GL_TEXTURE1);
+		glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
+
+		glClientActiveTextureARB(GL_TEXTURE2);
+		glTexCoordPointer(2, GL_FLOAT, 0, gTexCoords);
 
 		glColorPointer(4, GL_FLOAT, 0, gColors);
 	}
 
-  glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
+#if (NOISE_TEXTURE)
+	glBindTexture(GL_TEXTURE_2D, sgLevel.colorMap);
+#else
+	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
+#endif
 
-	if (useShadows())
+	glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+
+	glActiveTexture(GL_TEXTURE2);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
+
+	if (useBallShadow())
 	{
-	  glActiveTexture(GL_TEXTURE1);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+		if (hasBallShadowShader())
+		{
+			glUseProgram(sgBallShadowShader);
+
+			glUniform3fv(glGetUniformLocation(sgBallShadowShader, "ball"), 1,
+									 &sgoBall.pos.x);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex0"), 0);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex1"), 1);
+			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex2"), 2);
+		}
+		else
+		{
+			glActiveTexture(GL_TEXTURE3);
+			glEnable(GL_TEXTURE_3D);
+			glBindTexture(GL_TEXTURE_3D, gBallShadow);
+
+			glClientActiveTextureARB(GL_TEXTURE3);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			if (hasVertexbuffer())
+			{
+				void *data;
+
+				glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[6]);
+
+				data = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+
+				memcpy(data, gBallShadowCoords, sizeof(Vector3) * gCntVertices);
+
+				glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+
+				glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+			}
+			else
+			{
+				glTexCoordPointer(3, GL_FLOAT, 0, gBallShadowCoords);
+			}
+		}
 	}
 
-		glDrawElements(GL_QUADS, gCntIndices, GL_UNSIGNED_INT, ballReflection ? gBallReflectionIndices : gIndices);
-
-	if (useShadows())
+	if (ballReflection)
 	{
-		glActiveTexture(GL_TEXTURE1);
-		glDisable(GL_TEXTURE_2D);
+		glDrawElements(GL_QUADS, gCntBallReflectionIndices, GL_UNSIGNED_INT,
+									 gBallReflectionIndices);
+	}
+	else
+	{
+		glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT,
+									 gCameraViewIndices);
 	}
 
-  glActiveTexture(GL_TEXTURE0);
+	if (useBallShadow())
+	{
+		if (hasShader())
+		{
+			glUseProgram(0);
+		}
+		else
+		{
+			glActiveTexture(GL_TEXTURE3);
+			glDisable(GL_TEXTURE_3D);
+
+			glClientActiveTextureARB(GL_TEXTURE3);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+	}
+
+	glActiveTexture(GL_TEXTURE2);
 	glDisable(GL_TEXTURE_2D);
 
-	if (hasVertexbuffer()) {
+	glActiveTexture(GL_TEXTURE1);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glDisable(GL_TEXTURE_2D);
+
+#if 0
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(5.0f);
+
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT,
+								 ballReflection ? gBallReflectionIndices : gCameraViewIndices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
+
+	if (hasVertexbuffer())
+	{
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 
-	if (useShadows())
-	{
-		glClientActiveTextureARB(GL_TEXTURE1);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
+	glClientActiveTextureARB(GL_TEXTURE3);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glClientActiveTextureARB(GL_TEXTURE0);
+	glClientActiveTextureARB(GL_TEXTURE2);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glClientActiveTextureARB(GL_TEXTURE1);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glClientActiveTextureARB(GL_TEXTURE0);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glDisableClientState(GL_COLOR_ARRAY);
-}
-
-void drawGameFieldSpotlightParts(void) {
-#if 0
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-	glDepthFunc(GL_EQUAL);
-	glDepthMask(0);
-
-	if (hasVertexbuffer()) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
-
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
-		glNormalPointer(GL_FLOAT, 0, NULL);
-	} else {
-		glVertexPointer(3, GL_FLOAT, 0, sgVertices);
-
-		glNormalPointer(GL_FLOAT, 0, sgNormals);
-	}
-
-		glDrawElements(GL_QUADS, gCntSpotlightIndices, GL_UNSIGNED_INT, gSpotlightIndices);
-
-	if (hasVertexbuffer()) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-	}
-
-	glDepthFunc(GL_LESS);
-	glDepthMask(1);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-#endif
 }

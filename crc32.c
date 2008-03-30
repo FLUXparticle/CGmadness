@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "crc32.h"
@@ -29,10 +26,6 @@ unsigned int gRegister;
 void resetCRC32(void)
 {
 	gRegister = 0xffffffff;
-}
-
-void nextBit(int bit)
-{
 }
 
 void nextByte(unsigned char byte)
@@ -55,4 +48,9 @@ void nextByte(unsigned char byte)
 unsigned int getCRC32(void)
 {
 	return gRegister;
+}
+
+void setCRC32(unsigned int crc32)
+{
+	gRegister = crc32;
 }

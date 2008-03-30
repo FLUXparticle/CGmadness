@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,18 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "editormenu.h"
 
 #include "editor.h"
+#include "main.h"
+#include "menumanager.h"
 
 #include "text.h"
-#include "graph.h"
-#include "pick.h"
 #include "objects.h"
 #include "texture.h"
 #include "keyboard.h"
@@ -34,131 +31,85 @@
 
 #include <GL/glut.h>
 
+#include <stdlib.h>
 #include <string.h>
 
 #define SCALE_FONT 0.5f
 
-typedef struct {
-	char* left;
-	char* right;
+typedef struct
+{
+	char *left;
+	char *right;
 } LeftRight;
 
 /*
  * help text
  */
 static LeftRight gTextHelp[] = {
-	{ "Cursor", "Move" },
-	{ "Shift", "Multi Select" },
-	{ "W A S D", "Pitch" },
-	{ "R F", "Hight" },
-	{ "Y X C V B N", "Camera" },
-	{ "1 2", "Start Finish" },
-	{ "Esc", "Menu" },
+	{"Cursor", "move"},
+	{"Shift", "multi select"},
+	{"W A S D", "pitch"},
+	{"R F", "hight"},
+	{"0", "flatten"},
+	{"Enter", "test"},
+	{"Y X C V B N", "camera"},
+	{"1 2", "start finish"},
+	{"Esc", "menu"},
 };
 
-static Vector3 gEditorMenuPosition;
-
-static Object goLogo;
-static Object goMainMenu;
-static Object goHelpMenu;
-
-static Object goSuccessfulText;
-static Object goFailedText;
-
-static Object* gCurMenu;
+static Screen gScreenEditor;
+static Screen gScreenHelp;
+static Screen gScreenSuccessful;
+static Screen gScreenFailed;
 
 /* events */
 
-static void clickButtonEdit(void) {
+static void clickButtonEdit(void)
+{
+	popScreen();
 	resumeEditor();
 }
 
-static void clickButtonSave(void) {
+static void clickButtonSave(void)
+{
 	saveLevel();
 }
 
-static void clickButtonHelp(void) {
-	gCurMenu = &goHelpMenu;
+static void clickButtonHelp(void)
+{
+	pushScreen(&gScreenHelp);
 }
 
-static void clickButtonQuit(void) {
-	exit(0);
+static void clickButtonBack(void)
+{
+	popScreen();
 }
 
-static void clickButtonBack(void) {
-	gCurMenu = &goMainMenu;
+static void clickButtonQuit(void)
+{
+	popScreen();
+	stopEditor();
+	setMainState(STATE_MAIN);
 }
 
-void updateEditorMenu(float interval) {
-	if (gCurMenu == &goMainMenu) {
-		if (wasKeyPressed(KEY_ESC) || wasKeyPressed(KEY_ENTER)) {
-			clickButtonEdit();
-		}
-
-		if (wasKeyPressed('s')) {
-			clickButtonSave();
-		}
-
-		if (wasKeyPressed('h')) {
-			clickButtonHelp();
-		}
-
-		if (wasKeyPressed('q')) {
-			clickButtonQuit();
-		}
-	} else {
-		if (wasKeyPressed(KEY_ENTER) || wasKeyPressed(KEY_ESC)) {
-			clickButtonBack();
-		}
-	}
-}
-
-void showEditorMenu(int menu) {
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-
-	switch (menu) {
+void showEditorScreen(int menu)
+{
+	switch (menu)
+	{
 	case 0:
-		gCurMenu = &goMainMenu;
+		pushScreen(&gScreenEditor);
 		break;
 	case 1:
-		gCurMenu = &goSuccessfulText;
+		pushScreen(&gScreenSuccessful);
 		break;
 	case 2:
-		gCurMenu = &goFailedText;
+		pushScreen(&gScreenFailed);
 		break;
 	}
 }
 
-void setEditorMenuPosition(Vector3 pos) {
-	gEditorMenuPosition = pos;
-}
-
-void drawEditorMenu(void) {
-	glEnable(GL_LIGHTING);
-
-		setSomeLight();
-
-		glPushMatrix();
-			glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
-
-			drawObject(&goLogo);
-			drawObject(gCurMenu);
-
-		glPopMatrix();
-
-	glDisable(GL_LIGHTING);
-}
-
-void pickEditorMenu(void) {
-	glPushMatrix();
-		glTranslatef(gEditorMenuPosition.x, gEditorMenuPosition.y, gEditorMenuPosition.z);
-
-		pickObject(gCurMenu);
-
-	glPopMatrix();
-}
-
-void initEditorMenu() {
+void initEditorMenu()
+{
 	static Button bEdit;
 	static Button bSave;
 	static Button bHelp;
@@ -167,7 +118,26 @@ void initEditorMenu() {
 	static Button bSuccessful;
 	static Button bFailed;
 
-	static Object oTextHelp[2 * LENGTH(gTextHelp)];
+	static Label lTextHelp[2 * LENGTH(gTextHelp)];
+
+	static MenuItem *itemsEditor[] = {
+		&bEdit.item,
+		&bSave.item,
+		&bHelp.item,
+		&bQuit.item
+	};
+
+	static MenuItem *itemsHelp[LENGTH(lTextHelp) + 1];
+
+	static MenuItem *itemsSuccessful[] = {
+		&bSuccessful.item,
+	};
+
+	static MenuItem *itemsFailed[] = {
+		&bFailed.item,
+	};
+
+	static const float sizeHelp = 0.75f;
 
 	int i;
 
@@ -177,69 +147,40 @@ void initEditorMenu() {
 	 * put all together
 	 */
 
-	/* menu logo */
-	initObject(&goLogo, drawSquare);
-	goLogo.texture = loadTexture("data/logo.tga", 0);
-	setObjectPosition3f(&goLogo, 0.0f, 0.0f, 8.0f);
-	setObjectScale3f(&goLogo, 4.0f, 1.0f, 1.0f);
-
-	rotateObjectX(&goLogo, 90.0f);
-
 	/* main menu */
-	initObjectGroup(&goMainMenu);
+	initButton(&bEdit, 6.0f, clickButtonEdit, "edit", KEY_ENTER);
+	initButton(&bSave, 5.0f, clickButtonSave, "save", 's');
+	initButton(&bHelp, 4.0f, clickButtonHelp, "help", 'h');
+	initButton(&bQuit, 3.0f, clickButtonQuit, "back", KEY_ESC);
 
-	init3dButton(&bEdit, 6.0f, clickButtonEdit, "Edit");
-  addSubObject(&goMainMenu, &bEdit.oButton);
+	INIT_SCREEN(&gScreenEditor, itemsEditor);
 
-	init3dButton(&bSave, 5.0f, clickButtonSave, "Save");
-  addSubObject(&goMainMenu, &bSave.oButton);
+	/* help menu */
+	for (i = 0; i < LENGTH(lTextHelp); i++)
+	{
+		int row = i / 2;
+		int col = i % 2;
+		float z = 6.0f - row * sizeHelp;
 
-	init3dButton(&bHelp, 4.0f, clickButtonHelp, "Help");
-  addSubObject(&goMainMenu, &bHelp.oButton);
+		initLabel(&lTextHelp[i], col ? 5.0f : -5.0f, z, sizeHelp, col,
+							col ? gTextHelp[row].right : gTextHelp[row].left);
 
-	init3dButton(&bQuit, 3.0f, clickButtonQuit, "Quit");
-  addSubObject(&goMainMenu, &bQuit.oButton);
-
-	/* help text */
-	initObjectGroup(&goHelpMenu);
-
-	for (i = 0; i < LENGTH(gTextHelp); i++) {
-		float z = 6.0f - i;
-		float length;
-
-		{
-			Object* o = &oTextHelp[2 * i];
-
-			length = makeTextObject(o, gTextHelp[i].left) * SCALE_FONT;
-			setObjectPosition3f(o, -5.0f, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-
-	  	addSubObject(&goHelpMenu, o);
-		}
-
-		{
-			Object* o = &oTextHelp[2 * i + 1];
-
-			length = makeTextObject(o, gTextHelp[i].right) * SCALE_FONT;
-			setObjectPosition3f(o, 5.0f - length, 0.0f, z);
-			setObjectScalef(o, SCALE_FONT);
-			rotateObjectX(o, 90.0f);
-
-	  	addSubObject(&goHelpMenu, o);
-		}
+		itemsHelp[i] = &lTextHelp[i].item;
 	}
 
-	init3dButton(&bBack, 6.0f - LENGTH(gTextHelp), clickButtonBack, "back");
- 	addSubObject(&goHelpMenu, &bBack.oButton);
+	initButton(&bBack, 6.0f - LENGTH(gTextHelp) * sizeHelp, clickButtonBack,
+						 "back", KEY_ESC);
 
- 	/* response */
+	itemsHelp[LENGTH(lTextHelp)] = &bBack.item;
 
-	initObjectGroup(&goSuccessfulText);
-	init3dButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully");
- 	addSubObject(&goSuccessfulText, &bSuccessful.oButton);
+	INIT_SCREEN(&gScreenHelp, itemsHelp);
 
-	initObjectGroup(&goFailedText);
-	init3dButton(&bFailed, 5.0, clickButtonBack, "operation failed");
- 	addSubObject(&goFailedText, &bFailed.oButton);
+	/* response */
+
+	initButton(&bSuccessful, 5.0, clickButtonBack, "level saved successfully",
+						 KEY_ENTER);
+	INIT_SCREEN(&gScreenSuccessful, itemsSuccessful);
+
+	initButton(&bFailed, 5.0, clickButtonBack, "operation failed", KEY_ENTER);
+	INIT_SCREEN(&gScreenFailed, itemsFailed);
 }

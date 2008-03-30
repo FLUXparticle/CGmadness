@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "list.h"
@@ -28,10 +25,12 @@
  * a simple module for a linked list
  */
 
-List newNode(void* element, List next) {
+List newNode(void *element, List next)
+{
 	List result;
 	MALLOC(result, sizeof(*result));
-	if (!result) {
+	if (!result)
+	{
 		/* ERROR */
 	}
 	result->info = element;
@@ -39,12 +38,15 @@ List newNode(void* element, List next) {
 	return result;
 }
 
-List prependElement(List list, void* element) {
+List prependElement(List list, void *element)
+{
 	return newNode(element, list);
 }
 
-List appendElement(List list, void* element) {
-	if (!list) {
+List appendElement(List list, void *element)
+{
+	if (!list)
+	{
 		return newNode(element, list);
 	}
 
@@ -52,10 +54,12 @@ List appendElement(List list, void* element) {
 	return list;
 }
 
-List removeHead(List list) {
+List removeHead(List list)
+{
 	List tail;
-	
-	if (!list) {
+
+	if (!list)
+	{
 		return list;
 	}
 
@@ -64,12 +68,15 @@ List removeHead(List list) {
 	return tail;
 }
 
-List removeElement(List list, const void* element) {
-	if (!list) {
+List removeElement(List list, const void *element)
+{
+	if (!list)
+	{
 		return list;
 	}
 
-	if (list->info == element) {
+	if (list->info == element)
+	{
 		return removeHead(list);
 	}
 
@@ -77,30 +84,37 @@ List removeElement(List list, const void* element) {
 	return list;
 }
 
-List removeAll(List list) {
-	while (list) {
+List removeAll(List list)
+{
+	while (list)
+	{
 		list = removeHead(list);
 	}
 
 	return list;
 }
 
-int countElements(const List list) {
-  if (!list) {
-    return 0;
-  }
-  
-  return 1 + countElements(list->next);
+int countElements(const List list)
+{
+	if (!list)
+	{
+		return 0;
+	}
+
+	return 1 + countElements(list->next);
 }
 
-void* getElement(const List list, int index) {
-  if (!list) {
-    return NULL;
-  }
-  
-  if (index == 0) {
-    return list->info;
-  }
-  
-  return getElement(list->next, index - 1);
+void *getElement(const List list, int index)
+{
+	if (!list)
+	{
+		return NULL;
+	}
+
+	if (index == 0)
+	{
+		return list->info;
+	}
+
+	return getElement(list->next, index - 1);
 }

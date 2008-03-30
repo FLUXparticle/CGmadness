@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "skysphere.h"
@@ -46,21 +43,24 @@ static Vector2 gTextureBuffer[NUMVERTS];
 #endif
 static GLuint gIndexBuffer[NUMINDICES];
 
-void initSkysphere(void) {
+void initSkysphere(void)
+{
 	int i;
 	int j;
 	int ind;
-	float vx,vy,vz;
+	float vx, vy, vz;
 
 	/* Calculate deltaTheta */
 	float angle1;
 	float angle2;
 
-	for (j = 0; j <= SLICES; j++) {
+	for (j = 0; j <= SLICES; j++)
+	{
 		/* deltaPhi */
 		angle1 = j * (PI / 2.0f) / SLICES;
 
-		for (i = 0; i <= SIDES; i++) {
+		for (i = 0; i <= SIDES; i++)
+		{
 			angle2 = i * (2.0f * PI) / SIDES;
 
 			/* Calculate Vertexpositions */
@@ -81,31 +81,36 @@ void initSkysphere(void) {
 
 	/* Calculate Indices */
 	ind = 0;
-	for(j = 1; j <= SLICES; j++) {
-		for(i = 0; i <= SIDES; i++) {
+	for (j = 1; j <= SLICES; j++)
+	{
+		for (i = 0; i <= SIDES; i++)
+		{
 			gIndexBuffer[ind++] = (j - 1) * (SIDES + 1) + i;
 			gIndexBuffer[ind++] = j * (SIDES + 1) + i;
 		}
 	}
 }
 
-void drawSkysphere(void) {
+void drawSkysphere(void)
+{
 	int j;
 
 	glColor3f(0.651f, 0.682f, 1.0f);
 
 	glPushMatrix();
 
-		glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
+	glScalef(ENVIRONMENT_SIZE, ENVIRONMENT_SIZE, ENVIRONMENT_SIZE);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
 
-			for (j = 0; j < SLICES; j++) {
-				glDrawElements(GL_TRIANGLE_STRIP, (SIDES + 1) * 2, GL_UNSIGNED_INT, &gIndexBuffer[j * (SIDES + 1) * 2]);
-			}
+	for (j = 0; j < SLICES; j++)
+	{
+		glDrawElements(GL_TRIANGLE_STRIP, (SIDES + 1) * 2, GL_UNSIGNED_INT,
+									 &gIndexBuffer[j * (SIDES + 1) * 2]);
+	}
 
-		glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glPopMatrix();
 }

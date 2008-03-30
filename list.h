@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _list_h_
@@ -25,19 +22,20 @@
 
 #include <stdlib.h>
 
-typedef struct Node* List;
+typedef struct Node *List;
 
-struct Node {
-	void* info;
+struct Node
+{
+	void *info;
 	List next;
 };
 
-List prependElement(List list, void* element);
-List appendElement(List list, void* element);
-List removeElement(List list, const void* element);
+List prependElement(List list, void *element);
+List appendElement(List list, void *element);
+List removeElement(List list, const void *element);
 List removeAll(List list);
 
 int countElements(const List list);
-void* getElement(const List list, int index);
+void *getElement(const List list, int index);
 
 #endif

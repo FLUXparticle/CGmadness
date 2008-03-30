@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,17 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _editor_h_
 #define _editor_h_
 
-int initEditor(char* filename);
+int initEditor(void);
+
+void startEditor(void);
+void stopEditor(void);
 
 void resumeEditor(void);
+
+void updateEditor(float interval);
+
+void drawEditorField(void);
+
+void drawEditor(void);
 
 void saveLevel(void);
 

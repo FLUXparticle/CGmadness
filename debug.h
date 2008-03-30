@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _debug_h_
@@ -43,15 +40,17 @@
 #  define MALLOC(p, size) p = dbgMalloc(size, #p, __FILE__, __LINE__)
 #  define FREE(p) dbgFree(p, #p, __FILE__, __LINE__)
 
-void* dbgMalloc(int size, const char* pointername, const char* filename, int line);
-void dbgFree(void* p, const char* pointername, const char* filename, int line);
+void *dbgMalloc(int size, const char *pointername, const char *filename,
+								int line);
+void dbgFree(void *p, const char *pointername, const char *filename, int line);
 
 #else
 
 #  define MALLOC(p, size) p = saveMalloc(size, #p, __FILE__, __LINE__)
 #  define FREE(p) free(p)
 
-void* saveMalloc(int size, const char* pointername, const char* filename, int line);
+void *saveMalloc(int size, const char *pointername, const char *filename,
+								 int line);
 
 #endif
 

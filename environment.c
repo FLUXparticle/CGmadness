@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "environment.h"
@@ -36,17 +33,20 @@
 #define SKY 1
 #define WATER 1
 
-void initEnvironment(void) {
- 	initSkysphere();
- 	initSkyplane();
+void initEnvironment(void)
+{
+	initSkysphere();
+	initSkyplane();
 	initWater();
 }
 
-void updateEnvironment(float interval) {
+void updateEnvironment(float interval)
+{
 	updateWater(interval);
 }
 
-void drawEnvironment(void) {
+void drawEnvironment(funcDraw reflection)
+{
 #if (WATER)
 	if (useReflection())
 	{
@@ -54,24 +54,26 @@ void drawEnvironment(void) {
 
 		glPushMatrix();
 
-			glScalef(1.0f, 1.0f, -1.0f);
-			glClipPlane(GL_CLIP_PLANE0, equation);
+		glScalef(1.0f, 1.0f, -1.0f);
+		glClipPlane(GL_CLIP_PLANE0, equation);
 
-			glEnable(GL_CLIP_PLANE0);
-			glCullFace(GL_FRONT);
+		glEnable(GL_CLIP_PLANE0);
+		glCullFace(GL_FRONT);
 
 #  if (SKY)
-				glDisable(GL_DEPTH_TEST);
-					drawSkysphere();
-					drawSkyplane();
-				glEnable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
+		drawSkysphere();
+		drawSkyplane();
+		glEnable(GL_DEPTH_TEST);
 #  endif
 
-				drawGameField(0);
-				drawGameBall();
+		if (reflection)
+		{
+			reflection();
+		}
 
-			glCullFace(GL_BACK);
-			glDisable(GL_CLIP_PLANE0);
+		glCullFace(GL_BACK);
+		glDisable(GL_CLIP_PLANE0);
 
 		glPopMatrix();
 	}
@@ -81,8 +83,8 @@ void drawEnvironment(void) {
 
 #if (SKY)
 	glDisable(GL_DEPTH_TEST);
-		drawSkysphere();
-		drawSkyplane();
+	drawSkysphere();
+	drawSkyplane();
 	glEnable(GL_DEPTH_TEST);
 #endif
 }

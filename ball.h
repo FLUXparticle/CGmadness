@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _ball_h_
@@ -33,7 +30,8 @@
 #define BALL_LAYOUT_GOLFBALL 3
 #define BALL_LAYOUT_GOLFBALL_METAL 4
 
-typedef struct {
+typedef struct
+{
 	float mass;
 	float radius;
 
@@ -45,10 +43,20 @@ typedef struct {
 } Ball;
 
 extern Ball sgoBall;
+extern int sgIsBallInPieces;
+extern int sgHasBallHitGoal;
+extern int sgIsMouseControl;
+
+extern Vector3 sgForward;
+extern Vector3 sgRight;
 
 void initBall(void);
 
 void resetBall(void);
+void resetBallCamera(void);
+
+void enableBallCamera(void);
+void disableBallCamera(void);
 
 void updateBall(float interval);
 void changeBall(int layout);
@@ -60,8 +68,7 @@ void drawMenuBall(void);
 void drawGameBall(void);
 
 int hasBallTexture(void);
-int hasBallReflection(void);
-int hasBallShader(void);
+int hasCubeMap(void);
 
 int useBallReflection(void);
 

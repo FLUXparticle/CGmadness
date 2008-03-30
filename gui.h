@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,61 +15,147 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _gui_h_
 #define _gui_h_
 
-#include "graph.h"
-#include "pick.h"
+#include "vector.h"
+#include "mouse.h"
+#include "types.h"
 
-typedef void (*funcClick)(void);
+typedef void (*funcClick) (void);
 
-typedef void (*funcChange)(void* self);
+typedef void (*funcChange) (const void *self);
 
-typedef struct {
-	Object oButton;
-	Pick pButton;
+/***/
+
+typedef enum
+{
+	MI_CANVAS,
+	MI_LABEL,
+	MI_PROGRESS_BAR,
+	MI_BUTTON,
+	MI_CHECK,
+	MI_SPIN_EDIT
+} MenuItemType;
+
+typedef struct
+{
+	MenuItemType type;
+
+	Vector2 position;
+	float width;
+	float height;
+
+	int hover;
+	float emphasize;
+} MenuItem;
+
+typedef struct Screen
+{
+	int cntItems;
+	MenuItem **items;
+
+	struct Screen *back;
+} Screen;
+
+typedef struct
+{
+	MenuItem item;
+
+	funcUpdate customUpdate;
+	funcDraw customDraw;
+} Canvas;
+
+typedef struct
+{
+	MenuItem item;
+
+	char *text;
+	float size;
+} Label;
+
+typedef struct
+{
+	MenuItem item;
+
+	float *progress;
+} ProgressBar;
+
+typedef struct
+{
+	MenuItem item;
+
+	char *text;
+	int shortcut;
+
 	funcClick click;
 } Button;
 
-typedef struct {
+typedef struct
+{
+	MenuItem item;
+
+	char *text;
 	int value;
-	Object oCheck;
-	Pick pCheck;
+
 	funcChange change;
 } Check;
 
-typedef struct {
+typedef struct
+{
+	MenuItem item;
+
 	int value;
 	int minValue;
 	int maxValue;
-	Object oSpinEdit;
-	Object oLeft;
-	Object oRight;
-	Pick pLeft;
-	Pick pRight;
+
+	int side;
+
+	funcDraw draw;
 	funcChange change;
 } SpinEdit;
 
 void initGUI(void);
 
-void setSomeLight(void);
+/* Canvas */
+
+void initCanvas(Canvas * canvas, float z, float width, float height,
+								funcUpdate customUpdate, funcDraw customDraw);
+
+/* Label */
+
+void initLabel(Label * label, float x, float z, float size, int alignRight,
+							 char *text);
+
+/* ProgressBar */
+
+void initProgressBar(ProgressBar * progressBar, float z, float *progress);
 
 /* Button */
 
-void init3dButton(Button* button, float z, funcClick click, char* text);
+void initButton(Button * button, float z, funcClick click, char *text,
+								int shortcut);
 
 /* Check */
 
-void setCheck(Check* check, int value);
-void init3dCheck(Check* check, float z, funcChange change, char* text);
+void setCheck(Check * check, int value);
+void initCheck(Check * check, float z, funcChange change, char *text);
 
 /* SpinEdit */
 
-void init3dSpinEdit(SpinEdit* spinedit, int value, int min, int max, float z, Object* obj, funcChange change);
+void initSpinEdit(SpinEdit * spinedit, int value, int min, int max, float width,
+									float z, funcDraw draw, funcChange change);
+
+/* Screen */
+
+#define INIT_SCREEN(screen, items) initScreen((screen), LENGTH(items), (items))
+
+void initScreen(Screen * screen, int cntItems, MenuItem ** items);
+void prepareScreen(Screen * screen);
+void updateScreen(Screen * screen, float interval);
+void drawScreen(const Screen * screen);
+void eventScreen(Screen * screen, float x, float y, MouseEvent event);
 
 #endif

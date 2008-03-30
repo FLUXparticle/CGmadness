@@ -1,5 +1,5 @@
 # CG Madness - a Marble Madness clone
-# Copyright (C) 2007  Sven Reinck
+# Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,13 +26,14 @@ CFLAGS += -ansi -pedantic -Wall
 
 LIBS := -lm
 PROJECT := cgmadness
-SHADER := golfball spotlight
+SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
+	BUILD = mingw
 	EXECSUFFIX := .exe
 else
 	LIBS += -lglut -lGLU -lGL -lGLEW
@@ -41,10 +42,10 @@ endif
 
 SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
-DATA    :=  $(wildcard data/*.tga levels/*.lev levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
+DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl
-DOC     :=  license.txt cgm-editor-README.txt AUTHORS
+DEV     :=  mains.pl modules.pl indent.pro
+DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))

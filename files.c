@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "files.h"
@@ -28,22 +25,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* textFileRead(const char* fn) {
-	FILE* fp;
-	char* content = NULL;
+char *textFileRead(const char *fn)
+{
+	FILE *fp;
+	char *content = NULL;
 
 	int count = 0;
 
-	if (fn != NULL) {
+	if (fn != NULL)
+	{
 		fp = fopen(fn, "rt");
 
-		if (fp != NULL) {
-      fseek(fp, 0, SEEK_END);
-      count = ftell(fp);
-      rewind(fp);
+		if (fp != NULL)
+		{
+			fseek(fp, 0, SEEK_END);
+			count = ftell(fp);
+			rewind(fp);
 
-			if (count > 0) {
-				MALLOC(content, sizeof(char) * (count+1));
+			if (count > 0)
+			{
+				MALLOC(content, sizeof(char) * (count + 1));
 				count = fread(content, sizeof(char), count, fp);
 				content[count] = '\0';
 			}
@@ -54,19 +55,24 @@ char* textFileRead(const char* fn) {
 	return content;
 }
 
-int textFileWrite(const char *fn, const char *s) {
+int textFileWrite(const char *fn, const char *s)
+{
 	FILE *fp;
 	int status = 0;
 
-	if (fn != NULL) {
-		fp = fopen(fn,"w");
+	if (fn != NULL)
+	{
+		fp = fopen(fn, "w");
 
-		if (fp != NULL) {
-			if (fwrite(s,sizeof(char),strlen(s),fp) == strlen(s)) {
+		if (fp != NULL)
+		{
+			if (fwrite(s, sizeof(char), strlen(s), fp) == strlen(s))
+			{
 				status = 1;
 			}
 
-			if (fclose(fp) != 0) {
+			if (fclose(fp) != 0)
+			{
 				return 0;
 			}
 		}

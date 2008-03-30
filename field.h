@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,15 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _field_h_
 #define _field_h_
 
+#include "color.h"
+
 #include "vector.h"
+
+extern Vector3 *sgVertices;
+extern Vector3 *sgNormals;
 
 void setSquareColor(int q, Color4 col);
 
@@ -33,6 +35,7 @@ void destroyGameField(void);
 void updateGameField(void);
 
 void drawGameField(int ballReflection);
-void drawGameFieldSpotlightParts(void);
+
+void getVertIndex(int x, int y, int *start, int *end);
 
 #endif

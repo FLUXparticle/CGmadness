@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,43 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _lightmap_h_
 #define _lightmap_h_
 
+#include "atlas.h"
+
 #include "vector.h"
 
-#define LIGHT_MAP_SIZE 8
+float approximation(const Vector3 position, const Vector3 normal);
 
-#define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
-
-typedef struct {
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} LightMap;
-
-void allocLightMap(int cntSubLightMaps);
-
-int getCntAllocatedSubLightMaps(void);
-
-void freeLightMap(void);
-
-void lightMapToTexture(unsigned int texID);
-
-void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
-void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
-
-/*****/
-
-void allocSubLightMaps(LightMap* lightMap, int sizeX, int sizeY);
-
-void setLightMap(LightMap* lightMap, int x, int y, float value);
-
-Vector2 transformCoords(const LightMap* lightMap, const Vector2 coords);
+void genAmbientOcclusionTexture(SubAtlas * lightMap, Orientation orientation);
 
 #endif

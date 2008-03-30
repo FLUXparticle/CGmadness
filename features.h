@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #ifndef _features_h_
@@ -25,22 +22,24 @@
 
 #include <GL/glew.h>
 
-extern GLhandleARB sgSpotlightShader;
+extern GLhandleARB sgBallShadowShader;
+extern GLhandleARB sgGolfballShader;
 
-void initFeatures(int argc, char* argv[]);
+void usageFeatures(void);
+
+void initFeatures(int argc, char *argv[]);
 
 int hasShader(void);
 int hasFramebuffer(void);
 int hasVertexbuffer(void);
 int hasTwoSideStencil(void);
-int hasSpotlight(void);
+int hasBallShadowShader(void);
+int hasGolfballShader(void);
 
-void setSpotlight(int use);
-void setShadows(int use);
+void setBallShadow(int use);
 void setReflection(int use);
 
-int useSpotlight(void);
-int useShadows(void);
+int useBallShadow(void);
 int useReflection(void);
 
 #endif

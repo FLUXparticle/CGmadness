@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "debug.h"
@@ -25,25 +22,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* dbgMalloc(int size, const char* pointername, const char* filename, int line) {
-	void* p = malloc(size);
-	if (p) {
-		fprintf(stderr, "%s : %d -- malloc %s:%d\n", pointername, size, filename, line);
-	} else {
-		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size, filename, line);
+void *dbgMalloc(int size, const char *pointername, const char *filename,
+								int line)
+{
+	void *p = malloc(size);
+	if (p)
+	{
+		fprintf(stderr, "%s : %d -- malloc %s:%d\n", pointername, size, filename,
+						line);
+	}
+	else
+	{
+		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size,
+						filename, line);
 	}
 	return p;
 }
 
-void dbgFree(void* p, const char* pointername, const char* filename, int line) {
+void dbgFree(void *p, const char *pointername, const char *filename, int line)
+{
 	fprintf(stderr, "%s -- free %s:%d\n", pointername, filename, line);
 	free(p);
 }
 
-void* saveMalloc(int size, const char* pointername, const char* filename, int line) {
-	void* p = malloc(size);
-	if (!p) {
-		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size, filename, line);
+void *saveMalloc(int size, const char *pointername, const char *filename,
+								 int line)
+{
+	void *p = malloc(size);
+	if (!p)
+	{
+		fprintf(stderr, "%s : %d -- could not malloc in %s:%d\n", pointername, size,
+						filename, line);
 		exit(1);
 	}
 	return p;

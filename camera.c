@@ -1,6 +1,6 @@
 /*
  * CG Madness - a Marble Madness clone
- * Copyright (C) 2007  Sven Reinck
+ * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * $Id$
- *
  */
 
 #include "camera.h"
@@ -29,7 +26,8 @@
 Vector3 sgCamera;
 Vector3 sgLookat;
 
-void resetCamera(void) {
+void resetCamera(void)
+{
 	sgCamera.x = 0.0f;
 	sgCamera.y = 0.0f;
 	sgCamera.z = 1.0f;
@@ -39,7 +37,8 @@ void resetCamera(void) {
 	sgLookat.z = 0.0f;
 }
 
-void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
+void moveCamera(float interval, Vector3 camera, Vector3 lookat)
+{
 	Vector3 diff;
 	Vector3 up = { 0.0f, 0.0f, 1.0f };
 	float error;
@@ -57,11 +56,8 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(
-			sgCamera.x,  sgCamera.y, sgCamera.z,
-			sgLookat.x, sgLookat.y, sgLookat.z,
-			up.x, up.y, up.z
-			);
+	gluLookAt(sgCamera.x, sgCamera.y, sgCamera.z,
+						sgLookat.x, sgLookat.y, sgLookat.z, up.x, up.y, up.z);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, &sgWindowViewport.view[0][0]);
 }
