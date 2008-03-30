@@ -18,8 +18,10 @@
  */
 
 #include "game.h"
+#include "gamemenu.h"
 
 #include "common.h"
+#include "features.h"
 #include "level.h"
 #include "highscore.h"
 
@@ -27,9 +29,7 @@
 #include "ball.h"
 #include "field.h"
 #include "menumanager.h"
-#include "gamemenu.h"
 #include "files.h"
-#include "features.h"
 #include "keyboard.h"
 #include "camera.h"
 #include "callback.h"

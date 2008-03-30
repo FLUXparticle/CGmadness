@@ -19,7 +19,7 @@
 
 #include "varray.h"
 
-#include <GL/gl.h>
+#include <GL/glut.h>
 
 void drawTrianglesVerticesNormals(int count, const float *vertices,
 																	const float *normals)

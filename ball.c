@@ -19,6 +19,7 @@
 
 #include "ball.h"
 
+#include "features.h"
 #include "level.h"
 #include "game.h"
 #include "callback.h"
@@ -26,7 +27,6 @@
 #include "shader.h"
 #include "fbuffer.h"
 #include "vector.h"
-#include "features.h"
 #include "keyboard.h"
 #include "texture.h"
 #include "field.h"

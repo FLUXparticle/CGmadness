@@ -22,7 +22,6 @@
 #include "editormenu.h"
 #include "menumanager.h"
 
-#include "level.h"
 #include "ball.h"
 #include "field.h"
 #include "callback.h"
@@ -39,6 +38,8 @@
 
 #include <GL/glew.h>
 #include <GL/glut.h>
+
+#include "level.h"
 
 #include <stdio.h>
 #include <stdlib.h>

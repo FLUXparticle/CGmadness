@@ -21,6 +21,8 @@
 
 #include <GL/glut.h>
 
+#include <stdlib.h>
+
 float sgIdleProgress;
 int sgIdleWorking = 0;
 

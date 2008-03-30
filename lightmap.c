@@ -23,7 +23,7 @@
 
 #include "functions.h"
 
-#include <GL/glew.h>
+#include <GL/glut.h>
 
 #include <math.h>
 

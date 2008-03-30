@@ -27,7 +27,7 @@
 #include "functions.h"
 #include "debug.h"
 
-#include <GL/gl.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -335,7 +335,7 @@ void newLevel(void)
 	updateLightMap(0);
 }
 
-int readByte(FILE * file)
+static int readByte(FILE * file)
 {
 	int value;
 

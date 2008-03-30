@@ -20,6 +20,7 @@
 #include "callback.h"
 
 #include "main.h"
+#include "features.h"
 #include "level.h"
 #include "game.h"
 
@@ -28,7 +29,6 @@
 
 #include "tools.h"
 
-#include "features.h"
 
 #define GLUT_DISABLE_ATEXIT_HACK
 
@@ -64,7 +64,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#if 0
 	glutFullScreen();
+#endif
 
 	/* ---- */
 

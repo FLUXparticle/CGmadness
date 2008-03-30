@@ -21,9 +21,9 @@
 
 #include "ball.h"
 #include "text.h"
+#include "features.h"
 #include "level.h"
 #include "game.h"
-#include "features.h"
 #include "keyboard.h"
 #include "highscore.h"
 #include "main.h"

@@ -18,12 +18,12 @@
  */
 
 #include "field.h"
+#include "features.h"
 
 #include "level.h"
 #include "camera.h"
 
 #include "ball.h"
-#include "features.h"
 
 #include "vector.h"
 #include "functions.h"
@@ -32,7 +32,7 @@
 #include "debug.h"
 
 #include <GL/glew.h>
-#include <GL/glew.h>
+#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -22,7 +22,7 @@
 
 #include "types.h"
 
-#include <GL/glew.h>
+#include <GL/glut.h>
 
 extern float widthDigits[];
 
