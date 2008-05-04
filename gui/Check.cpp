@@ -28,7 +28,7 @@ Check::Check()
 	// empty
 }
 
-Check::Check(float z, funcChange change, char* text)
+Check::Check(float z, funcChange change, const char* text)
 {
 	this->text = text;
 	this->change = change;

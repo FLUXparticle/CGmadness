@@ -29,8 +29,8 @@
 
 typedef struct
 {
-	char* left;
-	char* right;
+	const char* left;
+	const char* right;
 } LeftRight;
 
 class ScreenHelp : public Screen

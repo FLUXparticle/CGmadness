@@ -28,7 +28,7 @@ Label::Label()
   // empty
 }
 
-Label::Label(float x, float z, float size, bool alignRight, char* text)
+Label::Label(float x, float z, float size, bool alignRight, const char* text)
 {
 	this->text = text;
 	this->size = size;

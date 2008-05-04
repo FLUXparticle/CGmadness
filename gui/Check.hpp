@@ -26,7 +26,7 @@ class Check : public MenuItem
 {
 public:
   Check();
-  Check(float z, funcChange change, char *text);
+  Check(float z, funcChange change, const char *text);
   virtual ~Check();
 
   void set(bool value);
@@ -34,7 +34,7 @@ public:
   void event(float x, float y, MouseEvent event);
   void draw() const;
   
-  char *text;
+  const char *text;
   bool value;
 
 	funcChange change;
