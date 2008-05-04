@@ -24,7 +24,7 @@ CC := $(CPREFIX)gcc
 CFLAGS := -Wall -O3
 
 CXX := $(CPREFIX)g++
-CXXFLAGS := $(CFLAGS) -ansi -pedantic -include cstdlib -I.
+CXXFLAGS := $(CFLAGS) -include cstdlib -I.
 
 LD := $(CPREFIX)g++
 LDFLAGS :=
@@ -39,13 +39,14 @@ SHADER := golfball ballshadow
 # Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
-	CXXFLAGS += -mno-cygwin
+	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
 	BUILD = mingw
 	EXECSUFFIX := .exe
 else
 	LIBS += -lglut -lGLU -lGL -lGLEW
+	CXXFLAGS += -ansi -pedantic 
 	EXECSUFFIX :=
 endif
 
