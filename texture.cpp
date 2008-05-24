@@ -61,12 +61,19 @@ typedef struct
 
 void copyPixel(GLubyte * data, int pos, GLubyte * pixel, int components)
 {
-	data[pos++] = pixel[2];
-	data[pos++] = pixel[1];
-	data[pos++] = pixel[0];
-	if (components > 3)
+	if (components < 3)
 	{
-		data[pos++] = pixel[3];
+		data[pos++] = pixel[0];
+	}
+	else
+	{
+		data[pos++] = pixel[2];
+		data[pos++] = pixel[1];
+		data[pos++] = pixel[0];
+		if (components > 3)
+		{
+			data[pos++] = pixel[3];
+		}
 	}
 }
 
@@ -107,6 +114,7 @@ const char* loadTGA(FILE * file, Image * image)
 	switch (header.typeImage)
 	{
 	case 10:
+	case 11:
 		compressed = 1;
 		break;
 	case 2:
@@ -125,6 +133,10 @@ const char* loadTGA(FILE * file, Image * image)
 
 	switch (header.bitsPerPixel)
 	{
+	case 8:
+		image->components = 1;
+		image->format = GL_ALPHA;
+		break;
 	case 24:
 		image->components = 3;
 		image->format = GL_RGB;
@@ -252,12 +264,12 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 
 	if (mipmapping)
 	{
-		gluBuild2DMipmaps(GL_TEXTURE_2D, image.components, image.width,
+		gluBuild2DMipmaps(GL_TEXTURE_2D, image.format, image.width,
 											image.height, image.format, GL_UNSIGNED_BYTE, image.data);
 	}
 	else
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, image.components, image.width, image.height,
+		glTexImage2D(GL_TEXTURE_2D, 0, image.format, image.width, image.height,
 								 0, image.format, GL_UNSIGNED_BYTE, image.data);
 	}
 

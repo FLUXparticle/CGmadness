@@ -72,7 +72,9 @@ protected:
 	Singleton<class MenuManager> gMenuManager;
 	
   void pauseGame();
-  
+
+private:
+	int mTextureRing;
 };
 
 #endif

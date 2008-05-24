@@ -49,25 +49,37 @@ void drawSquare()
 	glEnd();
 }
 
-void drawRingStrip(int corners, float from, float to)
+void drawRingStrip(int corners, float from, float to, int texture)
 {
 	int i = 0;
 
-	glBegin(GL_TRIANGLE_STRIP);
+	glColor3f(1.0f, 1.0f, 0.0f);
 
-	for (i = (int) (corners * from); i <= (int) (corners * to); i++)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	{
-		float angle1 = 2.0f * M_PI * (i + 0.5f) / corners;
-		float angle2 = 2.0f * M_PI * i / corners;
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+			{
+				for (i = (int) (corners * from); i <= (int) (corners * to); i++)
+				{
+					float angle1 = 2.0f * M_PI * (i + 0.5f) / corners;
+					float angle2 = 2.0f * M_PI * i / corners;
 
-		glColor4f(1.0f, 1.0f, 0.0f, 0.0f);
-		glVertex2f(0.9f * cos(angle1), 0.9f * sin(angle1));
+					glTexCoord2f(0.5f, 0.0f);
+					glVertex2f(0.9f * cos(angle1), 0.9f * sin(angle1));
 
-		glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
-		glVertex2f(1.0f * cos(angle2), 1.0f * sin(angle2));
+					glTexCoord2f(0.5f, 1.0f);
+					glVertex2f(1.0f * cos(angle2), 1.0f * sin(angle2));
+				}
+			}
+			glEnd();
+		}
+		glDisable(GL_TEXTURE_2D);
 	}
-
-	glEnd();
+	glDisable(GL_BLEND);
 }
 
 /*
@@ -184,16 +196,14 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 
 void initObjects()
 {
-	int i, j;
-
 	gCntBallVertices = 0;
 
-	for (i = 0; i < LENGTH(gIsokaederIndices); i++)
+	for (unsigned int i = 0; i < LENGTH(gIsokaederIndices); i++)
 	{
 		Vector3 tri[3];
 		Vector3 mid(0.0f, 0.0f, 0.0f);
 
-		for (j = 0; j < LENGTH(gIsokaederIndices[i]); j++)
+		for (unsigned int j = 0; j < LENGTH(gIsokaederIndices[i]); j++)
 		{
 			tri[j] = gIsokaederVertices[gIsokaederIndices[i][j]];
 			mid = add(mid, tri[j]);
@@ -286,10 +296,6 @@ float randFloat(void)
 void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
 									 Vector3 endSpeed)
 {
-	int i;
-	int j;
-	int v;
-
 	gExplosionTime = 0.0;
 	gMaxExplosionTime = 5.0;
 
@@ -298,19 +304,19 @@ void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
 	gEndPos = endPos;
 	gEndSpeed = endSpeed;
 
-	for (i = 0, v = 0; i < LENGTH(gFragments);
+	for (unsigned int i = 0, v = 0; i < LENGTH(gFragments);
 			 i++, v += LENGTH(gFragments[i].vertices))
 	{
 		Vector3 mid(0.0f, 0.0f, 0.0f);
 
-		for (j = 0; j < LENGTH(gFragments[i].vertices); j++)
+		for (unsigned int j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
 			mid = add(mid, gBallVertices[v + j]);
 		}
 
 		mid = scale(1.0f / LENGTH(gFragments[i].vertices), mid);
 
-		for (j = 0; j < LENGTH(gFragments[i].vertices); j++)
+		for (unsigned int j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
 			gFragments[i].vertices[j] = sub(gBallVertices[v + j], mid);
 		}
@@ -353,8 +359,6 @@ float smallestError(float x)
  */
 bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 {
-	int i;
-
 	float t = gExplosionTime / gMaxExplosionTime;
 
 	float b0 = 2 * t * t * t - 3 * t * t + 1;
@@ -371,7 +375,7 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 	*pos = add(*pos, scale(b2, gStartSpeed));
 	*pos = add(*pos, scale(b3, gEndSpeed));
 
-	for (i = 0; i < LENGTH(gFragments); i++)
+	for (unsigned int i = 0; i < LENGTH(gFragments); i++)
 	{
 		Vector3 rotError;
 
@@ -404,7 +408,7 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 	{
 		gExplosionTime = gMaxExplosionTime - 1.0f;
 
-		for (i = 0; i < LENGTH(gFragments); i++)
+		for (unsigned int i = 0; i < LENGTH(gFragments); i++)
 		{
 			gFragments[i].rotSpeed = Vector3(0.0f, 0.0f, 0.0f);
 			gFragments[i].rotation = Vector3(0.0f, 0.0f, 0.0f);
@@ -416,14 +420,10 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 
 void drawExplosion(Vector3 ballTexCoords[CNT_BALL_VERTICES])
 {
-	int i;
-	int j;
-	int v;
-
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 	glDisable(GL_CULL_FACE);
 
-	for (i = 0, v = 0; i < LENGTH(gFragments);
+	for (unsigned int i = 0, v = 0; i < LENGTH(gFragments);
 			 i++, v += LENGTH(gFragments[i].vertices))
 	{
 		glPushMatrix();
@@ -435,7 +435,7 @@ void drawExplosion(Vector3 ballTexCoords[CNT_BALL_VERTICES])
 		glRotatef(gFragments[i].rotation.z, 0.0f, 0.0f, 1.0f);
 
 		glBegin(GL_TRIANGLES);
-		for (j = 0; j < LENGTH(gFragments[i].vertices); j++)
+		for (unsigned int j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
 			glNormal3fv(&gBallVertices[v + j].x);
 			glTexCoord3fv(&ballTexCoords[v + j].x);

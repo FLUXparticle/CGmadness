@@ -48,6 +48,8 @@ Game::Game()
 {
   gScreenMain1 = new ScreenGameMain1(this);
   gScreenMain2 = new ScreenGameMain2(this);
+  
+	mTextureRing = loadTexture("data/ring.tga", false);
 }
 
 Game::~Game()
@@ -85,15 +87,12 @@ void Game::update(float interval)
 			}
 			break;
 		case STATE_COUNTDOWN:
-			updateBall(sgoBall, interval);
-			
 			mCounter += interval;
 			if (mCounter > COUNTDOWN_TIME)
 			{
 				enableBall();
 				mGameState = STATE_RUNNING;
 			}
-			break;
 		case STATE_RUNNING:
 			if (wasKeyPressed(KEY_ESC))
 			{
@@ -189,7 +188,7 @@ void Game::draw()
 			
 			float p = 2.0f * mCounter / COUNTDOWN_TIME;
 			
-			drawRingStrip(100, max(0.0f, p - 1.0f), min(1.0f, p));
+			drawRingStrip(100, max(0.0f, p - 1.0f), min(1.0f, p), mTextureRing);
 		}
 		glPushMatrix();
 		break;
