@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	
 	Singleton<Main> main;
 
-	main->setState(STATE_MAIN);
+	main->setState(Main::STATE_MAIN);
 	
 	startCallback(main);
 	

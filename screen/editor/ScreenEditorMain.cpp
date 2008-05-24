@@ -69,5 +69,5 @@ void ScreenEditorMain::clickButtonHelp()
 void ScreenEditorMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
+	setMainState(Main::STATE_MAIN);
 }

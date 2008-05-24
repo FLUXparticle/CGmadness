@@ -96,5 +96,5 @@ void ScreenGameMain::clickButtonHelp()
 void ScreenGameMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
+	setMainState(Main::STATE_MAIN);
 }

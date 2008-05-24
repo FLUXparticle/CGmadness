@@ -37,7 +37,7 @@ void initMain()
 	PlayersBall::init();
 }
 
-void setMainState(MainState newState)
+void setMainState(Main::MainState newState)
 {
 	Singleton<Main> gDispenser;
 	

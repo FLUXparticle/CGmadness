@@ -24,7 +24,7 @@
 
 void initMain();
 
-void setMainState(MainState newState);
+void setMainState(Main::MainState newState);
 
 void resetGameTime();
 

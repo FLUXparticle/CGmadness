@@ -25,7 +25,7 @@
 
 static void clickButtonChooseGame()
 {
-	setMainState(STATE_GAME);
+	setMainState(Main::STATE_GAME);
 }
 
 ScreenChooseGame::ScreenChooseGame()

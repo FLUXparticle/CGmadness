@@ -55,5 +55,5 @@ void ScreenGameEnd::clickButtonQuit2()
 {
 	acceptHighScoreName();
 	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
+	setMainState(Main::STATE_MAIN);
 }

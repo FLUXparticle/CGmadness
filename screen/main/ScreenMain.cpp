@@ -31,7 +31,7 @@
 
 static void clickButtonChooseEditor()
 {
-	setMainState(STATE_EDITOR);
+	setMainState(Main::STATE_EDITOR);
 }
 
 ScreenMain::ScreenMain()
