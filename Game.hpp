@@ -36,6 +36,7 @@ public:
 	{
 		STATE_MENU,
 		STATE_WAITING,
+		STATE_COUNTDOWN,
 		STATE_RUNNING
 	} GameState;
 
@@ -63,7 +64,7 @@ protected:
 protected:
 	GameState mGameState;
 	
-	float mWaitCounter;
+	float mCounter;
 
 	SmartPointer<class ScreenGameMain1> gScreenMain1;
 	SmartPointer<class ScreenGameMain2> gScreenMain2;

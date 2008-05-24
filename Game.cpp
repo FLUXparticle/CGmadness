@@ -36,10 +36,12 @@
 #include "environment.hpp"
 #include "atlas.hpp"
 #include "main.hpp"
+#include "objects.hpp"
 
 #include "functions.hpp"
 
-#define WAITING_TIME 0.2f
+#define WAITING_TIME 0.4f
+#define COUNTDOWN_TIME 1.0f
 
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
@@ -65,7 +67,7 @@ void Game::resumeGame()
 {
 	enableBallCamera();
 	mGameState = STATE_WAITING;
-	mWaitCounter = 0.0f;
+	mCounter = 0.0f;
 }
 
 void Game::update(float interval)
@@ -78,8 +80,18 @@ void Game::update(float interval)
 		case STATE_WAITING:
 			updateBall(sgoBall, interval);
 			
-			mWaitCounter += interval;
-			if (mWaitCounter > WAITING_TIME)
+			mCounter += interval;
+			if (mCounter > WAITING_TIME)
+			{
+				mCounter = 0.0f;
+				mGameState = STATE_COUNTDOWN;
+			}
+			break;
+		case STATE_COUNTDOWN:
+			updateBall(sgoBall, interval);
+			
+			mCounter += interval;
+			if (mCounter > COUNTDOWN_TIME)
 			{
 				enableBall();
 				mGameState = STATE_RUNNING;
@@ -144,6 +156,18 @@ void Game::draw()
 	switch (mGameState) {
 	case STATE_MENU:
 		gMenuManager->draw();
+		break;
+	case STATE_COUNTDOWN:
+		glPushMatrix();
+		{
+			const Vector3& pos = sgoBall.pos();
+			glTranslatef(pos.x, pos.y, pos.z);
+			
+			float p = 2.0f * mCounter / COUNTDOWN_TIME;
+			
+			drawRingStrip(100, max(0.0f, p - 1.0f), min(1.0f, p));
+		}
+		glPushMatrix();
 		break;
 	default:
 		break;

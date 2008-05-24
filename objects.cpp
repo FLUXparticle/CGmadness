@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void drawSquare(void)
+void drawSquare()
 {
 	glBegin(GL_POLYGON);
 	glNormal3f(0.0f, 0.0f, 1.0f);
@@ -46,6 +46,27 @@ void drawSquare(void)
 
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex2f(-1.0f, 1.0f);
+	glEnd();
+}
+
+void drawRingStrip(int corners, float from, float to)
+{
+	int i = 0;
+
+	glBegin(GL_TRIANGLE_STRIP);
+
+	for (i = (int) (corners * from); i <= (int) (corners * to); i++)
+	{
+		float angle1 = 2.0f * M_PI * (i + 0.5f) / corners;
+		float angle2 = 2.0f * M_PI * i / corners;
+
+		glColor4f(1.0f, 1.0f, 0.0f, 0.0f);
+		glVertex2f(0.9f * cos(angle1), 0.9f * sin(angle1));
+
+		glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
+		glVertex2f(1.0f * cos(angle2), 1.0f * sin(angle2));
+	}
+
 	glEnd();
 }
 
@@ -161,7 +182,7 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 	}
 }
 
-void initObjects(void)
+void initObjects()
 {
 	int i, j;
 

@@ -22,9 +22,10 @@
 
 #include "math/Vector3.hpp"
 
-void initObjects(void);
+void initObjects();
 
-void drawSquare(void);
+void drawSquare();
+void drawRingStrip(int corners, float from, float to);
 
 void drawBallObjectDefault();
 void drawBallObjectShader();
