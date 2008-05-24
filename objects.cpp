@@ -22,7 +22,7 @@
 #include "keyboard.hpp"
 
 #include "math/Vector3.hpp"
-#include "types.hpp"
+#include "macros.hpp"
 
 #include <GL/gl.h>
 

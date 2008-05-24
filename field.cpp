@@ -28,7 +28,7 @@
 #include "math/Vector2.hpp"
 #include "functions.hpp"
 
-#include "types.hpp"
+#include "macros.hpp"
 
 #include <GL/glew.h>
 #include <GL/gl.h>
