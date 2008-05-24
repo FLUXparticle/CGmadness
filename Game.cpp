@@ -186,9 +186,7 @@ void Game::draw()
 			
 			glMultMatrixf((GLfloat*) m);
 			
-			float p = 2.0f * mCounter / COUNTDOWN_TIME;
-			
-			drawRingStrip(100, max(0.0f, p - 1.0f), min(1.0f, p), mTextureRing);
+			drawRingStrip(100, mCounter / COUNTDOWN_TIME, mTextureRing);
 		}
 		glPushMatrix();
 		break;

@@ -25,7 +25,7 @@
 void initObjects();
 
 void drawSquare();
-void drawRingStrip(int corners, float from, float to, int texture);
+void drawRingStrip(int corners, float progress, int texture);
 
 void drawBallObjectDefault();
 void drawBallObjectShader();
