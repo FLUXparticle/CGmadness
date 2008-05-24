@@ -39,6 +39,8 @@
 
 #include "functions.hpp"
 
+#define WAITING_TIME 0.2f
+
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
@@ -54,50 +56,62 @@ Game::~Game()
 
 void Game::pauseGame()
 {
+	disableBall();
 	disableBallCamera();
-	gIsGameRunning = false;
+	mGameState = STATE_MENU;
 }
 
 void Game::resumeGame()
 {
 	enableBallCamera();
-	gIsGameRunning = true;
+	mGameState = STATE_WAITING;
+	mWaitCounter = 0.0f;
 }
 
 void Game::update(float interval)
 {
 	updateEnvironment(interval);
-	if (gIsGameRunning)
-	{
-		if (wasKeyPressed(KEY_ESC))
-		{
-			pauseGame();
-			gMenuManager->pushScreen(gScreenMain2);
-		}
+	switch (mGameState) {
+		case STATE_MENU:
+			gMenuManager->update(interval);
+			break;
+		case STATE_WAITING:
+			updateBall(sgoBall, interval);
+			
+			mWaitCounter += interval;
+			if (mWaitCounter > WAITING_TIME)
+			{
+				enableBall();
+				mGameState = STATE_RUNNING;
+			}
+			break;
+		case STATE_RUNNING:
+			if (wasKeyPressed(KEY_ESC))
+			{
+				pauseGame();
+				gMenuManager->pushScreen(gScreenMain2);
+			}
 
-		/* manually switch features */
-		if (wasFunctionPressed(1))
-		{
-			setBallShadow(!useBallShadow());
-		}
+			/* manually switch features */
+			if (wasFunctionPressed(1))
+			{
+				setBallShadow(!useBallShadow());
+			}
 
-		if (wasFunctionPressed(2))
-		{
-			setReflection(!useReflection());
-		}
+			if (wasFunctionPressed(2))
+			{
+				setReflection(!useReflection());
+			}
 
-		if (wasFunctionPressed(5))
-		{
-			pauseGame();
-			toggleMouseControl();
-			resumeGame();
-		}
+			if (wasFunctionPressed(5))
+			{
+				pauseGame();
+				toggleMouseControl();
+				resumeGame();
+			}
 
-		updateBall(sgoBall, interval);
-	}
-	else
-	{
-		gMenuManager->update(interval);
+			updateBall(sgoBall, interval);
+			break;
 	}
 
 	updateGameField(sgoBall);
@@ -127,9 +141,12 @@ void Game::draw()
 	drawGameField(false);
 	sgoBall.drawGameBall();
 
-	if (!gIsGameRunning)
-	{
+	switch (mGameState) {
+	case STATE_MENU:
 		gMenuManager->draw();
+		break;
+	default:
+		break;
 	}
 }
 

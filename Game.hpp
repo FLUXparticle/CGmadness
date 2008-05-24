@@ -32,6 +32,14 @@
 class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
+	typedef enum
+	{
+		STATE_MENU,
+		STATE_WAITING,
+		STATE_RUNNING
+	} GameState;
+
+public:
   Game();
   virtual ~Game();
 
@@ -53,7 +61,9 @@ protected:
   static PlayersBall& sgoBall;
   
 protected:
-	bool gIsGameRunning;
+	GameState mGameState;
+	
+	float mWaitCounter;
 
 	SmartPointer<class ScreenGameMain1> gScreenMain1;
 	SmartPointer<class ScreenGameMain2> gScreenMain2;

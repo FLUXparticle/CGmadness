@@ -53,7 +53,7 @@ void RaceTheClock::update(float interval)
 {
 	Game::update(interval);
 	
-	if (gIsGameRunning)
+	if (mGameState == STATE_RUNNING)
 	{
 		if (!sgoBall.isInPieces())
 		{
