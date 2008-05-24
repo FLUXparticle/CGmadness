@@ -33,11 +33,11 @@ struct Vector3
   Vector3 norm() const;
   
   Vector3 operator*(float s) const;
-  Vector3 operator+(const Vector3 b) const;
-  Vector3 operator-(const Vector3 b) const;
+  Vector3 operator+(const Vector3& b) const;
+  Vector3 operator-(const Vector3& b) const;
   Vector3 operator-() const;
-  float operator*(const Vector3 b) const;
-  Vector3 operator^(const Vector3 b) const;
+  float operator*(const Vector3& b) const;
+  Vector3 operator^(const Vector3& b) const;
   
 };
 

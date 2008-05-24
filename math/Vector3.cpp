@@ -66,7 +66,7 @@ Vector3 Vector3::operator*(float s) const
 	return b;
 }
 
-Vector3 Vector3::operator+(const Vector3 b) const
+Vector3 Vector3::operator+(const Vector3& b) const
 {
 	Vector3 c;
 
@@ -77,7 +77,7 @@ Vector3 Vector3::operator+(const Vector3 b) const
 	return c;
 }
 
-Vector3 Vector3::operator-(const Vector3 b) const
+Vector3 Vector3::operator-(const Vector3& b) const
 {
 	Vector3 c;
 
@@ -99,12 +99,12 @@ Vector3 Vector3::operator-() const
 	return b;
 }
 
-float Vector3::operator*(const Vector3 b) const
+float Vector3::operator*(const Vector3& b) const
 {
 	return x * b.x + y * b.y + z * b.z;
 }
 
-Vector3 Vector3::operator^(const Vector3 b) const
+Vector3 Vector3::operator^(const Vector3& b) const
 {
 	Vector3 c;
 

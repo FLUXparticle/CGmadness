@@ -23,6 +23,7 @@
 #include "PlayersBall.hpp"
 
 #include "gui.hpp"
+#include "ballcamera.hpp"
 #include "objects.hpp"
 #include "environment.hpp"
 
@@ -49,4 +50,6 @@ void resetGameTime()
 	Singleton<RaceTheClock> gGameProcess;
 
 	gGameProcess->resetGameTime();
+	gGameProcess->resumeGame();
+	disableBall();
 }

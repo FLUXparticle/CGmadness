@@ -40,7 +40,6 @@
 
 #include "functions.hpp"
 
-#define WAITING_TIME 0.4f
 #define COUNTDOWN_TIME 1.0f
 
 PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
@@ -67,7 +66,6 @@ void Game::resumeGame()
 {
 	enableBallCamera();
 	mGameState = STATE_WAITING;
-	mCounter = 0.0f;
 }
 
 void Game::update(float interval)
@@ -80,8 +78,7 @@ void Game::update(float interval)
 		case STATE_WAITING:
 			updateBall(sgoBall, interval);
 			
-			mCounter += interval;
-			if (mCounter > WAITING_TIME)
+			if ((sgoBall.pos() - sgLookat).len() < 1.0f)
 			{
 				mCounter = 0.0f;
 				mGameState = STATE_COUNTDOWN;
@@ -160,8 +157,35 @@ void Game::draw()
 	case STATE_COUNTDOWN:
 		glPushMatrix();
 		{
+			const Vector3 x = rotateVector(Vector3(1.0f, 0.0f, 0.0f));
+			const Vector3 y = rotateVector(Vector3(0.0f, 1.0f, 0.0f));
+			const Vector3 z = rotateVector(Vector3(0.0f, 0.0f, 1.0f));
+			
 			const Vector3& pos = sgoBall.pos();
-			glTranslatef(pos.x, pos.y, pos.z);
+			
+			Matrix m;
+			
+			m[0][0] = x.x;
+			m[0][1] = x.y;
+			m[0][2] = x.z;
+			m[0][3] = 0.0f;
+			
+			m[1][0] = y.x;
+			m[1][1] = y.y;
+			m[1][2] = y.z;
+			m[1][3] = 0.0f;
+			
+			m[2][0] = z.x;
+			m[2][1] = z.y;
+			m[2][2] = z.z;
+			m[2][3] = 0.0f;
+			
+			m[3][0] = pos.x;
+			m[3][1] = pos.y;
+			m[3][2] = pos.z;
+			m[3][3] = 1.0f;
+			
+			glMultMatrixf((GLfloat*) m);
 			
 			float p = 2.0f * mCounter / COUNTDOWN_TIME;
 			
