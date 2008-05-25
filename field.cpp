@@ -22,7 +22,6 @@
 #include "level.hpp"
 #include "camera.hpp"
 
-#include "ballcamera.hpp"
 #include "hw/features.hpp"
 
 #include "math/Vector2.hpp"

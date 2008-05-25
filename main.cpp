@@ -20,7 +20,7 @@
 #include "main.hpp"
 
 #include "process/RaceTheClock.hpp"
-#include "PlayersBall.hpp"
+#include "ball/PlayersBall.hpp"
 
 #include "gui/gui.hpp"
 #include "objects.hpp"

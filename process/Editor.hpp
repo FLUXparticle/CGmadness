@@ -22,7 +22,7 @@
 
 #include "Process.hpp"
 
-#include "Ball.hpp"
+#include "ball/Ball.hpp"
 
 #include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"

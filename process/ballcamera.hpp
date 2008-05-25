@@ -22,7 +22,7 @@
 
 #include "math/Vector3.hpp"
 
-#include "Ball.hpp"
+#include "ball/Ball.hpp"
 
 void resetBallCamera(void);
 

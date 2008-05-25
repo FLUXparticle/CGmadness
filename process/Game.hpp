@@ -24,7 +24,7 @@
 #include "reflection/WaterReflection.hpp"
 #include "reflection/BallReflection.hpp"
 
-#include "PlayersBall.hpp"
+#include "ball/PlayersBall.hpp"
 
 #include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"

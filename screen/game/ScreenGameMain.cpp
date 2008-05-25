@@ -21,7 +21,7 @@
 
 #include "ScreenGameHelp.hpp"
 
-#include "PlayersBall.hpp"
+#include "ball/PlayersBall.hpp"
 
 #include "utils/Callback.hpp"
 
