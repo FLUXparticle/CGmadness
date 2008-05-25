@@ -27,7 +27,7 @@
 
 #include "main.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 ScreenEditorMain::ScreenEditorMain(Editor* editor) :
 	mParent(editor)

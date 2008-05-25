@@ -20,7 +20,7 @@
 #ifndef MenuItem_hpp
 #define MenuItem_hpp
 
-#include "mouse.hpp"
+#include "hw/mouse.hpp"
 
 #include "math/Vector2.hpp"
 

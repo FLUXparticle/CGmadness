@@ -21,7 +21,7 @@
 
 #include "main.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 static void clickButtonChooseGame()
 {

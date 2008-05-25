@@ -21,7 +21,7 @@
 
 #include "objects.hpp"
 #include "texture.hpp"
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 #include "functions.hpp"
 

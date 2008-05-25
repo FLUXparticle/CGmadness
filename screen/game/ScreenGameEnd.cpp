@@ -23,7 +23,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 #include "main.hpp"
 
 ScreenGameEnd::ScreenGameEnd(Game* parent) :

@@ -19,7 +19,7 @@
 
 #include "objects.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 #include "math/Vector3.hpp"
 #include "types.hpp"

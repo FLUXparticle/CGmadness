@@ -29,7 +29,7 @@
 #include "ballcamera.hpp"
 #include "field.hpp"
 #include "camera.hpp"
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 #include "common.hpp"
 
 #include <GL/glut.h>

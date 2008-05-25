@@ -20,7 +20,7 @@
 #ifndef _skyspere_h_
 #define _skyspere_h_
 
-#include "shader.hpp"
+#include "hw/shader.hpp"
 #include "types.hpp"
 #include <math.h>
 #include <GL/glut.h>

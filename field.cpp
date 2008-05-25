@@ -23,7 +23,7 @@
 #include "camera.hpp"
 
 #include "ballcamera.hpp"
-#include "features.hpp"
+#include "hw/features.hpp"
 
 #include "math/Vector2.hpp"
 #include "functions.hpp"

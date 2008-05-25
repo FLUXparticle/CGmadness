@@ -19,7 +19,7 @@
 
 #include "environment.hpp"
 
-#include "features.hpp"
+#include "hw/features.hpp"
 #include "skysphere.hpp"
 #include "skyplane.hpp"
 #include "water.hpp"

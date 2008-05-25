@@ -20,8 +20,8 @@
 #include "PlayersBall.hpp"
 
 #include "objects.hpp"
-#include "features.hpp"
-#include "fbuffer.hpp"
+#include "hw/features.hpp"
+#include "hw/fbuffer.hpp"
 #include "process/Game.hpp"
 #include "lightmap.hpp"
 #include "main.hpp"

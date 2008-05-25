@@ -21,7 +21,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
 	lTextHelp(2 * length)

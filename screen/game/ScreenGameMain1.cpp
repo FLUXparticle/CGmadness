@@ -23,7 +23,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 ScreenGameMain1::ScreenGameMain1(Game* parent) :
 	mParent(parent)

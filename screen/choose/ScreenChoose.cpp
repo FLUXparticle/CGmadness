@@ -27,7 +27,7 @@
 
 #include "highscore.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 static void changeLevelChooser(const void *self)
 {

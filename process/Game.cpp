@@ -29,8 +29,8 @@
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "features.hpp"
-#include "keyboard.hpp"
+#include "hw/features.hpp"
+#include "hw/keyboard.hpp"
 #include "camera.hpp"
 #include "texture.hpp"
 #include "environment/environment.hpp"

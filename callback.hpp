@@ -20,7 +20,7 @@
 #ifndef _callback_hpp_
 #define _callback_hpp_
 
-#include "mouse.hpp"
+#include "hw/mouse.hpp"
 
 #include "process/Process.hpp"
 

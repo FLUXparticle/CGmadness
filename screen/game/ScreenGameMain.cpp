@@ -27,8 +27,8 @@
 
 #include "MenuManager.hpp"
 
-#include "features.hpp"
-#include "keyboard.hpp"
+#include "hw/features.hpp"
+#include "hw/keyboard.hpp"
 #include "main.hpp"
 
 static void changeBallEdit(const void *self)

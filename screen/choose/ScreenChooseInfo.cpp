@@ -28,7 +28,7 @@
 #include "main.hpp"
 
 #include "text/text.hpp"
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 #include <GL/gl.h>
 
