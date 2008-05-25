@@ -20,7 +20,7 @@
 #ifndef MenuManager_hpp
 #define MenuManager_hpp
 
-#include "Process.hpp"
+#include "process/Process.hpp"
 
 #include <stack>
 

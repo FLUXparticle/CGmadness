@@ -26,7 +26,7 @@
 
 #include "utils/Singleton.hpp"
 
-#include "Editor.hpp"
+#include "process/Editor.hpp"
 
 class ScreenEditorMain : public Screen
 {

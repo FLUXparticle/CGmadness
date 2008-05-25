@@ -24,7 +24,7 @@
 #include "texture.hpp"
 #include "objects.hpp"
 #include "main.hpp"
-#include "Game.hpp"
+#include "process/Game.hpp"
 #include "keyboard.hpp"
 #include "field.hpp"
 #include "lightmap.hpp"

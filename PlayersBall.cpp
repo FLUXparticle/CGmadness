@@ -22,7 +22,7 @@
 #include "objects.hpp"
 #include "features.hpp"
 #include "fbuffer.hpp"
-#include "Game.hpp"
+#include "process/Game.hpp"
 #include "lightmap.hpp"
 #include "main.hpp"
 

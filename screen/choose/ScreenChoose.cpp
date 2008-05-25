@@ -23,7 +23,7 @@
 
 #include "main.hpp"
 #include "level.hpp"
-#include "Editor.hpp"
+#include "process/Editor.hpp"
 
 #include "highscore.hpp"
 

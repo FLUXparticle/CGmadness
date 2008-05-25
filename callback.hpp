@@ -22,7 +22,7 @@
 
 #include "mouse.hpp"
 
-#include "Process.hpp"
+#include "process/Process.hpp"
 
 #include "math/Vector3.hpp"
 #include "types.hpp"

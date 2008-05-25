@@ -21,7 +21,7 @@
 
 #include "ScreenEditorHelp.hpp"
 
-#include "Editor.hpp"
+#include "process/Editor.hpp"
 
 #include "utils/Callback.hpp"
 
