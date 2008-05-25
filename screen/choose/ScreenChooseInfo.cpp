@@ -27,7 +27,7 @@
 #include "highscore.hpp"
 #include "main.hpp"
 
-#include "text.hpp"
+#include "text/text.hpp"
 #include "keyboard.hpp"
 
 #include <GL/gl.h>

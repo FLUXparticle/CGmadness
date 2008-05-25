@@ -19,7 +19,7 @@
 
 #include "Label.hpp"
 
-#include "font3d.hpp"
+#include "text/font3d.hpp"
 
 #include <GL/gl.h>
 

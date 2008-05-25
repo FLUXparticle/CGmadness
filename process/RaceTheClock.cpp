@@ -25,7 +25,7 @@
 
 #include "level.hpp"
 #include "highscore.hpp"
-#include "text.hpp"
+#include "text/text.hpp"
 
 #include "functions.hpp"
 
