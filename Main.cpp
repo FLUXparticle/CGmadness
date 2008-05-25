@@ -22,7 +22,7 @@
 #include "process/RaceTheClock.hpp"
 #include "PlayersBall.hpp"
 
-#include "gui.hpp"
+#include "gui/gui.hpp"
 #include "objects.hpp"
 #include "environment/environment.hpp"
 

@@ -19,7 +19,7 @@
 
 #include "gui.hpp"
 
-#include "gui/SpinEdit.hpp"
+#include "SpinEdit.hpp"
 
 void initGUI()
 {
