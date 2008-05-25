@@ -33,7 +33,7 @@
 #include "keyboard.hpp"
 #include "camera.hpp"
 #include "texture.hpp"
-#include "environment.hpp"
+#include "environment/environment.hpp"
 #include "atlas.hpp"
 #include "main.hpp"
 

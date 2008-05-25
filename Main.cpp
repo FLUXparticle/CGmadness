@@ -24,7 +24,7 @@
 
 #include "gui.hpp"
 #include "objects.hpp"
-#include "environment.hpp"
+#include "environment/environment.hpp"
 
 void initMain()
 {

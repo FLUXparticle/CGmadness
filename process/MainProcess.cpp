@@ -25,7 +25,7 @@
 
 #include "MenuManager.hpp"
 
-#include "environment.hpp"
+#include "environment/environment.hpp"
 
 MainProcess::MainProcess()
 {
