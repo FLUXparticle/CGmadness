@@ -23,7 +23,7 @@
 #include "hw/features.hpp"
 #include "texture.hpp"
 #include "objects.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"
 #include "field.hpp"
@@ -99,7 +99,6 @@ void Ball::update(float interval)
 	else if (updateExplosion(interval, &mVelocity, &mPos))
 	{
 		reset();
-		resetGameTime();
 	}
 }
 

@@ -27,11 +27,11 @@
 #include "utils/Callback.hpp"
 
 #include "hw/keyboard.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 
 static void clickButtonChooseEditor()
 {
-	setMainState(STATE_EDITOR);
+	Main::setState(STATE_EDITOR);
 }
 
 ScreenMain::ScreenMain()

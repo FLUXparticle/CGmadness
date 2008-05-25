@@ -21,7 +21,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 #include "level.hpp"
 #include "process/Editor.hpp"
 

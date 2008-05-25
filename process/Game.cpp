@@ -35,7 +35,7 @@
 #include "texture.hpp"
 #include "environment/environment.hpp"
 #include "atlas.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 
 #include "functions.hpp"
 

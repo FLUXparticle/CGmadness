@@ -17,15 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _main_hpp_
-#define _main_hpp_
+#ifndef Main_hpp
+#define Main_hpp
 
-#include "Main.hpp"
+#include "process/Dispenser.hpp"
 
-void initMain();
+#include "utils/Singleton.hpp"
 
-void setMainState(MainState newState);
+typedef enum
+{
+	STATE_MAIN,
+	STATE_GAME,
+	STATE_EDITOR
+} MainState;
 
-void resetGameTime();
+class Main : public Dispenser
+{
+public:
+  static void init();
+  
+  static void setState(MainState newState);
+  
+public:
+  Main();
+  virtual ~Main();
+
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
+  
+private:
+	Singleton<class MenuManager> gMenuManager;
+
+	Singleton<class MainProcess> gMainProcess;
+	Singleton<class RaceTheClock> gGameProcess;
+	Singleton<class Editor> gEditorProcess;
+
+};
 
 #endif

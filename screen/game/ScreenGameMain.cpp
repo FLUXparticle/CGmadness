@@ -29,7 +29,7 @@
 
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 
 static void changeBallEdit(const void *self)
 {
@@ -96,5 +96,5 @@ void ScreenGameMain::clickButtonHelp()
 void ScreenGameMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
+	Main::setState(STATE_MAIN);
 }

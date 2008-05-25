@@ -19,13 +19,13 @@
 
 #include "ScreenChooseGame.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 
 #include "hw/keyboard.hpp"
 
 static void clickButtonChooseGame()
 {
-	setMainState(STATE_GAME);
+	Main::setState(STATE_GAME);
 }
 
 ScreenChooseGame::ScreenChooseGame()

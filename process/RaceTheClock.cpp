@@ -51,12 +51,19 @@ void RaceTheClock::resetGame()
 
 void RaceTheClock::update(float interval)
 {
+	bool wasInPieces = sgoBall.isInPieces();
+	
 	Game::update(interval);
 	
 	if (gIsGameRunning)
 	{
 		if (!sgoBall.isInPieces())
 		{
+			if (wasInPieces)
+			{
+				resetGameTime();
+			}
+			
 			gGameTime += interval;
 		}
 

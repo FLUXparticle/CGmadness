@@ -25,7 +25,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 
 #include "hw/keyboard.hpp"
 
@@ -69,5 +69,5 @@ void ScreenEditorMain::clickButtonHelp()
 void ScreenEditorMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(STATE_MAIN);
+	Main::setState(STATE_MAIN);
 }

@@ -25,7 +25,7 @@
 
 #include "level.hpp"
 #include "highscore.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 
 #include "text/text.hpp"
 #include "hw/keyboard.hpp"
