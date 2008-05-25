@@ -22,7 +22,7 @@
 
 #include "callback.hpp"
 
-#include "quaternion.hpp"
+#include "math/quaternion.hpp"
 #include "math/Vector3.hpp"
 
 #define BALL_RADIUS 0.2f
