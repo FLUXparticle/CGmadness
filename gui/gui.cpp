@@ -17,23 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ballcamera_hpp
-#define ballcamera_hpp
+#include "gui.hpp"
 
-#include "math/Vector3.hpp"
+#include "SpinEdit.hpp"
 
-#include "Ball.hpp"
-
-void resetBallCamera(void);
-
-void enableBall();
-void disableBall();
-
-void enableBallCamera();
-void disableBallCamera();
-
-void toggleMouseControl();
-
-void updateBall(Ball& ball, float interval);
-
-#endif
+void initGUI()
+{
+	SpinEdit::init();
+}

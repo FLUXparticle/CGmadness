@@ -17,35 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _quaternion_hpp_
-#define _quaternion_hpp_
+#ifndef _skyspere_h_
+#define _skyspere_h_
 
-#include "math/Vector3.hpp"
+#include "hw/shader.hpp"
+#include "types.hpp"
+#include <math.h>
+#include <GL/glut.h>
 
-typedef struct
-{
-	float s;
-	Vector3 v;
-} Quaternion;
-
-float lenQuaternion(Quaternion q);
-
-Quaternion normQuaternion(Quaternion q);
-
-Quaternion scaleQuaternion(float s, Quaternion a);
-
-Quaternion addQuaternion(Quaternion a, Quaternion b);
-
-Quaternion subQuaternion(Quaternion a, Quaternion b);
-
-float dotQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mulQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mkQuaternion(float alpha, Vector3 v);
-
-Quaternion interpolate(float t, Quaternion a, Quaternion b);
-
-void quaternionTransform(Quaternion a);
+void initSkysphere(void);
+void drawSkysphere(void);
 
 #endif

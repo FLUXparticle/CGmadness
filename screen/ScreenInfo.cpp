@@ -21,7 +21,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 ScreenInfo::ScreenInfo(const char* message)
 {

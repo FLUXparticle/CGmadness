@@ -23,8 +23,8 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
-#include "main.hpp"
+#include "hw/keyboard.hpp"
+#include "Main.hpp"
 
 ScreenGameEnd::ScreenGameEnd(Game* parent) :
 	mParent(parent)
@@ -55,5 +55,5 @@ void ScreenGameEnd::clickButtonQuit2()
 {
 	acceptHighScoreName();
 	gMenuManager->popScreen();
-	setMainState(Main::STATE_MAIN);
+	Main::setState(Main::STATE_MAIN);
 }

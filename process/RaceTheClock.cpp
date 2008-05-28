@@ -25,7 +25,7 @@
 
 #include "level.hpp"
 #include "highscore.hpp"
-#include "text.hpp"
+#include "text/text.hpp"
 
 #include "functions.hpp"
 
@@ -51,12 +51,19 @@ void RaceTheClock::resetGame()
 
 void RaceTheClock::update(float interval)
 {
+	bool wasInPieces = sgoBall.isInPieces();
+	
 	Game::update(interval);
 	
 	if (mGameState == STATE_RUNNING)
 	{
 		if (!sgoBall.isInPieces())
 		{
+			if (wasInPieces)
+			{
+				resetGameTime();
+			}
+			
 			gGameTime += interval;
 		}
 

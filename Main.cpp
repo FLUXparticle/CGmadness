@@ -17,17 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "main.hpp"
+#include "Main.hpp"
 
-#include "RaceTheClock.hpp"
-#include "PlayersBall.hpp"
+#include "ball/Ball.hpp"
+#include "ball/PlayersBall.hpp"
 
-#include "gui.hpp"
-#include "ballcamera.hpp"
+#include "environment/environment.hpp"
+
+#include "process/MainProcess.hpp"
+#include "process/RaceTheClock.hpp"
+#include "process/Editor.hpp"
+
+#include "gui/gui.hpp"
 #include "objects.hpp"
-#include "environment.hpp"
 
-void initMain()
+#include "MenuManager.hpp"
+
+void Main::init()
 {
 	initObjects();
 	initEnvironment();
@@ -38,18 +44,35 @@ void initMain()
 	PlayersBall::init();
 }
 
-void setMainState(Main::MainState newState)
+Main::Main()
+{
+  // empty
+}
+
+Main::~Main()
+{
+  // empty
+}
+
+void Main::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+{
+	gMenuManager->event(position, direction, event);
+}
+
+void Main::setState(MainState newState)
 {
 	Singleton<Main> gDispenser;
 	
-	gDispenser->setState(newState);
-}
-
-void resetGameTime()
-{
-	Singleton<RaceTheClock> gGameProcess;
-
-	gGameProcess->resetGameTime();
-	gGameProcess->resumeGame();
-	disableBall();
+	switch (newState)
+	{
+	case STATE_MAIN:
+		gDispenser->setProcess(gDispenser->gMainProcess);
+		break;
+	case STATE_GAME:
+		gDispenser->setProcess(gDispenser->gGameProcess);
+		break;
+	case STATE_EDITOR:
+		gDispenser->setProcess(gDispenser->gEditorProcess);
+		break;
+	}
 }

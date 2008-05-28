@@ -29,13 +29,13 @@
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "features.hpp"
-#include "keyboard.hpp"
+#include "hw/features.hpp"
+#include "hw/keyboard.hpp"
 #include "camera.hpp"
 #include "texture.hpp"
-#include "environment.hpp"
+#include "environment/environment.hpp"
 #include "atlas.hpp"
-#include "main.hpp"
+#include "Main.hpp"
 #include "objects.hpp"
 
 #include "functions.hpp"

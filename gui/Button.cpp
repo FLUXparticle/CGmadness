@@ -19,8 +19,8 @@
 
 #include "Button.hpp"
 
-#include "font3d.hpp"
-#include "keyboard.hpp"
+#include "text/font3d.hpp"
+#include "hw/keyboard.hpp"
 
 #include <GL/gl.h>
 

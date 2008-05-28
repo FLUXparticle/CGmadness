@@ -21,15 +21,15 @@
 
 #include "ScreenGameHelp.hpp"
 
-#include "PlayersBall.hpp"
+#include "ball/PlayersBall.hpp"
 
 #include "utils/Callback.hpp"
 
 #include "MenuManager.hpp"
 
-#include "features.hpp"
-#include "keyboard.hpp"
-#include "main.hpp"
+#include "hw/features.hpp"
+#include "hw/keyboard.hpp"
+#include "Main.hpp"
 
 static void changeBallEdit(const void *self)
 {
@@ -96,5 +96,5 @@ void ScreenGameMain::clickButtonHelp()
 void ScreenGameMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(Main::STATE_MAIN);
+	Main::setState(Main::STATE_MAIN);
 }

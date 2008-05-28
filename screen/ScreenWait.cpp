@@ -21,7 +21,7 @@
 
 #include "idle.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 #include "callback.hpp"
 
 ScreenWait::ScreenWait(const Caller& callback) :

@@ -21,13 +21,13 @@
 
 #include "utils/Callback.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 #include "level.hpp"
-#include "Editor.hpp"
+#include "process/Editor.hpp"
 
 #include "highscore.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 static void changeLevelChooser(const void *self)
 {

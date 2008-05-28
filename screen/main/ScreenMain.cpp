@@ -26,12 +26,12 @@
 
 #include "utils/Callback.hpp"
 
-#include "keyboard.hpp"
-#include "main.hpp"
+#include "hw/keyboard.hpp"
+#include "Main.hpp"
 
 static void clickButtonChooseEditor()
 {
-	setMainState(Main::STATE_EDITOR);
+	Main::setState(Main::STATE_EDITOR);
 }
 
 ScreenMain::ScreenMain()

@@ -17,40 +17,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "MainProcess.hpp"
+#ifndef Editor_hpp
+#define Editor_hpp
 
-#include "Editor.hpp"
+#include "Process.hpp"
 
-#include "screen/main/ScreenMain.hpp"
+#include "ball/Ball.hpp"
 
-#include "MenuManager.hpp"
+#include "utils/Singleton.hpp"
+#include "utils/SmartPointer.hpp"
 
-#include "environment.hpp"
-
-MainProcess::MainProcess()
+class Editor : public Process
 {
-	gMenuManager->pushScreen(gScreenMain);
-}
+public:
+  Editor();
+  virtual ~Editor();
 
-MainProcess::~MainProcess()
-{
-  // empty
-}
+  void start();
+  void stop();
+  
+  void update(float interval);
+  void draw();
+  
+private:
+	Ball mBall;
+	
+	void enableTestMode();
+	void disableTestMode();
 
-void MainProcess::update(float interval)
-{
-	updateEnvironment(interval);
-	gMenuManager->update(interval);
-}
+	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
+	SmartPointer<class ScreenWait> gScreenWait;
+	SmartPointer<class ScreenInfo> gScreenInfo;
 
-void MainProcess::draw(void)
-{
-	drawEnvironment(this);
-	gMenuManager->draw();
-}
+	Singleton<class MenuManager> gMenuManager;
 
-void MainProcess::drawWaterReflection() const
-{
-	Screen* screen = gMenuManager->curScreen(); 
-	screen->drawBackground();
-}
+	void pause();
+	
+	void lightMapsReady();
+	void saveLevel();
+	
+	friend class ScreenEditorMain;
+	
+};
+
+void resumeEditor(void);
+
+void drawEditorField(void);
+
+#endif

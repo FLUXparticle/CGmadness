@@ -20,7 +20,7 @@
 #ifndef _field_hpp_
 #define _field_hpp_
 
-#include "PlayersBall.hpp"
+#include "ball/PlayersBall.hpp"
 
 #include "math/Vector3.hpp"
 

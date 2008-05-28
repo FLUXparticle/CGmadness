@@ -19,7 +19,7 @@
 
 #include "dataSmallAlpha.hpp"
 
-#include "varray.hpp"
+#include "hw/varray.hpp"
 
 float verticesSmallAlpha0[1176 * 3] = {
 	0.769792, 2.531771, 1.000000, 0.979167, 3.043750, 1.000000, 0.769792,

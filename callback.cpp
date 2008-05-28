@@ -19,7 +19,7 @@
 
 #include "callback.hpp"
 
-#include "text.hpp"
+#include "text/text.hpp"
 #include "camera.hpp"
 
 #include "math/vector.hpp"

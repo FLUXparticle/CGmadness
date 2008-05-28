@@ -19,7 +19,7 @@
 
 #include "dataBigAlpha.hpp"
 
-#include "varray.hpp"
+#include "hw/varray.hpp"
 
 float verticesBigAlpha0[792 * 3] = {
 	5.851042, 1.055729, 1.000000, 5.904167, 1.239583, 1.000000, 5.851042,

@@ -23,13 +23,13 @@
 
 #include "utils/Singleton.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 #include "level.hpp"
 
-#include "keyboard.hpp"
-#include "mouse.hpp"
+#include "hw/keyboard.hpp"
+#include "hw/mouse.hpp"
 
-#include "features.hpp"
+#include "hw/features.hpp"
 
 #include "tools.hpp"
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 	startKeyboard();
 	startMouse();
 
-	initMain();
+	Main::init();
 	
 	Singleton<Main> main;
 

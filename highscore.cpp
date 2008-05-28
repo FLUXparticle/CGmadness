@@ -25,8 +25,8 @@
 #include "level.hpp"
 #include "objects.hpp"
 
-#include "keyboard.hpp"
-#include "text.hpp"
+#include "hw/keyboard.hpp"
+#include "text/text.hpp"
 
 #include <GL/gl.h>
 

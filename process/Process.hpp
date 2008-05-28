@@ -22,7 +22,7 @@
 
 #include "math/Vector3.hpp"
 
-#include "mouse.hpp"
+#include "hw/mouse.hpp"
 
 class Process
 {

@@ -24,7 +24,7 @@
 
 #include "highscore.hpp"
 
-#include "Game.hpp"
+#include "process/Game.hpp"
 
 #include "gui/Button.hpp"
 

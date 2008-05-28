@@ -17,51 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Editor_hpp
-#define Editor_hpp
+#include "MainProcess.hpp"
 
-#include "Process.hpp"
+#include "Editor.hpp"
 
-#include "Ball.hpp"
+#include "screen/main/ScreenMain.hpp"
 
-#include "utils/Singleton.hpp"
-#include "utils/SmartPointer.hpp"
+#include "MenuManager.hpp"
 
-class Editor : public Process
+#include "environment/environment.hpp"
+
+MainProcess::MainProcess()
 {
-public:
-  Editor();
-  virtual ~Editor();
+	gMenuManager->pushScreen(gScreenMain);
+}
 
-  void start();
-  void stop();
-  
-  void update(float interval);
-  void draw();
-  
-private:
-	Ball mBall;
-	
-	void enableTestMode();
-	void disableTestMode();
+MainProcess::~MainProcess()
+{
+  // empty
+}
 
-	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
-	SmartPointer<class ScreenWait> gScreenWait;
-	SmartPointer<class ScreenInfo> gScreenInfo;
+void MainProcess::update(float interval)
+{
+	updateEnvironment(interval);
+	gMenuManager->update(interval);
+}
 
-	Singleton<class MenuManager> gMenuManager;
+void MainProcess::draw(void)
+{
+	drawEnvironment(this);
+	gMenuManager->draw();
+}
 
-	void pause();
-	
-	void lightMapsReady();
-	void saveLevel();
-	
-	friend class ScreenEditorMain;
-	
-};
-
-void resumeEditor(void);
-
-void drawEditorField(void);
-
-#endif
+void MainProcess::drawWaterReflection() const
+{
+	Screen* screen = gMenuManager->curScreen(); 
+	screen->drawBackground();
+}

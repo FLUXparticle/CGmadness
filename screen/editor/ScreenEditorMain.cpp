@@ -21,13 +21,13 @@
 
 #include "ScreenEditorHelp.hpp"
 
-#include "Editor.hpp"
+#include "process/Editor.hpp"
 
 #include "utils/Callback.hpp"
 
-#include "main.hpp"
+#include "Main.hpp"
 
-#include "keyboard.hpp"
+#include "hw/keyboard.hpp"
 
 ScreenEditorMain::ScreenEditorMain(Editor* editor) :
 	mParent(editor)
@@ -69,5 +69,5 @@ void ScreenEditorMain::clickButtonHelp()
 void ScreenEditorMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	setMainState(Main::STATE_MAIN);
+	Main::setState(Main::STATE_MAIN);
 }

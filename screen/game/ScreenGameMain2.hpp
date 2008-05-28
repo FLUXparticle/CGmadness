@@ -22,7 +22,7 @@
 
 #include "ScreenGameMain.hpp"
 
-#include "Game.hpp"
+#include "process/Game.hpp"
 
 class ScreenGameMain2 : public ScreenGameMain
 {
