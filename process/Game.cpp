@@ -145,7 +145,7 @@ void lightMapToTexture(unsigned int texID)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
 }
 
-void Game::start()
+void Game::start(Process* previous)
 {
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);

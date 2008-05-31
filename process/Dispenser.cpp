@@ -41,18 +41,11 @@ void Dispenser::update(float interval)
 {
 	if (mNewProcess)
 	{
-		if (mCurProcess)
-		{
-			mCurProcess->stop();
-		}
-
+		mCurProcess->stop();
+		mNewProcess->start(mCurProcess);
+		
 		mCurProcess = mNewProcess;
 		mNewProcess = NULL;
-
-		if (mCurProcess)
-		{
-			mCurProcess->start();
-		}
 	}
 	
 	mCurProcess->update(interval);

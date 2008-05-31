@@ -30,7 +30,7 @@ public:
   Process();
   virtual ~Process();
   
-  virtual void start();
+  virtual void start(Process* previous);
   virtual void stop();
   
   virtual void suspend();

@@ -82,7 +82,7 @@ void Editor::pause()
 	gIsEditorRunning = false;
 }
 
-void Editor::start()
+void Editor::start(Process* previous)
 {
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)

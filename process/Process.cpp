@@ -31,7 +31,7 @@ Process::~Process()
   // empty
 }
 
-void Process::start()
+void Process::start(Process* previous)
 {
   // empty
 }

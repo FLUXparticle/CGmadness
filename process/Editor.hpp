@@ -33,7 +33,7 @@ public:
   Editor();
   virtual ~Editor();
 
-  void start();
+  void start(Process* previous);
   void stop();
   
   void update(float interval);

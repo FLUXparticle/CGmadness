@@ -35,7 +35,7 @@ public:
   Game();
   virtual ~Game();
 
-  void start();
+  void start(Process* previous);
   void stop();
   
   void update(float interval);
