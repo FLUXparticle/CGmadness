@@ -26,7 +26,7 @@
 #include "hw/keyboard.hpp"
 
 ScreenGameMain1::ScreenGameMain1(Game* parent) :
-	mParent(parent)
+	ScreenGameMain(parent)
 {
 	bStart = Button(6.0f, CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
 	mItems.push_back(&bStart);
@@ -39,7 +39,6 @@ ScreenGameMain1::~ScreenGameMain1()
 
 void ScreenGameMain1::clickButtonStart()
 {
-	Main::popScreenStatic();
-	mParent->resumeGame();
+	Main::popState();
 }
 

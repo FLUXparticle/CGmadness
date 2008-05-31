@@ -39,7 +39,7 @@ RaceTheClock::RaceTheClock()
 
 RaceTheClock::~RaceTheClock()
 {
-  // empty
+	// empty
 }
 
 void RaceTheClock::resetGame()
@@ -51,9 +51,9 @@ void RaceTheClock::resetGame()
 void RaceTheClock::update(float interval)
 {
 	bool wasInPieces = sgoBall.isInPieces();
-	
+
 	Game::update(interval);
-	
+
 	if (gIsGameRunning)
 	{
 		if (!sgoBall.isInPieces())
@@ -62,7 +62,7 @@ void RaceTheClock::update(float interval)
 			{
 				resetGameTime();
 			}
-			
+
 			gGameTime += interval;
 		}
 
@@ -84,7 +84,7 @@ void RaceTheClock::drawHUD(float widthWindow, float heightWindow)
 	float height;
 
 	sprintf(strTime, "%d:%02d.%01d", tenthSecond / 600, tenthSecond / 10 % 60,
-					tenthSecond % 10);
+			tenthSecond % 10);
 
 	width = widthStrokeText(strTime) * scale;
 	height = scale;
@@ -92,13 +92,13 @@ void RaceTheClock::drawHUD(float widthWindow, float heightWindow)
 	glColor3f(1.0f, 1.0f, 0.0f);
 
 	glPushMatrix();
+	{
+		glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height),
+				0.0f);
+		glScalef(scale, scale, scale);
 
-	glTranslatef((widthWindow - widthDefault) / 2.0f, (heightWindow - height),
-							 0.0f);
-	glScalef(scale, scale, scale);
-
-	drawStrokeThickText(strTime);
-
+		drawStrokeThickText(strTime);
+	}
 	glPopMatrix();
 }
 
@@ -138,6 +138,5 @@ void RaceTheClock::stopWatch()
 void RaceTheClock::finishedGame()
 {
 	stopWatch();
-	pauseGame();
 	Main::pushState(gScreenEnd);
 }

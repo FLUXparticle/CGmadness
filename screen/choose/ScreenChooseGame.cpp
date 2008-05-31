@@ -42,6 +42,6 @@ ScreenChooseGame::~ScreenChooseGame()
 
 void ScreenChooseGame::clickButtonChooseGame()
 {
-	Main::setState(mGame);
+	Main::setState(mGame, true);
 }
 

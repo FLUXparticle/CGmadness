@@ -49,15 +49,12 @@ ScreenGameEnd::~ScreenGameEnd()
 void ScreenGameEnd::clickButtonAgain()
 {
 	hsHighScore.acceptHighScoreName();
-	Main::popScreenStatic();
+	Main::popState();
 	mParent->resetGame();
 }
 
 void ScreenGameEnd::clickButtonQuit2()
 {
 	hsHighScore.acceptHighScoreName();
-	Main::popScreenStatic();
-	
-	Singleton<MainProcess> main;
-	Main::setState(main);
+	mParent->leaveGame();
 }

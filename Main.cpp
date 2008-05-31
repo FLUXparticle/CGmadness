@@ -52,6 +52,11 @@ Main::~Main()
   // empty
 }
 
+void Main::setFirstProcess(Process* first)
+{
+	changeProcess(first, FLUSH);
+}
+
 void Main::setState(Process* process, bool flush)
 {
 	Singleton<Main> gDispenser;

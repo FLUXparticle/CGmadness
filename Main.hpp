@@ -37,6 +37,8 @@ public:
   Main();
   virtual ~Main();
 
+  void setFirstProcess(Process* first);
+  
 };
 
 #endif

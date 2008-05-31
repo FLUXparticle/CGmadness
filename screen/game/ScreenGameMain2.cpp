@@ -26,7 +26,7 @@
 #include "hw/keyboard.hpp"
 
 ScreenGameMain2::ScreenGameMain2(Game* parent) :
-	mParent(parent)
+	ScreenGameMain(parent)
 {
 	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
 	mItems.push_back(&bResume);
@@ -39,6 +39,5 @@ ScreenGameMain2::~ScreenGameMain2()
 
 void ScreenGameMain2::clickButtonResume()
 {
-	Main::popScreenStatic();
-	mParent->resumeGame();
+	Main::popState();
 }

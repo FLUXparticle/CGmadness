@@ -37,13 +37,16 @@ public:
   void start(Process* previous);
   void stop();
   
+  void suspend();
+  void resume();
+  
   void update(float interval);
 
   void preDisplay();
   void draw() const;
 
-  void resumeGame();
   virtual void resetGame();
+  void leaveGame();
 
 	void drawWaterReflection() const;
 	void drawBallReflection() const;
@@ -53,12 +56,12 @@ protected:
   
 protected:
 	bool gIsGameRunning;
+	
+	Process* mPrevious;
 
 	SmartPointer<class ScreenGameMain1> gScreenMain1;
 	SmartPointer<class ScreenGameMain2> gScreenMain2;
 
-  void pauseGame();
-  
 };
 
 #endif

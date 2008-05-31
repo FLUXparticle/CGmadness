@@ -55,7 +55,8 @@ static void drawMenuBall()
 	PlayersBall::sgoBall.drawMenuBall();
 }
 
-ScreenGameMain::ScreenGameMain()
+ScreenGameMain::ScreenGameMain(Game* parent) :
+	mParent(parent)
 {
 	int maxLayout = PlayersBall::sgoBall.cntLayouts() - 1;
 	
@@ -96,8 +97,5 @@ void ScreenGameMain::clickButtonHelp()
 
 void ScreenGameMain::clickButtonQuit()
 {
-	Main::popScreenStatic();
-	
-	Singleton<MainProcess> main;
-	Main::setState(main);
+	mParent->leaveGame();
 }

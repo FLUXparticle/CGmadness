@@ -43,8 +43,8 @@ PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
 {
-  gScreenMain1 = new ScreenGameMain1(this);
-  gScreenMain2 = new ScreenGameMain2(this);
+	gScreenMain1 = new ScreenGameMain1(this);
+	gScreenMain2 = new ScreenGameMain2(this);
 }
 
 Game::~Game()
@@ -52,13 +52,13 @@ Game::~Game()
   // empty
 }
 
-void Game::pauseGame()
+void Game::suspend()
 {
 	disableBallCamera();
 	gIsGameRunning = false;
 }
 
-void Game::resumeGame()
+void Game::resume()
 {
 	enableBallCamera();
 	gIsGameRunning = true;
@@ -71,7 +71,6 @@ void Game::update(float interval)
 	{
 		if (wasKeyPressed(KEY_ESC))
 		{
-			pauseGame();
 			Main::pushState(gScreenMain2);
 		}
 
@@ -88,16 +87,12 @@ void Game::update(float interval)
 
 		if (wasFunctionPressed(5))
 		{
-			pauseGame();
+			suspend();
 			toggleMouseControl();
-			resumeGame();
+			resume();
 		}
 
 		updateBall(sgoBall, interval);
-	}
-	else
-	{
-		// TODO empty
 	}
 
 	updateGameField(sgoBall);
@@ -123,14 +118,9 @@ void Game::drawBallReflection() const
 void Game::draw() const
 {
 	drawEnvironment(this);
-
+	
 	drawGameField(false);
 	sgoBall.drawGameBall();
-
-	if (!gIsGameRunning)
-	{
-		// TODO empty
-	}
 }
 
 void lightMapToTexture(unsigned int texID)
@@ -147,6 +137,8 @@ void lightMapToTexture(unsigned int texID)
 
 void Game::start(Process* previous)
 {
+	mPrevious = previous;
+	
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
@@ -157,7 +149,7 @@ void Game::start(Process* previous)
 	resetGame();
 }
 
-void Game::stop(void)
+void Game::stop()
 {
 	glDeleteTextures(1, &sgLevel.lightMap);
 
@@ -171,6 +163,10 @@ void Game::resetGame()
 
 	updateGameField(sgoBall);
 
-	pauseGame();
 	Main::pushState(gScreenMain1);
+}
+
+void Game::leaveGame()
+{
+	Main::setState(mPrevious, true);
 }

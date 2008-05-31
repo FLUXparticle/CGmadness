@@ -27,40 +27,48 @@
 class Dispenser : public Process
 {
 public:
-  Dispenser();
-  virtual ~Dispenser();
+	Dispenser();
+	virtual ~Dispenser();
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
-  
-  void update(float interval);
+	void event(const Vector3& position, const Vector3& direction, MouseEvent event);
 
-  void preDisplay();
-  void draw() const;
-  void drawHUD(float width, float height);
-  
+	void update(float interval);
+
+	void preDisplay();
+	void draw() const;
+	void drawHUD(float width, float height);
+
 protected:
-	void setProcess(Process* process, bool flush);
-	void pushProcess(Process* process);
-	void popProcess();
-	void popScreen();
-
-private:
-	typedef enum {
+	typedef enum
+	{
 		NONE,
 		PUSH,
 		POP,
 		SET,
 		FLUSH
 	} StackAction;
-	
-	bool mIsUpdating;
-	
-	std::list<Process*> mProcessStack;
-	Process* mNewProcess;
-	StackAction mAction;
+
+	void setProcess(Process* process, bool flush);
+	void pushProcess(Process* process);
+	void popProcess();
+	void popScreen();
 	
 	void changeProcess(Process* process, StackAction action);
-	
+
+private:
+	struct Task
+	{
+		Task(Process* process, StackAction action);
+
+		Process* process;
+		StackAction action;
+	};
+
+	std::list<Process*> mProcessStack;
+	std::list<Task> mTasks;
+
+	void enqueueTask(Process* process, StackAction action);
+
 };
 
 #endif
