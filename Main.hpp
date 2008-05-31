@@ -30,6 +30,7 @@ public:
   static void init();
   
   static void setState(Process* process);
+  static void pushState(Process* process);
   
 public:
   Main();

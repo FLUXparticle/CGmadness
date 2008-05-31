@@ -22,6 +22,8 @@
 
 #include "Process.hpp"
 
+#include <stack>
+
 class Dispenser : public Process
 {
 public:
@@ -36,11 +38,13 @@ public:
   
 protected:
 	void setProcess(Process* process);
+	void pushProcess(Process* process);
 
 private:
-	Process* mCurProcess;
+	std::stack<Process*> mProcessStack;
 	Process* mNewProcess;
-
+	bool mPush;
+	
 };
 
 #endif

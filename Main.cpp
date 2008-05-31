@@ -63,3 +63,10 @@ void Main::setState(Process* process)
 	
 	gDispenser->setProcess(process);
 }
+
+void Main::pushState(Process* process)
+{
+	Singleton<Main> gDispenser;
+	
+	gDispenser->pushProcess(process);
+}

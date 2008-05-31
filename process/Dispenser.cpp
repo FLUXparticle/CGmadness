@@ -26,54 +26,70 @@
 #include <stdlib.h>
 
 Dispenser::Dispenser() :
-	mCurProcess(NULL),
 	mNewProcess(NULL)
 {
-  // empty
+	// empty
 }
 
 Dispenser::~Dispenser()
 {
-  // empty
+	// empty
 }
 
 void Dispenser::update(float interval)
 {
 	if (mNewProcess)
 	{
-		mCurProcess->stop();
-		mNewProcess->start(mCurProcess);
+		Process* previous = mProcessStack.top();
 		
-		mCurProcess = mNewProcess;
+		if (mPush)
+		{
+			previous->suspend();
+		}
+		else
+		{
+			mProcessStack.pop();
+			previous->stop();
+		}
+
+		mNewProcess->start(previous);
+		mProcessStack.push(mNewProcess);
 		mNewProcess = NULL;
 	}
-	
-	mCurProcess->update(interval);
+
+	mProcessStack.top()->update(interval);
 }
 
 void Dispenser::preDisplay()
 {
-	mCurProcess->preDisplay();
+	mProcessStack.top()->preDisplay();
 }
 
 void Dispenser::draw() const
 {
-	mCurProcess->draw();
+	mProcessStack.top()->draw();
 }
 
 void Dispenser::drawHUD(float width, float height)
 {
-	mCurProcess->drawHUD(width, height);
+	mProcessStack.top()->drawHUD(width, height);
 }
 
 void Dispenser::setProcess(Process* process)
 {
-	if (mCurProcess)
+	if (mProcessStack.empty())
 	{
-		mNewProcess = process;
+		mProcessStack.push(process);
 	}
 	else
 	{
-		mCurProcess = process;
+		mNewProcess = process;
+		mPush = false;
 	}
+}
+
+void Dispenser::pushProcess(Process* process)
+{
+	mNewProcess = process;
+	mPush = true;
 }
