@@ -38,7 +38,7 @@ public:
 
   virtual void show();
   
-  void event(float x, float y, MouseEvent event);
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   void update(float interval);
   virtual void customUpdate(float interval);
   
@@ -49,6 +49,11 @@ protected:
 	Singleton<MenuManager> gMenuManager;
 	
 	std::list<MenuItem*> mItems;
+
+private:
+	static unsigned int gTexLogo;
+	
+	static void drawLogo();
 	
 };
 

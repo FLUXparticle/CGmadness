@@ -33,6 +33,9 @@ public:
   virtual void start();
   virtual void stop();
   
+  virtual void suspend();
+  virtual void resume();
+  
   virtual void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   virtual void update(float interval) = 0;
   

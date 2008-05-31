@@ -35,24 +35,14 @@ public:
   void pushScreen(Screen* screen);
   void popScreen();
   
-  Screen* curScreen() const;
-
   void update(float interval);
   void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   
   void draw() const;
   
 private:
-	unsigned int gTexLogo;
-	
 	std::stack<Screen*> mScreenStack;
 
-	void drawLogo() const;
 };
-
-inline Screen* MenuManager::curScreen() const
-{
-	return mScreenStack.top();
-}
 
 #endif

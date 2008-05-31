@@ -51,6 +51,5 @@ void MainProcess::draw() const
 
 void MainProcess::drawWaterReflection() const
 {
-	Screen* screen = gMenuManager->curScreen(); 
-	screen->drawBackground();
+	// TODO drawWaterReflection
 }
