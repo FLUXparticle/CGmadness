@@ -581,7 +581,7 @@ void drawEditorField(void)
 #endif
 }
 
-void Editor::draw()
+void Editor::draw() const
 {
 	drawEditorField();
 

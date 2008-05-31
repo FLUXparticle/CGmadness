@@ -37,7 +37,7 @@ public:
   virtual void update(float interval) = 0;
   
   virtual void preDisplay();
-  virtual void draw() = 0;
+  virtual void draw() const = 0;
   virtual void drawHUD(float width, float height);
 
 private:

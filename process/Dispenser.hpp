@@ -33,7 +33,7 @@ public:
   void update(float interval);
 
   void preDisplay();
-  void draw();
+  void draw() const;
   void drawHUD(float width, float height);
 
 private:

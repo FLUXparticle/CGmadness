@@ -120,7 +120,7 @@ void Game::drawBallReflection() const
 	drawGameField(true);
 }
 
-void Game::draw()
+void Game::draw() const
 {
 	drawEnvironment(this);
 

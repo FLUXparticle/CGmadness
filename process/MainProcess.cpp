@@ -43,7 +43,7 @@ void MainProcess::update(float interval)
 	gMenuManager->update(interval);
 }
 
-void MainProcess::draw(void)
+void MainProcess::draw() const
 {
 	drawEnvironment(this);
 	gMenuManager->draw();

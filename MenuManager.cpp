@@ -77,7 +77,7 @@ void MenuManager::event(const Vector3& position, const Vector3& direction, Mouse
 	}
 }
 
-void MenuManager::drawLogo()
+void MenuManager::drawLogo() const
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexLogo);
@@ -99,7 +99,7 @@ void MenuManager::drawLogo()
 	glDisable(GL_TEXTURE_2D);
 }
 
-void MenuManager::draw()
+void MenuManager::draw() const
 {
 	mScreenStack.top()->drawBackground();
 	

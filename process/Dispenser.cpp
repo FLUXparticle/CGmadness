@@ -46,7 +46,7 @@ void Dispenser::preDisplay()
 	mCurProcess->preDisplay();
 }
 
-void Dispenser::draw()
+void Dispenser::draw() const
 {
 	mCurProcess->draw();
 }

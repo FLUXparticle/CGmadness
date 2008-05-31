@@ -37,7 +37,7 @@ public:
   void stop();
   
   void update(float interval);
-  void draw();
+  void draw() const;
   
 private:
 	Ball mBall;

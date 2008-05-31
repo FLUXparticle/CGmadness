@@ -33,7 +33,7 @@ public:
   virtual ~MainProcess();
 
   void update(float interval);
-  void draw(void);
+  void draw() const;
 
 	void drawWaterReflection() const;
 	

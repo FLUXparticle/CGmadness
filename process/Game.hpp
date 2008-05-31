@@ -41,7 +41,7 @@ public:
   void update(float interval);
 
   void preDisplay();
-  void draw();
+  void draw() const;
 
   void resumeGame();
   virtual void resetGame();
