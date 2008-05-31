@@ -44,6 +44,8 @@ private:
 	void clickButtonCGMEditor();
 	void clickButtonQuit();
 
+	void clickButtonChooseEditor();
+
 };
 
 #endif

@@ -37,6 +37,8 @@ private:
 
 	HighScore hsHighScore;
 
+	void clickButtonChooseGame();
+
 };
 
 #endif

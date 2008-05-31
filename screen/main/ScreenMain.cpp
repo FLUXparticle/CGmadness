@@ -29,14 +29,9 @@
 #include "hw/keyboard.hpp"
 #include "Main.hpp"
 
-static void clickButtonChooseEditor()
-{
-	Main::setState(STATE_EDITOR);
-}
-
 ScreenMain::ScreenMain()
 {
-	gScreenChooseInfo = new ScreenChooseInfo(clickButtonChooseEditor);
+	gScreenChooseInfo = new ScreenChooseInfo(CALLBACK(ScreenMain, clickButtonChooseEditor));
 
 	bCGMadness = Button(6.0f, CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
 	mItems.push_back(&bCGMadness);
@@ -66,4 +61,9 @@ void ScreenMain::clickButtonCGMEditor()
 void ScreenMain::clickButtonQuit()
 {
 	exit(0);
+}
+
+void ScreenMain::clickButtonChooseEditor()
+{
+	Main::setState(STATE_EDITOR);
 }

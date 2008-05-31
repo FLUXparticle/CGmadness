@@ -21,16 +21,13 @@
 
 #include "Main.hpp"
 
-#include "hw/keyboard.hpp"
+#include "utils/Callback.hpp"
 
-static void clickButtonChooseGame()
-{
-	Main::setState(STATE_GAME);
-}
+#include "hw/keyboard.hpp"
 
 ScreenChooseGame::ScreenChooseGame()
 {
-	bChooseGame = Button(2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
+	bChooseGame = Button(2.0f, CALLBACK(ScreenChooseGame, clickButtonChooseGame), "choose", KEY_ENTER);
 	mItems.push_back(&bChooseGame);
 	
 	hsHighScore = HighScore(3.0f);
@@ -40,5 +37,10 @@ ScreenChooseGame::ScreenChooseGame()
 ScreenChooseGame::~ScreenChooseGame()
 {
   // empty
+}
+
+void ScreenChooseGame::clickButtonChooseGame()
+{
+	Main::setState(STATE_GAME);
 }
 

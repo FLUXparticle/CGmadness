@@ -29,7 +29,6 @@ class Caller
 public:
   Caller();
   Caller(Functor* f);
-  Caller(void (*f) ());
   
   virtual ~Caller();
 
