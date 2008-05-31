@@ -19,6 +19,8 @@
 
 #include "ScreenGameEnd.hpp"
 
+#include "process/MainProcess.hpp"
+
 #include "MenuManager.hpp"
 
 #include "utils/Callback.hpp"
@@ -55,5 +57,7 @@ void ScreenGameEnd::clickButtonQuit2()
 {
 	hsHighScore.acceptHighScoreName();
 	gMenuManager->popScreen();
-	Main::setState(STATE_MAIN);
+	
+	Singleton<MainProcess> main;
+	Main::setState(main);
 }

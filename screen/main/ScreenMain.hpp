@@ -40,6 +40,8 @@ private:
 	Singleton<class ScreenChooseGame> gScreenChooseGame;
 	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
 
+	Singleton<class Editor> mEditor;
+	
 	void clickButtonCGMadness();
 	void clickButtonCGMEditor();
 	void clickButtonQuit();

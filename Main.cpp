@@ -59,20 +59,9 @@ void Main::event(const Vector3& position, const Vector3& direction, MouseEvent e
 	gMenuManager->event(position, direction, event);
 }
 
-void Main::setState(MainState newState)
+void Main::setState(Process* process)
 {
 	Singleton<Main> gDispenser;
 	
-	switch (newState)
-	{
-	case STATE_MAIN:
-		gDispenser->setProcess(gDispenser->gMainProcess);
-		break;
-	case STATE_GAME:
-		gDispenser->setProcess(gDispenser->gGameProcess);
-		break;
-	case STATE_EDITOR:
-		gDispenser->setProcess(gDispenser->gEditorProcess);
-		break;
-	}
+	gDispenser->setProcess(process);
 }

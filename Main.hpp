@@ -24,19 +24,12 @@
 
 #include "utils/Singleton.hpp"
 
-typedef enum
-{
-	STATE_MAIN,
-	STATE_GAME,
-	STATE_EDITOR
-} MainState;
-
 class Main : public Dispenser
 {
 public:
   static void init();
   
-  static void setState(MainState newState);
+  static void setState(Process* process);
   
 public:
   Main();
@@ -46,10 +39,6 @@ public:
   
 private:
 	Singleton<class MenuManager> gMenuManager;
-
-	Singleton<class MainProcess> gMainProcess;
-	Singleton<class RaceTheClock> gGameProcess;
-	Singleton<class Editor> gEditorProcess;
 
 };
 

@@ -19,6 +19,7 @@
 
 #include "ScreenEditorMain.hpp"
 
+#include "process/MainProcess.hpp"
 #include "ScreenEditorHelp.hpp"
 
 #include "process/Editor.hpp"
@@ -69,5 +70,7 @@ void ScreenEditorMain::clickButtonHelp()
 void ScreenEditorMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	Main::setState(STATE_MAIN);
+	
+	Singleton<MainProcess> main;
+	Main::setState(main);
 }

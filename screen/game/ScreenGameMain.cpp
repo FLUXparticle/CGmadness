@@ -19,6 +19,7 @@
 
 #include "ScreenGameMain.hpp"
 
+#include "process/MainProcess.hpp"
 #include "ScreenGameHelp.hpp"
 
 #include "ball/PlayersBall.hpp"
@@ -96,5 +97,7 @@ void ScreenGameMain::clickButtonHelp()
 void ScreenGameMain::clickButtonQuit()
 {
 	gMenuManager->popScreen();
-	Main::setState(STATE_MAIN);
+	
+	Singleton<MainProcess> main;
+	Main::setState(main);
 }

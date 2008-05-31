@@ -21,6 +21,7 @@
 
 #include "screen/choose/ScreenChooseGame.hpp"
 #include "screen/choose/ScreenChooseInfo.hpp"
+#include "process/Editor.hpp"
 
 #include "MenuManager.hpp"
 
@@ -65,5 +66,5 @@ void ScreenMain::clickButtonQuit()
 
 void ScreenMain::clickButtonChooseEditor()
 {
-	Main::setState(STATE_EDITOR);
+	Main::setState(mEditor);
 }

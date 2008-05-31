@@ -20,6 +20,7 @@
 #include "ScreenChooseGame.hpp"
 
 #include "Main.hpp"
+#include "process/RaceTheClock.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -41,6 +42,6 @@ ScreenChooseGame::~ScreenChooseGame()
 
 void ScreenChooseGame::clickButtonChooseGame()
 {
-	Main::setState(STATE_GAME);
+	Main::setState(mGame);
 }
 

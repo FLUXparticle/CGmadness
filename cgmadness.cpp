@@ -20,16 +20,16 @@
 #include "callback.hpp"
 
 #include "Main.hpp"
+#include "process/MainProcess.hpp"
 
-#include "utils/Singleton.hpp"
-
-#include "Main.hpp"
 #include "level.hpp"
 
 #include "hw/keyboard.hpp"
 #include "hw/mouse.hpp"
 
 #include "hw/features.hpp"
+
+#include "utils/Singleton.hpp"
 
 #include "tools.hpp"
 
@@ -101,7 +101,8 @@ int main(int argc, char *argv[])
 	
 	Singleton<Main> main;
 
-	main->setState(STATE_MAIN);
+	Singleton<MainProcess> process;
+	main->setState(process);
 	
 	startCallback(main);
 	
