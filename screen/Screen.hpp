@@ -49,7 +49,6 @@ public:
 protected:
 	std::list<MenuItem*> mItems;
 
-private:
 	Process* mPrevious;
 	
 private:

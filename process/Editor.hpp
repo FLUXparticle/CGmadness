@@ -35,6 +35,9 @@ public:
   void start(Process* previous);
   void stop();
   
+	void suspend();
+	void resume();
+	
   void update(float interval);
   void draw() const;
   
@@ -47,17 +50,15 @@ private:
 	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
 	SmartPointer<class ScreenWait> gScreenWait;
 	SmartPointer<class ScreenInfo> gScreenInfo;
-
-	void pause();
 	
+	Process* mPrevious;
+
 	void lightMapsReady();
 	void saveLevel();
 	
 	friend class ScreenEditorMain;
 	
 };
-
-void resumeEditor(void);
 
 void drawEditorField(void);
 

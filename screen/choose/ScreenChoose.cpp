@@ -22,7 +22,9 @@
 #include "utils/Callback.hpp"
 #include "utils/Singleton.hpp"
 
+#include "process/MainProcess.hpp"
 #include "Main.hpp"
+
 #include "level.hpp"
 
 #include "hw/keyboard.hpp"
@@ -66,5 +68,7 @@ void ScreenChoose::show()
 void ScreenChoose::clickButtonBack()
 {
 	mLevelLoader->loadLevelByID(-1);
-	Main::popScreenStatic();
+	
+	Singleton<MainProcess> main;
+	Main::setState(main, true);
 }

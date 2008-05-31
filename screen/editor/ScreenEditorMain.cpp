@@ -22,8 +22,6 @@
 #include "process/MainProcess.hpp"
 #include "ScreenEditorHelp.hpp"
 
-#include "process/Editor.hpp"
-
 #include "utils/Callback.hpp"
 
 #include "Main.hpp"
@@ -53,8 +51,7 @@ ScreenEditorMain::~ScreenEditorMain()
 
 void ScreenEditorMain::clickButtonEdit()
 {
-	Main::popScreenStatic();
-	resumeEditor();
+	Main::popState();
 }
 
 void ScreenEditorMain::clickButtonSave()
@@ -69,8 +66,5 @@ void ScreenEditorMain::clickButtonHelp()
 
 void ScreenEditorMain::clickButtonQuit()
 {
-	Main::popScreenStatic();
-	
-	Singleton<MainProcess> main;
-	Main::setState(main);
+	Main::setState(mParent->mPrevious, true);
 }

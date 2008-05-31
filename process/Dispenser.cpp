@@ -154,9 +154,9 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 		{
 			while (!mProcessStack.empty())
 			{
+				previous = mProcessStack.back();
 				mProcessStack.pop_back();
 				previous->stop();
-				previous = mProcessStack.back();
 			}
 
 			Process* next = process;

@@ -28,16 +28,16 @@
 class Choose : public Process, public WaterReflection
 {
 public:
-  Choose(ScreenChoose* screenChoose);
-  virtual ~Choose();
+	Choose(ScreenChoose* screenChoose);
+	virtual ~Choose();
 
-  void start(Process* previous);
-  
-  void update(float interval);
-  
-  void draw() const;
+	void start(Process* previous);
+
+	void update(float interval);
+
+	void draw() const;
 	void drawWaterReflection() const;
-	
+
 private:
 	ScreenChoose* mScreenChoose;
 

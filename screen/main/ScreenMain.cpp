@@ -59,7 +59,8 @@ void ScreenMain::clickButtonCGMadness()
 
 void ScreenMain::clickButtonCGMEditor()
 {
-	Main::setState(gScreenChooseInfo);
+	mChoose = new Choose(gScreenChooseInfo);
+	Main::setState(mChoose, true);
 }
 
 void ScreenMain::clickButtonQuit()
@@ -69,5 +70,5 @@ void ScreenMain::clickButtonQuit()
 
 void ScreenMain::clickButtonChooseEditor()
 {
-	Main::setState(mEditor);
+	Main::setState(mEditor, true);
 }

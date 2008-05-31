@@ -32,18 +32,18 @@
 class ScreenChoose : public Screen
 {
 public:
-  ScreenChoose();
-  virtual ~ScreenChoose();
+	ScreenChoose();
+	virtual ~ScreenChoose();
 
-  void show();
-  
+	void show();
+
 private:
 	SpinEdit gseLevel;
 
 	Button bBack;
-	
+
 	Singleton<LevelLoader> mLevelLoader;
-	
+
 	void clickButtonBack();
 
 };

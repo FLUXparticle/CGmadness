@@ -76,14 +76,10 @@ Editor::~Editor()
   // empty
 }
 
-void Editor::pause()
-{
-	Main::pushState(gScreenEditorMain);
-	gIsEditorRunning = false;
-}
-
 void Editor::start(Process* previous)
 {
+	mPrevious = previous;
+	
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)
 	{
@@ -101,7 +97,7 @@ void Editor::start(Process* previous)
 	gIsTestMode = 0;
 	gShowCursor = 1;
 
-	pause();
+	Main::pushState(gScreenEditorMain);
 }
 
 void Editor::stop()
@@ -109,7 +105,12 @@ void Editor::stop()
 	gShowCursor = 0;
 }
 
-void resumeEditor(void)
+void Editor::suspend()
+{
+	gIsEditorRunning = false;
+}
+
+void Editor::resume()
 {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	gIsEditorRunning = true;
@@ -465,7 +466,7 @@ void Editor::update(float interval)
 
 		if (wasKeyPressed(KEY_ESC))
 		{
-			pause();
+			Main::pushState(gScreenEditorMain);
 		}
 
 		if (wasKeyPressed(KEY_ENTER))
