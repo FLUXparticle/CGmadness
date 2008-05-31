@@ -35,17 +35,12 @@ Screen::~Screen()
   // empty
 }
 
-void Screen::prepare()
+void Screen::show()
 {
   FOREACH(std::list<MenuItem*>, mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
 	}
-}
-
-void Screen::show()
-{
-	prepare();
 
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }

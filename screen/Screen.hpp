@@ -20,6 +20,8 @@
 #ifndef Screen_hpp
 #define Screen_hpp
 
+#include "process/Process.hpp"
+
 #include "gui/MenuItem.hpp"
 
 #include "MenuManager.hpp"
@@ -28,14 +30,12 @@
 
 #include <list>
 
-class Screen
+class Screen : public Process
 {
 public:
   Screen();
   virtual ~Screen();
 
-  void prepare();
-  
   virtual void show();
   
   void event(float x, float y, MouseEvent event);
