@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	
 	Singleton<Main> main;
 	Singleton<MainProcess> process;
-	Main::setState(process);
+	Main::setState(process, true);
 
 	startCallback(main);
 	

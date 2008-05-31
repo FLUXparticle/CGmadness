@@ -45,10 +45,21 @@ protected:
 	void popScreen();
 
 private:
+	typedef enum {
+		NONE,
+		PUSH,
+		POP,
+		SET,
+		FLUSH
+	} StackAction;
+	
+	bool mIsUpdating;
+	
 	std::list<Process*> mProcessStack;
 	Process* mNewProcess;
-	bool mPush;
-	bool mFlush;
+	StackAction mAction;
+	
+	void changeProcess(Process* process, StackAction action);
 	
 };
 
