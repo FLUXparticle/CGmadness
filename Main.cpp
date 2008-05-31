@@ -52,11 +52,11 @@ Main::~Main()
   // empty
 }
 
-void Main::setState(Process* process)
+void Main::setState(Process* process, bool flush)
 {
 	Singleton<Main> gDispenser;
 	
-	gDispenser->setProcess(process);
+	gDispenser->setProcess(process, flush);
 }
 
 void Main::pushState(Process* process)

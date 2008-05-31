@@ -27,7 +27,7 @@ class Main : public Dispenser
 public:
   static void init();
   
-  static void setState(Process* process);
+  static void setState(Process* process, bool flush = false);
   static void pushState(Process* process);
   static void popState();
   

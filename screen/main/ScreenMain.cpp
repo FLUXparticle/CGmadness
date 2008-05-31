@@ -21,6 +21,8 @@
 
 #include "screen/choose/ScreenChooseGame.hpp"
 #include "screen/choose/ScreenChooseInfo.hpp"
+
+#include "process/Choose.hpp"
 #include "process/Editor.hpp"
 
 #include "Main.hpp"
@@ -51,7 +53,8 @@ ScreenMain::~ScreenMain()
 
 void ScreenMain::clickButtonCGMadness()
 {
-	Main::setState(gScreenChooseGame);
+	mChoose = new Choose(gScreenChooseGame);
+	Main::setState(mChoose, true);
 }
 
 void ScreenMain::clickButtonCGMEditor()

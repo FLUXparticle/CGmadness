@@ -24,7 +24,6 @@
 
 #include "Main.hpp"
 #include "level.hpp"
-#include "process/Editor.hpp"
 
 #include "hw/keyboard.hpp"
 
@@ -62,16 +61,6 @@ void ScreenChoose::show()
 {
 	Screen::show();
 	changeLevelChooser(&gseLevel);
-}
-
-void ScreenChoose::drawBackground() const
-{
-	drawEditorField();
-}
-
-void ScreenChoose::drawWaterReflection() const
-{
-	drawEditorField();
 }
 
 void ScreenChoose::clickButtonBack()

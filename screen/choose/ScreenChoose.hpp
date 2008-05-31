@@ -37,10 +37,6 @@ public:
 
   void show();
   
-  void drawBackground() const;
-  
-	void drawWaterReflection() const;
-	
 private:
 	SpinEdit gseLevel;
 

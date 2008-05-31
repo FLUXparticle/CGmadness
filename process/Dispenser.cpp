@@ -40,7 +40,8 @@ Dispenser::~Dispenser()
 	// empty
 }
 
-void Dispenser::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+void Dispenser::event(const Vector3& position, const Vector3& direction,
+		MouseEvent event)
 {
 	mProcessStack.back()->event(position, direction, event);
 }
@@ -60,7 +61,11 @@ void Dispenser::update(float interval)
 			}
 			else
 			{
-				mProcessStack.pop_back();
+				do
+				{
+					mProcessStack.pop_back();
+				} while (mFlush && !mProcessStack.empty());
+
 				previous->stop();
 			}
 
@@ -107,7 +112,7 @@ void Dispenser::drawHUD(float width, float height)
 	mProcessStack.back()->drawHUD(width, height);
 }
 
-void Dispenser::setProcess(Process* process)
+void Dispenser::setProcess(Process* process, bool flush)
 {
 	if (mProcessStack.empty())
 	{
@@ -119,6 +124,7 @@ void Dispenser::setProcess(Process* process)
 	{
 		mNewProcess = process;
 		mPush = false;
+		mFlush = flush;
 	}
 }
 
@@ -136,6 +142,6 @@ void Dispenser::popProcess()
 void Dispenser::popScreen()
 {
 	Process* process = mProcessStack.back();
-	Screen* screen = dynamic_cast<Screen*>(process); 
+	Screen* screen = dynamic_cast<Screen*>(process);
 	screen->popScreen();
 }

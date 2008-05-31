@@ -17,39 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Dispenser_hpp
-#define Dispenser_hpp
+#include "Choose.hpp"
 
-#include "Process.hpp"
-
-#include <list>
-
-class Dispenser : public Process
+Choose::Choose(ScreenChoose* screenChoose) :
+	mScreenChoose(screenChoose)
 {
-public:
-  Dispenser();
-  virtual ~Dispenser();
+  // empty
+}
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
-  
-  void update(float interval);
+Choose::~Choose()
+{
+  // empty
+}
 
-  void preDisplay();
-  void draw() const;
-  void drawHUD(float width, float height);
-  
-protected:
-	void setProcess(Process* process, bool flush);
-	void pushProcess(Process* process);
-	void popProcess();
-	void popScreen();
+void Choose::start(Process* previous)
+{
+	Main::pushState(mScreenChoose);
+}
 
-private:
-	std::list<Process*> mProcessStack;
-	Process* mNewProcess;
-	bool mPush;
-	bool mFlush;
-	
-};
+void Choose::update(float interval)
+{
+	// TODO empty
+}
 
-#endif
+void Choose::draw() const
+{
+	// TODO empty
+}

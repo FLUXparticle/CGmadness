@@ -40,6 +40,7 @@ private:
 	
 	Singleton<class ScreenChooseGame> gScreenChooseGame;
 	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
+	SmartPointer<class Choose> mChoose;
 
 	Singleton<class Editor> mEditor;
 	

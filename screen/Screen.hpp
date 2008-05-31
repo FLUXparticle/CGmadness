@@ -45,7 +45,6 @@ public:
   virtual void customUpdate(float interval);
   
   void draw() const;
-  virtual void drawBackground() const;
 
 protected:
 	std::list<MenuItem*> mItems;

@@ -133,8 +133,6 @@ static void drawMenuItem(const MenuItem* item)
 
 void Screen::draw() const
 {
-	drawBackground();
-	
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
 	glEnable(GL_LIGHT0);
@@ -162,11 +160,6 @@ void Screen::draw() const
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
-}
-
-void Screen::drawBackground() const
-{
-	// empty
 }
 
 void Screen::drawLogo()
