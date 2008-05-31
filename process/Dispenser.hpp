@@ -28,16 +28,18 @@ public:
   Dispenser();
   virtual ~Dispenser();
 
-	void setProcess(Process* process);
-	
   void update(float interval);
 
   void preDisplay();
   void draw() const;
   void drawHUD(float width, float height);
+  
+protected:
+	void setProcess(Process* process);
 
 private:
 	Process* mCurProcess;
+	Process* mNewProcess;
 
 };
 

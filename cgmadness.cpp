@@ -20,7 +20,6 @@
 #include "callback.hpp"
 
 #include "Main.hpp"
-#include "process/MainProcess.hpp"
 
 #include "level.hpp"
 
@@ -101,9 +100,6 @@ int main(int argc, char *argv[])
 	
 	Singleton<Main> main;
 
-	Singleton<MainProcess> process;
-	main->setState(process);
-	
 	startCallback(main);
 	
 	glutMainLoop();

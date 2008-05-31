@@ -26,7 +26,8 @@
 #include <stdlib.h>
 
 Dispenser::Dispenser() :
-	mCurProcess(NULL)
+	mCurProcess(NULL),
+	mNewProcess(NULL)
 {
   // empty
 }
@@ -38,6 +39,22 @@ Dispenser::~Dispenser()
 
 void Dispenser::update(float interval)
 {
+	if (mNewProcess)
+	{
+		if (mCurProcess)
+		{
+			mCurProcess->stop();
+		}
+
+		mCurProcess = mNewProcess;
+		mNewProcess = NULL;
+
+		if (mCurProcess)
+		{
+			mCurProcess->start();
+		}
+	}
+	
 	mCurProcess->update(interval);
 }
 
@@ -58,15 +75,5 @@ void Dispenser::drawHUD(float width, float height)
 
 void Dispenser::setProcess(Process* process)
 {
-	if (mCurProcess)
-	{
-		mCurProcess->stop();
-	}
-	
-	mCurProcess = process;
-	
-	if (mCurProcess)
-	{
-		mCurProcess->start();
-	}
+	mNewProcess = process;
 }

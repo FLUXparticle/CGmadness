@@ -40,6 +40,8 @@ public:
 private:
 	Singleton<class MenuManager> gMenuManager;
 
+	Singleton<class MainProcess> mMainProcess;
+	
 };
 
 #endif

@@ -25,8 +25,6 @@
 #include "environment/environment.hpp"
 
 #include "process/MainProcess.hpp"
-#include "process/RaceTheClock.hpp"
-#include "process/Editor.hpp"
 
 #include "gui/gui.hpp"
 #include "objects.hpp"
@@ -46,7 +44,8 @@ void Main::init()
 
 Main::Main()
 {
-  // empty
+	setProcess(mMainProcess);
+	update(0.0);
 }
 
 Main::~Main()
