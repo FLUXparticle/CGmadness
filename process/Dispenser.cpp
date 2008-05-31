@@ -75,5 +75,12 @@ void Dispenser::drawHUD(float width, float height)
 
 void Dispenser::setProcess(Process* process)
 {
-	mNewProcess = process;
+	if (mCurProcess)
+	{
+		mNewProcess = process;
+	}
+	else
+	{
+		mCurProcess = process;
+	}
 }

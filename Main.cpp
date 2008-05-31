@@ -45,7 +45,6 @@ void Main::init()
 Main::Main()
 {
 	setProcess(mMainProcess);
-	update(0.0);
 }
 
 Main::~Main()
