@@ -31,6 +31,7 @@ public:
   
   static void setState(Process* process);
   static void pushState(Process* process);
+  static void popState();
   
 public:
   Main();

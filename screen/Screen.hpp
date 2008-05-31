@@ -35,6 +35,8 @@ class Screen : public Process
 public:
   Screen();
   virtual ~Screen();
+  
+  void start(Process* previous);
 
   virtual void show();
   

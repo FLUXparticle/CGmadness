@@ -44,6 +44,11 @@ Screen::~Screen()
   // empty
 }
 
+void Screen::start(Process* previous)
+{
+	show();
+}
+
 void Screen::show()
 {
   FOREACH(std::list<MenuItem*>, mItems, iter)

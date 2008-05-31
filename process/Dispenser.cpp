@@ -23,6 +23,8 @@
 
 #include "utils/Singleton.hpp"
 
+#include "macros.hpp"
+
 #include <stdlib.h>
 
 Dispenser::Dispenser() :
@@ -38,48 +40,71 @@ Dispenser::~Dispenser()
 
 void Dispenser::update(float interval)
 {
-	if (mNewProcess)
+	if (mNewProcess != mProcessStack.back())
 	{
-		Process* previous = mProcessStack.top();
-		
-		if (mPush)
+		if (mNewProcess)
 		{
-			previous->suspend();
+			Process* previous = mProcessStack.back();
+
+			if (mPush)
+			{
+				previous->suspend();
+			}
+			else
+			{
+				mProcessStack.pop_back();
+				previous->stop();
+			}
+
+			mNewProcess->start(previous);
+			mProcessStack.push_back(mNewProcess);
 		}
 		else
 		{
-			mProcessStack.pop();
-			previous->stop();
+			Process* current = mProcessStack.back();
+			mProcessStack.pop_back();
+			current->stop();
+			
+			mProcessStack.back()->resume();
 		}
-
-		mNewProcess->start(previous);
-		mProcessStack.push(mNewProcess);
-		mNewProcess = NULL;
 	}
 
-	mProcessStack.top()->update(interval);
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->update(interval);
+	}
 }
 
 void Dispenser::preDisplay()
 {
-	mProcessStack.top()->preDisplay();
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->preDisplay();
+	}
 }
 
 void Dispenser::draw() const
 {
-	mProcessStack.top()->draw();
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->draw();
+	}
 }
 
 void Dispenser::drawHUD(float width, float height)
 {
-	mProcessStack.top()->drawHUD(width, height);
+	mProcessStack.back()->drawHUD(width, height);
 }
 
 void Dispenser::setProcess(Process* process)
 {
 	if (mProcessStack.empty())
 	{
-		mProcessStack.push(process);
+		mProcessStack.push_back(process);
+		mNewProcess = process;
 	}
 	else
 	{
@@ -92,4 +117,9 @@ void Dispenser::pushProcess(Process* process)
 {
 	mNewProcess = process;
 	mPush = true;
+}
+
+void Dispenser::popProcess()
+{
+	mNewProcess = NULL;
 }

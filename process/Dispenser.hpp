@@ -22,7 +22,7 @@
 
 #include "Process.hpp"
 
-#include <stack>
+#include <list>
 
 class Dispenser : public Process
 {
@@ -39,9 +39,10 @@ public:
 protected:
 	void setProcess(Process* process);
 	void pushProcess(Process* process);
+	void popProcess();
 
 private:
-	std::stack<Process*> mProcessStack;
+	std::list<Process*> mProcessStack;
 	Process* mNewProcess;
 	bool mPush;
 	

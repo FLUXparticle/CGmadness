@@ -70,3 +70,10 @@ void Main::pushState(Process* process)
 	
 	gDispenser->pushProcess(process);
 }
+
+void Main::popState()
+{
+	Singleton<Main> gDispenser;
+	
+	gDispenser->popProcess();
+}
