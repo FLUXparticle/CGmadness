@@ -26,7 +26,7 @@
 
 #include "utils/Callback.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
@@ -91,12 +91,12 @@ void ScreenGameMain::show()
 
 void ScreenGameMain::clickButtonHelp()
 {
-	gMenuManager->pushScreen(gScreenHelp);
+	Main::setState(gScreenHelp);
 }
 
 void ScreenGameMain::clickButtonQuit()
 {
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	
 	Singleton<MainProcess> main;
 	Main::setState(main);

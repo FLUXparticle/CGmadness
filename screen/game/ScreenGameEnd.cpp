@@ -21,7 +21,7 @@
 
 #include "process/MainProcess.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -49,14 +49,14 @@ ScreenGameEnd::~ScreenGameEnd()
 void ScreenGameEnd::clickButtonAgain()
 {
 	hsHighScore.acceptHighScoreName();
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	mParent->resetGame();
 }
 
 void ScreenGameEnd::clickButtonQuit2()
 {
 	hsHighScore.acceptHighScoreName();
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	
 	Singleton<MainProcess> main;
 	Main::setState(main);

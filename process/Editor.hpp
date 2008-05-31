@@ -24,7 +24,6 @@
 
 #include "ball/Ball.hpp"
 
-#include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"
 
 class Editor : public Process
@@ -48,8 +47,6 @@ private:
 	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
 	SmartPointer<class ScreenWait> gScreenWait;
 	SmartPointer<class ScreenInfo> gScreenInfo;
-
-	Singleton<class MenuManager> gMenuManager;
 
 	void pause();
 	

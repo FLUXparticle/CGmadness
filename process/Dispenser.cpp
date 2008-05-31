@@ -19,7 +19,9 @@
 
 #include "Dispenser.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
+
+#include "screen/Screen.hpp"
 
 #include "utils/Singleton.hpp"
 
@@ -38,6 +40,11 @@ Dispenser::~Dispenser()
 	// empty
 }
 
+void Dispenser::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+{
+	mProcessStack.back()->event(position, direction, event);
+}
+
 void Dispenser::update(float interval)
 {
 	if (mNewProcess != mProcessStack.back())
@@ -45,6 +52,7 @@ void Dispenser::update(float interval)
 		if (mNewProcess)
 		{
 			Process* previous = mProcessStack.back();
+			Process* next = mNewProcess;
 
 			if (mPush)
 			{
@@ -56,15 +64,15 @@ void Dispenser::update(float interval)
 				previous->stop();
 			}
 
-			mNewProcess->start(previous);
-			mProcessStack.push_back(mNewProcess);
+			next->start(previous);
+			mProcessStack.push_back(next);
 		}
 		else
 		{
 			Process* current = mProcessStack.back();
 			mProcessStack.pop_back();
 			current->stop();
-			
+
 			mProcessStack.back()->resume();
 		}
 	}
@@ -105,6 +113,7 @@ void Dispenser::setProcess(Process* process)
 	{
 		mProcessStack.push_back(process);
 		mNewProcess = process;
+		process->start(NULL);
 	}
 	else
 	{
@@ -122,4 +131,11 @@ void Dispenser::pushProcess(Process* process)
 void Dispenser::popProcess()
 {
 	mNewProcess = NULL;
+}
+
+void Dispenser::popScreen()
+{
+	Process* process = mProcessStack.back();
+	Screen* screen = dynamic_cast<Screen*>(process); 
+	screen->popScreen();
 }

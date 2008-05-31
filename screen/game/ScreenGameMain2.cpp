@@ -19,7 +19,7 @@
 
 #include "ScreenGameMain2.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -39,6 +39,6 @@ ScreenGameMain2::~ScreenGameMain2()
 
 void ScreenGameMain2::clickButtonResume()
 {
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	mParent->resumeGame();
 }

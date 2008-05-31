@@ -21,7 +21,7 @@
 
 #include "screen/game/ScreenGameEnd.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "level.hpp"
 #include "text/text.hpp"
@@ -139,5 +139,5 @@ void RaceTheClock::finishedGame()
 {
 	stopWatch();
 	pauseGame();
-	gMenuManager->pushScreen(gScreenEnd);
+	Main::pushState(gScreenEnd);
 }

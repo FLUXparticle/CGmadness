@@ -30,6 +30,8 @@ public:
   Dispenser();
   virtual ~Dispenser();
 
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
+  
   void update(float interval);
 
   void preDisplay();
@@ -40,6 +42,7 @@ protected:
 	void setProcess(Process* process);
 	void pushProcess(Process* process);
 	void popProcess();
+	void popScreen();
 
 private:
 	std::list<Process*> mProcessStack;

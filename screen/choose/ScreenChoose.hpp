@@ -27,6 +27,8 @@
 #include "gui/SpinEdit.hpp"
 #include "gui/Button.hpp"
 
+#include "utils/Singleton.hpp"
+
 class ScreenChoose : public Screen
 {
 public:

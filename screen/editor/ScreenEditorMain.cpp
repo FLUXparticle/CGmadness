@@ -53,7 +53,7 @@ ScreenEditorMain::~ScreenEditorMain()
 
 void ScreenEditorMain::clickButtonEdit()
 {
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	resumeEditor();
 }
 
@@ -64,12 +64,12 @@ void ScreenEditorMain::clickButtonSave()
 
 void ScreenEditorMain::clickButtonHelp()
 {
-	gMenuManager->pushScreen(gScreenEditorHelp);
+	Main::setState(gScreenEditorHelp);
 }
 
 void ScreenEditorMain::clickButtonQuit()
 {
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 	
 	Singleton<MainProcess> main;
 	Main::setState(main);

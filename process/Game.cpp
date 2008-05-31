@@ -22,7 +22,7 @@
 #include "screen/game/ScreenGameMain1.hpp"
 #include "screen/game/ScreenGameMain2.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "common.hpp"
 #include "level.hpp"
@@ -72,7 +72,7 @@ void Game::update(float interval)
 		if (wasKeyPressed(KEY_ESC))
 		{
 			pauseGame();
-			gMenuManager->pushScreen(gScreenMain2);
+			Main::pushState(gScreenMain2);
 		}
 
 		/* manually switch features */
@@ -97,7 +97,7 @@ void Game::update(float interval)
 	}
 	else
 	{
-		gMenuManager->update(interval);
+		// TODO empty
 	}
 
 	updateGameField(sgoBall);
@@ -129,7 +129,7 @@ void Game::draw() const
 
 	if (!gIsGameRunning)
 	{
-		gMenuManager->draw();
+		// TODO empty
 	}
 }
 
@@ -172,5 +172,5 @@ void Game::resetGame()
 	updateGameField(sgoBall);
 
 	pauseGame();
-	gMenuManager->pushScreen(gScreenMain1);
+	Main::pushState(gScreenMain1);
 }

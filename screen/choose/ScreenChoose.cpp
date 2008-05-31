@@ -20,6 +20,7 @@
 #include "ScreenChoose.hpp"
 
 #include "utils/Callback.hpp"
+#include "utils/Singleton.hpp"
 
 #include "Main.hpp"
 #include "level.hpp"
@@ -76,5 +77,5 @@ void ScreenChoose::drawWaterReflection() const
 void ScreenChoose::clickButtonBack()
 {
 	mLevelLoader->loadLevelByID(-1);
-	gMenuManager->popScreen();
+	Main::popScreenStatic();
 }

@@ -22,8 +22,6 @@
 
 #include "process/Dispenser.hpp"
 
-#include "utils/Singleton.hpp"
-
 class Main : public Dispenser
 {
 public:
@@ -33,17 +31,12 @@ public:
   static void pushState(Process* process);
   static void popState();
   
+  static void popScreenStatic();
+  
 public:
   Main();
   virtual ~Main();
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
-  
-private:
-	Singleton<class MenuManager> gMenuManager;
-
-	Singleton<class MainProcess> mMainProcess;
-	
 };
 
 #endif

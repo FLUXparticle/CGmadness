@@ -24,9 +24,7 @@
 
 #include "gui/MenuItem.hpp"
 
-#include "MenuManager.hpp"
-
-#include "utils/Singleton.hpp"
+#include "Main.hpp"
 
 #include <list>
 
@@ -37,9 +35,11 @@ public:
   virtual ~Screen();
   
   void start(Process* previous);
-
+  
   virtual void show();
   
+  void popScreen(); 
+
   void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   void update(float interval);
   virtual void customUpdate(float interval);
@@ -48,10 +48,11 @@ public:
   virtual void drawBackground() const;
 
 protected:
-	Singleton<MenuManager> gMenuManager;
-	
 	std::list<MenuItem*> mItems;
 
+private:
+	Process* mPrevious;
+	
 private:
 	static unsigned int gTexLogo;
 	

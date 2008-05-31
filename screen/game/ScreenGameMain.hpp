@@ -26,6 +26,8 @@
 #include "gui/Check.hpp"
 #include "gui/SpinEdit.hpp"
 
+#include "utils/Singleton.hpp"
+
 class ScreenGameMain : public Screen
 {
 public:

@@ -24,6 +24,7 @@
 
 #include "gui/Button.hpp"
 
+#include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"
 
 class ScreenMain : public Screen

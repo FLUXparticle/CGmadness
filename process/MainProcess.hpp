@@ -32,14 +32,14 @@ public:
   MainProcess();
   virtual ~MainProcess();
 
+  void start(Process* previous);
+  
   void update(float interval);
   void draw() const;
 
 	void drawWaterReflection() const;
 	
 private:
-	Singleton<class MenuManager> gMenuManager;
-	
 	Singleton<class ScreenMain> gScreenMain;
 	
 };

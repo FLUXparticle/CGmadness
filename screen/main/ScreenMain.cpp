@@ -23,7 +23,7 @@
 #include "screen/choose/ScreenChooseInfo.hpp"
 #include "process/Editor.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -51,12 +51,12 @@ ScreenMain::~ScreenMain()
 
 void ScreenMain::clickButtonCGMadness()
 {
-	gMenuManager->pushScreen(gScreenChooseGame);
+	Main::setState(gScreenChooseGame);
 }
 
 void ScreenMain::clickButtonCGMEditor()
 {
-	gMenuManager->pushScreen(gScreenChooseInfo);
+	Main::setState(gScreenChooseInfo);
 }
 
 void ScreenMain::clickButtonQuit()

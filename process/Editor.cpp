@@ -78,7 +78,7 @@ Editor::~Editor()
 
 void Editor::pause()
 {
-	gMenuManager->pushScreen(gScreenEditorMain);
+	Main::pushState(gScreenEditorMain);
 	gIsEditorRunning = false;
 }
 
@@ -131,7 +131,7 @@ void Editor::saveLevel()
 		
 		initCommon();
 		setUpdateFrequency(10);
-		gMenuManager->pushScreen(gScreenWait);
+		Main::setState(gScreenWait);
 		updateLightMap(1);
 	}
 	else
@@ -140,12 +140,12 @@ void Editor::saveLevel()
 		{
 			sgLevel.saved = true;
 			gScreenInfo = new ScreenInfo("level saved successfully");
-			gMenuManager->pushScreen(gScreenInfo);
+			Main::setState(gScreenInfo);
 		}
 		else
 		{
 			gScreenInfo = new ScreenInfo("operation failed");
-			gMenuManager->pushScreen(gScreenInfo);
+			Main::setState(gScreenInfo);
 		}
 	}
 }
@@ -448,7 +448,7 @@ void Editor::update(float interval)
 {
 	if (!gIsEditorRunning)
 	{
-		gMenuManager->update(interval);
+		// TODO empty
 	}
 	else if (gIsTestMode)
 	{
@@ -587,7 +587,7 @@ void Editor::draw() const
 
 	if (!gIsEditorRunning)
 	{
-		gMenuManager->draw();
+		// TODO empty
 	}
 	else if (gIsTestMode)
 	{

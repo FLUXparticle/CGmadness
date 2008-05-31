@@ -29,7 +29,7 @@
 #include "gui/gui.hpp"
 #include "objects.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 void Main::init()
 {
@@ -44,17 +44,12 @@ void Main::init()
 
 Main::Main()
 {
-	setProcess(mMainProcess);
+  // empty
 }
 
 Main::~Main()
 {
   // empty
-}
-
-void Main::event(const Vector3& position, const Vector3& direction, MouseEvent event)
-{
-	gMenuManager->event(position, direction, event);
 }
 
 void Main::setState(Process* process)
@@ -76,4 +71,11 @@ void Main::popState()
 	Singleton<Main> gDispenser;
 	
 	gDispenser->popProcess();
+}
+
+void Main::popScreenStatic()
+{
+	Singleton<Main> gDispenser;
+	
+	gDispenser->popScreen();
 }

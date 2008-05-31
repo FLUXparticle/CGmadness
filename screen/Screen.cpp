@@ -46,6 +46,7 @@ Screen::~Screen()
 
 void Screen::start(Process* previous)
 {
+	mPrevious = previous;
 	show();
 }
 
@@ -57,6 +58,11 @@ void Screen::show()
 	}
 
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+}
+
+void Screen::popScreen()
+{
+	Main::setState(mPrevious);
 }
 
 void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent event)
