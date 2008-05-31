@@ -22,11 +22,9 @@
 
 #include "Process.hpp"
 
-#include "reflection/WaterReflection.hpp"
-
 #include "utils/Singleton.hpp"
 
-class MainProcess : public Process, public WaterReflection
+class MainProcess : public Process
 {
 public:
   MainProcess();
@@ -37,8 +35,6 @@ public:
   void update(float interval);
   void draw() const;
 
-	void drawWaterReflection() const;
-	
 private:
 	Singleton<class ScreenMain> gScreenMain;
 	

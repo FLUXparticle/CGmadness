@@ -19,6 +19,10 @@
 
 #include "Choose.hpp"
 
+#include "Editor.hpp"
+
+#include "environment/environment.hpp"
+
 Choose::Choose(ScreenChoose* screenChoose) :
 	mScreenChoose(screenChoose)
 {
@@ -37,10 +41,16 @@ void Choose::start(Process* previous)
 
 void Choose::update(float interval)
 {
-	// TODO empty
+	updateEnvironment(interval);
 }
 
 void Choose::draw() const
 {
-	// TODO empty
+	drawEnvironment(this);
+	drawEditorField();
+}
+
+void Choose::drawWaterReflection() const
+{
+	drawEditorField();
 }

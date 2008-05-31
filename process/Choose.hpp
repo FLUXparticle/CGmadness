@@ -21,10 +21,11 @@
 #define Choose_hpp
 
 #include "Process.hpp"
+#include "reflection/WaterReflection.hpp"
 
 #include "screen/choose/ScreenChoose.hpp"
 
-class Choose : public Process
+class Choose : public Process, public WaterReflection
 {
 public:
   Choose(ScreenChoose* screenChoose);
@@ -35,7 +36,8 @@ public:
   void update(float interval);
   
   void draw() const;
-  
+	void drawWaterReflection() const;
+	
 private:
 	ScreenChoose* mScreenChoose;
 

@@ -19,8 +19,6 @@
 
 #include "MainProcess.hpp"
 
-#include "Editor.hpp"
-
 #include "screen/main/ScreenMain.hpp"
 
 #include "Main.hpp"
@@ -49,10 +47,5 @@ void MainProcess::update(float interval)
 
 void MainProcess::draw() const
 {
-	drawEnvironment(this);
-}
-
-void MainProcess::drawWaterReflection() const
-{
-	// TODO drawWaterReflection
+	drawEnvironment(NULL);
 }
