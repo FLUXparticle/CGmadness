@@ -25,8 +25,6 @@
 #include "level.hpp"
 #include "process/Editor.hpp"
 
-#include "highscore.hpp"
-
 #include "hw/keyboard.hpp"
 
 static void changeLevelChooser(const void *self)
@@ -36,8 +34,8 @@ static void changeLevelChooser(const void *self)
 	const SpinEdit *spinedit = (const SpinEdit *) self;
 
 	gLevelLoader->loadLevelByID(spinedit->value);
-
-	sgLastPlayerIndex = MAX_SCORE_COLS;
+	
+	sgLevel.lastPlayerIndex = MAX_SCORE_COLS;
 }
 
 static void drawMenuLevel()

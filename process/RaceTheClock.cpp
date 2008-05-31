@@ -24,7 +24,6 @@
 #include "MenuManager.hpp"
 
 #include "level.hpp"
-#include "highscore.hpp"
 #include "text/text.hpp"
 
 #include "functions.hpp"
@@ -133,7 +132,7 @@ void RaceTheClock::stopWatch()
 		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
 
-	sgLastPlayerIndex = newIndex;
+	sgLevel.lastPlayerIndex = newIndex;
 }
 
 void RaceTheClock::finishedGame()

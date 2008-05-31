@@ -17,28 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenChooseGame.hpp"
+#ifndef HighScore_hpp
+#define HighScore_hpp
 
-#include "Main.hpp"
+#include "gui/Canvas.hpp"
 
-#include "hw/keyboard.hpp"
-
-static void clickButtonChooseGame()
+class HighScore : public Canvas
 {
-	Main::setState(STATE_GAME);
-}
+public:
+  HighScore();
+  HighScore(float z);
+  virtual ~HighScore();
 
-ScreenChooseGame::ScreenChooseGame()
-{
-	bChooseGame = Button(2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
-	mItems.push_back(&bChooseGame);
+  void acceptHighScoreName();
+  
+	void update(float interval);
+	void draw() const;
+
+private:
+	int gShowCursor;
 	
-	hsHighScore = HighScore(3.0f);
-	mItems.push_back(&hsHighScore);
-}
+};
 
-ScreenChooseGame::~ScreenChooseGame()
-{
-  // empty
-}
-
+#endif

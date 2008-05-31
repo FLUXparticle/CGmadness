@@ -24,7 +24,7 @@
 
 #include "gui/Button.hpp"
 
-#include "highscore.hpp"
+#include "HighScore.hpp"
 
 class ScreenChooseGame : public ScreenChoose
 {

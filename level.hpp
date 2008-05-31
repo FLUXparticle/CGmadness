@@ -91,6 +91,7 @@ typedef struct
 
 	int cntScoreCols;
 	ScoreCol scores[MAX_SCORE_COLS];
+	int lastPlayerIndex;
 
 	Vector3 origin;
 

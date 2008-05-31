@@ -22,7 +22,7 @@
 
 #include "screen/Screen.hpp"
 
-#include "highscore.hpp"
+#include "screen/choose/HighScore.hpp"
 
 #include "process/Game.hpp"
 

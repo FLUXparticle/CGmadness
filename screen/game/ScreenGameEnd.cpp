@@ -29,7 +29,7 @@
 ScreenGameEnd::ScreenGameEnd(Game* parent) :
 	mParent(parent)
 {
-	initHighScore(&hsHighScore, 3.0f);
+	hsHighScore = HighScore(3.0f);
 	mItems.push_back(&hsHighScore);
 
 	bAgain = Button(2.0f, CALLBACK(ScreenGameEnd, clickButtonAgain), "play again", KEY_ENTER);
@@ -46,14 +46,14 @@ ScreenGameEnd::~ScreenGameEnd()
 
 void ScreenGameEnd::clickButtonAgain()
 {
-	acceptHighScoreName();
+	hsHighScore.acceptHighScoreName();
 	gMenuManager->popScreen();
 	mParent->resetGame();
 }
 
 void ScreenGameEnd::clickButtonQuit2()
 {
-	acceptHighScoreName();
+	hsHighScore.acceptHighScoreName();
 	gMenuManager->popScreen();
 	Main::setState(STATE_MAIN);
 }
