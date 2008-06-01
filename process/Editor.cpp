@@ -37,8 +37,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-static int gShowCursor = 0;
-
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
 static int gCamAngle = 0;
@@ -48,8 +46,6 @@ static const int gCos[] = { 1, 0, -1, 0 };
 
 static bool gDirtyTexCoords;
 static bool gDirtyLightmaps;
-
-static bool gIsTestMode;
 
 Editor::Editor()
 {
@@ -79,15 +75,9 @@ void Editor::start(Process* previous)
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	gIsTestMode = 0;
-	gShowCursor = 1;
+	mState = STATE_PAUSED;
 
 	Main::pushState(gScreenEditorMain);
-}
-
-void Editor::stop()
-{
-	gShowCursor = 0;
 }
 
 void Editor::suspend()
@@ -405,8 +395,7 @@ void Editor::enableTestMode()
 
 	initGameField();
 
-	gIsTestMode = 1;
-	gShowCursor = 0;
+	mState = STATE_TESTING;
 }
 
 void Editor::disableTestMode()
@@ -414,8 +403,7 @@ void Editor::disableTestMode()
 	destroyGameField();
 	disableBallCamera();
 
-	gIsTestMode = 0;
-	gShowCursor = 1;
+	mState = STATE_EDITING;
 }
 
 void Editor::update(float interval)
@@ -464,7 +452,7 @@ void Editor::update(float interval)
 	}
 }
 
-void drawEditorField()
+void drawEditorField(bool showCursor)
 {
 	int i;
 	int j;
@@ -487,7 +475,7 @@ void drawEditorField()
 		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 		{
 
-			if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
+			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
 					<= gCurEnd.y && cur.y >= gCurStart.y)
 			{
 				glColor3f(1.0f, 0.0f, 0.0f);
@@ -547,9 +535,9 @@ void drawEditorField()
 
 void Editor::draw() const
 {
-	drawEditorField();
+	drawEditorField(mState == STATE_EDITING);
 
-	if (gIsTestMode)
+	if (mState == STATE_TESTING)
 	{
 		mBall.drawGameBall();
 	}

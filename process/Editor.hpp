@@ -41,7 +41,6 @@ public:
 	virtual ~Editor();
 
 	void start(Process* previous);
-	void stop();
 
 	void suspend();
 	void resume();
@@ -70,6 +69,6 @@ private:
 
 };
 
-void drawEditorField();
+void drawEditorField(bool showCursor = false);
 
 #endif
