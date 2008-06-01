@@ -105,13 +105,6 @@ void Dispenser::popProcess()
 	enqueueTask(NULL, POP);
 }
 
-void Dispenser::popScreen()
-{
-	Process* process = mProcessStack.back();
-	Screen* screen = dynamic_cast<Screen*>(process);
-	screen->popScreen();
-}
-
 void Dispenser::enqueueTask(Process* process, StackAction action)
 {
 	mTasks.push_back(Task(process, action));

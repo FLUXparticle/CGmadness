@@ -51,7 +51,6 @@ protected:
 	void setProcess(Process* process, bool flush);
 	void pushProcess(Process* process);
 	void popProcess();
-	void popScreen();
 	
 	void changeProcess(Process* process, StackAction action);
 

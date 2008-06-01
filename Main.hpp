@@ -31,8 +31,6 @@ public:
   static void pushState(Process* process);
   static void popState();
   
-  static void popScreenStatic();
-  
 public:
   Main();
   virtual ~Main();

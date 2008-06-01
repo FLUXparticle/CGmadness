@@ -77,10 +77,3 @@ void Main::popState()
 	
 	gDispenser->popProcess();
 }
-
-void Main::popScreenStatic()
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->popScreen();
-}

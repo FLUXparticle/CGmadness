@@ -36,6 +36,6 @@ ScreenInfo::~ScreenInfo()
 
 void ScreenInfo::clickButtonAccept()
 {
-	Main::popScreenStatic();
+	popScreen();
 }
 

@@ -43,12 +43,12 @@ void ScreenWait::customUpdate(float interval)
 		stopIdle();
 		
 		setUpdateFrequency(0);
-		Main::popScreenStatic();
+		popScreen();
 	}
 	else if (!sgIdleWorking)
 	{
 		setUpdateFrequency(0);
-		Main::popScreenStatic();
+		popScreen();
 
 		gWaitCallback();
 	}
