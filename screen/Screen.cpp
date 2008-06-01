@@ -62,7 +62,7 @@ void Screen::show()
 
 void Screen::popScreen()
 {
-	Main::setState(mPrevious);
+	Main::setState(mPrevious, false);
 }
 
 void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent event)

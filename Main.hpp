@@ -25,18 +25,18 @@
 class Main : public Dispenser
 {
 public:
-  static void init();
-  
-  static void setState(Process* process, bool flush = false);
-  static void pushState(Process* process);
-  static void popState();
-  
-public:
-  Main();
-  virtual ~Main();
+	static void init();
 
-  void setFirstProcess(Process* first);
-  
+	static void setState(Process* process, bool flush);
+	static void pushState(Process* process);
+	static void popState();
+
+public:
+	Main();
+	virtual ~Main();
+
+	void setFirstProcess(Process* first);
+
 };
 
 #endif

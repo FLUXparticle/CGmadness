@@ -61,7 +61,7 @@ void ScreenEditorMain::clickButtonSave()
 
 void ScreenEditorMain::clickButtonHelp()
 {
-	Main::setState(gScreenEditorHelp);
+	Main::setState(gScreenEditorHelp, false);
 }
 
 void ScreenEditorMain::clickButtonQuit()

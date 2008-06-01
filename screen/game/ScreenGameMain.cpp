@@ -92,7 +92,7 @@ void ScreenGameMain::show()
 
 void ScreenGameMain::clickButtonHelp()
 {
-	Main::setState(gScreenHelp);
+	Main::setState(gScreenHelp, false);
 }
 
 void ScreenGameMain::clickButtonQuit()

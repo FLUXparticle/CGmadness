@@ -107,7 +107,7 @@ void Editor::saveLevel()
 
 		initCommon();
 		setUpdateFrequency(10);
-		Main::setState(gScreenWait);
+		Main::setState(gScreenWait, false);
 		updateLightMap(1);
 	}
 	else
@@ -116,12 +116,12 @@ void Editor::saveLevel()
 		{
 			sgLevel.saved = true;
 			gScreenInfo = new ScreenInfo("level saved successfully");
-			Main::setState(gScreenInfo);
+			Main::setState(gScreenInfo, false);
 		}
 		else
 		{
 			gScreenInfo = new ScreenInfo("operation failed");
-			Main::setState(gScreenInfo);
+			Main::setState(gScreenInfo, false);
 		}
 	}
 }
