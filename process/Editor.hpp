@@ -29,37 +29,47 @@
 class Editor : public Process
 {
 public:
-  Editor();
-  virtual ~Editor();
+	typedef enum
+	{
+		STATE_PAUSED,
+		STATE_EDITING,
+		STATE_TESTING
+	} EditorState;
+	
+public:
+	Editor();
+	virtual ~Editor();
 
-  void start(Process* previous);
-  void stop();
-  
+	void start(Process* previous);
+	void stop();
+
 	void suspend();
 	void resume();
-	
-  void update(float interval);
-  void draw() const;
-  
+
+	void update(float interval);
+	void draw() const;
+
 private:
 	Ball mBall;
 	
+	EditorState mState;
+
 	void enableTestMode();
 	void disableTestMode();
 
 	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
 	SmartPointer<class ScreenWait> gScreenWait;
 	SmartPointer<class ScreenInfo> gScreenInfo;
-	
+
 	Process* mPrevious;
 
 	void lightMapsReady();
 	void saveLevel();
-	
+
 	friend class ScreenEditorMain;
-	
+
 };
 
-void drawEditorField(void);
+void drawEditorField();
 
 #endif

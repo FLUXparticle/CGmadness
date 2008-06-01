@@ -37,21 +37,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define DRAW_DEBUG_LINES 0
-
-#if (DRAW_DEBUG_LINES)
-typedef struct
-{
-	Vector3 v1;
-	Vector3 v2;
-} Line;
-
-Line gLines[10 * 10 * LIGHT_MAP_SIZE * LIGHT_MAP_SIZE * 32 * 8];
-int gCntLines = 0;
-#endif
-
-static bool gIsEditorRunning;
-
 static int gShowCursor = 0;
 
 static FieldCoord gCurStart;
@@ -73,13 +58,13 @@ Editor::Editor()
 
 Editor::~Editor()
 {
-  // empty
+	// empty
 }
 
 void Editor::start(Process* previous)
 {
 	mPrevious = previous;
-	
+
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)
 	{
@@ -107,13 +92,13 @@ void Editor::stop()
 
 void Editor::suspend()
 {
-	gIsEditorRunning = false;
+	mState = STATE_PAUSED;
 }
 
 void Editor::resume()
 {
 	glutSetCursor(GLUT_CURSOR_NONE);
-	gIsEditorRunning = true;
+	mState = STATE_EDITING;
 }
 
 void Editor::lightMapsReady()
@@ -127,9 +112,9 @@ void Editor::saveLevel()
 	if (gDirtyLightmaps)
 	{
 		destroyCommon();
-		
+
 		gScreenWait = new ScreenWait(CALLBACK(Editor, lightMapsReady));
-		
+
 		initCommon();
 		setUpdateFrequency(10);
 		Main::setState(gScreenWait);
@@ -150,15 +135,6 @@ void Editor::saveLevel()
 		}
 	}
 }
-
-#if (DRAW_DEBUG_LINES)
-void addLine(Vector3 v1, Vector3 v2)
-{
-	gLines[gCntLines].v1 = v1;
-	gLines[gCntLines].v2 = v2;
-	gCntLines++;
-}
-#endif
 
 void updateEditorCamera(float interval, Vector3 marker)
 {
@@ -247,9 +223,8 @@ void changeMarkerArea(int incz, int incdzx, int incdzy)
 			dzx += incdzx;
 			dzy += incdzy;
 
-			if (z - (abs(dzx) + abs(dzy)) >= 0
-					&& (z + (abs(dzx) + abs(dzy))) <= MAX_LEVEL_HEIGHT * HEIGHT_STEPS
-					&& abs(dzx) <= 5 && abs(dzy) <= 5)
+			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
+					<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
 			{
 				p->z = z;
 				p->dzx = dzx;
@@ -283,7 +258,6 @@ void flattenMarkerArea(void)
 
 	markerChanged();
 }
-
 
 void modBetween(int *value, int mod, int min, int max)
 {
@@ -353,7 +327,6 @@ void animateEditor(float interval)
 	{
 		changeMarkerArea(0, -gCos[gCamAngle], -gSin[gCamAngle]);
 	}
-
 
 	if (wasKeyPressed('s'))
 	{
@@ -426,7 +399,7 @@ void animateEditor(float interval)
 void Editor::enableTestMode()
 {
 	mBall.reset();
-	
+
 	resetBallCamera();
 	enableBallCamera();
 
@@ -447,20 +420,17 @@ void Editor::disableTestMode()
 
 void Editor::update(float interval)
 {
-	if (!gIsEditorRunning)
+	switch (mState)
 	{
-		// TODO empty
-	}
-	else if (gIsTestMode)
-	{
+	case STATE_TESTING:
 		if (wasKeyPressed(KEY_ESC))
 		{
 			disableTestMode();
 		}
 
 		updateBall(mBall, interval);
-	}
-	else
+		break;
+	case STATE_EDITING:
 	{
 		Vector3 markerPos;
 
@@ -476,8 +446,8 @@ void Editor::update(float interval)
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z =
-			(float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
+		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z
+				/ HEIGHT_STEPS;
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
@@ -487,17 +457,22 @@ void Editor::update(float interval)
 			updateTexCoords();
 			gDirtyTexCoords = false;
 		}
+		break;
+	}
+	default:
+		break;
 	}
 }
 
-void drawEditorField(void)
+void drawEditorField()
 {
 	int i;
 	int j;
 	FieldCoord cur;
 	Square square;
 
-	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+	float pos[4] =
+	{ 0.0f, 0.0f, 1.0f, 0.0f };
 
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -512,8 +487,8 @@ void drawEditorField(void)
 		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 		{
 
-			if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x
-					&& cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
+			if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
+					<= gCurEnd.y && cur.y >= gCurStart.y)
 			{
 				glColor3f(1.0f, 0.0f, 0.0f);
 			}
@@ -568,29 +543,13 @@ void drawEditorField(void)
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
-
-#if (DRAW_DEBUG_LINES)
-	glBegin(GL_LINES);
-	for (i = 0; i < gCntLines; i++)
-	{
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(gLines[i].v1.x, gLines[i].v1.y, gLines[i].v1.z);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(gLines[i].v2.x, gLines[i].v2.y, gLines[i].v2.z);
-	}
-	glEnd();
-#endif
 }
 
 void Editor::draw() const
 {
 	drawEditorField();
 
-	if (!gIsEditorRunning)
-	{
-		// TODO empty
-	}
-	else if (gIsTestMode)
+	if (gIsTestMode)
 	{
 		mBall.drawGameBall();
 	}
