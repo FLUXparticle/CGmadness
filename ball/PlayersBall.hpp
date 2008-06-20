@@ -41,13 +41,13 @@ public:
 	
 	static void init();
 	
+	static int cntLayouts();
+	
 public:
 	void initCubeMap();
 	
 	bool hasCubeMap() const;
 	bool useBallReflection() const;
-	
-	int cntLayouts() const;
 	
   void reset();
   
@@ -60,6 +60,9 @@ public:
 	void drawMenuBall() const;
 
 private:
+	static std::vector<int> gBallLayouts;
+	
+private:
 	int mCubeMapBall;
 	bool mIsReflectionDirty;
 	
@@ -67,8 +70,6 @@ private:
 
 	RenderTarget mTargetCube[6];
 	Viewport mViewportCube[6];
-	
-	std::vector<int> gBallLayouts;
 	
   PlayersBall();
   virtual ~PlayersBall();
@@ -85,7 +86,7 @@ private:
 
 };
 
-inline int PlayersBall::cntLayouts() const
+inline int PlayersBall::cntLayouts()
 {
 	return gBallLayouts.size();
 }

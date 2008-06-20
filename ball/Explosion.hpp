@@ -17,46 +17,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.hpp"
+#ifndef Explosion_hpp
+#define Explosion_hpp
 
-#include <GL/gl.h>
+#include "BallObject.hpp"
 
-void drawSquare()
+#define PARTS_TOGETHER 16
+
+class Explosion : public BallObject
 {
-	glBegin(GL_POLYGON);
+public:
+	Explosion();
+	virtual ~Explosion();
+
+	void init(const Vector3& startPos, const Vector3& startSpeed,
+			const Vector3& endPos, const Vector3& endSpeed);
+	
+	bool update(float interval, const Vector3& speed, Vector3& pos);
+
+	void drawDefault() const;
+	void drawShader() const;
+	
+private:
+	struct Fragment
 	{
-		glNormal3f(0.0f, 0.0f, 1.0f);
+		Vector3 vertices[PARTS_TOGETHER * 3];
 
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
+		Vector3 pos;
+		Vector3 offset;
+		Vector3 speed;
 
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(1.0f, -1.0f);
+		Vector3 rotation;
+		Vector3 rotSpeed;
+	};
+	
+	Vector3 gStartPos;
+	Vector3 gStartSpeed;
 
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(1.0f, 1.0f);
+	Vector3 gEndPos;
+	Vector3 gEndSpeed;
 
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-1.0f, 1.0f);
-	}
-	glEnd();
-}
+	Fragment gFragments[CNT_BALL_TRIANGLES / PARTS_TOGETHER];
 
-void drawPanel(float width, float height)
-{
-	glPushMatrix();
-	{
-		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
+	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;
+	
+};
 
-		glScalef(width / 2.0f, height / 2.0f, 1.0f);
-
-		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
-
-		glEnable(GL_BLEND);
-		{
-			drawSquare();
-		}
-		glDisable(GL_BLEND);
-	}
-	glPopMatrix();
-}
+#endif

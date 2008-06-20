@@ -29,13 +29,13 @@
 #include "process/Editor.hpp"
 
 #include "gui/gui.hpp"
-#include "objects.hpp"
+#include "ball/BallObject.hpp"
 
 #include "MenuManager.hpp"
 
 void Main::init()
 {
-	initObjects();
+	BallObject::init();
 	initEnvironment();
 
 	initGUI();
