@@ -57,6 +57,9 @@ private:
 	Vector3 gEndPos;
 	Vector3 gEndSpeed;
 
+	float gExplosionTime;
+	float gMaxExplosionTime;
+
 	Fragment gFragments[CNT_BALL_TRIANGLES / PARTS_TOGETHER];
 
 	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;

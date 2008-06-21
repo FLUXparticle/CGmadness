@@ -34,9 +34,6 @@
 #define T1 1.0f
 #define T2 5.0f
 
-float gExplosionTime;
-float gMaxExplosionTime;
-
 float randFloat(void)
 {
 	return ((float) rand() / RAND_MAX) * 2.0f- 1.0f;
