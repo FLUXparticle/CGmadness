@@ -23,7 +23,6 @@
 #include "dataSmallAlpha.h"
 #include "dataDigits.h"
 
-
 #include "debug.h"
 
 #include <GL/glut.h>

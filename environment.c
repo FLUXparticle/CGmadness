@@ -27,7 +27,7 @@
 #include "field.h"
 #include "ball.h"
 
-#include <GL/glut.h>
+#include <GL/glew.h>
 
 #define REFLECTION 1
 #define SKY 1

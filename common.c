@@ -31,7 +31,7 @@
 
 #include "debug.h"
 
-#include <GL/glut.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 #include <stdlib.h>

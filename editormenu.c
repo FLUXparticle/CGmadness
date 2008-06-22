@@ -29,7 +29,7 @@
 #include "keyboard.h"
 #include "gui.h"
 
-#include <GL/glut.h>
+#include <GL/glew.h>
 
 #include <stdlib.h>
 #include <string.h>
