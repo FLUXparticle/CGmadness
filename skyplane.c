@@ -23,8 +23,11 @@
 #include "functions.h"
 #include "vector.h"
 #include "color.h"
+#include "texture.h"
 
 #include "debug.h"
+
+#include <GL/glew.h>
 
 #include <math.h>
 

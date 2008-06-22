@@ -20,9 +20,9 @@ CFLAGS := -O3
 LDFLAGS :=
 PERL := perl
 
-BUILD := build
+BUILD := $(shell $(CC) -dumpmachine)
 
-CFLAGS += -ansi -pedantic -Wall
+CFLAGS += -Wall
 
 LIBS := -lm
 PROJECT := cgmadness
@@ -33,9 +33,9 @@ ifdef COMSPEC
 	CFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
-	BUILD = mingw
 	EXECSUFFIX := .exe
 else
+	CFLAGS += -I/opt/local/include
 	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif

@@ -24,7 +24,10 @@
 #include "vector.h"
 #include "types.h"
 
+#include <GL/glew.h>
+
 #include <stdio.h>
+#include <math.h>
 
 #define DAMPENING 0.8
 

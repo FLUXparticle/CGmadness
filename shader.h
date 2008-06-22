@@ -20,9 +20,6 @@
 #ifndef _shader_h_
 #define _shader_h_
 
-#include <GL/glew.h>
-
-GLhandleARB makeShader(const char *vertexShaderFilename,
-											 const char *fragmentShaderFilename);
+unsigned int makeShader(const char *vertexShaderFilename, const char *fragmentShaderFilename);
 
 #endif

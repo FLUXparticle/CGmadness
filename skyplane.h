@@ -20,15 +20,6 @@
 #ifndef _skyplane_h_
 #define _skyplane_h_
 
-#include "types.h"
-#include "texture.h"
-
-#include <GL/glew.h>
-#include <GL/glut.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-
 void initSkyplane(void);
 void drawSkyplane(void);
 

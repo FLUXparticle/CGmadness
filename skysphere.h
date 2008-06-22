@@ -20,11 +20,6 @@
 #ifndef _skyspere_h_
 #define _skyspere_h_
 
-#include "shader.h"
-#include "types.h"
-#include <math.h>
-#include <GL/glut.h>
-
 void initSkysphere(void);
 void drawSkysphere(void);
 

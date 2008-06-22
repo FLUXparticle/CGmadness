@@ -21,6 +21,8 @@
 
 #include "shader.h"
 
+#include <GL/glew.h>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -40,8 +42,8 @@ static int gShaderAvailable;
 static int gUseBallShadow = 0;
 static int gUseReflection = 0;
 
-GLhandleARB sgBallShadowShader = 0;
-GLhandleARB sgGolfballShader = 0;
+unsigned int sgBallShadowShader = 0;
+unsigned int sgGolfballShader = 0;
 
 void usageFeatures(void)
 {
@@ -76,6 +78,8 @@ void initFeatures(int argc, char *argv[])
 			noVBO = 1;
 		}
 	}
+
+	glewInit();
 
 	gFramebufferAvailable = 1;
 	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil)

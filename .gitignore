@@ -3,3 +3,7 @@
 *.dll
 
 .deps
+i686-apple-darwin9
+
+cgmadness
+convert-cgm
