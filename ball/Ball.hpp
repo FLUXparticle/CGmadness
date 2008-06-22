@@ -22,6 +22,9 @@
 
 #include "callback.hpp"
 
+#include "BallObject.hpp"
+#include "Explosion.hpp"
+
 #include "math/quaternion.hpp"
 #include "math/Vector3.hpp"
 
@@ -67,6 +70,9 @@ protected:
 	
 	Vector3 mPushDirection;
 
+	BallObject mBallObject;
+	Explosion mExplosion;
+	
   virtual void drawBall() const;
   virtual void drawExplosion() const;
   
@@ -76,7 +82,7 @@ protected:
 	
   virtual void activateBallShader() const;
   virtual void deactivateBallShader() const;
-  
+
 };
 
 inline const Vector3& Ball::pos() const

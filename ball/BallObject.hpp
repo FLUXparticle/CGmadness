@@ -17,46 +17,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.hpp"
+#ifndef BallObject_hpp
+#define BallObject_hpp
 
-#include <GL/gl.h>
+#include "math/Vector3.hpp"
 
-void drawSquare()
+#define SUB_DIVS_DEPTH 3
+
+/*
+ * WARNING: CNT_BALL_TRIANGLES must be (20 * (4 ^ SUB_DIVS_DEPTH))
+ */
+
+#define CNT_BALL_TRIANGLES (20 * 64)
+#define CNT_BALL_VERTICES (CNT_BALL_TRIANGLES * 3)
+
+class BallObject
 {
-	glBegin(GL_POLYGON);
-	{
-		glNormal3f(0.0f, 0.0f, 1.0f);
+public:
+	static void init();
+	
+public:
+  BallObject();
+  virtual ~BallObject();
+  
+  void drawDefault() const;
+  void drawShader() const;
+  
+protected:
+	static Vector3 gBallVertices[CNT_BALL_VERTICES];
+	static Vector3 gBallTexCoordsDefault[CNT_BALL_VERTICES];
+	static Vector3 gBallTexCoordsShader[CNT_BALL_VERTICES];
 
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
+protected:
+	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;
+	
+private:
+	static int gCntBallVertices;
 
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(1.0f, -1.0f);
+	static void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s);
+	
+};
 
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(1.0f, 1.0f);
-
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-1.0f, 1.0f);
-	}
-	glEnd();
-}
-
-void drawPanel(float width, float height)
-{
-	glPushMatrix();
-	{
-		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
-
-		glScalef(width / 2.0f, height / 2.0f, 1.0f);
-
-		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
-
-		glEnable(GL_BLEND);
-		{
-			drawSquare();
-		}
-		glDisable(GL_BLEND);
-	}
-	glPopMatrix();
-}
+#endif

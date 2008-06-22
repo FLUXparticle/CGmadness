@@ -17,46 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.hpp"
+#ifndef DefaultBall_hpp
+#define DefaultBall_hpp
 
-#include <GL/gl.h>
+#include "BallObject.hpp"
 
-void drawSquare()
+class DefaultBall : public BallObject
 {
-	glBegin(GL_POLYGON);
-	{
-		glNormal3f(0.0f, 0.0f, 1.0f);
+public:
+  DefaultBall();
+  virtual ~DefaultBall();
 
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
+private:
 
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(1.0f, -1.0f);
+};
 
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(1.0f, 1.0f);
-
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-1.0f, 1.0f);
-	}
-	glEnd();
-}
-
-void drawPanel(float width, float height)
-{
-	glPushMatrix();
-	{
-		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
-
-		glScalef(width / 2.0f, height / 2.0f, 1.0f);
-
-		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
-
-		glEnable(GL_BLEND);
-		{
-			drawSquare();
-		}
-		glDisable(GL_BLEND);
-	}
-	glPopMatrix();
-}
+#endif

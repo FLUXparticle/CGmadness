@@ -22,7 +22,6 @@
 #include "level.hpp"
 #include "hw/features.hpp"
 #include "texture.hpp"
-#include "objects.hpp"
 #include "Main.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"
@@ -96,7 +95,7 @@ void Ball::update(float interval)
 	{
 		animateBall(interval);
 	}
-	else if (updateExplosion(interval, &mVelocity, &mPos))
+	else if (mExplosion.update(interval, mVelocity, mPos))
 	{
 		reset();
 	}
@@ -136,7 +135,7 @@ void Ball::explodeBall()
 
 	this->mVelocity.z = -10.0f;
 
-	initExplosion(pos, speed, this->mPos, this->mVelocity);
+	mExplosion.init(pos, speed, this->mPos, this->mVelocity);
 
 	this->mPos = pos;
 	this->mVelocity = speed;
@@ -357,12 +356,12 @@ void Ball::animateBall(float interval)
 
 void Ball::drawBall() const
 {
-	drawBallObjectDefault();
+	mBallObject.drawDefault();
 }
 
 void Ball::drawExplosion() const
 {
-	drawExplosionDefault();
+	mExplosion.drawDefault();
 }
 
 void Ball::activateBallShader() const
