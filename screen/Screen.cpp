@@ -48,6 +48,8 @@ void Screen::start(Process* previous)
 {
 	mPrevious = previous;
 	show();
+
+	mAnimationTime = 0.0;
 }
 
 void Screen::show()
@@ -76,7 +78,7 @@ void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent
 	  FOREACH(std::list<MenuItem*>, mItems, iter)
 	  {
 	  	MenuItem* item = *iter;
-	  	
+
 	  	item->hover = 0;
 
 	  	if (x >= item->position.x && y >= item->position.y &&
@@ -91,6 +93,11 @@ void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent
 
 void Screen::update(float interval)
 {
+	if (mAnimationTime < 1.0)
+	{
+		mAnimationTime += interval;
+	}
+
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
@@ -99,7 +106,7 @@ void Screen::update(float interval)
   FOREACH(std::list<MenuItem*>, mItems, iter)
   {
   	MenuItem* item = *iter;
-  	
+
   	if (item->hover)
   	{
   		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
@@ -111,7 +118,7 @@ void Screen::update(float interval)
 
   	item->update(interval);
   }
-  
+
   customUpdate(interval);
 }
 
@@ -150,6 +157,12 @@ void Screen::draw() const
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
 			drawLogo();
+
+			if (mAnimationTime < 1.0)
+			{
+				glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
+			}
+
 		  FOREACH(std::list<MenuItem*>, mItems, iter)
 		  {
 		  	drawMenuItem(*iter);

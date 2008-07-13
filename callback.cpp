@@ -240,7 +240,7 @@ void setUpdateFrequency(int callsPerSecond)
 void startCallback(Process* process)
 {
 	gProcess = process;
-	
+
 	startTimer();
 	startDisplay();
 }
