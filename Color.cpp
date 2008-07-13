@@ -17,27 +17,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _color_hpp_
-#define _color_hpp_
+#include "Color.hpp"
 
-struct Color3
+Color3::Color3()
 {
-	Color3();
-	Color3(float r, float g, float b);
+	// empty
+}
 
-	float r;
-	float g;
-	float b;
-};
-
-struct Color4 : public Color3
+Color3::Color3(float r, float g, float b)
 {
-	Color4();
-	Color4(float r, float g, float b, float a);
+	this->r = r;
+	this->g = g;
+	this->b = b;
+}
 
-	float a;
-};
+Color4::Color4()
+{
+	// empty
+}
 
-Color3 interpolateColor(Color3 col1, Color3 col2, float t);
+Color4::Color4(float r, float g, float b, float a) :
+	Color3(r, g, b)
+{
+	this->a = a;
+}
 
-#endif
+Color3 interpolateColor(Color3 col1, Color3 col2, float t)
+{
+	float invT = 1.0f - t;
+
+	return Color3(col1.r * invT + col2.r * t, col1.g * invT + col2.g * t,
+								col1.b * invT + col2.b * t);
+}

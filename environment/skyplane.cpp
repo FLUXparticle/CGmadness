@@ -23,7 +23,7 @@
 #include "math/Vector3.hpp"
 
 #include "functions.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 
 #include "texture.hpp"
 
