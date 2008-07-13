@@ -96,7 +96,7 @@ void LevelInfo::draw() const
 			ColorStack::colorStack.setColor(Color4::blue);
 			break;
 		case 5:
-			ColorStack::colorStack.setColor(Color4::foo);
+			ColorStack::colorStack.setColor(Color4::yellow);
 			break;
 		default:
 			ColorStack::colorStack.setColor(Color4::white);

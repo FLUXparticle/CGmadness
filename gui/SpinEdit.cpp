@@ -39,18 +39,13 @@ void drawArrowLeft(void)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexLeft);
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glScalef(0.5f, 0.5f, 1.0f);
+			glScalef(0.5f, 0.5f, 1.0f);
 
-				drawSquare();
-			}
-			glPopMatrix();
+			drawSquare();
 		}
-		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 	glDisable(GL_TEXTURE_2D);
 }
@@ -60,18 +55,13 @@ void drawArrowRight(void)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexRight);
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glScalef(0.5f, 0.5f, 1.0f);
+			glScalef(0.5f, 0.5f, 1.0f);
 
-				drawSquare();
-			}
-			glPopMatrix();
+			drawSquare();
 		}
-		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 	glDisable(GL_TEXTURE_2D);
 }

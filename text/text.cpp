@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -54,19 +54,18 @@ static void drawStrokeText(const char *str)
 	const char *s;
 
 	glPushMatrix();
-
-	glScalef(scale, scale, scale);
-
-	for (s = str; *s; s++)
 	{
-		glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
+		glEnable(GL_LINE_SMOOTH);
+		{
+			glScalef(scale, scale, scale);
+
+			for (s = str; *s; s++)
+			{
+				glutStrokeCharacter(GLUT_STROKE_ROMAN, *s);
+			}
+		}
+		glDisable(GL_LINE_SMOOTH);
 	}
-
-	glLineWidth(1.0f);
-
-	glDisable(GL_BLEND);
-	glDisable(GL_LINE_SMOOTH);
-
 	glPopMatrix();
 }
 
@@ -81,19 +80,13 @@ void drawStrokeThinText(const char *str)
 
 void drawStrokeThickText(const char *str)
 {
-	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
+	{
+		glLineWidth(3.5f);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		drawStrokeText(str);
 
-	glLineWidth(3.5f);
-
-	drawStrokeText(str);
-
-	glLineWidth(1.0f);
-
-	glDisable(GL_BLEND);
+		glLineWidth(1.0f);
+	}
 	glDisable(GL_LINE_SMOOTH);
-
-	glPopMatrix();
 }

@@ -49,16 +49,11 @@ void drawPanel(float width, float height)
 	glPushMatrix();
 	{
 		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
-
 		glScalef(width / 2.0f, height / 2.0f, 1.0f);
 
 		ColorStack::colorStack.setColor(Color4(0.0f, 0.0f, 0.0f, 0.5f));
 
-		glEnable(GL_BLEND);
-		{
-			drawSquare();
-		}
-		glDisable(GL_BLEND);
+		drawSquare();
 	}
 	glPopMatrix();
 }

@@ -23,7 +23,7 @@ Color4 Color4::white(1.0f, 1.0f, 1.0f);
 Color4 Color4::gray(0.5f, 0.5f, 0.5f);
 Color4 Color4::red(0.0f, 0.0f, 1.0f);
 Color4 Color4::blue(0.0f, 0.0f, 1.0f);
-Color4 Color4::foo(1.0f, 1.0f, 0.0f);
+Color4 Color4::yellow(1.0f, 1.0f, 0.0f);
 
 Color3::Color3()
 {
