@@ -17,63 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Main.hpp"
+#include "DefaultBall.hpp"
 
-#include "ball/Ball.hpp"
-#include "ball/PlayersBall.hpp"
-
-#include "environment/environment.hpp"
-
-#include "process/MainProcess.hpp"
-
-#include "gui/gui.hpp"
-#include "ball/BallObject.hpp"
-
-#include "Main.hpp"
-
-void Main::init()
-{
-	BallObject::init();
-	initEnvironment();
-
-	initGUI();
-	
-	Ball::init();
-	PlayersBall::init();
-}
-
-Main::Main()
+DefaultBall::DefaultBall()
 {
   // empty
 }
 
-Main::~Main()
+DefaultBall::~DefaultBall()
 {
   // empty
 }
 
-void Main::setFirstProcess(Process* first)
-{
-	changeProcess(first, FLUSH);
-}
-
-void Main::setState(Process* process, bool flush)
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->setProcess(process, flush);
-}
-
-void Main::pushState(Process* process)
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->pushProcess(process);
-}
-
-void Main::popState()
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->popProcess();
-}

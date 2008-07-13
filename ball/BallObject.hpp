@@ -17,63 +17,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Main.hpp"
+#ifndef BallObject_hpp
+#define BallObject_hpp
 
-#include "ball/Ball.hpp"
-#include "ball/PlayersBall.hpp"
+#include "math/Vector3.hpp"
 
-#include "environment/environment.hpp"
+#define SUB_DIVS_DEPTH 3
 
-#include "process/MainProcess.hpp"
+/*
+ * WARNING: CNT_BALL_TRIANGLES must be (20 * (4 ^ SUB_DIVS_DEPTH))
+ */
 
-#include "gui/gui.hpp"
-#include "ball/BallObject.hpp"
+#define CNT_BALL_TRIANGLES (20 * 64)
+#define CNT_BALL_VERTICES (CNT_BALL_TRIANGLES * 3)
 
-#include "Main.hpp"
-
-void Main::init()
+class BallObject
 {
-	BallObject::init();
-	initEnvironment();
-
-	initGUI();
+public:
+	static void init();
 	
-	Ball::init();
-	PlayersBall::init();
-}
+public:
+  BallObject();
+  virtual ~BallObject();
+  
+  void drawDefault() const;
+  void drawShader() const;
+  
+protected:
+	static Vector3 gBallVertices[CNT_BALL_VERTICES];
+	static Vector3 gBallTexCoordsDefault[CNT_BALL_VERTICES];
+	static Vector3 gBallTexCoordsShader[CNT_BALL_VERTICES];
 
-Main::Main()
-{
-  // empty
-}
-
-Main::~Main()
-{
-  // empty
-}
-
-void Main::setFirstProcess(Process* first)
-{
-	changeProcess(first, FLUSH);
-}
-
-void Main::setState(Process* process, bool flush)
-{
-	Singleton<Main> gDispenser;
+protected:
+	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;
 	
-	gDispenser->setProcess(process, flush);
-}
+private:
+	static int gCntBallVertices;
 
-void Main::pushState(Process* process)
-{
-	Singleton<Main> gDispenser;
+	static void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s);
 	
-	gDispenser->pushProcess(process);
-}
+};
 
-void Main::popState()
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->popProcess();
-}
+#endif

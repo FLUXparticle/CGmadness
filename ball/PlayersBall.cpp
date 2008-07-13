@@ -36,6 +36,8 @@
 
 PlayersBall PlayersBall::sgoBall;
 
+std::vector<int> PlayersBall::gBallLayouts;
+
 PlayersBall::PlayersBall() :
 	mIsReflectionDirty(true),
 	mBallLayout(0)
@@ -55,26 +57,26 @@ void PlayersBall::init()
 		sgoBall.initCubeMap();
 	}
 
-	sgoBall.gBallLayouts.push_back(BALL_LAYOUT_DEFAULT);
+	gBallLayouts.push_back(BALL_LAYOUT_DEFAULT);
 
 	if (Ball::hasBallTexture())
 	{
-		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_TEXTURE);
+		gBallLayouts.push_back(BALL_LAYOUT_TEXTURE);
 	}
 
 	if (sgoBall.hasCubeMap())
 	{
-		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_METAL);
+		gBallLayouts.push_back(BALL_LAYOUT_METAL);
 	}
 
 	if (hasGolfballShader())
 	{
-		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL);
+		gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL);
 	}
 
 	if (hasGolfballShader() && PlayersBall::sgoBall.hasCubeMap())
 	{
-		sgoBall.gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL_METAL);
+		gBallLayouts.push_back(BALL_LAYOUT_GOLFBALL_METAL);
 	}
 }
 
@@ -198,11 +200,11 @@ void PlayersBall::drawBall() const
 {
 	if (useBallShader())
 	{
-		drawBallObjectShader();
+		mBallObject.drawShader();
 	}
 	else
 	{
-		drawBallObjectDefault();
+		mBallObject.drawDefault();
 	}
 }
 
@@ -210,11 +212,11 @@ void PlayersBall::drawExplosion() const
 {
 	if (useBallShader())
 	{
-		drawExplosionShader();
+		mExplosion.drawShader();
 	}
 	else
 	{
-		drawExplosionDefault();
+		mExplosion.drawDefault();
 	}
 }
 

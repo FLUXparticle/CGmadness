@@ -22,20 +22,8 @@
 
 #include "math/Vector3.hpp"
 
-void initObjects();
-
 void drawSquare();
 void drawPanel(float width, float height);
 void drawRingStrip(int corners, float progress, int texture);
-
-void drawBallObjectDefault();
-void drawBallObjectShader();
-
-void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
-									 Vector3 endSpeed);
-bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos);
-
-void drawExplosionDefault();
-void drawExplosionShader();
 
 #endif

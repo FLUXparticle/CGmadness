@@ -42,16 +42,16 @@ float Vector3::len() const
 Vector3 Vector3::norm() const
 {
 	float l = len();
-	
+
 	Vector3 b(0.0f, 0.0f, 0.0f);
-	
+
 	if (l > 0.0f)
 	{
 		b.x = x / l;
 		b.y = y / l;
 		b.z = z / l;
 	}
-	
+
 	return b;
 }
 

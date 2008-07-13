@@ -17,63 +17,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Main.hpp"
+#ifndef Explosion_hpp
+#define Explosion_hpp
 
-#include "ball/Ball.hpp"
-#include "ball/PlayersBall.hpp"
+#include "BallObject.hpp"
 
-#include "environment/environment.hpp"
+#define PARTS_TOGETHER 16
 
-#include "process/MainProcess.hpp"
-
-#include "gui/gui.hpp"
-#include "ball/BallObject.hpp"
-
-#include "Main.hpp"
-
-void Main::init()
+class Explosion : public BallObject
 {
-	BallObject::init();
-	initEnvironment();
+public:
+	Explosion();
+	virtual ~Explosion();
 
-	initGUI();
+	void init(const Vector3& startPos, const Vector3& startSpeed,
+			const Vector3& endPos, const Vector3& endSpeed);
 	
-	Ball::init();
-	PlayersBall::init();
-}
+	bool update(float interval, const Vector3& speed, Vector3& pos);
 
-Main::Main()
-{
-  // empty
-}
-
-Main::~Main()
-{
-  // empty
-}
-
-void Main::setFirstProcess(Process* first)
-{
-	changeProcess(first, FLUSH);
-}
-
-void Main::setState(Process* process, bool flush)
-{
-	Singleton<Main> gDispenser;
+	void drawDefault() const;
+	void drawShader() const;
 	
-	gDispenser->setProcess(process, flush);
-}
+private:
+	struct Fragment
+	{
+		Vector3 vertices[PARTS_TOGETHER * 3];
 
-void Main::pushState(Process* process)
-{
-	Singleton<Main> gDispenser;
-	
-	gDispenser->pushProcess(process);
-}
+		Vector3 pos;
+		Vector3 offset;
+		Vector3 speed;
 
-void Main::popState()
-{
-	Singleton<Main> gDispenser;
+		Vector3 rotation;
+		Vector3 rotSpeed;
+	};
 	
-	gDispenser->popProcess();
-}
+	Vector3 gStartPos;
+	Vector3 gStartSpeed;
+
+	Vector3 gEndPos;
+	Vector3 gEndSpeed;
+
+	float gExplosionTime;
+	float gMaxExplosionTime;
+
+	Fragment gFragments[CNT_BALL_TRIANGLES / PARTS_TOGETHER];
+
+	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;
+	
+};
+
+#endif

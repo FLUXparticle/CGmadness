@@ -58,7 +58,7 @@ static void drawMenuBall()
 ScreenGameMain::ScreenGameMain(Game* parent) :
 	mParent(parent)
 {
-	int maxLayout = PlayersBall::sgoBall.cntLayouts() - 1;
+	int maxLayout = PlayersBall::cntLayouts() - 1;
 	
 	gseBall = SpinEdit(maxLayout, 0, maxLayout, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 	mItems.push_back(&gseBall);
