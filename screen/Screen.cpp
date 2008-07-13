@@ -97,7 +97,7 @@ void Screen::update(float interval)
 {
 	if (mAnimationTime < 1.0)
 	{
-		mAnimationTime += interval;
+		mAnimationTime += 5.0f * interval * (1.0f - mAnimationTime);
 	}
 
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
