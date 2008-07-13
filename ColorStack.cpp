@@ -17,48 +17,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.hpp"
-
 #include "ColorStack.hpp"
+
+#include "macros.hpp"
 
 #include <GL/gl.h>
 
-void drawSquare()
+ColorStack ColorStack::colorStack;
+
+ColorStack::ColorStack()
 {
-	glBegin(GL_POLYGON);
-	{
-		glNormal3f(0.0f, 0.0f, 1.0f);
-
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
-
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(1.0f, -1.0f);
-
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(1.0f, 1.0f);
-
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(-1.0f, 1.0f);
-	}
-	glEnd();
+  // empty
 }
 
-void drawPanel(float width, float height)
+ColorStack::~ColorStack()
 {
-	glPushMatrix();
+  // empty
+}
+
+void ColorStack::pushColor(const Color4& color)
+{
+	mStack.push_back(color);
+}
+
+void ColorStack::popColor()
+{
+	mStack.pop_back();
+}
+
+void ColorStack::setColor(const Color4& color) const
+{
+	Color4 c = color;
+
+	FOREACH(std::list<Color4>, mStack, iter)
 	{
-		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
-
-		glScalef(width / 2.0f, height / 2.0f, 1.0f);
-
-		ColorStack::colorStack.setColor(Color4(0.0f, 0.0f, 0.0f, 0.5f));
-
-		glEnable(GL_BLEND);
-		{
-			drawSquare();
-		}
-		glDisable(GL_BLEND);
+		c *= *iter;
 	}
-	glPopMatrix();
+
+	glColor4f(c.r, c.g, c.b, c.a);
 }

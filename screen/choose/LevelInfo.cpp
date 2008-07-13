@@ -27,6 +27,8 @@
 #include "objects.hpp"
 #include "text/text.hpp"
 
+#include "ColorStack.hpp"
+
 #include <stdio.h>
 #include <GL/gl.h>
 
@@ -53,7 +55,7 @@ LevelInfo::~LevelInfo()
 void LevelInfo::draw() const
 {
 	Singleton<LevelLoader> gLevelLoader;
-	
+
 	const char *lines[LEVELINFO_LINES];
 	char size[20];
 	int i;
@@ -91,13 +93,13 @@ void LevelInfo::draw() const
 		switch (i)
 		{
 		case 0:
-			glColor3f(0.0f, 0.0f, 1.0f);
+			ColorStack::colorStack.setColor(Color4::blue);
 			break;
 		case 5:
-			glColor3f(1.0f, 1.0f, 0.0f);
+			ColorStack::colorStack.setColor(Color4::foo);
 			break;
 		default:
-			glColor3f(1.0f, 1.0f, 1.0f);
+			ColorStack::colorStack.setColor(Color4::white);
 			break;
 		}
 
@@ -106,5 +108,5 @@ void LevelInfo::draw() const
 		glPopMatrix();
 	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	ColorStack::colorStack.setColor(Color4::white);
 }

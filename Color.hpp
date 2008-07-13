@@ -32,8 +32,18 @@ struct Color3
 
 struct Color4 : public Color3
 {
+public:
+	static Color4 white;
+	static Color4 gray;
+	static Color4 red;
+	static Color4 blue;
+	static Color4 foo;
+
+public:
 	Color4();
-	Color4(float r, float g, float b, float a);
+	Color4(float r, float g, float b, float a = 1.0f);
+
+	void operator *= (const Color4& other);
 
 	float a;
 };

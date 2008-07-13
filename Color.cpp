@@ -19,6 +19,12 @@
 
 #include "Color.hpp"
 
+Color4 Color4::white(1.0f, 1.0f, 1.0f);
+Color4 Color4::gray(0.5f, 0.5f, 0.5f);
+Color4 Color4::red(0.0f, 0.0f, 1.0f);
+Color4 Color4::blue(0.0f, 0.0f, 1.0f);
+Color4 Color4::foo(1.0f, 1.0f, 0.0f);
+
 Color3::Color3()
 {
 	// empty
@@ -40,6 +46,14 @@ Color4::Color4(float r, float g, float b, float a) :
 	Color3(r, g, b)
 {
 	this->a = a;
+}
+
+void Color4::operator *= (const Color4& other)
+{
+	r *= other.r;
+	g *= other.g;
+	b *= other.b;
+	a *= other.a;
 }
 
 Color3 interpolateColor(Color3 col1, Color3 col2, float t)

@@ -19,6 +19,8 @@
 
 #include "Screen.hpp"
 
+#include "ColorStack.hpp"
+
 #include "texture.hpp"
 #include "camera.hpp"
 #include "objects.hpp"
@@ -150,7 +152,7 @@ void Screen::draw() const
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
-		glColor3f(1.0f, 1.0f, 1.0f);
+		ColorStack::colorStack.setColor(Color4::white);
 
 		glPushMatrix();
 		{
