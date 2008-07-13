@@ -20,25 +20,23 @@
 #ifndef _color_hpp_
 #define _color_hpp_
 
-typedef struct
+struct Color3
 {
-	float r;
-	float g;
-	float b;
-} Color3;
+	Color3();
+	Color3(float r, float g, float b);
 
-typedef struct
-{
 	float r;
 	float g;
 	float b;
+};
+
+struct Color4 : public Color3
+{
+	Color4();
+	Color4(float r, float g, float b, float a);
+
 	float a;
-} Color4;
-
-Color4 color4(float r, float g, float b, float a);
-
-Color3 color3(float r, float g, float b);
-Color3 color3i(int r, int g, int b);
+};
 
 Color3 interpolateColor(Color3 col1, Color3 col2, float t);
 

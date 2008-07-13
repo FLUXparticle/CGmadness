@@ -228,9 +228,9 @@ void initBallShadow(void)
 
 void initGameField(void)
 {
-	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
-	static Color4 blue = { 0.0f, 0.0f, 1.0f, 1.0f };
-	static Color4 white = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static Color4 green(0.0f, 1.0f, 0.0f, 1.0f);
+	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
+	static Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int x;
 	int y;
@@ -449,7 +449,7 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
 void updateGameField(const PlayersBall& ball)
 {
 	gBallPosition = ball.pos();
-	
+
 	static int lastMX = 0;
 	static int lastMY = 0;
 
