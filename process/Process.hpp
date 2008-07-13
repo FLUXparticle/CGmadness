@@ -30,14 +30,17 @@ public:
   Process();
   virtual ~Process();
   
-  virtual void start();
+  virtual void start(Process* previous);
   virtual void stop();
+  
+  virtual void suspend();
+  virtual void resume();
   
   virtual void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   virtual void update(float interval) = 0;
   
   virtual void preDisplay();
-  virtual void draw() = 0;
+  virtual void draw() const = 0;
   virtual void drawHUD(float width, float height);
 
 private:

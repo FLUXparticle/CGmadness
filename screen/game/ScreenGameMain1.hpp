@@ -22,8 +22,6 @@
 
 #include "ScreenGameMain.hpp"
 
-#include "process/Game.hpp"
-
 class ScreenGameMain1 : public ScreenGameMain
 {
 public:
@@ -33,8 +31,6 @@ public:
 private:
 	Button bStart;
 	
-	Game* mParent;
-
 	void clickButtonStart();
 	
 };

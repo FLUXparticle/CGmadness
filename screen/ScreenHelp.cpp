@@ -48,5 +48,5 @@ ScreenHelp::~ScreenHelp()
 
 void ScreenHelp::clickButtonBack()
 {
-	gMenuManager->popScreen();
+	popScreen();
 }

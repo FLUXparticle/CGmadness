@@ -20,25 +20,28 @@
 #include "ScreenChooseGame.hpp"
 
 #include "Main.hpp"
+#include "process/RaceTheClock.hpp"
+
+#include "utils/Callback.hpp"
 
 #include "hw/keyboard.hpp"
 
-static void clickButtonChooseGame()
-{
-	Main::setState(Main::STATE_GAME);
-}
-
 ScreenChooseGame::ScreenChooseGame()
 {
-	bChooseGame = Button(2.0f, clickButtonChooseGame, "choose", KEY_ENTER);
+	bChooseGame = Button(2.0f, CALLBACK(ScreenChooseGame, clickButtonChooseGame), "choose", KEY_ENTER);
 	mItems.push_back(&bChooseGame);
 	
-	initHighScore(&hsHighScore, 3.0f);
+	hsHighScore = HighScore(3.0f);
 	mItems.push_back(&hsHighScore);
 }
 
 ScreenChooseGame::~ScreenChooseGame()
 {
   // empty
+}
+
+void ScreenChooseGame::clickButtonChooseGame()
+{
+	Main::setState(mGame, true);
 }
 

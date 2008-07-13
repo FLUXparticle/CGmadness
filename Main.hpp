@@ -22,35 +22,20 @@
 
 #include "process/Dispenser.hpp"
 
-#include "utils/Singleton.hpp"
-
 class Main : public Dispenser
 {
 public:
-	typedef enum
-	{
-		STATE_MAIN,
-		STATE_GAME,
-		STATE_EDITOR
-	} MainState;
+	static void init();
+
+	static void setState(Process* process, bool flush);
+	static void pushState(Process* process);
+	static void popState();
 
 public:
-  static void init();
-  
-  static void setState(MainState newState);
-  
-public:
-  Main();
-  virtual ~Main();
+	Main();
+	virtual ~Main();
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
-  
-private:
-	Singleton<class MenuManager> gMenuManager;
-
-	Singleton<class MainProcess> gMainProcess;
-	Singleton<class RaceTheClock> gGameProcess;
-	Singleton<class Editor> gEditorProcess;
+	void setFirstProcess(Process* first);
 
 };
 

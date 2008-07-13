@@ -24,11 +24,8 @@ Canvas::Canvas()
   // empty
 }
 
-Canvas::Canvas(float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw)
+Canvas::Canvas(float z, float width, float height)
 {
-	this->customUpdate = customUpdate;
-	this->customDraw = customDraw;
-
 	this->width = width;
 	this->height = height;
 
@@ -42,10 +39,10 @@ Canvas::~Canvas()
 
 void Canvas::update(float interval)
 {
-	this->customUpdate(interval);
+  // empty
 }
 
 void Canvas::draw() const
 {
-	this->customDraw();
+  // empty
 }

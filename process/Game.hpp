@@ -26,8 +26,8 @@
 
 #include "ball/PlayersBall.hpp"
 
-#include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"
+#include "utils/Singleton.hpp"
 
 class Game : public Process, public WaterReflection, public BallReflection
 {
@@ -44,33 +44,36 @@ public:
   Game();
   virtual ~Game();
 
-  void start();
+  void start(Process* previous);
   void stop();
-  
+
+  void suspend();
+  void resume();
+
   void update(float interval);
 
   void preDisplay();
-  void draw();
+  void draw() const;
 
-  void resumeGame();
   virtual void resetGame();
+  void leaveGame();
 
 	void drawWaterReflection() const;
 	void drawBallReflection() const;
-	
+
 protected:
   static PlayersBall& sgoBall;
-  
+
 protected:
 	GameState mGameState;
-	
+
 	float mCounter;
+
+	Process* mPrevious;
 
 	SmartPointer<class ScreenGameMain1> gScreenMain1;
 	SmartPointer<class ScreenGameMain2> gScreenMain2;
 
-	Singleton<class MenuManager> gMenuManager;
-	
   void pauseGame();
 
 private:

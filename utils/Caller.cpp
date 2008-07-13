@@ -32,12 +32,6 @@ Caller::Caller(Functor* f) :
 	// empty
 }
 
-Caller::Caller(void (*f) ()) :
-	mF(new Function(f))
-{
-	// empty
-}
-
 Caller::~Caller()
 {
 	// empty

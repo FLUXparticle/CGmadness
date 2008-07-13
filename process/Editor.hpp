@@ -24,24 +24,35 @@
 
 #include "ball/Ball.hpp"
 
-#include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"
 
 class Editor : public Process
 {
 public:
-  Editor();
-  virtual ~Editor();
+	typedef enum
+	{
+		STATE_PAUSED,
+		STATE_EDITING,
+		STATE_TESTING
+	} EditorState;
+	
+public:
+	Editor();
+	virtual ~Editor();
 
-  void start();
-  void stop();
-  
-  void update(float interval);
-  void draw();
-  
+	void start(Process* previous);
+
+	void suspend();
+	void resume();
+
+	void update(float interval);
+	void draw() const;
+
 private:
 	Ball mBall;
 	
+	EditorState mState;
+
 	void enableTestMode();
 	void disableTestMode();
 
@@ -49,19 +60,15 @@ private:
 	SmartPointer<class ScreenWait> gScreenWait;
 	SmartPointer<class ScreenInfo> gScreenInfo;
 
-	Singleton<class MenuManager> gMenuManager;
+	Process* mPrevious;
 
-	void pause();
-	
 	void lightMapsReady();
 	void saveLevel();
-	
+
 	friend class ScreenEditorMain;
-	
+
 };
 
-void resumeEditor(void);
-
-void drawEditorField(void);
+void drawEditorField(bool showCursor = false);
 
 #endif

@@ -37,23 +37,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define DRAW_DEBUG_LINES 0
-
-#if (DRAW_DEBUG_LINES)
-typedef struct
-{
-	Vector3 v1;
-	Vector3 v2;
-} Line;
-
-Line gLines[10 * 10 * LIGHT_MAP_SIZE * LIGHT_MAP_SIZE * 32 * 8];
-int gCntLines = 0;
-#endif
-
-static bool gIsEditorRunning;
-
-static int gShowCursor = 0;
-
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
 static int gCamAngle = 0;
@@ -64,8 +47,6 @@ static const int gCos[] = { 1, 0, -1, 0 };
 static bool gDirtyTexCoords;
 static bool gDirtyLightmaps;
 
-static bool gIsTestMode;
-
 Editor::Editor()
 {
 	gScreenEditorMain = new ScreenEditorMain(this);
@@ -73,17 +54,13 @@ Editor::Editor()
 
 Editor::~Editor()
 {
-  // empty
+	// empty
 }
 
-void Editor::pause()
+void Editor::start(Process* previous)
 {
-	gMenuManager->pushScreen(gScreenEditorMain);
-	gIsEditorRunning = false;
-}
+	mPrevious = previous;
 
-void Editor::start()
-{
 	sgLevel.lightMap = 0;
 	if (sgLevel.saved)
 	{
@@ -98,21 +75,20 @@ void Editor::start()
 	gCurEnd.x = 0;
 	gCurEnd.y = 0;
 
-	gIsTestMode = 0;
-	gShowCursor = 1;
+	mState = STATE_PAUSED;
 
-	pause();
+	Main::pushState(gScreenEditorMain);
 }
 
-void Editor::stop()
+void Editor::suspend()
 {
-	gShowCursor = 0;
+	mState = STATE_PAUSED;
 }
 
-void resumeEditor(void)
+void Editor::resume()
 {
 	glutSetCursor(GLUT_CURSOR_NONE);
-	gIsEditorRunning = true;
+	mState = STATE_EDITING;
 }
 
 void Editor::lightMapsReady()
@@ -126,12 +102,12 @@ void Editor::saveLevel()
 	if (gDirtyLightmaps)
 	{
 		destroyCommon();
-		
+
 		gScreenWait = new ScreenWait(CALLBACK(Editor, lightMapsReady));
-		
+
 		initCommon();
 		setUpdateFrequency(10);
-		gMenuManager->pushScreen(gScreenWait);
+		Main::setState(gScreenWait, false);
 		updateLightMap(1);
 	}
 	else
@@ -140,24 +116,15 @@ void Editor::saveLevel()
 		{
 			sgLevel.saved = true;
 			gScreenInfo = new ScreenInfo("level saved successfully");
-			gMenuManager->pushScreen(gScreenInfo);
+			Main::setState(gScreenInfo, false);
 		}
 		else
 		{
 			gScreenInfo = new ScreenInfo("operation failed");
-			gMenuManager->pushScreen(gScreenInfo);
+			Main::setState(gScreenInfo, false);
 		}
 	}
 }
-
-#if (DRAW_DEBUG_LINES)
-void addLine(Vector3 v1, Vector3 v2)
-{
-	gLines[gCntLines].v1 = v1;
-	gLines[gCntLines].v2 = v2;
-	gCntLines++;
-}
-#endif
 
 void updateEditorCamera(float interval, Vector3 marker)
 {
@@ -246,9 +213,8 @@ void changeMarkerArea(int incz, int incdzx, int incdzy)
 			dzx += incdzx;
 			dzy += incdzy;
 
-			if (z - (abs(dzx) + abs(dzy)) >= 0
-					&& (z + (abs(dzx) + abs(dzy))) <= MAX_LEVEL_HEIGHT * HEIGHT_STEPS
-					&& abs(dzx) <= 5 && abs(dzy) <= 5)
+			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
+					<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
 			{
 				p->z = z;
 				p->dzx = dzx;
@@ -282,7 +248,6 @@ void flattenMarkerArea(void)
 
 	markerChanged();
 }
-
 
 void modBetween(int *value, int mod, int min, int max)
 {
@@ -352,7 +317,6 @@ void animateEditor(float interval)
 	{
 		changeMarkerArea(0, -gCos[gCamAngle], -gSin[gCamAngle]);
 	}
-
 
 	if (wasKeyPressed('s'))
 	{
@@ -425,14 +389,13 @@ void animateEditor(float interval)
 void Editor::enableTestMode()
 {
 	mBall.reset();
-	
+
 	resetBallCamera();
 	enableBallCamera();
 
 	initGameField();
 
-	gIsTestMode = 1;
-	gShowCursor = 0;
+	mState = STATE_TESTING;
 }
 
 void Editor::disableTestMode()
@@ -440,32 +403,28 @@ void Editor::disableTestMode()
 	destroyGameField();
 	disableBallCamera();
 
-	gIsTestMode = 0;
-	gShowCursor = 1;
+	mState = STATE_EDITING;
 }
 
 void Editor::update(float interval)
 {
-	if (!gIsEditorRunning)
+	switch (mState)
 	{
-		gMenuManager->update(interval);
-	}
-	else if (gIsTestMode)
-	{
+	case STATE_TESTING:
 		if (wasKeyPressed(KEY_ESC))
 		{
 			disableTestMode();
 		}
 
 		updateBall(mBall, interval);
-	}
-	else
+		break;
+	case STATE_EDITING:
 	{
 		Vector3 markerPos;
 
 		if (wasKeyPressed(KEY_ESC))
 		{
-			pause();
+			Main::pushState(gScreenEditorMain);
 		}
 
 		if (wasKeyPressed(KEY_ENTER))
@@ -475,8 +434,8 @@ void Editor::update(float interval)
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z =
-			(float) sgLevel.field[gCurStart.x][gCurStart.y].z / HEIGHT_STEPS;
+		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z
+				/ HEIGHT_STEPS;
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
@@ -486,17 +445,22 @@ void Editor::update(float interval)
 			updateTexCoords();
 			gDirtyTexCoords = false;
 		}
+		break;
+	}
+	default:
+		break;
 	}
 }
 
-void drawEditorField(void)
+void drawEditorField(bool showCursor)
 {
 	int i;
 	int j;
 	FieldCoord cur;
 	Square square;
 
-	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+	float pos[4] =
+	{ 0.0f, 0.0f, 1.0f, 0.0f };
 
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -511,8 +475,8 @@ void drawEditorField(void)
 		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 		{
 
-			if (gShowCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x
-					&& cur.y <= gCurEnd.y && cur.y >= gCurStart.y)
+			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
+					<= gCurEnd.y && cur.y >= gCurStart.y)
 			{
 				glColor3f(1.0f, 0.0f, 0.0f);
 			}
@@ -567,29 +531,13 @@ void drawEditorField(void)
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
-
-#if (DRAW_DEBUG_LINES)
-	glBegin(GL_LINES);
-	for (i = 0; i < gCntLines; i++)
-	{
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(gLines[i].v1.x, gLines[i].v1.y, gLines[i].v1.z);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(gLines[i].v2.x, gLines[i].v2.y, gLines[i].v2.z);
-	}
-	glEnd();
-#endif
 }
 
-void Editor::draw()
+void Editor::draw() const
 {
-	drawEditorField();
+	drawEditorField(mState == STATE_EDITING);
 
-	if (!gIsEditorRunning)
-	{
-		gMenuManager->draw();
-	}
-	else if (gIsTestMode)
+	if (mState == STATE_TESTING)
 	{
 		mBall.drawGameBall();
 	}

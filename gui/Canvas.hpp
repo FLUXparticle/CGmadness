@@ -28,15 +28,12 @@ class Canvas : public MenuItem
 {
 public:
   Canvas();
-  Canvas(float z, float width, float height, funcUpdate customUpdate, funcDraw customDraw);
+  Canvas(float z, float width, float height);
   virtual ~Canvas();
 
   void update(float interval);
   void draw() const;
   
-	funcUpdate customUpdate;
-	funcDraw customDraw;
-	
 private:
 
 };

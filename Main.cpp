@@ -25,13 +25,11 @@
 #include "environment/environment.hpp"
 
 #include "process/MainProcess.hpp"
-#include "process/RaceTheClock.hpp"
-#include "process/Editor.hpp"
 
 #include "gui/gui.hpp"
 #include "objects.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 void Main::init()
 {
@@ -54,25 +52,28 @@ Main::~Main()
   // empty
 }
 
-void Main::event(const Vector3& position, const Vector3& direction, MouseEvent event)
+void Main::setFirstProcess(Process* first)
 {
-	gMenuManager->event(position, direction, event);
+	changeProcess(first, FLUSH);
 }
 
-void Main::setState(MainState newState)
+void Main::setState(Process* process, bool flush)
 {
 	Singleton<Main> gDispenser;
 	
-	switch (newState)
-	{
-	case STATE_MAIN:
-		gDispenser->setProcess(gDispenser->gMainProcess);
-		break;
-	case STATE_GAME:
-		gDispenser->setProcess(gDispenser->gGameProcess);
-		break;
-	case STATE_EDITOR:
-		gDispenser->setProcess(gDispenser->gEditorProcess);
-		break;
-	}
+	gDispenser->setProcess(process, flush);
+}
+
+void Main::pushState(Process* process)
+{
+	Singleton<Main> gDispenser;
+	
+	gDispenser->pushProcess(process);
+}
+
+void Main::popState()
+{
+	Singleton<Main> gDispenser;
+	
+	gDispenser->popProcess();
 }

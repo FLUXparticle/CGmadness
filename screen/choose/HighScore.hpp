@@ -17,26 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Caller_hpp
-#define Caller_hpp
+#ifndef HighScore_hpp
+#define HighScore_hpp
 
-#include "Functor.hpp"
+#include "gui/Canvas.hpp"
 
-#include "SmartPointer.hpp"
-
-class Caller
+class HighScore : public Canvas
 {
 public:
-  Caller();
-  Caller(Functor* f);
-  
-  virtual ~Caller();
+  HighScore();
+  HighScore(float z);
+  virtual ~HighScore();
 
-  void operator() ();
+  void acceptHighScoreName();
   
+	void update(float interval);
+	void draw() const;
+
 private:
-	SmartPointer<Functor> mF;
-
+	int gShowCursor;
+	
 };
 
 #endif

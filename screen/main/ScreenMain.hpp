@@ -24,6 +24,7 @@
 
 #include "gui/Button.hpp"
 
+#include "utils/Singleton.hpp"
 #include "utils/SmartPointer.hpp"
 
 class ScreenMain : public Screen
@@ -39,10 +40,15 @@ private:
 	
 	Singleton<class ScreenChooseGame> gScreenChooseGame;
 	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
+	SmartPointer<class Choose> mChoose;
 
+	Singleton<class Editor> mEditor;
+	
 	void clickButtonCGMadness();
 	void clickButtonCGMEditor();
 	void clickButtonQuit();
+
+	void clickButtonChooseEditor();
 
 };
 

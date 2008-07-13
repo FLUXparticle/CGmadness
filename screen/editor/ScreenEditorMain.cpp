@@ -19,9 +19,8 @@
 
 #include "ScreenEditorMain.hpp"
 
+#include "process/MainProcess.hpp"
 #include "ScreenEditorHelp.hpp"
-
-#include "process/Editor.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -52,8 +51,7 @@ ScreenEditorMain::~ScreenEditorMain()
 
 void ScreenEditorMain::clickButtonEdit()
 {
-	gMenuManager->popScreen();
-	resumeEditor();
+	Main::popState();
 }
 
 void ScreenEditorMain::clickButtonSave()
@@ -63,11 +61,10 @@ void ScreenEditorMain::clickButtonSave()
 
 void ScreenEditorMain::clickButtonHelp()
 {
-	gMenuManager->pushScreen(gScreenEditorHelp);
+	Main::setState(gScreenEditorHelp, false);
 }
 
 void ScreenEditorMain::clickButtonQuit()
 {
-	gMenuManager->popScreen();
-	Main::setState(Main::STATE_MAIN);
+	Main::setState(mParent->mPrevious, true);
 }

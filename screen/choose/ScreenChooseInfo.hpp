@@ -22,8 +22,9 @@
 
 #include "ScreenChoose.hpp"
 
+#include "LevelInfo.hpp"
+
 #include "gui/Button.hpp"
-#include "gui/Canvas.hpp"
 
 #include "utils/Caller.hpp"
 
@@ -36,7 +37,7 @@ public:
 private:
 	Button bChooseEditor;
 
-	Canvas cLevelInfo;
+	LevelInfo cLevelInfo;
 
 };
 

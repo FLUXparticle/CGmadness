@@ -36,39 +36,60 @@
 void drawSquare()
 {
 	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, 0.0f, 1.0f);
+	{
+		glNormal3f(0.0f, 0.0f, 1.0f);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(-1.0f, -1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex2f(-1.0f, -1.0f);
 
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(1.0f, -1.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex2f(1.0f, -1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(1.0f, 1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(1.0f, 1.0f);
 
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(-1.0f, 1.0f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(-1.0f, 1.0f);
+	}
 	glEnd();
+}
+
+void drawPanel(float width, float height)
+{
+	glPushMatrix();
+	{
+		glTranslatef(width / 2.0f, height / 2.0f, -0.1f);
+
+		glScalef(width / 2.0f, height / 2.0f, 1.0f);
+
+		glColor4f(0.0f, 0.0f, 0.0f, 0.5);
+
+		glEnable(GL_BLEND);
+		{
+			drawSquare();
+		}
+		glDisable(GL_BLEND);
+	}
+	glPopMatrix();
 }
 
 void drawRingStrip(int corners, float progress, int texture)
 {
 	static float step = 0.05f / (2.0f * M_PI);
 	static float f = 1.0f - 2.0f * step;
-	
+
 	float p = 2.0f * f * progress;
-	
+
 	float p0 = max(0.0f, p - f);
 	float p2 = min(1.0f - step, p + step);
-	
+
 	float p1 = p0 + step;
 	float p3 = p2 + step;
-	
+
 	float diff = p2 - p0;
-	
+
 	int steps = (diff / step + 0.5f);
-	
+
 	glColor3f(1.0f, 1.0f, 0.0f);
 
 	glEnable(GL_BLEND);
@@ -80,25 +101,25 @@ void drawRingStrip(int corners, float progress, int texture)
 			glBegin(GL_TRIANGLE_STRIP);
 			{
 				float angle = 2.0f * M_PI * p0;
-				
+
 				glTexCoord2f(0.0f, 0.0f);
 				glVertex2f(0.9f * cos(angle), 0.9f * sin(angle));
 
 				glTexCoord2f(0.0f, 1.0f);
 				glVertex2f(1.0f * cos(angle), 1.0f * sin(angle));
-				
+
 				for (int i = 0; i <= steps; i++)
 				{
 					float t = (float) i / steps;
 					angle = 2.0f * M_PI * ((1.0f - t) * p1 + t * p2);
-					
+
 					glTexCoord2f(0.5f, 0.0f);
 					glVertex2f(0.9f * cos(angle), 0.9f * sin(angle));
 
 					glTexCoord2f(0.5f, 1.0f);
 					glVertex2f(1.0f * cos(angle), 1.0f * sin(angle));
 				}
-				
+
 				angle = 2.0f * M_PI * p3;
 
 				glTexCoord2f(1.0f, 0.0f);
@@ -122,27 +143,34 @@ void drawRingStrip(int corners, float progress, int texture)
 
 #define Z 0.850650808352039932
 
-static Vector3 gIsokaederVertices[12] = {
-		Vector3(-X, 0.0, Z),
-		Vector3(X, 0.0, Z),
-		Vector3(-X, 0.0, -Z),
-		Vector3(X, 0.0, -Z),
-		Vector3(0.0, Z, X),
-		Vector3(0.0, Z, -X),
-		Vector3(0.0, -Z, X),
-		Vector3(0.0, -Z, -X),
-		Vector3(Z, X, 0.0),
-		Vector3(-Z, X, 0.0),
-		Vector3(Z, -X, 0.0),
-		Vector3(-Z, -X, 0.0)
-};
+static Vector3 gIsokaederVertices[12] =
+{ Vector3(-X, 0.0, Z), Vector3(X, 0.0, Z), Vector3(-X, 0.0, -Z),
+		Vector3(X, 0.0, -Z), Vector3(0.0, Z, X), Vector3(0.0, Z, -X), Vector3(0.0,
+				-Z, X), Vector3(0.0, -Z, -X), Vector3(Z, X, 0.0), Vector3(-Z, X, 0.0),
+		Vector3(Z, -X, 0.0), Vector3(-Z, -X, 0.0) };
 
-static int gIsokaederIndices[20][3] = {
-	{1, 4, 0}, {4, 9, 0}, {4, 5, 9}, {8, 5, 4}, {1, 8, 4},
-	{1, 10, 8}, {10, 3, 8}, {8, 3, 5}, {3, 2, 5}, {3, 7, 2},
-	{3, 10, 7}, {10, 6, 7}, {6, 11, 7}, {6, 0, 11}, {6, 1, 0},
-	{10, 1, 6}, {11, 0, 9}, {2, 11, 9}, {5, 2, 9}, {11, 2, 7}
-};
+static int gIsokaederIndices[20][3] =
+{
+{ 1, 4, 0 },
+{ 4, 9, 0 },
+{ 4, 5, 9 },
+{ 8, 5, 4 },
+{ 1, 8, 4 },
+{ 1, 10, 8 },
+{ 10, 3, 8 },
+{ 8, 3, 5 },
+{ 3, 2, 5 },
+{ 3, 7, 2 },
+{ 3, 10, 7 },
+{ 10, 6, 7 },
+{ 6, 11, 7 },
+{ 6, 0, 11 },
+{ 6, 1, 0 },
+{ 10, 1, 6 },
+{ 11, 0, 9 },
+{ 2, 11, 9 },
+{ 5, 2, 9 },
+{ 11, 2, 7 } };
 
 #define SUB_DIVS_DEPTH 3
 
@@ -165,7 +193,7 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 	int i;
 	if (depth == 0)
 	{
-		float u0 = 0.5f * atan2(tri[0].x, tri[0].y) / M_PI + 0.5f;
+		float u0 = 0.5f * atan2(tri[0].x, tri[0].y) / M_PI+ 0.5f;
 		for (i = 0; i < 3; i++)
 		{
 			float light = 1.0f - acos(dot(tri[i], z)) / M_PI;
@@ -176,15 +204,15 @@ void subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 
 			texCoordShader = norm(sub(tri[i], hole));
 
-			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / M_PI + 0.5f;
-			texCoordDefault.y = asin(tri[i].z) / M_PI + 0.5f;
+			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / M_PI+ 0.5f;
+			texCoordDefault.y = asin(tri[i].z) / M_PI+ 0.5f;
 			texCoordDefault.z = 0.0f;
 
 			if (texCoordDefault.x - u0 > 0.5f)
 			{
 				texCoordDefault.x -= 1.0f;
 			}
-			else if (u0 - texCoordDefault.x > 0.5f)
+			else if (u0 - texCoordDefault.x> 0.5f)
 			{
 				texCoordDefault.x += 1.0f;
 			}
@@ -258,7 +286,7 @@ void drawBallObject(Vector3 ballTexCoords[CNT_BALL_VERTICES])
 #endif
 
 	glTexCoordPointer(3, GL_FLOAT, 0, ballTexCoords);
-	
+
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glNormalPointer(GL_FLOAT, 0, gBallVertices);
@@ -319,14 +347,14 @@ float gMaxExplosionTime;
 
 float randFloat(void)
 {
-	return ((float) rand() / RAND_MAX) * 2.0f - 1.0f;
+	return ((float) rand() / RAND_MAX) * 2.0f- 1.0f;
 }
 
 /*
  * WARNING: must be caled befor each new explosion
  */
 void initExplosion(Vector3 startPos, Vector3 startSpeed, Vector3 endPos,
-									 Vector3 endSpeed)
+		Vector3 endSpeed)
 {
 	gExplosionTime = 0.0;
 	gMaxExplosionTime = 5.0;
@@ -416,13 +444,13 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 		gFragments[i].pos.y = 0.0f;
 		gFragments[i].pos.z = 0.0f;
 
-		gFragments[i].pos =
-			add(gFragments[i].pos, scale(b0 + b1, gFragments[i].offset));
+		gFragments[i].pos =add(gFragments[i].pos, scale(b0 + b1,
+				gFragments[i].offset));
 		gFragments[i].pos = add(gFragments[i].pos, scale(b2, gFragments[i].speed));
 
 		/* rotation */
-		gFragments[i].rotSpeed =
-			sub(gFragments[i].rotSpeed, scale(T1 * interval, gFragments[i].rotSpeed));
+		gFragments[i].rotSpeed =sub(gFragments[i].rotSpeed,
+				scale(T1 * interval, gFragments[i].rotSpeed));
 
 		rotError = sub(gFragments[i].rotSpeed, gFragments[i].rotation);
 
@@ -430,8 +458,8 @@ bool updateExplosion(float interval, Vector3 * speed, Vector3 * pos)
 		rotError.y = smallestError(rotError.y);
 		rotError.z = smallestError(rotError.z);
 
-		gFragments[i].rotation =
-			add(gFragments[i].rotation, scale(T2 * interval, rotError));
+		gFragments[i].rotation =add(gFragments[i].rotation,
+				scale(T2 * interval, rotError));
 	}
 
 	gExplosionTime += interval;

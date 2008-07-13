@@ -19,7 +19,9 @@
 
 #include "ScreenGameEnd.hpp"
 
-#include "MenuManager.hpp"
+#include "process/MainProcess.hpp"
+
+#include "Main.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -29,7 +31,7 @@
 ScreenGameEnd::ScreenGameEnd(Game* parent) :
 	mParent(parent)
 {
-	initHighScore(&hsHighScore, 3.0f);
+	hsHighScore = HighScore(3.0f);
 	mItems.push_back(&hsHighScore);
 
 	bAgain = Button(2.0f, CALLBACK(ScreenGameEnd, clickButtonAgain), "play again", KEY_ENTER);
@@ -46,14 +48,13 @@ ScreenGameEnd::~ScreenGameEnd()
 
 void ScreenGameEnd::clickButtonAgain()
 {
-	acceptHighScoreName();
-	gMenuManager->popScreen();
+	hsHighScore.acceptHighScoreName();
+	Main::popState();
 	mParent->resetGame();
 }
 
 void ScreenGameEnd::clickButtonQuit2()
 {
-	acceptHighScoreName();
-	gMenuManager->popScreen();
-	Main::setState(Main::STATE_MAIN);
+	hsHighScore.acceptHighScoreName();
+	mParent->leaveGame();
 }

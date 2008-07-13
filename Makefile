@@ -150,11 +150,11 @@ $(DEPS)/%.o.d: %.cpp modules.pl | $$(@D)/.
 
 $(DEPS)/%.c.d: %.c | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CC) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
+	@$(CC) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
 
 $(DEPS)/%.cpp.d: %.cpp | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CXX) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
+	@$(CXX) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
 
 # create necessary directories
 .PRECIOUS: %/.

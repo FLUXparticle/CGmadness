@@ -22,22 +22,51 @@
 
 #include "Process.hpp"
 
+#include <list>
+
 class Dispenser : public Process
 {
 public:
-  Dispenser();
-  virtual ~Dispenser();
+	Dispenser();
+	virtual ~Dispenser();
 
-	void setProcess(Process* process);
+	void event(const Vector3& position, const Vector3& direction, MouseEvent event);
+
+	void update(float interval);
+
+	void preDisplay();
+	void draw() const;
+	void drawHUD(float width, float height);
+
+protected:
+	typedef enum
+	{
+		NONE,
+		PUSH,
+		POP,
+		SET,
+		FLUSH
+	} StackAction;
+
+	void setProcess(Process* process, bool flush);
+	void pushProcess(Process* process);
+	void popProcess();
 	
-  void update(float interval);
-
-  void preDisplay();
-  void draw();
-  void drawHUD(float width, float height);
+	void changeProcess(Process* process, StackAction action);
 
 private:
-	Process* mCurProcess;
+	struct Task
+	{
+		Task(Process* process, StackAction action);
+
+		Process* process;
+		StackAction action;
+	};
+
+	std::list<Process*> mProcessStack;
+	std::list<Task> mTasks;
+
+	void enqueueTask(Process* process, StackAction action);
 
 };
 

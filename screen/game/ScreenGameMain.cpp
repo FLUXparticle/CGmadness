@@ -19,13 +19,14 @@
 
 #include "ScreenGameMain.hpp"
 
+#include "process/MainProcess.hpp"
 #include "ScreenGameHelp.hpp"
 
 #include "ball/PlayersBall.hpp"
 
 #include "utils/Callback.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
@@ -54,7 +55,8 @@ static void drawMenuBall()
 	PlayersBall::sgoBall.drawMenuBall();
 }
 
-ScreenGameMain::ScreenGameMain()
+ScreenGameMain::ScreenGameMain(Game* parent) :
+	mParent(parent)
 {
 	int maxLayout = PlayersBall::sgoBall.cntLayouts() - 1;
 	
@@ -90,11 +92,10 @@ void ScreenGameMain::show()
 
 void ScreenGameMain::clickButtonHelp()
 {
-	gMenuManager->pushScreen(gScreenHelp);
+	Main::setState(gScreenHelp, false);
 }
 
 void ScreenGameMain::clickButtonQuit()
 {
-	gMenuManager->popScreen();
-	Main::setState(Main::STATE_MAIN);
+	mParent->leaveGame();
 }

@@ -20,35 +20,41 @@
 #ifndef Screen_hpp
 #define Screen_hpp
 
+#include "process/Process.hpp"
+
 #include "gui/MenuItem.hpp"
 
-#include "MenuManager.hpp"
-
-#include "utils/Singleton.hpp"
+#include "Main.hpp"
 
 #include <list>
 
-class Screen
+class Screen : public Process
 {
 public:
   Screen();
   virtual ~Screen();
-
-  void prepare();
+  
+  void start(Process* previous);
   
   virtual void show();
   
-  void event(float x, float y, MouseEvent event);
+  void popScreen(); 
+
+  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   void update(float interval);
   virtual void customUpdate(float interval);
   
   void draw() const;
-  virtual void drawBackground() const;
 
 protected:
-	Singleton<MenuManager> gMenuManager;
-	
 	std::list<MenuItem*> mItems;
+
+	Process* mPrevious;
+	
+private:
+	static unsigned int gTexLogo;
+	
+	static void drawLogo();
 	
 };
 

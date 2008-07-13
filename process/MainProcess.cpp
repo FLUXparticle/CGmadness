@@ -19,17 +19,15 @@
 
 #include "MainProcess.hpp"
 
-#include "Editor.hpp"
-
 #include "screen/main/ScreenMain.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
 
 #include "environment/environment.hpp"
 
 MainProcess::MainProcess()
 {
-	gMenuManager->pushScreen(gScreenMain);
+  // empty
 }
 
 MainProcess::~MainProcess()
@@ -37,20 +35,17 @@ MainProcess::~MainProcess()
   // empty
 }
 
+void MainProcess::start(Process* previous)
+{
+	Main::pushState(gScreenMain);
+}
+
 void MainProcess::update(float interval)
 {
 	updateEnvironment(interval);
-	gMenuManager->update(interval);
 }
 
-void MainProcess::draw(void)
+void MainProcess::draw() const
 {
-	drawEnvironment(this);
-	gMenuManager->draw();
-}
-
-void MainProcess::drawWaterReflection() const
-{
-	Screen* screen = gMenuManager->curScreen(); 
-	screen->drawBackground();
+	drawEnvironment(NULL);
 }

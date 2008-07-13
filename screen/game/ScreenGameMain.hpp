@@ -22,19 +22,24 @@
 
 #include "screen/Screen.hpp"
 
+#include "process/Game.hpp"
+
 #include "gui/Button.hpp"
 #include "gui/Check.hpp"
 #include "gui/SpinEdit.hpp"
 
+#include "utils/Singleton.hpp"
+
 class ScreenGameMain : public Screen
 {
 public:
-  ScreenGameMain();
+  ScreenGameMain(Game* parent);
   virtual ~ScreenGameMain();
   
   void show();
 
 protected:
+	Game* mParent;
 
 	Button bQuit;
 	Button bHelp;

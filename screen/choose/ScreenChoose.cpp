@@ -20,12 +20,12 @@
 #include "ScreenChoose.hpp"
 
 #include "utils/Callback.hpp"
+#include "utils/Singleton.hpp"
 
+#include "process/MainProcess.hpp"
 #include "Main.hpp"
-#include "level.hpp"
-#include "process/Editor.hpp"
 
-#include "highscore.hpp"
+#include "level.hpp"
 
 #include "hw/keyboard.hpp"
 
@@ -36,8 +36,8 @@ static void changeLevelChooser(const void *self)
 	const SpinEdit *spinedit = (const SpinEdit *) self;
 
 	gLevelLoader->loadLevelByID(spinedit->value);
-
-	sgLastPlayerIndex = MAX_SCORE_COLS;
+	
+	sgLevel.lastPlayerIndex = MAX_SCORE_COLS;
 }
 
 static void drawMenuLevel()
@@ -65,18 +65,10 @@ void ScreenChoose::show()
 	changeLevelChooser(&gseLevel);
 }
 
-void ScreenChoose::drawBackground() const
-{
-	drawEditorField();
-}
-
-void ScreenChoose::drawWaterReflection() const
-{
-	drawEditorField();
-}
-
 void ScreenChoose::clickButtonBack()
 {
 	mLevelLoader->loadLevelByID(-1);
-	gMenuManager->popScreen();
+	
+	Singleton<MainProcess> main;
+	Main::setState(main, true);
 }

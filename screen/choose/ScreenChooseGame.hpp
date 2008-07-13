@@ -23,8 +23,9 @@
 #include "ScreenChoose.hpp"
 
 #include "gui/Button.hpp"
+#include "HighScore.hpp"
 
-#include "highscore.hpp"
+#include "utils/Singleton.hpp"
 
 class ScreenChooseGame : public ScreenChoose
 {
@@ -36,6 +37,10 @@ private:
 	Button bChooseGame;
 
 	HighScore hsHighScore;
+
+	Singleton<class RaceTheClock> mGame;
+	
+	void clickButtonChooseGame();
 
 };
 

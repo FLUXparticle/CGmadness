@@ -36,6 +36,6 @@ ScreenInfo::~ScreenInfo()
 
 void ScreenInfo::clickButtonAccept()
 {
-	gMenuManager->popScreen();
+	popScreen();
 }
 

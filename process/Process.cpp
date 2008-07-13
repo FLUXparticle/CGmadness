@@ -31,12 +31,22 @@ Process::~Process()
   // empty
 }
 
-void Process::start()
+void Process::start(Process* previous)
 {
   // empty
 }
 
 void Process::stop()
+{
+  // empty
+}
+
+void Process::suspend()
+{
+  // empty
+}
+
+void Process::resume()
 {
   // empty
 }

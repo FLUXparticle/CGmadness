@@ -17,26 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Caller_hpp
-#define Caller_hpp
+#include "Choose.hpp"
 
-#include "Functor.hpp"
+#include "Editor.hpp"
 
-#include "SmartPointer.hpp"
+#include "environment/environment.hpp"
 
-class Caller
+Choose::Choose(ScreenChoose* screenChoose) :
+	mScreenChoose(screenChoose)
 {
-public:
-  Caller();
-  Caller(Functor* f);
-  
-  virtual ~Caller();
+  // empty
+}
 
-  void operator() ();
-  
-private:
-	SmartPointer<Functor> mF;
+Choose::~Choose()
+{
+  // empty
+}
 
-};
+void Choose::start(Process* previous)
+{
+	Main::pushState(mScreenChoose);
+}
 
-#endif
+void Choose::update(float interval)
+{
+	updateEnvironment(interval);
+}
+
+void Choose::draw() const
+{
+	drawEnvironment(this);
+	drawEditorField();
+}
+
+void Choose::drawWaterReflection() const
+{
+	drawEditorField();
+}

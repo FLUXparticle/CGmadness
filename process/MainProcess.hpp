@@ -22,24 +22,20 @@
 
 #include "Process.hpp"
 
-#include "reflection/WaterReflection.hpp"
-
 #include "utils/Singleton.hpp"
 
-class MainProcess : public Process, public WaterReflection
+class MainProcess : public Process
 {
 public:
   MainProcess();
   virtual ~MainProcess();
 
+  void start(Process* previous);
+  
   void update(float interval);
-  void draw(void);
+  void draw() const;
 
-	void drawWaterReflection() const;
-	
 private:
-	Singleton<class MenuManager> gMenuManager;
-	
 	Singleton<class ScreenMain> gScreenMain;
 	
 };

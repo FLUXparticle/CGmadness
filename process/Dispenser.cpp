@@ -19,54 +19,145 @@
 
 #include "Dispenser.hpp"
 
-#include "MenuManager.hpp"
+#include "Main.hpp"
+
+#include "screen/Screen.hpp"
 
 #include "utils/Singleton.hpp"
 
+#include "macros.hpp"
+
 #include <stdlib.h>
 
-Dispenser::Dispenser() :
-	mCurProcess(NULL)
+Dispenser::Task::Task(Process* process, StackAction action) :
+	process(process), action(action)
 {
-  // empty
+	// empty
+}
+
+Dispenser::Dispenser()
+{
+	// empty
 }
 
 Dispenser::~Dispenser()
 {
-  // empty
+	// empty
+}
+
+void Dispenser::event(const Vector3& position, const Vector3& direction,
+		MouseEvent event)
+{
+	mProcessStack.back()->event(position, direction, event);
 }
 
 void Dispenser::update(float interval)
 {
-	mCurProcess->update(interval);
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->update(interval);
+	}
+
+	while (!mTasks.empty())
+	{
+		Task task = mTasks.front();
+		changeProcess(task.process, task.action);
+		mTasks.pop_front();
+	}
 }
 
 void Dispenser::preDisplay()
 {
-	mCurProcess->preDisplay();
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->preDisplay();
+	}
 }
 
-void Dispenser::draw()
+void Dispenser::draw() const
 {
-	mCurProcess->draw();
+	FOREACH(std::list<Process*>, mProcessStack, iter)
+	{
+		Process* p = *iter;
+		p->draw();
+	}
 }
 
 void Dispenser::drawHUD(float width, float height)
 {
-	mCurProcess->drawHUD(width, height);
+	mProcessStack.back()->drawHUD(width, height);
 }
 
-void Dispenser::setProcess(Process* process)
+void Dispenser::setProcess(Process* process, bool flush)
 {
-	if (mCurProcess)
+	enqueueTask(process, flush ? FLUSH : SET);
+}
+
+void Dispenser::pushProcess(Process* process)
+{
+	enqueueTask(process, PUSH);
+}
+
+void Dispenser::popProcess()
+{
+	enqueueTask(NULL, POP);
+}
+
+void Dispenser::enqueueTask(Process* process, StackAction action)
+{
+	mTasks.push_back(Task(process, action));
+}
+
+void Dispenser::changeProcess(Process* process, StackAction action)
+{
+	Process* previous = mProcessStack.back();
+	switch (action)
 	{
-		mCurProcess->stop();
+	case PUSH:
+	{
+		previous->suspend();
+
+		Process* next = process;
+		mProcessStack.push_back(next);
+		next->start(previous);
+		break;
 	}
-	
-	mCurProcess = process;
-	
-	if (mCurProcess)
+	case POP:
 	{
-		mCurProcess->start();
+		mProcessStack.pop_back();
+		previous->stop();
+
+		Process* next = mProcessStack.back();
+		next->resume();
+		break;
+	}
+	case SET:
+	{
+		mProcessStack.pop_back();
+		previous->stop();
+
+		Process* next = process;
+		mProcessStack.push_back(next);
+		next->start(previous);
+		break;
+	}
+	case FLUSH:
+	{
+		while (!mProcessStack.empty())
+		{
+			previous = mProcessStack.back();
+			mProcessStack.pop_back();
+			previous->stop();
+		}
+
+		Process* next = process;
+		mProcessStack.push_back(next);
+		next->start(previous);
+		break;
+	}
+	case NONE:
+		break;
 	}
 }

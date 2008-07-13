@@ -22,13 +22,11 @@
 
 #include "screen/Screen.hpp"
 
-#include "highscore.hpp"
+#include "screen/choose/HighScore.hpp"
 
 #include "process/Game.hpp"
 
 #include "gui/Button.hpp"
-
-#include "utils/Singleton.hpp"
 
 class ScreenGameEnd : public Screen
 {
@@ -42,8 +40,6 @@ private:
 	Button bQuit2;
 	
 	Game* mParent;
-
-	Singleton<class MenuManager> gMenuManager;
 
 	void clickButtonAgain();
 	void clickButtonQuit2();

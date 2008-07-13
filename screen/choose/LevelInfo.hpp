@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,19 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _highscore_hpp_
-#define _highscore_hpp_
+#ifndef LevelInfo_hpp
+#define LevelInfo_hpp
 
 #include "gui/Canvas.hpp"
 
-typedef Canvas HighScore;
+class LevelInfo : public Canvas
+{
+public:
+  LevelInfo();
+  LevelInfo(float z);
+  virtual ~LevelInfo();
 
-extern int sgLastPlayerIndex;
+private:
+	void draw() const;
 
-void initHighScore(HighScore * highScore, float z);
-
-void drawPanel(float width, float height);
-
-void acceptHighScoreName(void);
+};
 
 #endif

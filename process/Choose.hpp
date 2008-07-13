@@ -17,42 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MenuManager_hpp
-#define MenuManager_hpp
+#ifndef Choose_hpp
+#define Choose_hpp
 
-#include "process/Process.hpp"
+#include "Process.hpp"
+#include "reflection/WaterReflection.hpp"
 
-#include <stack>
+#include "screen/choose/ScreenChoose.hpp"
 
-class Screen;
-
-class MenuManager : public Process
+class Choose : public Process, public WaterReflection
 {
 public:
-  MenuManager();
-  virtual ~MenuManager();
+	Choose(ScreenChoose* screenChoose);
+	virtual ~Choose();
 
-  void pushScreen(Screen* screen);
-  void popScreen();
-  
-  Screen* curScreen() const;
+	void start(Process* previous);
 
-  void update(float interval);
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
-  
-  void draw();
-  
+	void update(float interval);
+
+	void draw() const;
+	void drawWaterReflection() const;
+
 private:
-	unsigned int gTexLogo;
-	
-	std::stack<Screen*> mScreenStack;
+	ScreenChoose* mScreenChoose;
 
-	void drawLogo();
 };
-
-inline Screen* MenuManager::curScreen() const
-{
-	return mScreenStack.top();
-}
 
 #endif
