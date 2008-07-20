@@ -8,9 +8,11 @@
 
 #include "macros.hpp"
 
+#include <fstream>
+#include <string>
 #include <list>
 
-#define FOO(x, y, z) foo(x, &y, &z)
+#define FOO(x, y, z) foo(x, &y, &z, MACRO_STRING(y))
 
 struct Point
 {
@@ -32,7 +34,7 @@ struct Point
 int gProcessedPoints;
 int gKnownPoints;
 
-void foo(int count, const float *vertices, const float *normals)
+void foo(int count, const float *vertices, const float *normals, const char* name)
 {
 	std::list<Point> knownPoints;
 	std::list<unsigned int> indices;
@@ -70,7 +72,49 @@ void foo(int count, const float *vertices, const float *normals)
 	gProcessedPoints += count;
 	gKnownPoints += knownPoints.size();
 
-	fprintf(stderr, "%d -> %d\n", count, knownPoints.size());
+	fprintf(stderr, "%s: %d -> %d\n", name + 8, count, knownPoints.size());
+
+	std::string basename(name + 8);
+
+	std::fstream fout((std::string("font3d/") + basename).c_str(), std::fstream::out);
+
+	fout << "float vertices" << basename << "[" << knownPoints.size() << " * 3] = {" << std::endl;
+	FOREACH(std::list<Point>, knownPoints, iter)
+	{
+		const Point& p = *iter;
+
+		const Vector3& v = p.vertex;
+
+		fout << v.x << ", " << v.y << ", " << v.z << std::endl;
+	}
+	fout << "};" << std::endl << std::endl;
+
+	fout << "float normals" << basename << "[" << knownPoints.size() << " * 3] = {" << std::endl;
+	FOREACH(std::list<Point>, knownPoints, iter)
+	{
+		const Point& p = *iter;
+
+		const Vector3& n = p.normal;
+
+		fout << n.x << ", " << n.y << ", " << n.z << ", " << std::endl;
+	}
+	fout << "};" << std::endl << std::endl;
+
+	fout << "unsigned int indices" << basename << "[" << indices.size() << "] = {";
+	int i = 0;
+	FOREACH(std::list<unsigned int>, indices, iter)
+	{
+		const unsigned int& index = *iter;
+
+		if (i % 3 == 0)
+		{
+			fout << std::endl;
+		}
+		i++;
+
+		fout << index << ", ";
+	}
+	fout << std::endl << "};" << std::endl;
 }
 
 int main(int argc, char* argv[])
