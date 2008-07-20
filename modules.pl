@@ -29,7 +29,7 @@ sub scan {
 	close(FILE);
 
 	foreach (@lines) {
-		if (/# *include +"([^"]+)"/) {
+		if (/# *include +"([^"]+\.h(pp)?)"/) {
 			local $file = $1;
 
 			if (defined $path) {

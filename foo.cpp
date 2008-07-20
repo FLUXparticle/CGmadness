@@ -22,7 +22,7 @@ struct Point
 	Point(Vector3 vertex, Vector3 normal) :
 		vertex(vertex), normal(normal)
 	{
-		 // empty
+		// empty
 	}
 
 	bool operator==(const Point& other) const
@@ -34,7 +34,8 @@ struct Point
 int gProcessedPoints;
 int gKnownPoints;
 
-void foo(int count, const float *vertices, const float *normals, const char* name)
+void foo(int count, const float *vertices, const float *normals,
+		const char* name)
 {
 	std::list<Point> knownPoints;
 	std::list<unsigned int> indices;
@@ -42,13 +43,12 @@ void foo(int count, const float *vertices, const float *normals, const char* nam
 	int start = 0;
 	for (int i = 0; i < count; i++)
 	{
-		Vector3 vertex(vertices[start], vertices[start+1], vertices[start+2]);
-		Vector3 normal(normals[start], normals[start+1], normals[start+2]);
+		Vector3 vertex(vertices[start], vertices[start + 1], vertices[start + 2]);
+		Vector3 normal(normals[start], normals[start + 1], normals[start + 2]);
 		Point p(vertex, normal);
 
 		unsigned int index = 0;
-		FOREACH(std::list<Point>, knownPoints, iter)
-		{
+		FOREACH(std::list<Point>, knownPoints, iter){
 			if (*iter == p)
 			{
 				break;
@@ -76,7 +76,7 @@ void foo(int count, const float *vertices, const float *normals, const char* nam
 
 	std::string basename(name + 8);
 
-	std::fstream fout((std::string("font3d/") + basename).c_str(), std::fstream::out);
+	std::fstream fout((std::string("font3d/") + basename + ".inc").c_str(), std::fstream::out);
 
 	fout << "float vertices" << basename << "[" << knownPoints.size() << " * 3] = {" << std::endl;
 	FOREACH(std::list<Point>, knownPoints, iter)
@@ -85,7 +85,7 @@ void foo(int count, const float *vertices, const float *normals, const char* nam
 
 		const Vector3& v = p.vertex;
 
-		fout << v.x << ", " << v.y << ", " << v.z << std::endl;
+		fout << v.x << ", " << v.y << ", " << v.z << ", " << std::endl;
 	}
 	fout << "};" << std::endl << std::endl;
 
@@ -114,7 +114,12 @@ void foo(int count, const float *vertices, const float *normals, const char* nam
 
 		fout << index << ", ";
 	}
-	fout << std::endl << "};" << std::endl;
+	fout << std::endl << "};" << std::endl << std::endl;
+
+	fout << "void draw" << basename << "()" << std::endl;
+	fout << "{" << std::endl;
+	fout << "drawTrianglesVerticesNormalsIndices(" << indices.size() << ", vertices" << basename << ", normals" << basename << ", indices" << basename << ");" << std::endl;
+	fout << "}" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -187,5 +192,5 @@ int main(int argc, char* argv[])
 
 	fprintf(stderr, "\n%d -> %d\n", gProcessedPoints, gKnownPoints);
 
-  return 0;
+	return 0;
 }
