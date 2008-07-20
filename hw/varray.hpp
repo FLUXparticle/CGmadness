@@ -20,9 +20,6 @@
 #ifndef _varray_hpp_
 #define _varray_hpp_
 
-void drawTrianglesVerticesNormals(int count, const float *vertices,
-		const float *normals);
-
 void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
 		const float* normals, const unsigned int* indices);
 

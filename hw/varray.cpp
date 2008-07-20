@@ -21,21 +21,6 @@
 
 #include <GL/gl.h>
 
-void drawTrianglesVerticesNormals(int count, const float *vertices,
-		const float *normals)
-{
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
-	glNormalPointer(GL_FLOAT, 0, normals);
-
-	glDrawArrays(GL_TRIANGLES, 0, count);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-}
-
 void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
 		const float* normals, const unsigned int* indices)
 {
