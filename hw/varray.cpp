@@ -22,7 +22,7 @@
 #include <GL/gl.h>
 
 void drawTrianglesVerticesNormals(int count, const float *vertices,
-																	const float *normals)
+		const float *normals)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -31,6 +31,21 @@ void drawTrianglesVerticesNormals(int count, const float *vertices,
 	glNormalPointer(GL_FLOAT, 0, normals);
 
 	glDrawArrays(GL_TRIANGLES, 0, count);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+}
+
+void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
+		const float* normals, const unsigned int* indices)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 0, vertices);
+	glNormalPointer(GL_FLOAT, 0, normals);
+
+	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, indices);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
