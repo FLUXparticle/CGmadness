@@ -55,6 +55,11 @@ Vector3 Vector3::norm() const
 	return b;
 }
 
+bool Vector3::operator==(const Vector3& other) const
+{
+	return x == other.x && y == other.y && z == other.z;
+}
+
 Vector3 Vector3::operator*(float s) const
 {
 	Vector3 b;

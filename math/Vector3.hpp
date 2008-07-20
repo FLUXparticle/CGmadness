@@ -32,6 +32,8 @@ struct Vector3
   float len() const;
   Vector3 norm() const;
 
+  bool operator == (const Vector3& other) const;
+
   Vector3 operator*(float s) const;
   Vector3 operator+(const Vector3& b) const;
   Vector3 operator-(const Vector3& b) const;

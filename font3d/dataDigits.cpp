@@ -17,21 +17,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "varray.hpp"
+#include "dataDigits.hpp"
 
-#include <GL/gl.h>
+#include "hw/varray.hpp"
 
-void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
-		const float* normals, const unsigned int* indices)
-{
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+#include "Digits0.inc"
+#include "Digits1.inc"
+#include "Digits2.inc"
+#include "Digits3.inc"
+#include "Digits4.inc"
+#include "Digits5.inc"
+#include "Digits6.inc"
+#include "Digits7.inc"
+#include "Digits8.inc"
+#include "Digits9.inc"
 
-	glVertexPointer(3, GL_FLOAT, 0, vertices);
-	glNormalPointer(GL_FLOAT, 0, normals);
+float widthDigits[10] = {
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+	10.000000,
+};
 
-	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, indices);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-}
+funcDraw drawDigits[10] = {
+	drawDigits0,
+	drawDigits1,
+	drawDigits2,
+	drawDigits3,
+	drawDigits4,
+	drawDigits5,
+	drawDigits6,
+	drawDigits7,
+	drawDigits8,
+	drawDigits9,
+};
