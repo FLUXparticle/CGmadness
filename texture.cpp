@@ -59,18 +59,7 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 {
 	GLuint id;
 	Image image;
-	FILE *file = fopen(filename, "rb");
-	const char *error;
-
-	if (file)
-	{
-		error = image.loadTGA(file);
-		fclose(file);
-	}
-	else
-	{
-		error = "open";
-	}
+	const char *error = image.loadTGA(filename);
 
 	if (error)
 	{
@@ -83,24 +72,7 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 		initTextureEnvironment();
 	}
 
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-
-	image.toTexture(mipmapping);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (mipmapping)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-										GL_LINEAR_MIPMAP_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
+	image.toTexture(id, mipmapping);
 
 	return id;
 }

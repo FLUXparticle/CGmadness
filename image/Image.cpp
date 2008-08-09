@@ -100,6 +100,24 @@ Image::~Image()
   // empty
 }
 
+const char* Image::loadTGA(const char* filename)
+{
+	FILE *file = fopen(filename, "rb");
+	const char *error;
+
+	if (file)
+	{
+		error = loadTGA(file);
+		fclose(file);
+	}
+	else
+	{
+		error = "open";
+	}
+
+	return error;
+}
+
 const char* Image::loadTGA(FILE* file)
 {
 	TGAHeader header;
@@ -217,8 +235,11 @@ const char* Image::loadTGA(FILE* file)
 	return NULL;
 }
 
-void Image::toTexture(bool mipmapping)
+void Image::toTexture(GLuint id, bool mipmapping)
 {
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+
 	if (mipmapping)
 	{
 		gluBuild2DMipmaps(GL_TEXTURE_2D, components, width, height, format,
@@ -231,4 +252,19 @@ void Image::toTexture(bool mipmapping)
 	}
 
 	delete[] data;
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (mipmapping)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+										GL_LINEAR_MIPMAP_LINEAR);
+	}
+	else
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+
 }

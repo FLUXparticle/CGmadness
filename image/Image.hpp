@@ -30,8 +30,8 @@ public:
 	Image();
   virtual ~Image();
 
-  const char* loadTGA(FILE* file);
-  void toTexture(bool mipmapping);
+  const char* loadTGA(const char* filename);
+  void toTexture(GLuint id, bool mipmapping);
 
 private:
 	GLubyte components;
@@ -39,6 +39,8 @@ private:
 	GLushort height;
 	GLenum format;
 	GLubyte *data;
+
+  const char* loadTGA(FILE* file);
 
 };
 
