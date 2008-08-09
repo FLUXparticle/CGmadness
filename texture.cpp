@@ -86,18 +86,7 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
-	if (mipmapping)
-	{
-		gluBuild2DMipmaps(GL_TEXTURE_2D, image.components, image.width,
-											image.height, image.format, GL_UNSIGNED_BYTE, image.data);
-	}
-	else
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, image.components, image.width, image.height,
-								 0, image.format, GL_UNSIGNED_BYTE, image.data);
-	}
-
-	delete[] image.data;
+	image.toTexture(mipmapping);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

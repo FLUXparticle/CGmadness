@@ -27,18 +27,18 @@
 class Image
 {
 public:
+	Image();
+  virtual ~Image();
+
+  const char* loadTGA(FILE* file);
+  void toTexture(bool mipmapping);
+
+private:
 	GLubyte components;
 	GLushort width;
 	GLushort height;
 	GLenum format;
 	GLubyte *data;
-
-	Image();
-  virtual ~Image();
-
-  const char* loadTGA(FILE* file);
-
-private:
 
 };
 

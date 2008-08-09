@@ -19,6 +19,8 @@
 
 #include "Image.hpp"
 
+#include <GL/glu.h>
+
 struct TGAHeader
 {
 	GLubyte lenID;
@@ -213,4 +215,20 @@ const char* Image::loadTGA(FILE* file)
 	}
 
 	return NULL;
+}
+
+void Image::toTexture(bool mipmapping)
+{
+	if (mipmapping)
+	{
+		gluBuild2DMipmaps(GL_TEXTURE_2D, components, width, height, format,
+				GL_UNSIGNED_BYTE, data);
+	}
+	else
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format,
+				GL_UNSIGNED_BYTE, data);
+	}
+
+	delete[] data;
 }
