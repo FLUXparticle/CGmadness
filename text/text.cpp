@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,11 +19,20 @@
 
 #include "text.hpp"
 
+#include "Font.hpp"
+
 #include <GL/glut.h>
 
 #define SCALE 0.1f
 
 #define STROKE_SIZE 119.05f
+
+static Font* gFont;
+
+void initStrokeThickText()
+{
+	gFont = new Font("data/font.tga");
+}
 
 void drawBitmapText(const char *str)
 {
@@ -81,19 +90,5 @@ void drawStrokeThinText(const char *str)
 
 void drawStrokeThickText(const char *str)
 {
-	glEnable(GL_BLEND);
-	glEnable(GL_LINE_SMOOTH);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glLineWidth(3.5f);
-
-	drawStrokeText(str);
-
-	glLineWidth(1.0f);
-
-	glDisable(GL_BLEND);
-	glDisable(GL_LINE_SMOOTH);
-
-	glPopMatrix();
+	gFont->drawText(str);
 }

@@ -31,17 +31,32 @@ public:
   virtual ~Image();
 
   const char* loadTGA(const char* filename);
-  void toTexture(GLuint id, bool mipmapping);
+  GLuint toTexture(bool mipmapping);
+
+  const GLubyte* pixel(int x, int y) const;
+
+  int width() const;
+  int height() const;
 
 private:
-	GLubyte components;
-	GLushort width;
-	GLushort height;
-	GLenum format;
-	GLubyte *data;
+	GLubyte mComponents;
+	GLushort mWidth;
+	GLushort mHeight;
+	GLenum mFormat;
+	GLubyte* mData;
 
   const char* loadTGA(FILE* file);
 
 };
+
+inline int Image::width() const
+{
+	return mWidth;
+}
+
+inline int Image::height() const
+{
+	return mHeight;
+}
 
 #endif

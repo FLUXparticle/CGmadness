@@ -39,16 +39,23 @@ struct TGAHeader
 
 void copyPixel(GLubyte * data, int pos, GLubyte * pixel, int components)
 {
-	data[pos++] = pixel[2];
-	data[pos++] = pixel[1];
-	data[pos++] = pixel[0];
-	if (components > 3)
+	if (components < 3)
 	{
-		data[pos++] = pixel[3];
+		data[pos++] = pixel[0];
+	}
+	else
+	{
+		data[pos++] = pixel[2];
+		data[pos++] = pixel[1];
+		data[pos++] = pixel[0];
+		if (components > 3)
+		{
+			data[pos++] = pixel[3];
+		}
 	}
 }
 
-#define BOTTOMUP(header) ((header).attrImage & 8)
+#define BOTTOMUP(header) (!((header).attrImage & 32))
 
 void nextPixel(TGAHeader * header, int *pos)
 {
@@ -143,6 +150,7 @@ const char* Image::loadTGA(FILE* file)
 	switch (header.typeImage)
 	{
 	case 10:
+	case 11:
 		compressed = 1;
 		break;
 	case 2:
@@ -156,29 +164,33 @@ const char* Image::loadTGA(FILE* file)
 		return "Offset";
 	}
 
-	width = header.width;
-	height = header.height;
+	mWidth = header.width;
+	mHeight = header.height;
 
 	switch (header.bitsPerPixel)
 	{
+	case 8:
+		mComponents = 1;
+		mFormat = GL_ALPHA;
+		break;
 	case 24:
-		components = 3;
-		format = GL_RGB;
+		mComponents = 3;
+		mFormat = GL_RGB;
 		break;
 	case 32:
-		components = 4;
-		format = GL_RGBA;
+		mComponents = 4;
+		mFormat = GL_RGBA;
 		break;
 	default:
 		return "Components";
 	}
 
-	pixels = width * height;
-	size = pixels * components;
+	pixels = mWidth * mHeight;
+	size = pixels * mComponents;
 
-	data = new GLubyte[size];
+	mData = new GLubyte[size];
 
-	if (!data)
+	if (!mData)
 	{
 		return "malloc";
 	}
@@ -190,7 +202,7 @@ const char* Image::loadTGA(FILE* file)
 
 		if (BOTTOMUP(header))
 		{
-			pos = (height - 1) * width * components;
+			pos = (mHeight - 1) * mWidth * mComponents;
 		}
 
 		while (pixel < pixels)
@@ -202,11 +214,11 @@ const char* Image::loadTGA(FILE* file)
 				GLubyte value[4];
 				int i;
 
-				fread(value, 1, components, file);
+				fread(value, 1, mComponents, file);
 
 				for (i = 0; i < repeat; i++)
 				{
-					copyPixel(data, pos, value, components);
+					copyPixel(mData, pos, value, mComponents);
 					nextPixel(&header, &pos);
 					pixel++;
 				}
@@ -219,8 +231,8 @@ const char* Image::loadTGA(FILE* file)
 
 				for (i = 0; i < plainbytes; i++)
 				{
-					fread(value, 1, components, file);
-					copyPixel(data, pos, value, components);
+					fread(value, 1, mComponents, file);
+					copyPixel(mData, pos, value, mComponents);
 					nextPixel(&header, &pos);
 					pixel++;
 				}
@@ -235,23 +247,25 @@ const char* Image::loadTGA(FILE* file)
 	return NULL;
 }
 
-void Image::toTexture(GLuint id, bool mipmapping)
+GLuint Image::toTexture(bool mipmapping)
 {
+	GLuint id;
+
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	if (mipmapping)
 	{
-		gluBuild2DMipmaps(GL_TEXTURE_2D, components, width, height, format,
-				GL_UNSIGNED_BYTE, data);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, mFormat, mWidth, mHeight, mFormat,
+				GL_UNSIGNED_BYTE, mData);
 	}
 	else
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format,
-				GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, mFormat, mWidth, mHeight, 0, mFormat,
+				GL_UNSIGNED_BYTE, mData);
 	}
 
-	delete[] data;
+	delete[] mData;
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -259,12 +273,17 @@ void Image::toTexture(GLuint id, bool mipmapping)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (mipmapping)
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-										GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 	else
 	{
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
 
+	return id;
+}
+
+const GLubyte* Image::pixel(int x, int y) const
+{
+	return mData + (y * mWidth + x) * mComponents;
 }

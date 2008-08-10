@@ -57,7 +57,6 @@ unsigned int genTexture(void)
 
 unsigned int loadTexture(const char *filename, bool mipmapping)
 {
-	GLuint id;
 	Image image;
 	const char *error = image.loadTGA(filename);
 
@@ -72,7 +71,5 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 		initTextureEnvironment();
 	}
 
-	image.toTexture(id, mipmapping);
-
-	return id;
+	return image.toTexture(mipmapping);
 }

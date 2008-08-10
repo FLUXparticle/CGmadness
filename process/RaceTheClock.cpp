@@ -34,6 +34,8 @@
 
 RaceTheClock::RaceTheClock()
 {
+	initStrokeThickText();
+
 	gScreenEnd = new ScreenGameEnd(this);
 }
 

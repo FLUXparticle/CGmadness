@@ -17,15 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _text_hpp_
-#define _text_hpp_
+#ifndef Font_hpp
+#define Font_hpp
 
-void initStrokeThickText();
+#include "math/Vector2.hpp"
 
-void drawBitmapText(const char *str);
+#define FONT_MIN_CHAR 33
+#define FONT_MAX_CHAR 126
 
-float widthStrokeText(const char *str);
-void drawStrokeThinText(const char *str);
-void drawStrokeThickText(const char *str);
+class Font
+{
+public:
+  Font(const char* imagename);
+  virtual ~Font();
+
+  void drawText(const char* str) const;
+
+private:
+	struct CharInfo
+	{
+		Vector2 coords[4];
+		Vector2 texcoords[4];
+	};
+
+	CharInfo mInfo[FONT_MAX_CHAR - FONT_MIN_CHAR + 1];
+	unsigned int mTexID;
+
+	void drawChar(const char ch) const;
+
+};
 
 #endif
