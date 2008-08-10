@@ -31,6 +31,7 @@ public:
   Font(const char* imagename);
   virtual ~Font();
 
+  float widthText(const char* str) const;
   void drawText(const char* str) const;
 
 private:
@@ -43,7 +44,9 @@ private:
 	CharInfo mInfo[FONT_MAX_CHAR - FONT_MIN_CHAR + 1];
 	unsigned int mTexID;
 
+	float widthChar(const char ch) const;
 	void drawChar(const char ch) const;
+	const CharInfo& getInfo(const char ch) const;
 
 };
 

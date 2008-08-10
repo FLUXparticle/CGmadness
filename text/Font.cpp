@@ -25,6 +25,8 @@
 
 #define HEIGHT 128
 
+#define CHAR_AS_WIDE_AS_SPACE 'x'
+
 Font::Font(const char* imagename)
 {
 	Image image;
@@ -84,6 +86,18 @@ Font::~Font()
 	// empty
 }
 
+float Font::widthText(const char* str) const
+{
+	float width = 0.0f;
+
+	for (const char* s = str; *s; s++)
+	{
+		width += widthChar(*s);
+	}
+
+	return width;
+}
+
 void Font::drawText(const char* str) const
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -107,12 +121,19 @@ void Font::drawText(const char* str) const
 	glDisable(GL_BLEND);
 }
 
+float Font::widthChar(const char ch) const
+{
+	const CharInfo& info = getInfo(ch);
+
+	return info.coords[3].x;
+}
+
 void Font::drawChar(const char ch) const
 {
+	const CharInfo& info = getInfo(ch);
+
 	if (ch >= FONT_MIN_CHAR && ch <= FONT_MAX_CHAR)
 	{
-		const CharInfo& info = mInfo[ch - FONT_MIN_CHAR];
-
 		glBegin(GL_QUADS);
 		{
 			for (int i = 0; i < 4; i++)
@@ -123,6 +144,19 @@ void Font::drawChar(const char ch) const
 		}
 		glEnd();
 
-		glTranslatef(info.coords[3].x, 0.0f, 0.0f);
+	}
+
+	glTranslatef(info.coords[3].x, 0.0f, 0.0f);
+}
+
+const Font::CharInfo& Font::getInfo(const char ch) const
+{
+	if (ch >= FONT_MIN_CHAR && ch <= FONT_MAX_CHAR)
+	{
+		return mInfo[ch - FONT_MIN_CHAR];
+	}
+	else
+	{
+		return mInfo[CHAR_AS_WIDE_AS_SPACE - FONT_MIN_CHAR];
 	}
 }

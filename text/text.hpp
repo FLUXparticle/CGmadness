@@ -22,8 +22,6 @@
 
 void initStrokeThickText();
 
-void drawBitmapText(const char *str);
-
 float widthStrokeText(const char *str);
 void drawStrokeThinText(const char *str);
 void drawStrokeThickText(const char *str);
