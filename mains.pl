@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-@sources = `ls *.c`;
+@sources = `ls *.c *.cpp 2>/dev/null`;
 @mains = ();
 
 foreach $source (@sources) {
@@ -24,6 +24,7 @@ foreach $source (@sources) {
 	open(SOURCE, $source);
 	while (<SOURCE>) {
 		if (/int +main *\(int +\w+ *, *char *\* *\w+\[ *\] *\)/) {
+                      $source =~ s/\.c(pp)?//;
 			push @mains, $source;
 		}
 	}

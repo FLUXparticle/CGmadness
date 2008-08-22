@@ -15,43 +15,54 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+BUILD := $(shell $(CC) -dumpmachine)
+DEPS  := .deps
+
 CC := gcc
 CFLAGS := -O3
 LDFLAGS :=
 PERL := perl
 
-BUILD := $(shell $(CC) -dumpmachine)
-
 CFLAGS += -Wall
 
+CXX := g++
+CXXFLAGS := $(CFLAGS)
+
+LD := g++
+LDFLAGS :=
 LIBS := -lm
-PROJECT := cgmadness
+
+PERL := perl
+
+PROJECT := $(basename $(shell pwd))
 SHADER := golfball ballshadow
 
 # Check if compiling with Linux or Cygwin/MinGW
 ifdef COMSPEC
 	CFLAGS += -mno-cygwin
+	CXXFLAGS += -mno-cygwin
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
 	EXECSUFFIX := .exe
 else
-	CFLAGS += -I/opt/local/include
+	CXXFLAGS += -I/opt/local/include
 	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif
 
-SRC     :=  $(wildcard *.c)
 MAINS   :=  $(shell $(PERL) mains.pl)
+SRC_C   :=  $(wildcard *.c)
+SRC_CPP :=  $(wildcard *.cpp)
+SRC     :=  $(SRC_C) $(SRC_CPP)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  mains.pl modules.pl indent.pro
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
-EXEC    :=  $(MAINS:%.c=%$(EXECSUFFIX))
-OBJS    :=  $(SRC:%.c=$(BUILD)/%.o)
-DEPS    :=  $(SRC:%=.deps/%.d) $(MAINS:%.c=.deps/%.o.d)
-CLEAN   :=  $(OBJS) $(EXEC)
+EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
+DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
+CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
 .PHONY: all
@@ -65,13 +76,17 @@ profile:
 debug:
 	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(LDFLAGS)"
 
-%$(EXECSUFFIX):
+%$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
-	@$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
+	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c | $(BUILD)/.
 	@echo "  CC $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
+
+$(BUILD)/%.o: %.cpp | $(BUILD)/.
+	@echo "  CXX $@"
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
 TAR := $(PROJECT).tar.bz2
@@ -85,14 +100,14 @@ src: $(SRC_TAR)
 
 $(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
+	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
 
 .PHONY: tar
 tar: $(TAR)
 
 $(TAR): $(EXEC) $(DATA) $(DOC)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=cgmadness/%)
+	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
 
 .PHONY: zip
 zip: $(ZIP)
@@ -110,18 +125,28 @@ doc:
 .PHONY: clean
 clean:
 	@echo "  CLEAN"
-	@rm -f $(CLEAN)
+	@rm -rf $(CLEAN)
 
 # dependancies
-include $(DEPS)
+include $(DEP)
 
-.deps/%.o.d: %.c modules.pl | .deps/.
+.DELETE_ON_ERROR:
+
+$(DEPS)/%.o.d: %.c modules.pl | $(DEPS)/.
 	@echo "  MODULES $@"
-	@$(PERL) modules.pl $* > $@
+	@$(PERL) modules.pl $< > $@
 
-.deps/%.c.d: %.c | .deps/.
+$(DEPS)/%.o.d: %.cpp modules.pl | $(DEPS)/.
+	@echo "  MODULES $@"
+	@$(PERL) modules.pl $< > $@
+
+$(DEPS)/%.c.d: %.c | $(DEPS)/.
 	@echo "  DEP $@"
-	@$(CC) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CFLAGS) $< > $@ || rm $@
+	@$(CC) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
+
+$(DEPS)/%.cpp.d: %.cpp | $(DEPS)/.
+	@echo "  DEP $@"
+	@$(CXX) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
 
 # create necessary directories
 .PRECIOUS: %/.
