@@ -55,9 +55,6 @@ $target = $ARGV[0];
 @modules = ($target);
 
 @source = @modules;
-foreach (@source) {
-	s/$/.c/;
-}
 
 @process = @modules;
 do {
@@ -65,16 +62,15 @@ do {
 	$changed = 0;
 
 	foreach $module (@process) {
-		@files = &scan("$module.c");
-		foreach (@files) {
-			$file = $_;
-			s/\.h//;
+		@files = &scan($module);
+		foreach $file (@files) {
 			if (!grep $_ eq $file, @source) {
 				push @source, $file;
 			}
 		}
-		foreach $mod (@files) {
-			if (-e "$mod.c" && !grep $_ eq $mod, (@modules, @newmodules)) {
+		foreach (@files) {
+			($mod = $_) =~ s/\.h/.c/;
+			if (-e "$mod" && !grep $_ eq $mod, (@modules, @newmodules)) {
 				push @newmodules, $mod;
 				$changed = 1;
 			}
@@ -85,15 +81,14 @@ do {
 	@process = @newmodules;
 } while ($changed);
 
-foreach (@modules) {
-	($file = $_) =~ s/$/.c/;
-	push @source, $file;
-}
+push @source, @modules;
 
 foreach (@modules) {
-	s/$/.o/;
+	s/\.[^.]*$/.o/;
 	s/^/\$(BUILD)\//;
 }
+
+$target =~ s/\.[^.]*$//;
 
 print ".deps/$target.o.d: @source\n";
 print "$target\$(EXECSUFFIX): @modules\n";
