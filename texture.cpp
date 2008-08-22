@@ -25,12 +25,12 @@
 
 #define LINEAR_FILTER 1
 
-static int gUseTextures = 0;
+static bool gUseTextures = false;
 
 void initTextureEnvironment(void)
 {
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	gUseTextures = 1;
+	gUseTextures = true;
 }
 
 typedef struct
@@ -111,7 +111,8 @@ int readHeader(FILE* file, TGAHeader* header)
   return 1;
 }
 
-int loadTGA(FILE* file, Image* image, char** error) {
+const char* loadTGA(FILE * file, Image * image)
+{
 	TGAHeader header;
 	int compressed;
 	int size;
@@ -119,20 +120,17 @@ int loadTGA(FILE* file, Image* image, char** error) {
 
 	if (!readHeader(file, &header))
 	{
-		*error = "header";
-		return 0;
+		return "header";
 	}
 
 	if (header.lenID != 0)
 	{
-		*error = "ID";
-		return 0;
+		return "ID";
 	}
 
 	if (header.typePalette != 0)
 	{
-		*error = "Palette";
-		return 0;
+		return "Palette";
 	}
 
 	switch (header.typeImage)
@@ -143,14 +141,12 @@ int loadTGA(FILE* file, Image* image, char** error) {
 	case 2:
 		compressed = 0;
 	default:
-		*error = "Imagetype";
-		return 0;
+		return "Imagetype";
 	}
 
 	if (header.startX != 0 || header.startY != 0)
 	{
-		*error = "Offset";
-		return 0;
+		return "Offset";
 	}
 
 	image->width = header.width;
@@ -167,9 +163,7 @@ int loadTGA(FILE* file, Image* image, char** error) {
 		image->format = GL_RGBA;
 		break;
 	default:
-    printf("BPP: %d\n", header.bitsPerPixel);
-		*error = "Components";
-		return 0;
+		return "Components";
 	}
 
 	pixels = image->width * image->height;
@@ -179,8 +173,7 @@ int loadTGA(FILE* file, Image* image, char** error) {
 
 	if (!image->data)
 	{
-		*error = "malloc";
-		return 0;
+		return "malloc";
 	}
 
 	if (compressed)
@@ -229,11 +222,10 @@ int loadTGA(FILE* file, Image* image, char** error) {
 	}
 	else
 	{
-		*error = "data";
-		return 0;
+		return "data";
 	}
 
-	return 1;
+	return NULL;
 }
 
 unsigned int genTexture(void)
@@ -256,17 +248,16 @@ unsigned int genTexture(void)
 	return texID;
 }
 
-int loadTexture(const char *filename, int mipmapping)
+unsigned int loadTexture(const char *filename, bool mipmapping)
 {
 	GLuint id;
 	Image image;
 	FILE *file = fopen(filename, "rb");
-	int success = 0;
-	char *error = NULL;
+	const char *error;
 
 	if (file)
 	{
-		success = loadTGA(file, &image, &error);
+		error = loadTGA(file, &image);
 		fclose(file);
 	}
 	else
@@ -274,10 +265,10 @@ int loadTexture(const char *filename, int mipmapping)
 		error = "open";
 	}
 
-	if (!success)
+	if (error)
 	{
 		printf("%s: %s\n", filename, error);
-		return -1;
+		return 0;
 	}
 
 	if (!gUseTextures)

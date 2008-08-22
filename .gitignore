@@ -5,6 +5,10 @@
 .deps
 i686-apple-darwin9
 powerpc-apple-darwin9
+i486-linux-gnu
+debug
+
+*.debug
 
 cgmadness
 convert-cgm

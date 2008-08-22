@@ -23,7 +23,7 @@
 typedef void (*funcIdle) (int step);
 
 extern float sgIdleProgress;
-extern int sgIdleWorking;
+extern bool sgIdleWorking;
 
 void startIdle(int steps, funcIdle idle);
 void stopIdle(void);

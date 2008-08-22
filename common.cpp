@@ -20,7 +20,6 @@
 #include "common.hpp"
 
 #include "atlas.hpp"
-#include "noise.hpp"
 #include "idle.hpp"
 #include "lightmap.hpp"
 #include "level.hpp"
@@ -142,13 +141,13 @@ Orientation orientationSide(int fx, int fy, int side)
 	getSideFace(fx, fy, side, &face);
 
 	orientation.origin =
-		add(vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom)),
+		add(Vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom)),
 				sgLevel.origin);
 	orientation.vx =
-		vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
-	orientation.vy = vector3(0.0f, 0.0f, 1.0f);
+		Vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
+	orientation.vy = Vector3(0.0f, 0.0f, 1.0f);
 	orientation.normal =
-		vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);
+		Vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);
 
 	return orientation;
 }
@@ -196,32 +195,6 @@ void updateLightMap(int useProgressBar)
 	}
 }
 
-static void calcNoiseIdle(int step)
-{
-	int side = step % 5;
-	int y = step / 5 % sgLevel.size.y;
-	int x = step / 5 / sgLevel.size.y;
-
-	if (side < 4)
-	{
-		Orientation orientation = orientationSide(x, y, side);
-		genNoiseTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation.origin,
-										orientation.vx, orientation.vy);
-	}
-	else
-	{
-		Orientation floor = orientationFloor(x, y);
-		genNoiseTexture(&SUB_ATLAS_FLOOR(x, y), floor.origin, floor.vx, floor.vy);
-	}
-}
-
-void updateColorMap(void)
-{
-	initNoise();
-
-	startIdle(sgLevel.size.x * sgLevel.size.y * 5, calcNoiseIdle);
-}
-
 void updateTexCoords(void)
 {
 	int x;
@@ -230,8 +203,6 @@ void updateTexCoords(void)
 
 	float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
 	float b = 1.0f / (2 * LIGHT_MAP_SIZE);
-	float c = (float) (COLOR_MAP_SIZE - 1) / COLOR_MAP_SIZE;
-	float d = 1.0f / (2 * COLOR_MAP_SIZE);
 
 	/*****/
 
@@ -261,11 +232,6 @@ void updateTexCoords(void)
 					square->lightmap[i].y = a * sgEdgeY[i] + b;
 					square->lightmap[i] =
 						transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
-
-					square->colormap[i].x = c * sgEdgeX[i] + d;
-					square->colormap[i].y = c * sgEdgeY[i] + d;
-					square->colormap[i] =
-						transformCoords(&SUB_ATLAS_FLOOR(x, y), square->colormap[i]);
 				}
 			}
 		}
@@ -322,12 +288,6 @@ void updateTexCoords(void)
 							square->lightmap[i] =
 								transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side],
 																square->lightmap[i]);
-
-							square->colormap[i].x = c * txy + d;
-							square->colormap[i].y = z0 + c * tz + d - floor(face->bottom);
-							square->colormap[i] =
-								transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side],
-																square->colormap[i]);
 						}
 					}
 				}

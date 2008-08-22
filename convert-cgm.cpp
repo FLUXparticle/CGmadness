@@ -27,7 +27,7 @@
 
 void usage(void)
 {
-	printf("usage: upgrade-cgm [parameters...] <cgm-files...>\n");
+	printf("usage: convert-cgm [parameters...] <cgm-files...>\n");
 	printf
 		("  --size x y  resize all levels after this parameter to given size\n");
 	printf("\n");

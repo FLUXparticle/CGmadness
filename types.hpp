@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,14 +22,11 @@
 
 /*
  * namen conventions for variables:
- * type Object            o
+ * member                 m
+ * static member          s
  * global                 g
- * globale Object         go
  * super global           sg
- * super globale Objecte  sgo
  */
-
-#define PI 3.14159265358979323846
 
 #define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
 

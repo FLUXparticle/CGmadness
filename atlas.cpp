@@ -21,8 +21,6 @@
 
 #include "macros.hpp"
 
-#include <GL/glew.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -33,10 +31,7 @@ static int gCols;
 static int gRows;
 static int gLightMapSizeX;
 static int gLightMapSizeY;
-static int gColorMapSizeX;
-static int gColorMapSizeY;
 static float *gLightMapData;
-static Color3 *gColorMapData;
 static int gAllocatedSubTextures;
 static int gMaxSubLightMaps = 0;
 
@@ -73,12 +68,7 @@ void initAtlas(int cntSubTextures)
 
 	gLightMapData = new float[gLightMapSizeX * gLightMapSizeY];
 
-	gColorMapSizeX = gCols * COLOR_MAP_SIZE;
-	gColorMapSizeY = gRows * COLOR_MAP_SIZE;
-
-	gColorMapData = new Color3[gColorMapSizeX * gColorMapSizeY];
-
-#if 1
+#if 0
 	{
 		int i;
 		for (i = 0; i < gLightMapSizeX * gLightMapSizeY; i++)
@@ -93,15 +83,12 @@ void initAtlas(int cntSubTextures)
 
 	PRINT_INT(gLightMapSizeX);
 	PRINT_INT(gLightMapSizeY);
-	PRINT_INT(gColorMapSizeX);
-	PRINT_INT(gColorMapSizeY);
 	PRINT_INT(cntSubTextures);
 }
 
 void destroyAtlas(void)
 {
 	delete[] gLightMapData;
-	delete[] gColorMapData;
 
 	gCols = 0;
 	gRows = 0;
@@ -127,31 +114,21 @@ float getSubLightMapPixel(int index, int sx, int sy)
 	return *p;
 }
 
-void setSubColorMapPixel(int index, int sx, int sy, Color3 col)
-{
-	int x = (index % gCols) * COLOR_MAP_SIZE + sx;
-	int y = (index / gCols) * COLOR_MAP_SIZE + sy;
-	gColorMapData[y * gColorMapSizeX + x] = col;
-}
-
 Vector2 transformSubCoords(int index, const Vector2 coords)
 {
-	return vector2(((index % gCols) + coords.x) / gCols,
+	return Vector2(((index % gCols) + coords.x) / gCols,
 								 ((index / gCols) + coords.y) / gRows);
 }
 
-void lightMapToTexture(unsigned int texID)
+void getAtlasInfo(unsigned int* sizeX, unsigned int* sizeY, const float** data)
 {
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, gLightMapSizeX, gLightMapSizeY,
-							 0, GL_LUMINANCE, GL_FLOAT, gLightMapData);
+	*sizeX = gLightMapSizeX;
+	*sizeY = gLightMapSizeY;
+	*data = gLightMapData;
 }
-
-void colorMapToTexture(unsigned int texID)
+const float* getLightMapData()
 {
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, gColorMapSizeX, gColorMapSizeY, 0,
-							 GL_RGB, GL_FLOAT, gColorMapData);
+	return gLightMapData;
 }
 
 void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
@@ -211,19 +188,6 @@ void setLightMap(SubAtlas * subAtlas, int x, int y, float value)
 	setSubLightMapPixel(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
 }
 
-void setColorMap(SubAtlas * subAtlas, int x, int y, Color3 col)
-{
-	int index;
-
-	assert(x >= 0 && x < subAtlas->sizeX * COLOR_MAP_SIZE);
-	assert(y >= 0 && y < subAtlas->sizeY * COLOR_MAP_SIZE);
-
-	index =
-		subAtlas->idxSubLightMap + (y / COLOR_MAP_SIZE) * subAtlas->sizeX +
-		(x / COLOR_MAP_SIZE);
-	setSubColorMapPixel(index, x % COLOR_MAP_SIZE, y % COLOR_MAP_SIZE, col);
-}
-
 Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords)
 {
 	if (gCols > 0 && gRows > 0)
@@ -233,7 +197,7 @@ Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords)
 		int x = (int) floor(fx);
 		int y = (int) floor(fy);
 		int index = subAtlas->idxSubLightMap + y * subAtlas->sizeX + x;
-		Vector2 v = vector2(fx - x, fy - y);
+		Vector2 v = Vector2(fx - x, fy - y);
 
 		assert(coords.x >= 0.0f && coords.x <= subAtlas->sizeX);
 		assert(coords.y >= 0.0f && coords.y <= subAtlas->sizeY);

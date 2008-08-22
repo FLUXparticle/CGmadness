@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int isCGM(char *filename)
+static bool isCGM(char *filename)
 {
 	return strcmp(filename + strlen(filename) - 4, ".cgm") == 0;
 }
@@ -213,7 +213,7 @@ void loadStringListFromFile(StringList * list, const char *filename)
 	}
 }
 
-static int compar(const void *a, const void *b)
+static int compare(const void *a, const void *b)
 {
 	const char **pa = (const char **) a;
 	const char **pb = (const char **) b;
@@ -223,5 +223,5 @@ static int compar(const void *a, const void *b)
 
 void sortStringList(StringList * list)
 {
-	qsort(list->strings, list->count, sizeof(char *), compar);
+	qsort(list->strings, list->count, sizeof(char *), compare);
 }

@@ -20,9 +20,11 @@
 #ifndef _field_hpp_
 #define _field_hpp_
 
-#include "color.hpp"
+#include "ball/PlayersBall.hpp"
 
-#include "vector.hpp"
+#include "math/Vector3.hpp"
+
+#include "color.hpp"
 
 extern Vector3 *sgVertices;
 extern Vector3 *sgNormals;
@@ -32,9 +34,9 @@ void setSquareColor(int q, Color4 col);
 void initGameField(void);
 void destroyGameField(void);
 
-void updateGameField(void);
+void updateGameField(const PlayersBall& ball);
 
-void drawGameField(int ballReflection);
+void drawGameField(bool ballReflection);
 
 void getVertIndex(int x, int y, int *start, int *end);
 
