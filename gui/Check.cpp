@@ -21,7 +21,7 @@
 
 #include "font3d/font3d.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 Check::Check()
 {

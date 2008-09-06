@@ -19,7 +19,7 @@
 
 #include "text.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #define SCALE 0.1f
 

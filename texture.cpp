@@ -19,7 +19,7 @@
 
 #include "texture.hpp"
 
-#include <GL/glew.h>
+#include GLU_H
 
 #include <stdio.h>
 

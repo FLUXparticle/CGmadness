@@ -36,7 +36,7 @@
 
 #include "tools.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdio.h>
 #include <stdlib.h>

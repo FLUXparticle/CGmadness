@@ -25,7 +25,7 @@
 
 #include "functions.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 /*
  * TODO split SpinEdit into two seperate MenuItems

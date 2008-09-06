@@ -21,7 +21,7 @@
 
 #include "objects.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 ProgressBar::ProgressBar()
 {

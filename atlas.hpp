@@ -23,7 +23,7 @@
 #include "math/Vector2.hpp"
 #include "color.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #define LIGHT_MAP_SIZE 8
 

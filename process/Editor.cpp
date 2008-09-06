@@ -32,7 +32,7 @@
 #include "hw/keyboard.hpp"
 #include "common.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdlib.h>
 #include <math.h>

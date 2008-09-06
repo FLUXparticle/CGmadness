@@ -23,7 +23,7 @@
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10

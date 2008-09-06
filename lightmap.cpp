@@ -23,7 +23,7 @@
 
 #include "functions.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #include <math.h>
 

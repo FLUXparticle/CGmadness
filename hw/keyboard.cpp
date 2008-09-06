@@ -20,7 +20,7 @@
 #include "keyboard.hpp"
 #include "types.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <cstdlib>
 

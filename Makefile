@@ -15,17 +15,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-BUILD := $(shell $(CC) -dumpmachine)
+MACHINE := $(shell $(CC) -dumpmachine)
+BUILD := build/$(MACHINE)
 DEPS  := .deps
 
 CPREFIX :=
-
-CC := $(CPREFIX)gcc
-CFLAGS := -O3
-LDFLAGS :=
 PERL := perl
-
-CFLAGS += -Wall
 
 CC := $(CPREFIX)gcc
 CFLAGS := -Wall -O3
@@ -43,19 +38,33 @@ PWD := $(notdir $(shell pwd))
 PROJECT := cgmadness
 SHADER := golfball ballshadow
 
+GL_H := <GL/glew.h>
+GLU_H := <GL/glew.h>
+GLUT_H := <GL/glut.h>
+
 # Check if compiling with Linux or Cygwin/MinGW
-ifdef COMSPEC
+ifneq ($(findstring mingw32,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
 	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
 	EXECSUFFIX := .exe
-else
-	CXXFLAGS += 
-	CXXFLAGS += -I/opt/local/include
+endif
+ifneq ($(findstring linux-gnu,$(MACHINE)),)
+	CXXFLAGS += -ansi -pedantic 
 	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif
+ifneq ($(findstring apple-darwin,$(MACHINE)),)
+	CXXFLAGS += -I/opt/local/include
+	LIBS += -framework OpenGL -framework GLUT -lGLEW
+	EXECSUFFIX :=
+	GL_H := <GL/glew.h>
+	GLU_H := <GL/glew.h>
+	GLUT_H := <GLUT/glut.h>
+endif
+
+CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
 
 MAINS   :=  $(shell $(PERL) mains.pl)
 SRC     :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
@@ -82,11 +91,11 @@ mingw-%:
 
 .PHONY: profile
 profile:
-	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
+	@$(MAKE) BUILD=profile/$(MACHINE) EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
 
 .PHONY: debug
 debug:
-	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
+	@$(MAKE) BUILD=debug/$(MACHINE) EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
 
 .SECONDEXPANSION:
 

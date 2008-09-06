@@ -20,7 +20,7 @@
 #ifndef _texture_hpp_
 #define _texture_hpp_
 
-#include <GL/glew.h>
+#include GL_H
 
 unsigned int genTexture(void);
 unsigned int loadTexture(const char *filename, bool mipmapping);

@@ -26,7 +26,7 @@
 
 #include "field.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #define REFLECTION 1
 #define SKY 1

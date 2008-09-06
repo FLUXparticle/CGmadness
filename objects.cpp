@@ -19,7 +19,7 @@
 
 #include "objects.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 void drawSquare()
 {
