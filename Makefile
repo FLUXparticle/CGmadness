@@ -15,12 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-MACHINE := $(shell $(CC) -dumpmachine)
-BUILD := build/$(MACHINE)
-DEPS  := .deps
-
 CPREFIX :=
-PERL := perl
 
 CC := $(CPREFIX)gcc
 CFLAGS := -Wall -O3
@@ -33,6 +28,10 @@ LDFLAGS :=
 LIBS := -lm
 
 PERL := perl
+
+MACHINE := $(shell $(CC) -dumpmachine)
+BUILD := build/$(MACHINE)
+DEPS  := .deps
 
 PWD := $(notdir $(shell pwd))
 PROJECT := cgmadness

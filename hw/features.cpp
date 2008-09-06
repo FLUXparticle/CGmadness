@@ -61,6 +61,8 @@ void initFeatures(int argc, char *argv[])
 	bool noShader = false;
 	bool noVBO = false;
 
+	glewInit();
+
 	for (i = 1; i < argc; i++)
 	{
 		if (strcmp(argv[i], NO_FRAMEBUFFER) == 0)
