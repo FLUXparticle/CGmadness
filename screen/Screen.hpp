@@ -46,14 +46,17 @@ public:
   void draw() const;
 
 protected:
-	std::list<MenuItem*> mItems;
-
 	Process* mPrevious;
+
+	void addItem(MenuItem* item);
 
 private:
 	static unsigned int gTexLogo;
 
 	static void drawLogo();
+
+private:
+	std::list<MenuItem*> mItems;
 
 };
 

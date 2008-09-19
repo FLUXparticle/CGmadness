@@ -37,13 +37,13 @@ ScreenMain::ScreenMain()
 	gScreenChooseInfo = new ScreenChooseInfo(CALLBACK(ScreenMain, clickButtonChooseEditor));
 
 	bCGMadness = Button(6.0f, CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
-	mItems.push_back(&bCGMadness);
+	addItem(&bCGMadness);
 	
 	bCGMEditor = Button(4.0f, CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
-	mItems.push_back(&bCGMEditor);
+	addItem(&bCGMEditor);
 	
 	bQuit = Button(2.0f, CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
-	mItems.push_back(&bQuit);
+	addItem(&bQuit);
 }
 
 ScreenMain::~ScreenMain()

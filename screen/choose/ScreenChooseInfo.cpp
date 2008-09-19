@@ -36,10 +36,10 @@
 ScreenChooseInfo::ScreenChooseInfo(const Caller& choose)
 {
 	cLevelInfo = LevelInfo(3.0f);
-	mItems.push_back(&cLevelInfo);
+	addItem(&cLevelInfo);
 
 	bChooseEditor = Button(2.0f, choose, "choose", KEY_ENTER);
-	mItems.push_back(&bChooseEditor);
+	addItem(&bChooseEditor);
 }
 
 ScreenChooseInfo::~ScreenChooseInfo()

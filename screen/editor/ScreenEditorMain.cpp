@@ -32,16 +32,16 @@ ScreenEditorMain::ScreenEditorMain(Editor* editor) :
 	mParent(editor)
 {
 	bEdit = Button(6.0f, CALLBACK(ScreenEditorMain, clickButtonEdit), "edit", KEY_ENTER);
-	mItems.push_back(&bEdit);
+	addItem(&bEdit);
 	
 	bSave = Button(5.0f, CALLBACK(ScreenEditorMain, clickButtonSave), "save", 's');
-	mItems.push_back(&bSave);
+	addItem(&bSave);
 
 	bHelp = Button(4.0f, CALLBACK(ScreenEditorMain, clickButtonHelp), "help", 'h');
-	mItems.push_back(&bHelp);
+	addItem(&bHelp);
 
 	bQuit = Button(3.0f, CALLBACK(ScreenEditorMain, clickButtonQuit), "back", KEY_ESC);
-	mItems.push_back(&bQuit);
+	addItem(&bQuit);
 }
 
 ScreenEditorMain::~ScreenEditorMain()

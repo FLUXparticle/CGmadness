@@ -34,11 +34,11 @@ ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
 
 		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, size, col,
 							col ? gTextHelp[row].right : gTextHelp[row].left);
-		mItems.push_back(&lTextHelp[i]);
+		addItem(&lTextHelp[i]);
 	}
 
 	bBack = Button(6.0f - length * size, CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
-	mItems.push_back(&bBack);
+	addItem(&bBack);
 }
 
 ScreenHelp::~ScreenHelp()
