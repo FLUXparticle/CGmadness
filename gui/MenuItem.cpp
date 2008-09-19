@@ -34,11 +34,6 @@ MenuItem::~MenuItem()
   // empty
 }
 
-void MenuItem::event(float x, float y, MouseEvent event)
-{
-  // empty
-}
-
 void MenuItem::update(float interval)
 {
   // empty

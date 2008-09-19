@@ -32,8 +32,7 @@ class MenuItem
 public:
   MenuItem();
   virtual ~MenuItem();
-  
-  virtual void event(float x, float y, MouseEvent event);
+
   virtual void update(float interval);
   virtual void draw() const;
 
@@ -46,7 +45,7 @@ public:
 
 protected:
 	static float scaleText;
-	
+
 private:
 
 };

@@ -31,9 +31,8 @@ public:
 
   void set(bool value);
 
-  void event(float x, float y, MouseEvent event);
   void draw() const;
-  
+
   const char *text;
   bool value;
 

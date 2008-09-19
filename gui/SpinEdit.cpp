@@ -117,41 +117,6 @@ void SpinEdit::change(int change)
 	this->fChange(this);
 }
 
-void SpinEdit::event(float x, float y, MouseEvent event)
-{
-	int side;
-
-	float dist = this->width / 2.0f - 1.0f;
-
-	if (x < -dist)
-	{
-		side = -1;
-	}
-	else if (x > dist)
-	{
-		side = 1;
-	}
-	else
-	{
-		side = 0;
-	}
-
-	if (side != 0)
-	{
-		this->side = side;
-	}
-
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		change(side);
-		break;
-	default:
-		this->hover = (side != 0);
-		break;
-	}
-}
-
 void SpinEdit::update(float interval)
 {
 	if (wasCursorPressed(CURSOR_LEFT))

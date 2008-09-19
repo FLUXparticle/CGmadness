@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -48,7 +48,5 @@ void centerMouse(int *x, int *y);
 void startCallback(Process* process);
 
 void setUpdateFrequency(int callsPerSecond);
-
-void mouseEvent(int x, int y, MouseEvent event);
 
 #endif

@@ -65,30 +65,6 @@ void Screen::popScreen()
 	Main::setState(mPrevious, false);
 }
 
-void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent event)
-{
-	if (position.y < 0.0f && direction.y > 0.0f)
-	{
-		float t = -position.y / direction.y;
-		float x = position.x + t * direction.x;
-		float y = position.z + t * direction.z;
-
-	  FOREACH(std::list<MenuItem*>, mItems, iter)
-	  {
-	  	MenuItem* item = *iter;
-	  	
-	  	item->hover = 0;
-
-	  	if (x >= item->position.x && y >= item->position.y &&
-	  			x <= item->position.x + item->width &&
-	  			y <= item->position.y + item->height)
-	  	{
-	  		item->event(x, y, event);
-	  	}
-	  }
-	}
-}
-
 void Screen::update(float interval)
 {
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
@@ -99,7 +75,7 @@ void Screen::update(float interval)
   FOREACH(std::list<MenuItem*>, mItems, iter)
   {
   	MenuItem* item = *iter;
-  	
+
   	if (item->hover)
   	{
   		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
@@ -111,7 +87,7 @@ void Screen::update(float interval)
 
   	item->update(interval);
   }
-  
+
   customUpdate(interval);
 }
 

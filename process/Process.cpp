@@ -51,11 +51,6 @@ void Process::resume()
   // empty
 }
 
-void Process::event(const Vector3& position, const Vector3& direction, MouseEvent event)
-{
-  // empty
-}
-
 void Process::preDisplay()
 {
   // empty

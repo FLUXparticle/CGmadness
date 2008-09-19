@@ -33,29 +33,28 @@ class Screen : public Process
 public:
   Screen();
   virtual ~Screen();
-  
-  void start(Process* previous);
-  
-  virtual void show();
-  
-  void popScreen(); 
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
+  void start(Process* previous);
+
+  virtual void show();
+
+  void popScreen();
+
   void update(float interval);
   virtual void customUpdate(float interval);
-  
+
   void draw() const;
 
 protected:
 	std::list<MenuItem*> mItems;
 
 	Process* mPrevious;
-	
+
 private:
 	static unsigned int gTexLogo;
-	
+
 	static void drawLogo();
-	
+
 };
 
 #endif

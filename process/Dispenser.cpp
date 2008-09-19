@@ -45,12 +45,6 @@ Dispenser::~Dispenser()
 	// empty
 }
 
-void Dispenser::event(const Vector3& position, const Vector3& direction,
-		MouseEvent event)
-{
-	mProcessStack.back()->event(position, direction, event);
-}
-
 void Dispenser::update(float interval)
 {
 	FOREACH(std::list<Process*>, mProcessStack, iter)

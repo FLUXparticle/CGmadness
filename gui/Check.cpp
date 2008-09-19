@@ -52,19 +52,6 @@ void Check::set(bool value)
 	this->change(this);
 }
 
-void Check::event(float x, float y, MouseEvent event)
-{
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		set(!this->value);
-		break;
-	default:
-		this->hover = 1;
-		break;
-	}
-}
-
 void Check::draw() const
 {
 	float scale = scaleText * (1.0f + 0.1f * this->emphasize);

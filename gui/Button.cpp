@@ -46,19 +46,6 @@ Button::~Button()
   // empty
 }
 
-void Button::event(float x, float y, MouseEvent event)
-{
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		mClick();
-		break;
-	default:
-		this->hover = 1;
-		break;
-	}
-}
-
 void Button::update(float interval)
 {
 	if (wasKeyPressed(this->shortcut))
