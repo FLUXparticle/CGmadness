@@ -59,6 +59,7 @@ private:
 	typedef std::list<MenuItem*> MenuItems;
 
 	MenuItems mItems;
+	MenuItems mInteractiveItems;
 	MenuItems::iterator mSelectedItem;
 
 };

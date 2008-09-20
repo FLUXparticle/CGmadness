@@ -142,19 +142,23 @@ void Screen::draw() const
 
 void Screen::addItem(MenuItem* item)
 {
-	MenuItems::iterator pos = mItems.end();
-	FOREACH(mItems, iter)
-	{
-		if ((*iter)->position.y < item->position.y)
-		{
-			pos = iter;
-			break;
-		}
-	}
+	mItems.push_back(item);
 
-	mItems.insert(pos, item);
-	mSelectedItem = mItems.begin();
-	PRINT_FLOAT((*mSelectedItem)->position.y);
+	if (item->interactive())
+	{
+		MenuItems::iterator pos = mInteractiveItems.end();
+		FOREACH(mInteractiveItems, iter)
+		{
+			if ((*iter)->position.y < item->position.y)
+			{
+				pos = iter;
+				break;
+			}
+		}
+
+		mInteractiveItems.insert(pos, item);
+		mSelectedItem = mInteractiveItems.begin();
+	}
 }
 
 void Screen::drawLogo()

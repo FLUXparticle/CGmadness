@@ -23,12 +23,14 @@
 
 #include <GL/gl.h>
 
-Label::Label()
+Label::Label() :
+	MenuItem(false)
 {
   // empty
 }
 
-Label::Label(float x, float z, float size, bool alignRight, const char* text)
+Label::Label(float x, float z, float size, bool alignRight, const char* text) :
+	MenuItem(false)
 {
 	this->text = text;
 	this->size = size;
@@ -58,7 +60,7 @@ void Label::draw() const
 	glPushMatrix();
 	{
 		glScalef(scale, scale, scale);
-	
+
 		drawFont3DText(this->text);
 	}
 	glPopMatrix();

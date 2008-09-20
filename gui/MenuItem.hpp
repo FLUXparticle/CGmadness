@@ -30,7 +30,7 @@ typedef void (*funcDraw) (void);
 class MenuItem
 {
 public:
-  MenuItem();
+  MenuItem(bool interactive = true);
   virtual ~MenuItem();
 
   virtual void update(float interval);
@@ -43,11 +43,19 @@ public:
 	bool hover;
 	float emphasize;
 
+	bool interactive() const;
+
 protected:
 	static float scaleText;
 
 private:
+	bool mInteractive;
 
 };
+
+inline bool MenuItem::interactive() const
+{
+	return mInteractive;
+}
 
 #endif
