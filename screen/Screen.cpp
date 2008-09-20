@@ -52,7 +52,7 @@ void Screen::start(Process* previous)
 
 void Screen::show()
 {
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
 	}
@@ -72,7 +72,7 @@ void Screen::update(float interval)
 
 	moveCamera(interval, camera, lookat);
 
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
   {
   	MenuItem* item = *iter;
 
@@ -126,7 +126,7 @@ void Screen::draw() const
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
 			drawLogo();
-		  FOREACH(std::list<MenuItem*>, mItems, iter)
+		  FOREACH(mItems, iter)
 		  {
 		  	drawMenuItem(*iter);
 		  }

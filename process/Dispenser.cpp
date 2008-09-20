@@ -47,7 +47,7 @@ Dispenser::~Dispenser()
 
 void Dispenser::update(float interval)
 {
-	FOREACH(std::list<Process*>, mProcessStack, iter)
+	FOREACH(mProcessStack, iter)
 	{
 		Process* p = *iter;
 		p->update(interval);
@@ -63,7 +63,7 @@ void Dispenser::update(float interval)
 
 void Dispenser::preDisplay()
 {
-	FOREACH(std::list<Process*>, mProcessStack, iter)
+	FOREACH(mProcessStack, iter)
 	{
 		Process* p = *iter;
 		p->preDisplay();
@@ -72,7 +72,7 @@ void Dispenser::preDisplay()
 
 void Dispenser::draw() const
 {
-	FOREACH(std::list<Process*>, mProcessStack, iter)
+	FOREACH(mProcessStack, iter)
 	{
 		Process* p = *iter;
 		p->draw();
