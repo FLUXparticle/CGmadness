@@ -57,7 +57,7 @@ Editor::~Editor()
 	// empty
 }
 
-void Editor::start(Process* previous)
+void Editor::start(Process* previous, bool push)
 {
 	mPrevious = previous;
 

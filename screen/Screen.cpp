@@ -46,9 +46,13 @@ Screen::~Screen()
   // empty
 }
 
-void Screen::start(Process* previous)
+void Screen::start(Process* previous, bool push)
 {
 	mPrevious = previous;
+	if (push)
+	{
+		mSelectedItem = mInteractiveItems.begin();
+	}
 	show();
 }
 
@@ -57,6 +61,7 @@ void Screen::show()
   FOREACH(mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
+	  (*iter)->hover = false;
 	}
 
   (*mSelectedItem)->hover = true;
@@ -75,20 +80,6 @@ void Screen::update(float interval)
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
-
-  FOREACH(mItems, iter)
-  {
-  	MenuItem* item = *iter;
-
-  	if (item->hover)
-  	{
-  		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
-  	}
-  	else
-  	{
-  		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
-  	}
-  }
 
   if (wasCursorPressed(0)) // UP
   {
@@ -111,7 +102,23 @@ void Screen::update(float interval)
   }
   else
   {
-  	(*mSelectedItem)->update(interval);
+  	(*mSelectedItem)->updateSelected(interval);
+  }
+
+  FOREACH(mItems, iter)
+  {
+  	MenuItem* item = *iter;
+
+  	if (item->hover)
+  	{
+  		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
+  	}
+  	else
+  	{
+  		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
+  	}
+
+  	item->update(interval);
   }
 
   customUpdate(interval);

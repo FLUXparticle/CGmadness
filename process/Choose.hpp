@@ -31,7 +31,7 @@ public:
 	Choose(ScreenChoose* screenChoose);
 	virtual ~Choose();
 
-	void start(Process* previous);
+	void start(Process* previous, bool push);
 
 	void update(float interval);
 

@@ -48,6 +48,14 @@ Button::~Button()
 
 void Button::update(float interval)
 {
+	if (wasKeyPressed(shortcut))
+	{
+		mClick();
+	}
+}
+
+void Button::updateSelected(float interval)
+{
 	if (wasKeyPressed(KEY_ENTER))
 	{
 		mClick();

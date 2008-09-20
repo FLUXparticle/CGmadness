@@ -115,7 +115,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, true);
 		break;
 	}
 	case POP:
@@ -134,7 +134,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, false);
 		break;
 	}
 	case FLUSH:
@@ -148,7 +148,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, false);
 		break;
 	}
 	case NONE:

@@ -34,7 +34,7 @@ Choose::~Choose()
   // empty
 }
 
-void Choose::start(Process* previous)
+void Choose::start(Process* previous, bool push)
 {
 	Main::pushState(mScreenChoose);
 }

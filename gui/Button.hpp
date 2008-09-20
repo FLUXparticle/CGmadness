@@ -32,6 +32,8 @@ public:
   virtual ~Button();
 
   void update(float interval);
+  void updateSelected(float interval);
+
   void draw() const;
 
   const char* text;

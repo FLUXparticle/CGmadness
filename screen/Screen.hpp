@@ -34,7 +34,7 @@ public:
   Screen();
   virtual ~Screen();
 
-  void start(Process* previous);
+  void start(Process* previous, bool push);
 
   virtual void show();
 

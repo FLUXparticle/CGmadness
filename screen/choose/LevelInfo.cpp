@@ -34,13 +34,14 @@
 #define LEVELINFO_HEIGHT 4.0f
 #define LEVELINFO_LINES 11
 
-LevelInfo::LevelInfo()
+LevelInfo::LevelInfo() :
+	Canvas(false)
 {
   // empty
 }
 
 LevelInfo::LevelInfo(float z) :
-	Canvas(z, LEVELINFO_WIDTH, LEVELINFO_HEIGHT)
+	Canvas(z, LEVELINFO_WIDTH, LEVELINFO_HEIGHT, false)
 {
   // empty
 }
@@ -53,7 +54,7 @@ LevelInfo::~LevelInfo()
 void LevelInfo::draw() const
 {
 	Singleton<LevelLoader> gLevelLoader;
-	
+
 	const char *lines[LEVELINFO_LINES];
 	char size[20];
 	int i;

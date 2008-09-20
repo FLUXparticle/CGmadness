@@ -52,6 +52,10 @@ void Check::set(bool value)
 	this->change(this);
 }
 
+void Check::updateSelected(float interval)
+{
+}
+
 void Check::draw() const
 {
 	float scale = scaleText * (1.0f + 0.1f * this->emphasize);

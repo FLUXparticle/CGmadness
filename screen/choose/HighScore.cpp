@@ -38,13 +38,14 @@
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
 
-HighScore::HighScore()
+HighScore::HighScore() :
+	Canvas(true)
 {
   // empty
 }
 
 HighScore::HighScore(float z) :
-	Canvas(z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT)
+	Canvas(z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, true)
 {
   // empty
 }

@@ -40,6 +40,11 @@ void MenuItem::update(float interval)
   // empty
 }
 
+void MenuItem::updateSelected(float interval)
+{
+  // empty
+}
+
 void MenuItem::draw() const
 {
   // empty

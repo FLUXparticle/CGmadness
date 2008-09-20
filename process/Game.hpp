@@ -34,7 +34,7 @@ public:
   Game();
   virtual ~Game();
 
-  void start(Process* previous);
+  void start(Process* previous, bool push);
   void stop();
   
   void suspend();
