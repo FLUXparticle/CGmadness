@@ -23,6 +23,8 @@
 #include "camera.hpp"
 #include "objects.hpp"
 
+#include "hw/keyboard.hpp"
+
 #include "macros.hpp"
 
 #include <GL/glut.h>
@@ -86,8 +88,30 @@ void Screen::update(float interval)
   	{
   		item->emphasize += EMPHASIZE_SPEED * interval * (0.0f - item->emphasize);
   	}
+  }
 
-  	item->update(interval);
+  if (wasCursorPressed(0)) // UP
+  {
+  	if (mSelectedItem != mInteractiveItems.begin())
+  	{
+			(*mSelectedItem)->hover = false;
+			mSelectedItem--;
+			(*mSelectedItem)->hover = true;
+  	}
+  }
+  else if (wasCursorPressed(1)) // DOWN
+  {
+  	(*mSelectedItem)->hover = false;
+  	mSelectedItem++;
+  	if (mSelectedItem == mInteractiveItems.end())
+  	{
+    	mSelectedItem--;
+  	}
+  	(*mSelectedItem)->hover = true;
+  }
+  else
+  {
+  	(*mSelectedItem)->update(interval);
   }
 
   customUpdate(interval);
