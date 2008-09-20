@@ -56,7 +56,10 @@ private:
 	static void drawLogo();
 
 private:
-	std::list<MenuItem*> mItems;
+	typedef std::list<MenuItem*> MenuItems;
+
+	MenuItems mItems;
+	MenuItems::iterator mSelectedItem;
 
 };
 

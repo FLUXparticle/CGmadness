@@ -57,6 +57,8 @@ void Screen::show()
 		(*iter)->emphasize = 0.0f;
 	}
 
+  (*mSelectedItem)->hover = true;
+
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
@@ -140,7 +142,19 @@ void Screen::draw() const
 
 void Screen::addItem(MenuItem* item)
 {
-	mItems.push_back(item);
+	MenuItems::iterator pos = mItems.end();
+	FOREACH(mItems, iter)
+	{
+		if ((*iter)->position.y < item->position.y)
+		{
+			pos = iter;
+			break;
+		}
+	}
+
+	mItems.insert(pos, item);
+	mSelectedItem = mItems.begin();
+	PRINT_FLOAT((*mSelectedItem)->position.y);
 }
 
 void Screen::drawLogo()
