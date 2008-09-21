@@ -190,8 +190,6 @@ void Screen::draw() const
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
-		ColorStack::colorStack.setColor(Color4::white);
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
@@ -199,6 +197,7 @@ void Screen::draw() const
 			{
 				glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
+				ColorStack::colorStack.setColor(Color4::white);
 				drawLogo();
 
 				if (isAnimation)
@@ -208,6 +207,19 @@ void Screen::draw() const
 					Color4 filter(1.0f, 1.0f, 1.0f, mAnimationTime);
 					ColorStack::colorStack.pushColor(filter);
 				}
+
+				glPushMatrix();
+				{
+					double scale = 1.05;
+					glTranslatef((*mSelectedItem)->position.x * scale, (*mSelectedItem)->position.y, -0.1f);
+					glScaled(scale, scale, 1.0);
+
+					ColorStack::colorStack.pushColor(Color4::black);
+					ColorStack::colorStack.setColor(Color4::white);
+					(*mSelectedItem)->draw();
+					ColorStack::colorStack.popColor();
+				}
+				glPopMatrix();
 
 				FOREACH(mItems, iter)
 				{

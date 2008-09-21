@@ -40,6 +40,7 @@ public:
 	static Color4 red;
 	static Color4 blue;
 	static Color4 yellow;
+	static Color4 black;
 
 public:
 	Color4();

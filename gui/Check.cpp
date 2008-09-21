@@ -79,8 +79,6 @@ void Check::draw() const
 		ColorStack::colorStack.setColor((this->value) ? Color4::white : Color4::gray);
 
 		drawFont3DText(this->text);
-
-		ColorStack::colorStack.setColor(Color4::white);
 	}
 	glPopMatrix();
 }
