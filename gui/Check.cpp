@@ -21,6 +21,8 @@
 
 #include "font3d/font3d.hpp"
 
+#include "hw/keyboard.hpp"
+
 #include <GL/gl.h>
 
 Check::Check()
@@ -54,6 +56,10 @@ void Check::set(bool value)
 
 void Check::updateSelected(float interval)
 {
+	if (wasKeyPressed(KEY_ENTER))
+	{
+		set(!this->value);
+	}
 }
 
 void Check::draw() const
