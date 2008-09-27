@@ -53,7 +53,7 @@ void SmartPointer<T>::operator= (const SmartPointer<T>& other)
 	if (mPtr != other.mPtr)
 	{
 		release();
-		assign(other.mPtr);
+		assign(other);
 	}
 }
 
@@ -72,7 +72,7 @@ SmartPointer<T>::operator T* ()
 template<class T>
 void SmartPointer<T>::release()
 {
-	*mCounter--;
+	(*mCounter)--;
 	if (*mCounter == 0)
 	{
 		delete mPtr;
@@ -85,5 +85,5 @@ void SmartPointer<T>::assign(const SmartPointer& other)
 {
 	mPtr = other.mPtr;
 	mCounter = other.mCounter;
-	*mCounter++;
+	(*mCounter)++;
 }
