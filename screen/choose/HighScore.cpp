@@ -81,6 +81,7 @@ void HighScore::update(float interval)
 		switch (ch)
 		{
 		case '\b':
+		case 127:
 			if (len > 0)
 			{
 				name[len - 1] = '\0';
