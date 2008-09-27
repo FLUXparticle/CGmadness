@@ -69,7 +69,7 @@ MAINS   :=  $(shell $(PERL) mains.pl)
 SRC     :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl indent.pro
+DEV     :=  mains.pl modules.pl
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
