@@ -32,7 +32,6 @@ void initFeatures(int argc, char *argv[]);
 bool hasShader(void);
 bool hasFramebuffer(void);
 bool hasVertexbuffer(void);
-bool hasTwoSideStencil(void);
 bool hasBallShadowShader(void);
 bool hasGolfballShader(void);
 

@@ -23,7 +23,7 @@ uniform samplerCube Environment;
 
 uniform float reflection;
 
-varying vec4 diffuse; // , ambient;
+varying vec4 diffuse;
 varying vec3 normal;
 varying vec3 vViewVec;
 

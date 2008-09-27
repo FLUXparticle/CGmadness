@@ -34,7 +34,6 @@
 
 static bool gFramebufferAvailable;
 static bool gVertexbufferAvailable;
-static bool gTwoSideStencilAvailable;
 static bool gShaderAvailable;
 
 static bool gUseBallShadow = 0;
@@ -115,13 +114,6 @@ void initFeatures(int argc, char *argv[])
 		gVertexbufferAvailable = false;
 	}
 
-	gTwoSideStencilAvailable = true;
-	if (!GLEW_EXT_stencil_two_side || !GLEW_EXT_stencil_wrap)
-	{
-		printf("No two side stencil available :(\n");
-		gTwoSideStencilAvailable = false;
-	}
-
 	if (hasShader())
 	{
 		sgBallShadowShader = makeShader("ballshadow.vert", "ballshadow.frag");
@@ -153,11 +145,6 @@ bool hasFramebuffer(void)
 bool hasVertexbuffer(void)
 {
 	return gVertexbufferAvailable;
-}
-
-bool hasTwoSideStencil(void)
-{
-	return gTwoSideStencilAvailable;
 }
 
 bool hasBallShadowShader(void)
