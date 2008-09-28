@@ -66,7 +66,9 @@ endif
 CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
 
 MAINS   :=  $(shell $(PERL) mains.pl)
-SRC     :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
+CODE    :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
+INCLUDE :=  $(subst ./,,$(shell find . -name '*.h' -or -name '*.hpp' -or -name '*.inc'))
+SRC     :=  $(CODE) $(INCLUDE)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  mains.pl modules.pl
@@ -74,7 +76,7 @@ DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
-DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
+DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
@@ -121,7 +123,7 @@ CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
+$(SRC_TAR): Makefile $(SRC) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 
