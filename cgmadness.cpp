@@ -17,23 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
+#include "hw/features.hpp"
+#include "Main.hpp"
+
+
 #include "callback.hpp"
 
-#include "main.hpp"
+#include "process/MainProcess.hpp"
+
 #include "level.hpp"
-#include "game.hpp"
 
-#include "keyboard.hpp"
-#include "mouse.hpp"
+#include "hw/keyboard.hpp"
+#include "hw/mouse.hpp"
 
-#include "features.hpp"
+
+#include "utils/Singleton.hpp"
 
 #include "tools.hpp"
 
-#define GLUT_DISABLE_ATEXIT_HACK
-
-#include <GL/glew.h>
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,8 +71,6 @@ int main(int argc, char *argv[])
 
 	/* ---- */
 
-	glewInit();
-
 	initFeatures(argc, argv);
 
 	/* ---- */
@@ -93,14 +94,17 @@ int main(int argc, char *argv[])
 
 	/* ---- */
 
-	initMain();
-
 	startKeyboard();
 	startMouse();
 
-	startTimer();
-	startDisplay();
+	Main::init();
+	
+	Singleton<Main> main;
+	Singleton<MainProcess> process;
+	main->setFirstProcess(process);
 
+	startCallback(main);
+	
 	glutMainLoop();
 
 	return 0;

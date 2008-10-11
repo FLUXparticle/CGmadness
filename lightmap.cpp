@@ -23,6 +23,8 @@
 
 #include "functions.hpp"
 
+#include GL_H
+
 #include <math.h>
 
 float approximationSquare(const Vector3 position, const Vector3 normal,
@@ -47,13 +49,13 @@ float approximationSquare(const Vector3 position, const Vector3 normal,
 		return 1.0f;
 	}
 
-	return 1.0f - ((d1 * d2) / (1.0f + PI * sqr(r) / square.area));
+	return 1.0f - ((d1 * d2) / (1.0f + M_PI * sqr(r) / square.area));
 }
 
 float approximation(const Vector3 position, const Vector3 normal)
 {
-	Vector3 z = vector3(0.0f, 0.0f, 1.0f);
-	float light = 1.0f - acos(dot(normal, z)) / PI;
+	Vector3 z = Vector3(0.0f, 0.0f, 1.0f);
+	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
 	int x;
 	int y;
@@ -70,7 +72,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 			if (len
 					(sub
 					 (position,
-						add(vector3(x + 0.5f, y + 0.5f, position.z),
+						add(Vector3(x + 0.5f, y + 0.5f, position.z),
 								sgLevel.origin))) > 6.0f)
 			{
 				continue;

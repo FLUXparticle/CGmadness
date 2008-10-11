@@ -20,7 +20,10 @@
 #ifndef _level_hpp_
 #define _level_hpp_
 
-#include "vector.hpp"
+#include "math/Vector2.hpp"
+#include "math/Vector3.hpp"
+
+#include GL_H
 
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
@@ -31,12 +34,9 @@
 #define MIN_ALLOWED_CHAR 32
 #define MAX_ALLOWED_CHAR 127
 
-#define NOISE_TEXTURE 0
-
 typedef struct
 {
 	Vector3 normal;
-	Vector2 colormap[4];
 	Vector2 lightmap[4];
 	Vector2 texcoord[4];
 	Vector3 vertices[4];
@@ -85,14 +85,15 @@ typedef struct
 	FieldCoord finish;
 	FieldCoord size;
 	unsigned int borderTexture;
-	unsigned int colorMap;
-	unsigned int lightMap;
+	GLuint colorMap;
+	GLuint lightMap;
 
 	const char *filename;
 	unsigned int crc32;
 
 	int cntScoreCols;
 	ScoreCol scores[MAX_SCORE_COLS];
+	int lastPlayerIndex;
 
 	Vector3 origin;
 

@@ -25,7 +25,7 @@
 
 #include "functions.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #include <stdio.h>
 #include <string.h>
@@ -53,6 +53,18 @@ static char *addStrings(const char *a, const char *b)
 	strcat(c, b);
 
 	return c;
+}
+
+Vector3 midpoint(const Vector3 quad[4])
+{
+	Vector3 mid(0.0f, 0.0f, 0.0f);
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		mid = add(mid, scale(1.0f / 4.0f, quad[i]));
+	}
+
+	return mid;
 }
 
 static void updateSquareAttributes(Square * square)
@@ -345,7 +357,7 @@ void newLevel(void)
 	updateLightMap(0);
 }
 
-int readByte(FILE * file)
+static int readByte(FILE * file)
 {
 	int value;
 

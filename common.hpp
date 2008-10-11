@@ -24,7 +24,6 @@ void initCommon(void);
 void destroyCommon(void);
 
 void updateLightMap(int useProgressBar);
-void updateColorMap(void);
 void updateTexCoords(void);
 
 #endif

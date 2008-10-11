@@ -20,20 +20,16 @@
 #ifndef _callback_hpp_
 #define _callback_hpp_
 
-#include "mouse.hpp"
+#include "hw/mouse.hpp"
 
-#include "vector.hpp"
+#include "process/Process.hpp"
+
+#include "math/Vector3.hpp"
 #include "types.hpp"
-
-typedef void (*funcDrawHUD) (float width, float height);
-
-typedef void (*funcDoMouseEvent) (const Vector3 * position,
-																	const Vector3 * direction, MouseEvent event);
 
 typedef struct
 {
 	Matrix projection;
-	Matrix view;
 } Viewport;
 
 typedef struct
@@ -47,13 +43,10 @@ typedef struct
 
 extern Viewport sgWindowViewport;
 
-void setPreDisplayFunc(funcDraw preDisplay);
-
 void centerMouse(int *x, int *y);
 
-void startDisplay(void);
+void startCallback(Process* process);
 
-void startTimer(void);
 void setUpdateFrequency(int callsPerSecond);
 
 void mouseEvent(int x, int y, MouseEvent event);

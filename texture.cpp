@@ -19,8 +19,7 @@
 
 #include "texture.hpp"
 
-#include <GL/glew.h>
-#include <GL/glu.h>
+#include GLU_H
 
 #include <stdio.h>
 
@@ -57,7 +56,7 @@ typedef struct
 	GLushort height;
 	GLubyte bitsPerPixel;
 	GLubyte attrImage;
-} __attribute__ ((__packed__)) TGAHeader;
+} TGAHeader;
 
 void copyPixel(GLubyte * data, int pos, GLubyte * pixel, int components)
 {
@@ -82,29 +81,56 @@ void nextPixel(TGAHeader * header, int *pos)
 	}
 }
 
-bool loadTGA(FILE * file, Image * image, char **error)
+static GLubyte readByte(FILE* file)
+{
+  return fgetc(file);
+}
+
+GLushort readShort(FILE* file)
+{
+  int lower = readByte(file);
+  int upper = readByte(file);
+  return (upper << 8) | lower;
+}
+
+int readHeader(FILE* file, TGAHeader* header)
+{
+  header->lenID            = readByte(file);
+  header->typePalette      = readByte(file);
+  header->typeImage        = readByte(file);
+  header->startPalette     = readShort(file);
+  header->lenPalette       = readShort(file);
+  header->sizePaletteEntry = readByte(file);
+  header->startX           = readShort(file);
+  header->startY           = readShort(file);
+  header->width            = readShort(file);
+  header->height           = readShort(file);
+  header->bitsPerPixel     = readByte(file);
+  header->attrImage        = readByte(file);
+
+  return 1;
+}
+
+const char* loadTGA(FILE * file, Image * image)
 {
 	TGAHeader header;
 	int compressed;
 	int size;
 	int pixels;
 
-	if (fread(&header, sizeof(header), 1, file) != 1)
+	if (!readHeader(file, &header))
 	{
-		*error = "header";
-		return 0;
+		return "header";
 	}
 
 	if (header.lenID != 0)
 	{
-		*error = "ID";
-		return 0;
+		return "ID";
 	}
 
 	if (header.typePalette != 0)
 	{
-		*error = "Palette";
-		return 0;
+		return "Palette";
 	}
 
 	switch (header.typeImage)
@@ -115,14 +141,12 @@ bool loadTGA(FILE * file, Image * image, char **error)
 	case 2:
 		compressed = 0;
 	default:
-		*error = "Imagetype";
-		return 0;
+		return "Imagetype";
 	}
 
 	if (header.startX != 0 || header.startY != 0)
 	{
-		*error = "Offset";
-		return 0;
+		return "Offset";
 	}
 
 	image->width = header.width;
@@ -139,8 +163,7 @@ bool loadTGA(FILE * file, Image * image, char **error)
 		image->format = GL_RGBA;
 		break;
 	default:
-		*error = "Components";
-		return 0;
+		return "Components";
 	}
 
 	pixels = image->width * image->height;
@@ -150,8 +173,7 @@ bool loadTGA(FILE * file, Image * image, char **error)
 
 	if (!image->data)
 	{
-		*error = "malloc";
-		return 0;
+		return "malloc";
 	}
 
 	if (compressed)
@@ -200,11 +222,10 @@ bool loadTGA(FILE * file, Image * image, char **error)
 	}
 	else
 	{
-		*error = "data";
-		return 0;
+		return "data";
 	}
 
-	return 1;
+	return NULL;
 }
 
 unsigned int genTexture(void)
@@ -232,12 +253,11 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 	GLuint id;
 	Image image;
 	FILE *file = fopen(filename, "rb");
-	bool success = false;
-	char *error = NULL;
+	const char *error;
 
 	if (file)
 	{
-		success = loadTGA(file, &image, &error);
+		error = loadTGA(file, &image);
 		fclose(file);
 	}
 	else
@@ -245,10 +265,10 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 		error = "open";
 	}
 
-	if (!success)
+	if (error)
 	{
 		printf("%s: %s\n", filename, error);
-		return -1;
+		return 0;
 	}
 
 	if (!gUseTextures)

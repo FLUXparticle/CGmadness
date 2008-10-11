@@ -19,14 +19,12 @@
 
 #include "callback.hpp"
 
-#include "main.hpp"
-#include "menumanager.hpp"
-
-#include "text.hpp"
+#include "text/text.hpp"
 #include "camera.hpp"
 
-#include <GL/glew.h>
-#include <GL/glut.h>
+#include "math/vector.hpp"
+
+#include GLUT_H
 
 #include <stdio.h>
 #include <math.h>
@@ -41,16 +39,11 @@ Viewport sgWindowViewport;
 
 static RenderTarget gTargetWindow;
 
+static Process* gProcess;
+
 /*** Scene ***/
 
-static funcDraw gPreDisplay = NULL;
-
 static bool gSceneDirty = 1;
-
-void setPreDisplayFunc(funcDraw preDisplay)
-{
-	gPreDisplay = preDisplay;
-}
 
 /*** Display ***/
 
@@ -88,13 +81,12 @@ void display(void)
 	Viewport *v = gTargetWindow.viewport;
 	float aspect = (float) gTargetWindow.height / gTargetWindow.width;
 
-	if (gPreDisplay)
 	{
 #if(DEBUG_PREDISPLAY)
 		int after;
 		int before = glutGet(GLUT_ELAPSED_TIME);
 #endif
-		gPreDisplay();
+		gProcess->preDisplay();
 #if(DEBUG_PREDISPLAY)
 		after = glutGet(GLUT_ELAPSED_TIME);
 		sumPredisplayTime += after - before;
@@ -112,9 +104,10 @@ void display(void)
 		glScalef(aspect, 1.0f, 1.0f);
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(&v->view[0][0]);
+		glLoadIdentity();
+		setCamera();
 
-		drawMain();
+		gProcess->draw();
 	}
 
 	/* draw framerate */
@@ -133,7 +126,7 @@ void display(void)
 
 	glMatrixMode(GL_MODELVIEW);
 
-	drawMainHUD(1.0f / aspect, 1.0f);
+	gProcess->drawHUD(1.0f / aspect, 1.0f);
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -173,21 +166,7 @@ void startDisplay(void)
 	glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 	glGetFloatv(GL_PROJECTION_MATRIX, &gProjectionText[0][0]);
 
-	{
-		int x;
-		int y;
-		Viewport *v = &sgWindowViewport;
-
-		for (x = 0; x < 4; x++)
-		{
-			for (y = 0; y < 4; y++)
-			{
-				v->view[x][y] = (x == y);
-			}
-		}
-
-		initProjectMat(v->projection, FOV);
-	}
+	initProjectMat(sgWindowViewport.projection, FOV);
 
 	/* RenderTarget for main window */
 	gTargetWindow.framebuffer = 0;
@@ -230,10 +209,10 @@ void timer(int startTime)
 
 	while (simulationTime < realTime)
 	{
-		eventMenuManager(&gLastMouseEvent.position, &gLastMouseEvent.direction,
-										 gLastMouseEvent.event);
+		gProcess->event(gLastMouseEvent.position, gLastMouseEvent.direction, gLastMouseEvent.event);
+		gLastMouseEvent.event = MOUSE_MOTION;
 
-		updateMain(TIME_STEP / 1000.0f);
+		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
 }
@@ -256,6 +235,16 @@ void setUpdateFrequency(int callsPerSecond)
 	}
 }
 
+/*** Callback ***/
+
+void startCallback(Process* process)
+{
+	gProcess = process;
+	
+	startTimer();
+	startDisplay();
+}
+
 /*** Picking ***/
 
 void mouseEvent(int mx, int my, MouseEvent event)
@@ -263,32 +252,18 @@ void mouseEvent(int mx, int my, MouseEvent event)
 	int width = gTargetWindow.width;
 	int height = gTargetWindow.height;
 	float aspect = (float) width / height;
-	float f = tan(FOV / 2.0f * PI / 180.0f);
+	float f = tan(FOV / 2.0f * M_PI / 180.0f);
 	float x = (float) mx / width * 2.0f - 1.0f;
 	float y = (float) my / height * 2.0f - 1.0f;
 
-	Vector3 dir = vector3(aspect * f * x, f * -y, -1.0f);
-
-	Viewport *v = gTargetWindow.viewport;
+	Vector3 dir = Vector3(aspect * f * x, f * -y, -1.0f);
 
 	Vector3 position = sgCamera;
-	Vector3 direction;
-
-	direction.x =
-		dir.x * v->view[0][0] + dir.y * v->view[0][1] + dir.z * v->view[0][2];
-	direction.y =
-		dir.x * v->view[1][0] + dir.y * v->view[1][1] + dir.z * v->view[1][2];
-	direction.z =
-		dir.x * v->view[2][0] + dir.y * v->view[2][1] + dir.z * v->view[2][2];
-
-	if (event == MOUSE_CLICK)
-	{
-		eventMenuManager(&position, &direction, event);
-	}
+	Vector3 direction = rotateVector(dir);
 
 	gLastMouseEvent.position = position;
 	gLastMouseEvent.direction = direction;
-	gLastMouseEvent.event = MOUSE_MOTION;
+	gLastMouseEvent.event = event;
 }
 
 void centerMouse(int *x, int *y)

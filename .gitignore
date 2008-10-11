@@ -3,3 +3,10 @@
 *.dll
 
 .deps
+build
+debug
+
+*.debug
+
+cgmadness
+convert-cgm

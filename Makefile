@@ -15,50 +15,68 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-BUILD := build
-DEPS  := .deps
+CPREFIX :=
 
-CC := gcc
-CFLAGS := -Wall -ansi -pedantic -O3
+CC := $(CPREFIX)gcc
+CFLAGS := -Wall -O3
 
-CXX := g++
+CXX := $(CPREFIX)g++
 CXXFLAGS := $(CFLAGS) -include cstdlib -I.
 
-LD := g++
+LD := $(CPREFIX)g++
 LDFLAGS :=
 LIBS := -lm
 
 PERL := perl
 
-PROJECT := $(basename $(shell pwd))
+MACHINE := $(shell $(CC) -dumpmachine)
+BUILD := build/$(MACHINE)
+DEPS  := .deps
+
+PWD := $(notdir $(shell pwd))
+PROJECT := cgmadness
 SHADER := golfball ballshadow
 
+GL_H := <GL/glew.h>
+GLU_H := <GL/glew.h>
+GLUT_H := <GL/glut.h>
+
 # Check if compiling with Linux or Cygwin/MinGW
-ifdef COMSPEC
+ifneq ($(findstring mingw32,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
-	CXXFLAGS += -mno-cygwin
+	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
-	BUILD = mingw
 	EXECSUFFIX := .exe
-else
+endif
+ifneq ($(findstring linux-gnu,$(MACHINE)),)
+	CXXFLAGS += -ansi -pedantic 
 	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif
+ifneq ($(findstring apple-darwin,$(MACHINE)),)
+	CXXFLAGS += -I/opt/local/include
+	LIBS += -framework OpenGL -framework GLUT -lGLEW
+	EXECSUFFIX :=
+	GL_H := <GL/glew.h>
+	GLU_H := <GL/glew.h>
+	GLUT_H := <GLUT/glut.h>
+endif
 
-MAINS    :=  $(shell $(PERL) mains.pl)
-SRC_DIRS :=  k2tree
-SRC_C    :=  $(wildcard *.c) $(shell find $(SRC_DIRS) -name '*.c')
-SRC_CPP  :=  $(wildcard *.cpp) $(shell find $(SRC_DIRS) -name '*.cpp')
-SRC      :=  $(SRC_C) $(SRC_CPP)
-DATA     :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
-DLL      :=  glut32.dll glew32.dll
-DEV      :=  mains.pl modules.pl indent.pro $(SRC_DIRS)
-DOC      :=  license.txt AUTHORS
-DOC_DEV  :=  $(DOC) README
+CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
+
+MAINS   :=  $(shell $(PERL) mains.pl)
+CODE    :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
+INCLUDE :=  $(subst ./,,$(shell find . -name '*.h' -or -name '*.hpp' -or -name '*.inc'))
+SRC     :=  $(CODE) $(INCLUDE)
+DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
+DLL     :=  glut32.dll glew32.dll
+DEV     :=  mains.pl modules.pl
+DOC     :=  license.txt AUTHORS
+DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
-DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
+DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
@@ -68,13 +86,22 @@ CLEAN   :=  $(BUILD) $(EXEC)
 .PHONY: all
 all: $(EXEC)
 
+.PHONY: release
+release: src tar mingw-zip
+
+.PHONY: mingw-%
+mingw-%:
+	@$(MAKE) $* COMSPEC=1 CPREFIX="i586-mingw32msvc-"
+
 .PHONY: profile
 profile:
-	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(LDFLAGS)"
+	@$(MAKE) BUILD=profile/$(MACHINE) EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
 
 .PHONY: debug
 debug:
-	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(LDFLAGS)"
+	@$(MAKE) BUILD=debug/$(MACHINE) EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
+
+.SECONDEXPANSION:
 
 %$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
@@ -89,32 +116,33 @@ $(BUILD)/%.o: %.cpp | $$(@D)/.
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # building archives
-TAR := $(PROJECT).tar.bz2
-SRC_TAR := $(PROJECT)-src.tar.bz2
-ZIP := $(PROJECT).zip
+BASENAME := $(PROJECT)
+SRC_TAR := $(BASENAME)-src.tar.bz2
+TAR := $(BASENAME).tar.bz2
+ZIP := $(BASENAME).zip
 CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
+$(SRC_TAR): Makefile $(SRC) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
+	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 
 .PHONY: tar
 tar: $(TAR)
 
 $(TAR): $(EXEC) $(DATA) $(DOC)
 	@echo "  TAR $@"
-	@tar -C .. -cjf $@ $(^:%=$(PROJECT)/%)
+	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 
 .PHONY: zip
 zip: $(ZIP)
 
 $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
-	@zip $@ $^ > /dev/null
+	@zip "$@" $^ > /dev/null 2>&1
 
 # documentation
 .PHONY: doc
@@ -142,11 +170,11 @@ $(DEPS)/%.o.d: %.cpp modules.pl | $$(@D)/.
 
 $(DEPS)/%.c.d: %.c | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CC) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
+	@$(CC) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
 
 $(DEPS)/%.cpp.d: %.cpp | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CXX) -MM -MP -MT $@ -MT '$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
+	@$(CXX) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
 
 # create necessary directories
 .PRECIOUS: %/.
