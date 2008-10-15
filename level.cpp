@@ -285,7 +285,7 @@ float getMaxZValue(const Square * square)
 void initLevel(void)
 {
 	int x;
-	
+
 	sgLevel.field = new Plate *[sgLevel.size.x];
 	sgLevel.field[0] = new Plate[sgLevel.size.x * sgLevel.size.y];
 
@@ -357,25 +357,28 @@ void newLevel(void)
 	updateLightMap(0);
 }
 
-static int readByte(FILE * file)
+static int readByte(FILE* file)
 {
 	int value;
 
-	fscanf(file, "%i", &value);
-	nextByte(value);
+	if (fscanf(file, "%i", &value) == 1)
+	{
+		nextByte(value);
+	}
 
 	return value;
 }
 
-int readInt(FILE * file)
+static int readInt(FILE* file)
 {
 	int value;
 	int tmp;
 	int i;
 
-	fscanf(file, "%i", &value);
-
-	tmp = value;
+	if (fscanf(file, "%i", &value) == 1)
+	{
+		tmp = value;
+	}
 
 	for (i = 0; i < 4; i++)
 	{
@@ -504,18 +507,14 @@ bool loadHighscoreFromFile(void)
 	}
 
 	/* version number */
-	fscanf(file, "v%u", &version);
-
-	if (version > THIS_HIGHSCORE_VERSION)
+	if (fscanf(file, "v%u", &version) != 1 || version > THIS_HIGHSCORE_VERSION)
 	{
 		fprintf(stderr, "incompatible version number: %u\n", version);
 		fclose(file);
 		return false;
 	}
 
-	fscanf(file, "%x\n", &crc32);
-
-	if (crc32 != sgLevel.crc32)
+	if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != sgLevel.crc32)
 	{
 		fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 		fclose(file);
@@ -532,9 +531,7 @@ bool loadHighscoreFromFile(void)
 		readString(file, sgLevel.scores[i].name);
 	}
 
-	fscanf(file, "%x\n", &crc32);
-
-	if (crc32 != getCRC32())
+	if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != getCRC32())
 	{
 		fprintf(stderr, "2st checksum mismatch: %s\n", filename);
 		fclose(file);
@@ -574,9 +571,7 @@ bool loadLevelFromFile(const char *filename, bool justLoad)
 	}
 
 	/* version number */
-	fscanf(file, "v%u", &version);
-
-	if (version > THIS_CGM_VERSION)
+	if (fscanf(file, "v%u", &version) != 1 || version > THIS_CGM_VERSION)
 	{
 		fprintf(stderr, "incompatible version number: %u\n", version);
 		fclose(file);
@@ -637,9 +632,7 @@ bool loadLevelFromFile(const char *filename, bool justLoad)
 
 	if (version >= 2 && !resize)
 	{
-		fscanf(file, "%x\n", &crc32);
-
-		if (crc32 != getCRC32())
+		if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != getCRC32())
 		{
 			fprintf(stderr, "1st checksum mismatch: %s\n", filename);
 			fclose(file);
@@ -744,9 +737,7 @@ bool loadLevelFromFile(const char *filename, bool justLoad)
 				delete[] tmp;
 			}
 
-			fscanf(file, "%x\n", &crc32);
-
-			if (crc32 != getCRC32())
+			if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != getCRC32())
 			{
 				fprintf(stderr, "2st checksum mismatch: %s\n", filename);
 				fclose(file);

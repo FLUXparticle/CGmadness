@@ -23,16 +23,17 @@
 #include <string.h>
 #include <unistd.h>
 
-void message(void)
+void message()
 {
 	printf("CG Madness, Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>\n");
 	printf("CG Madness comes with ABSOLUTELY NO WARRANTY.\n");
 	printf("\n");
 }
 
-void assurePath(const char *progname)
+bool assurePath(const char *progname)
 {
 	const char *lastSlash = NULL;
+	bool success = false;
 
 	const char *s;
 
@@ -54,8 +55,13 @@ void assurePath(const char *progname)
 
 		printf("change dir: '%s'\n", path);
 
-		chdir(path);
+		if (chdir(path) == 0)
+		{
+			success = true;
+		}
 
 		delete[] path;
 	}
+
+	return success;
 }

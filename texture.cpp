@@ -21,7 +21,7 @@
 
 #include GLU_H
 
-#include <stdio.h>
+#include <fstream>
 
 #define LINEAR_FILTER 1
 
@@ -81,19 +81,28 @@ void nextPixel(TGAHeader * header, int *pos)
 	}
 }
 
-static GLubyte readByte(FILE* file)
+static GLubyte readByte(std::ifstream& file)
 {
-  return fgetc(file);
+	char byte;
+
+	file.read(&byte, 1);
+
+	return byte;
 }
 
-GLushort readShort(FILE* file)
+static void readBytes(std::ifstream& file, int count, GLubyte* value)
+{
+	file.read((char*) value, count);
+}
+
+GLushort readShort(std::ifstream& file)
 {
   int lower = readByte(file);
   int upper = readByte(file);
   return (upper << 8) | lower;
 }
 
-int readHeader(FILE* file, TGAHeader* header)
+bool readHeader(std::ifstream& file, TGAHeader* header)
 {
   header->lenID            = readByte(file);
   header->typePalette      = readByte(file);
@@ -108,10 +117,10 @@ int readHeader(FILE* file, TGAHeader* header)
   header->bitsPerPixel     = readByte(file);
   header->attrImage        = readByte(file);
 
-  return 1;
+  return true;
 }
 
-const char* loadTGA(FILE * file, Image * image)
+const char* loadTGA(std::ifstream& file, Image* image)
 {
 	TGAHeader header;
 	int compressed;
@@ -188,14 +197,14 @@ const char* loadTGA(FILE * file, Image * image)
 
 		while (pixel < pixels)
 		{
-			int control = fgetc(file);
+			int control = readByte(file);
 			if (control >> 7)
 			{
 				int repeat = (control & 0x7f) + 1;
 				GLubyte value[4];
 				int i;
 
-				fread(value, 1, image->components, file);
+				readBytes(file, image->components, value);
 
 				for (i = 0; i < repeat; i++)
 				{
@@ -212,7 +221,7 @@ const char* loadTGA(FILE * file, Image * image)
 
 				for (i = 0; i < plainbytes; i++)
 				{
-					fread(value, 1, image->components, file);
+					readBytes(file, image->components, value);
 					copyPixel(image->data, pos, value, image->components);
 					nextPixel(&header, &pos);
 					pixel++;
@@ -228,7 +237,7 @@ const char* loadTGA(FILE * file, Image * image)
 	return NULL;
 }
 
-unsigned int genTexture(void)
+unsigned int genTexture()
 {
 	GLuint texID;
 
@@ -252,13 +261,13 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 {
 	GLuint id;
 	Image image;
-	FILE *file = fopen(filename, "rb");
+	std::ifstream file(filename, std::ios::binary);
 	const char *error;
 
-	if (file)
+	if (file.is_open())
 	{
 		error = loadTGA(file, &image);
-		fclose(file);
+		file.close();
 	}
 	else
 	{

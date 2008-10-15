@@ -25,12 +25,12 @@
 #include "process/Choose.hpp"
 #include "process/Editor.hpp"
 
-#include "Main.hpp"
-
 #include "utils/Callback.hpp"
 
 #include "hw/keyboard.hpp"
 #include "Main.hpp"
+
+#include <cstdlib>
 
 ScreenMain::ScreenMain()
 {
