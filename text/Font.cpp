@@ -27,7 +27,7 @@
 
 #define CHAR_AS_WIDE_AS_SPACE 'x'
 
-Font::Font(const char* imagename)
+Font::Font(const char* imagename, bool doubled)
 {
 	Image image;
 	const char* error = image.loadTGA(imagename);
@@ -48,13 +48,19 @@ Font::Font(const char* imagename)
 		int height = HEIGHT;
 		float offsetY = *image.pixel(index * 2 + 1, 0) / (256.0f * 16.0f);
 
-		float fWidth = (float) width / HEIGHT * 18.0f / 14.0f;
+		if (doubled)
+		{
+			width *= 2;
+			height *= 2;
+		}
+
+		float fWidth = (float) width / height * 18.0f / 14.0f;
 		float fHeight = 18.0f / 14.0f;
 
 		if (sx + width > image.width())
 		{
 			sx = 0;
-			sy += HEIGHT;
+			sy += height;
 		}
 
 		float fx = (float) sx / image.width();
