@@ -25,24 +25,24 @@
 #include "process/Choose.hpp"
 #include "process/Editor.hpp"
 
-#include "Main.hpp"
-
 #include "utils/Callback.hpp"
 
 #include "hw/keyboard.hpp"
 #include "Main.hpp"
 
+#include <cstdlib>
+
 ScreenMain::ScreenMain()
 {
-	gScreenChooseInfo = new ScreenChooseInfo(CALLBACK(ScreenMain, clickButtonChooseEditor));
+	gScreenChooseInfo = new ScreenChooseInfo(MY_CALLBACK(ScreenMain, clickButtonChooseEditor));
 
-	bCGMadness = Button(6.0f, CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
+	bCGMadness = Button(6.0f, MY_CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
 	mItems.push_back(&bCGMadness);
 	
-	bCGMEditor = Button(4.0f, CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
+	bCGMEditor = Button(4.0f, MY_CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
 	mItems.push_back(&bCGMEditor);
 	
-	bQuit = Button(2.0f, CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
+	bQuit = Button(2.0f, MY_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
 	mItems.push_back(&bQuit);
 }
 

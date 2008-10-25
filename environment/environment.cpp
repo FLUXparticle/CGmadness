@@ -26,7 +26,7 @@
 
 #include "field.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #define REFLECTION 1
 #define SKY 1
@@ -36,7 +36,7 @@
 
 void initFog(void)
 {
-	int mode = GL_EXP;
+	GLint mode = GL_EXP;
 	float density = FOG_DENSITY;
 	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 

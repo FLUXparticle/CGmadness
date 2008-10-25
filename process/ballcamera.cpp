@@ -27,7 +27,7 @@
 
 #include "functions.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <math.h>
 

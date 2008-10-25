@@ -21,9 +21,7 @@
 
 #include "image/Image.hpp"
 
-#include <GL/glu.h>
-
-#include <stdio.h>
+#include GLU_H
 
 #define LINEAR_FILTER 1
 
@@ -35,7 +33,7 @@ void initTextureEnvironment(void)
 	gUseTextures = true;
 }
 
-unsigned int genTexture(void)
+unsigned int genTexture()
 {
 	GLuint texID;
 

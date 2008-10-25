@@ -28,7 +28,7 @@
 ScreenGameMain2::ScreenGameMain2(Game* parent) :
 	ScreenGameMain(parent)
 {
-	bResume = Button(6.0f, CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
+	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
 	mItems.push_back(&bResume);
 }
 

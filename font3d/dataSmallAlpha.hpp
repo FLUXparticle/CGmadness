@@ -22,8 +22,6 @@
 
 #include "types.hpp"
 
-#include <GL/gl.h>
-
 extern float widthSmallAlpha[];
 
 extern funcDraw drawSmallAlpha[];

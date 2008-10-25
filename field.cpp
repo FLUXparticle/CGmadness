@@ -17,20 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "field.hpp"
+#include "hw/features.hpp"
 
 #include "level.hpp"
 #include "camera.hpp"
 
-#include "hw/features.hpp"
 
 #include "math/Vector2.hpp"
 #include "functions.hpp"
 
 #include "types.hpp"
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include "field.hpp"
+
+#include GL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +52,7 @@ static Color4 gDefaultColor;
 static Vector2 *gTexCoords;
 static Vector2 *gLightMapCoords;
 static Color4 *gColors;
-static unsigned int gVBuffers[6];
+static GLuint gVBuffers[6];
 
 static Vector3 *gBallShadowCoords;
 

@@ -24,7 +24,7 @@
 
 #include "math/vector.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdio.h>
 #include <math.h>

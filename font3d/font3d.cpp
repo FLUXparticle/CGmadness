@@ -23,7 +23,7 @@
 #include "dataSmallAlpha.hpp"
 #include "dataDigits.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 float widthFont3DText(const char *str)
 {

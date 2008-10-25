@@ -22,8 +22,6 @@
 
 #include "types.hpp"
 
-#include <GL/gl.h>
-
 extern float widthDigits[];
 
 extern funcDraw drawDigits[];
