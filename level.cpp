@@ -359,7 +359,7 @@ void newLevel(void)
 
 static int readByte(FILE* file)
 {
-	int value;
+	int value = -1;
 
 	if (fscanf(file, "%i", &value) == 1)
 	{
