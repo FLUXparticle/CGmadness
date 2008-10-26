@@ -19,7 +19,7 @@
 
 #include "Image.hpp"
 
-#include <GL/glu.h>
+#include GLU_H
 
 struct TGAHeader
 {
@@ -57,7 +57,7 @@ void copyPixel(GLubyte * data, int pos, GLubyte * pixel, int components)
 
 #define BOTTOMUP(header) (!((header).attrImage & 32))
 
-void nextPixel(TGAHeader * header, int *pos)
+void nextPixel(TGAHeader* header, int *pos)
 {
 	int components = header->bitsPerPixel / 8;
 	*pos += components;
@@ -67,19 +67,28 @@ void nextPixel(TGAHeader * header, int *pos)
 	}
 }
 
-static GLubyte readByte(FILE* file)
+static GLubyte readByte(std::ifstream& file)
 {
-  return fgetc(file);
+	char byte;
+
+	file.read(&byte, 1);
+
+	return byte;
 }
 
-static GLushort readShort(FILE* file)
+static void readBytes(std::ifstream& file, int count, GLubyte* value)
+{
+	file.read((char*) value, count);
+}
+
+static GLushort readShort(std::ifstream& file)
 {
   int lower = readByte(file);
   int upper = readByte(file);
   return (upper << 8) | lower;
 }
 
-static bool readHeader(FILE* file, TGAHeader* header)
+static bool readHeader(std::ifstream& file, TGAHeader* header)
 {
   header->lenID            = readByte(file);
   header->typePalette      = readByte(file);
@@ -109,13 +118,13 @@ Image::~Image()
 
 const char* Image::loadTGA(const char* filename)
 {
-	FILE *file = fopen(filename, "rb");
+	std::ifstream file(filename, std::ios::binary);
 	const char *error;
 
-	if (file)
+	if (file.is_open())
 	{
 		error = loadTGA(file);
-		fclose(file);
+		file.close();
 	}
 	else
 	{
@@ -125,7 +134,7 @@ const char* Image::loadTGA(const char* filename)
 	return error;
 }
 
-const char* Image::loadTGA(FILE* file)
+const char* Image::loadTGA(std::ifstream& file)
 {
 	TGAHeader header;
 	int compressed;
@@ -207,14 +216,14 @@ const char* Image::loadTGA(FILE* file)
 
 		while (pixel < pixels)
 		{
-			int control = fgetc(file);
+			int control = readByte(file);
 			if (control >> 7)
 			{
 				int repeat = (control & 0x7f) + 1;
 				GLubyte value[4];
 				int i;
 
-				fread(value, 1, mComponents, file);
+				readBytes(file, mComponents, value);
 
 				for (i = 0; i < repeat; i++)
 				{
@@ -231,7 +240,7 @@ const char* Image::loadTGA(FILE* file)
 
 				for (i = 0; i < plainbytes; i++)
 				{
-					fread(value, 1, mComponents, file);
+					readBytes(file, mComponents, value);
 					copyPixel(mData, pos, value, mComponents);
 					nextPixel(&header, &pos);
 					pixel++;

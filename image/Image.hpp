@@ -20,9 +20,9 @@
 #ifndef Image_hpp
 #define Image_hpp
 
-#include <GL/gl.h>
+#include GL_H
 
-#include <stdio.h>
+#include <fstream>
 
 class Image
 {
@@ -45,7 +45,7 @@ private:
 	GLenum mFormat;
 	GLubyte* mData;
 
-  const char* loadTGA(FILE* file);
+  const char* loadTGA(std::ifstream& file);
 
 };
 

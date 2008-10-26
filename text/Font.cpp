@@ -21,7 +21,7 @@
 
 #include "image/Image.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #define HEIGHT 128
 
