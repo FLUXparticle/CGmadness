@@ -17,15 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataSmallAlpha_hpp_
-#define _dataSmallAlpha_hpp_
+#ifndef _dataDigits_hpp_
+#define _dataDigits_hpp_
 
 #include "types.hpp"
 
-#include <GL/gl.h>
+extern float widthDigits[];
 
-extern float widthSmallAlpha[];
-
-extern funcDraw drawSmallAlpha[];
+extern funcDraw drawDigits[];
 
 #endif

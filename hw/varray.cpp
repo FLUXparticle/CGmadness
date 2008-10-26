@@ -19,10 +19,10 @@
 
 #include "varray.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
-void drawTrianglesVerticesNormals(int count, const float *vertices,
-																	const float *normals)
+void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
+		const float* normals, const unsigned int* indices)
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -30,7 +30,7 @@ void drawTrianglesVerticesNormals(int count, const float *vertices,
 	glVertexPointer(3, GL_FLOAT, 0, vertices);
 	glNormalPointer(GL_FLOAT, 0, normals);
 
-	glDrawArrays(GL_TRIANGLES, 0, count);
+	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, indices);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);

@@ -23,6 +23,8 @@
 #include "math/Vector2.hpp"
 #include "Color.hpp"
 
+#include GL_H
+
 #define LIGHT_MAP_SIZE 8
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)

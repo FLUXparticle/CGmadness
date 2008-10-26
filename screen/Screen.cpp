@@ -27,7 +27,7 @@
 
 #include "macros.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #define EMPHASIZE_SPEED 10.0f
 

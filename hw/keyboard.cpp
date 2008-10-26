@@ -20,7 +20,9 @@
 #include "keyboard.hpp"
 #include "types.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
+
+#include <cstdlib>
 
 #define MAX_KEYS 256
 

@@ -20,8 +20,8 @@
 #ifndef _tools_hpp_
 #define _tools_hpp_
 
-void message(void);
+void message();
 
-void assurePath(const char *progname);
+bool assurePath(const char *progname);
 
 #endif

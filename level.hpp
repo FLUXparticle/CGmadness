@@ -23,6 +23,8 @@
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
 
+#include GL_H
+
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
 
@@ -83,8 +85,8 @@ typedef struct
 	FieldCoord finish;
 	FieldCoord size;
 	unsigned int borderTexture;
-	unsigned int colorMap;
-	unsigned int lightMap;
+	GLuint colorMap;
+	GLuint lightMap;
 
 	const char *filename;
 	unsigned int crc32;

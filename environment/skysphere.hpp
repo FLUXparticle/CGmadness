@@ -23,7 +23,6 @@
 #include "hw/shader.hpp"
 #include "types.hpp"
 #include <math.h>
-#include <GL/glut.h>
 
 void initSkysphere(void);
 void drawSkysphere(void);

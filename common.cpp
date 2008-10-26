@@ -28,7 +28,7 @@
 
 #include "functions.hpp"
 
-#include <GL/glut.h>
+#include GL_H
 
 #include <stdio.h>
 #include <stdlib.h>

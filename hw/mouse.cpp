@@ -21,7 +21,7 @@
 
 #include "callback.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 
 #define SELECT_BUFFER_SIZE 512

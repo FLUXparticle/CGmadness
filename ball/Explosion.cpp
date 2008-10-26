@@ -23,7 +23,7 @@
 
 #include "macros.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #include <stdlib.h>
 #include <math.h>

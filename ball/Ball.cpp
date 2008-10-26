@@ -17,12 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "Main.hpp"
+#include "hw/features.hpp"
 #include "Ball.hpp"
 
 #include "level.hpp"
-#include "hw/features.hpp"
 #include "texture.hpp"
-#include "Main.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"
 #include "field.hpp"
@@ -30,7 +30,7 @@
 
 #include "functions.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #include <math.h>
 #include <string.h>

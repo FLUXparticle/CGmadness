@@ -21,7 +21,7 @@
 
 #include "macros.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #include <math.h>
 

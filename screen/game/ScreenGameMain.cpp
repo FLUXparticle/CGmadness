@@ -69,10 +69,10 @@ ScreenGameMain::ScreenGameMain(Game* parent) :
 	gcReflection = Check(3.0f, changeReflection, "reflection");
 	mItems.push_back(&gcReflection);
 
-	bHelp = Button(2.0f, CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
+	bHelp = Button(2.0f, MY_CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
 	mItems.push_back(&bHelp);
 	
-	bQuit = Button(1.0f, CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
+	bQuit = Button(1.0f, MY_CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
 	mItems.push_back(&bQuit);
 }
 

@@ -21,7 +21,7 @@
 
 #include "ColorStack.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 void drawSquare()
 {

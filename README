@@ -39,3 +39,14 @@ Linux:
 	required packages: freeglut3-dev libglew-dev (or equivalent)
 
 	to build just go into source directory and type "make"
+
+Mac OS X: (tested on PowerBook G4/Leopard)
+
+	In order to compile cgmadness you need glew. An easy way is to download and install it through DarwinPorts: http://darwinports.com/download/
+
+	Open the Terminal.app and enter
+		sudo port install glew
+
+	In the cgmadness source dir type
+		make
+	to build cgmadness
