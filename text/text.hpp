@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -20,7 +20,7 @@
 #ifndef _text_hpp_
 #define _text_hpp_
 
-void drawBitmapText(const char *str);
+void initStrokeThickText();
 
 float widthStrokeText(const char *str);
 void drawStrokeThinText(const char *str);

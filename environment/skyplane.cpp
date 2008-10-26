@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <GL/glew.h>
+
 #include "skyplane.hpp"
 
 #include "math/Vector2.hpp"
@@ -26,9 +28,6 @@
 #include "color.hpp"
 
 #include "texture.hpp"
-
-#include <GL/glew.h>
-#include <GL/glut.h>
 
 #include <stdio.h>
 #include <stdlib.h>

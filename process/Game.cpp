@@ -19,26 +19,28 @@
 
 #include "Game.hpp"
 
+#include "hw/features.hpp"
+
 #include "screen/game/ScreenGameMain1.hpp"
 #include "screen/game/ScreenGameMain2.hpp"
 
 #include "Main.hpp"
 
-#include "common.hpp"
 #include "level.hpp"
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "hw/features.hpp"
-#include "hw/keyboard.hpp"
 #include "camera.hpp"
 #include "texture.hpp"
 #include "environment/environment.hpp"
-#include "atlas.hpp"
 #include "Main.hpp"
 #include "objects.hpp"
 
 #include "functions.hpp"
+#include "hw/keyboard.hpp"
+
+#include "atlas.hpp"
+#include "common.hpp"
 
 #define COUNTDOWN_TIME 1.0f
 

@@ -15,9 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-BUILD := build
-DEPS  := .deps
-
 CPREFIX :=
 
 CC := $(CPREFIX)gcc
@@ -32,34 +29,54 @@ LIBS := -lm
 
 PERL := perl
 
+MACHINE := $(shell $(CC) -dumpmachine)
+BUILD := build/$(MACHINE)
+DEPS  := .deps
+
 PWD := $(notdir $(shell pwd))
 PROJECT := cgmadness
 SHADER := golfball ballshadow
 
+GL_H := <GL/glew.h>
+GLU_H := <GL/glew.h>
+GLUT_H := <GL/glut.h>
+
 # Check if compiling with Linux or Cygwin/MinGW
-ifdef COMSPEC
+ifneq ($(findstring mingw32,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
 	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
 	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
-	BUILD = mingw
 	EXECSUFFIX := .exe
-else
-	LIBS += -lglut -lGLU -lGL -lGLEW
+endif
+ifneq ($(findstring linux-gnu,$(MACHINE)),)
 	CXXFLAGS += -ansi -pedantic 
+	LIBS += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif
+ifneq ($(findstring apple-darwin,$(MACHINE)),)
+	CXXFLAGS += -I/opt/local/include
+	LIBS += -framework OpenGL -framework GLUT -lGLEW
+	EXECSUFFIX :=
+	GL_H := <GL/glew.h>
+	GLU_H := <GL/glew.h>
+	GLUT_H := <GLUT/glut.h>
+endif
+
+CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
 
 MAINS   :=  $(shell $(PERL) mains.pl)
-SRC     :=  $(subst ./,,$(shell find -name '*.c' -or -name '*.cpp'))
+CODE    :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
+INCLUDE :=  $(subst ./,,$(shell find . -name '*.h' -or -name '*.hpp' -or -name '*.inc'))
+SRC     :=  $(CODE) $(INCLUDE)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl indent.pro
+DEV     :=  mains.pl modules.pl
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
 EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
-DEP     :=  $(SRC:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
+DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
@@ -75,11 +92,11 @@ mingw-%:
 
 .PHONY: profile
 profile:
-	@$(MAKE) BUILD=profile EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
+	@$(MAKE) BUILD=profile/$(MACHINE) EXECSUFFIX=".profile$(EXECSUFFIX)" CFLAGS="-pg $(CFLAGS) -O0" LDFLAGS="-pg $(filter-out -s,$(LDFLAGS))"
 
 .PHONY: debug
 debug:
-	@$(MAKE) BUILD=debug EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
+	@$(MAKE) BUILD=debug/$(MACHINE) EXECSUFFIX=".debug$(EXECSUFFIX)" CFLAGS="-g $(CFLAGS) -O0" LDFLAGS="-g $(filter-out -s,$(LDFLAGS))"
 
 .SECONDEXPANSION:
 
@@ -106,7 +123,7 @@ CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 .PHONY: src
 src: $(SRC_TAR)
 
-$(SRC_TAR): Makefile $(wildcard *.c *.h) $(DATA) $(DEV) $(DOC_DEV)
+$(SRC_TAR): Makefile $(SRC) $(DATA) $(DEV) $(DOC_DEV)
 	@echo "  TAR $@"
 	@tar -C .. -cjf $@ $(^:%=$(PWD)/%)
 

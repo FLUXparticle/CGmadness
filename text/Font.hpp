@@ -17,36 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenHelp.hpp"
+#ifndef Font_hpp
+#define Font_hpp
 
-#include "utils/Callback.hpp"
+#include "math/Vector2.hpp"
 
-#include "hw/keyboard.hpp"
+#define FONT_MIN_CHAR 33
+#define FONT_MAX_CHAR 126
 
-ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
-	lTextHelp(2 * length)
+class Font
 {
-	for (unsigned int i = 0; i < lTextHelp.size(); i++)
+public:
+  Font(const char* imagename);
+  virtual ~Font();
+
+  float widthText(const char* str) const;
+  void drawText(const char* str) const;
+
+private:
+	struct CharInfo
 	{
-		int row = i / 2;
-		int col = i % 2;
-		float z = 6.0f - row * size;
+		Vector2 coords[4];
+		Vector2 texcoords[4];
+	};
 
-		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, size, col,
-							col ? gTextHelp[row].right : gTextHelp[row].left);
-		mItems.push_back(&lTextHelp[i]);
-	}
+	CharInfo mInfo[FONT_MAX_CHAR - FONT_MIN_CHAR + 1];
+	unsigned int mTexID;
 
-	bBack = Button(6.0f - length * size, MY_CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
-	mItems.push_back(&bBack);
-}
+	float widthChar(const char ch) const;
+	void drawChar(const char ch) const;
+	const CharInfo& getInfo(const char ch) const;
 
-ScreenHelp::~ScreenHelp()
-{
-  // empty
-}
+};
 
-void ScreenHelp::clickButtonBack()
-{
-	popScreen();
-}
+#endif

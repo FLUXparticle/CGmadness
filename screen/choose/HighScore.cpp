@@ -29,7 +29,7 @@
 
 #include "hw/keyboard.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 #include <stdio.h>
 #include <string.h>
@@ -81,6 +81,7 @@ void HighScore::update(float interval)
 		switch (ch)
 		{
 		case '\b':
+		case 127:
 			if (len > 0)
 			{
 				name[len - 1] = '\0';

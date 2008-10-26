@@ -17,12 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "water.hpp"
+#include <GL/glew.h>
 
 #include "texture.hpp"
 #include "environment.hpp"
 
-#include <GL/glew.h>
+#include "water.hpp"
 
 #include <stdio.h>
 

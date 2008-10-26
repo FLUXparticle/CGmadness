@@ -19,7 +19,7 @@
 
 #include "varray.hpp"
 
-#include <GL/gl.h>
+#include GL_H
 
 void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
 		const float* normals, const unsigned int* indices)

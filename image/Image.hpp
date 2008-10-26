@@ -17,36 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenHelp.hpp"
+#ifndef Image_hpp
+#define Image_hpp
 
-#include "utils/Callback.hpp"
+#include GL_H
 
-#include "hw/keyboard.hpp"
+#include <fstream>
 
-ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
-	lTextHelp(2 * length)
+class Image
 {
-	for (unsigned int i = 0; i < lTextHelp.size(); i++)
-	{
-		int row = i / 2;
-		int col = i % 2;
-		float z = 6.0f - row * size;
+public:
+	Image();
+  virtual ~Image();
 
-		lTextHelp[i] = Label(col ? 5.0f : -5.0f, z, size, col,
-							col ? gTextHelp[row].right : gTextHelp[row].left);
-		mItems.push_back(&lTextHelp[i]);
-	}
+  const char* loadTGA(const char* filename);
+  GLuint toTexture(bool mipmapping);
 
-	bBack = Button(6.0f - length * size, MY_CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
-	mItems.push_back(&bBack);
+  const GLubyte* pixel(int x, int y) const;
+
+  int width() const;
+  int height() const;
+
+private:
+	GLubyte mComponents;
+	GLushort mWidth;
+	GLushort mHeight;
+	GLenum mFormat;
+	GLubyte* mData;
+
+  const char* loadTGA(std::ifstream& file);
+
+};
+
+inline int Image::width() const
+{
+	return mWidth;
 }
 
-ScreenHelp::~ScreenHelp()
+inline int Image::height() const
 {
-  // empty
+	return mHeight;
 }
 
-void ScreenHelp::clickButtonBack()
-{
-	popScreen();
-}
+#endif
