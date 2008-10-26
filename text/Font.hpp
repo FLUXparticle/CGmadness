@@ -28,7 +28,7 @@
 class Font
 {
 public:
-  Font(const char* imagename, bool doubled = false);
+  Font(const char* imagename);
   virtual ~Font();
 
   float widthText(const char* str) const;

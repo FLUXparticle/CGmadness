@@ -29,7 +29,7 @@ static Font* gThickFont;
 void initStrokeThickText()
 {
 	gThinFont = new Font("data/thin.tga");
-	gThickFont = new Font("data/thick.tga", true);
+	gThickFont = new Font("data/thick.tga");
 }
 
 float widthStrokeText(const char *str)
