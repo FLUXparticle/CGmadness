@@ -71,7 +71,7 @@ INCLUDE :=  $(subst ./,,$(shell find . -name '*.h' -or -name '*.hpp' -or -name '
 SRC     :=  $(CODE) $(INCLUDE)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl
+DEV     :=  $(wildcard *.pl)
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
