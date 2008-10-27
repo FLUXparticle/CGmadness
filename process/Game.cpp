@@ -187,7 +187,7 @@ void Game::draw() const
 
 			drawRingStrip(100, mCounter / COUNTDOWN_TIME, mTextureRing);
 		}
-		glPushMatrix();
+		glPopMatrix();
 		break;
 	default:
 		break;
