@@ -55,8 +55,8 @@ void RaceTheClock::update(float interval)
 	bool wasInPieces = sgoBall.isInPieces();
 
 	Game::update(interval);
-
-	if (gIsGameRunning)
+	
+	if (mGameState == STATE_RUNNING)
 	{
 		if (!sgoBall.isInPieces())
 		{
