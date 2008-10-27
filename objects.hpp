@@ -24,5 +24,6 @@
 
 void drawSquare();
 void drawPanel(float width, float height);
+void drawRingStrip(int corners, float progress, int texture);
 
 #endif
