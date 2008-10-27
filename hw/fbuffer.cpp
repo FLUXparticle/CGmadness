@@ -20,7 +20,7 @@
 #include "fbuffer.hpp"
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 

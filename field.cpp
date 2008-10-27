@@ -30,7 +30,7 @@
 #include "types.hpp"
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -21,7 +21,7 @@
 
 #include "callback.hpp"
 
-#include <GL/glu.h>
+#include <GL/glew.h>
 
 Vector3 sgCamera(0.0f, 0.0f, 0.0f);
 Vector3 sgLookat(0.0f, 1.0f, 0.0f);

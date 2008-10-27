@@ -21,7 +21,7 @@
 
 #include "font3d/font3d.hpp"
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 Label::Label() :
 	MenuItem(false)

@@ -28,7 +28,7 @@
 #include "text/text.hpp"
 
 #include <stdio.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #define LEVELINFO_WIDTH 4.0f
 #define LEVELINFO_HEIGHT 4.0f

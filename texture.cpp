@@ -20,7 +20,7 @@
 #include "texture.hpp"
 
 #include <GL/glew.h>
-#include <GL/glu.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 

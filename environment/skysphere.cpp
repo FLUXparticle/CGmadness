@@ -25,6 +25,8 @@
 
 #include "types.hpp"
 
+#include <GL/glew.h>
+
 #include <stdio.h>
 
 #define DAMPENING 0.8

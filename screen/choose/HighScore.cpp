@@ -29,7 +29,7 @@
 
 #include "hw/keyboard.hpp"
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 #include <stdio.h>
 #include <string.h>
