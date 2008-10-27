@@ -46,5 +46,5 @@ void main() {
 	vec4 colReflection = textureCube(Environment, vec3(gl_TextureMatrix[0] * vec4(reflVec, 1)));
 
 	float fog = exp(-gl_FogFragCoord * gl_Fog.density);
-	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), 1.0) * fog;
+	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), diffuse.a) * fog;
 }

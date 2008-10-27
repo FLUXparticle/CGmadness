@@ -120,7 +120,7 @@ void Game::drawBallReflection() const
 void Game::draw() const
 {
 	drawEnvironment(this);
-	
+
 	drawGameField(false);
 	sgoBall.drawGameBall();
 }
@@ -130,9 +130,9 @@ void lightMapToTexture(unsigned int texID)
 	unsigned int sizeX;
 	unsigned int sizeY;
 	const float* data;
-	
+
 	getAtlasInfo(&sizeX, &sizeY, &data);
-	
+
 	glBindTexture(GL_TEXTURE_2D, texID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
 }
@@ -140,7 +140,7 @@ void lightMapToTexture(unsigned int texID)
 void Game::start(Process* previous)
 {
 	mPrevious = previous;
-	
+
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 

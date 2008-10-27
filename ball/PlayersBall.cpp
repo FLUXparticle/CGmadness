@@ -26,6 +26,8 @@
 #include "lightmap.hpp"
 #include "Main.hpp"
 
+#include "ColorStack.hpp"
+
 #include "math/vector.hpp"
 
 #include "debug.hpp"
@@ -226,7 +228,7 @@ void PlayersBall::activateBallShader() const
 	float light = approximation(mPos, normal);
 
 	glEnable(GL_COLOR_MATERIAL);
-	glColor3f(light, light, light);
+	ColorStack::colorStack.setColor(Color4(light, light, light));
 
 	switch (ballLayout())
 	{
@@ -239,7 +241,7 @@ void PlayersBall::activateBallShader() const
 
 			glEnable(GL_LIGHTING);
 
-			glColor3f(light, 0.0f, 0.0f);
+			ColorStack::colorStack.setColor(Color4(light, 0.0f, 0.0f));
 			break;
 		}
 	case BALL_LAYOUT_TEXTURE:
@@ -257,8 +259,6 @@ void PlayersBall::activateBallShader() const
 		glEnable(GL_TEXTURE_GEN_S);
 		glEnable(GL_TEXTURE_GEN_T);
 		glEnable(GL_TEXTURE_GEN_R);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
 		break;
 	case BALL_LAYOUT_GOLFBALL:
 		break;
@@ -314,6 +314,9 @@ void PlayersBall::activateBallShader() const
 
 			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
 			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
+
+			glEnable(GL_COLOR_MATERIAL);
+			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		}
 
 		glUseProgram(sgGolfballShader);
@@ -365,6 +368,8 @@ void PlayersBall::deactivateBallShader() const
 		{
 			glDisable(GL_TEXTURE_CUBE_MAP_EXT);
 		}
+
+		glDisable(GL_COLOR_MATERIAL);
 	}
 }
 
