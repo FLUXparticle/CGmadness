@@ -48,8 +48,8 @@ PlayersBall& Game::sgoBall = PlayersBall::sgoBall;
 
 Game::Game()
 {
-  gScreenMain1 = new ScreenGameMain1(this);
-  gScreenMain2 = new ScreenGameMain2(this);
+	gScreenMain1 = new ScreenGameMain1(this);
+	gScreenMain2 = new ScreenGameMain2(this);
 
 	mTextureRing = loadTexture("data/ring.tga", false);
 }

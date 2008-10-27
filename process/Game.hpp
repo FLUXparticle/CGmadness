@@ -27,7 +27,6 @@
 #include "ball/PlayersBall.hpp"
 
 #include "utils/SmartPointer.hpp"
-#include "utils/Singleton.hpp"
 
 class Game : public Process, public WaterReflection, public BallReflection
 {
