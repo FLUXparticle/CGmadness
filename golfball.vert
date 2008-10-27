@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-varying vec4 diffuse, ambient;
+varying vec4 diffuse;
 varying vec3 normal;
 varying vec3 vViewVec;
 
@@ -29,7 +29,6 @@ void main() {
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 
 	diffuse = gl_FrontMaterial.diffuse;
-	ambient = gl_FrontMaterial.ambient;
 
 	vViewVec = -ecPos.xyz;
 

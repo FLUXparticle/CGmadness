@@ -27,7 +27,7 @@
 
 #include "functions.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <math.h>
 
@@ -36,7 +36,9 @@ static bool gIsMouseControl = false;
 static Vector3 gForward;
 static Vector3 gRight;
 
-static bool gIsBallCameraActive;
+static bool gIsBallActive = false;
+static bool gIsBallControlActive = false;
+static bool gIsBallCameraActive = false;
 
 static float gDistance;
 static float gLatitude;
@@ -58,7 +60,20 @@ void resetBallCamera(void)
 	gLongitude = 0.0f;
 }
 
-void enableBallCamera(void)
+void enableBall()
+{
+	glutSetCursor(GLUT_CURSOR_NONE);
+
+	gIsBallActive = true;
+	gIsBallControlActive = true;
+}
+
+void disableBall()
+{
+	gIsBallActive = false;
+}
+
+void enableBallCamera()
 {
 	if (gIsMouseControl)
 	{
@@ -70,7 +85,7 @@ void enableBallCamera(void)
 	gIsBallCameraActive = true;
 }
 
-void disableBallCamera(void)
+void disableBallCamera()
 {
 	setDragFunc(NULL);
 
@@ -145,56 +160,62 @@ void toggleMouseControl()
 void updateBall(Ball& ball, float interval)
 {
 	Vector3 force(0.0f, 0.0f, 0.0f);
-
-	/* ball controls */
-	if (gIsMouseControl)
+	
+	if (gIsBallControlActive)
 	{
-		if (isKeyPressed('a'))
+		/* ball controls */
+		if (gIsMouseControl)
 		{
-			force = sub(force, gRight);
+			if (isKeyPressed('a'))
+			{
+				force = sub(force, gRight);
+			}
+	
+			if (isKeyPressed('d'))
+			{
+				force = add(force, gRight);
+			}
+	
+			if (isKeyPressed('s'))
+			{
+				force = sub(force, gForward);
+			}
+	
+			if (isKeyPressed('w'))
+			{
+				force = add(force, gForward);
+			}
 		}
-
-		if (isKeyPressed('d'))
+		else
 		{
-			force = add(force, gRight);
-		}
-
-		if (isKeyPressed('s'))
-		{
-			force = sub(force, gForward);
-		}
-
-		if (isKeyPressed('w'))
-		{
-			force = add(force, gForward);
-		}
-	}
-	else
-	{
-		if (isCursorPressed(CURSOR_LEFT))
-		{
-			force = sub(force, gRight);
-		}
-
-		if (isCursorPressed(CURSOR_RIGHT))
-		{
-			force = add(force, gRight);
-		}
-
-		if (isCursorPressed(CURSOR_DOWN))
-		{
-			force = sub(force, gForward);
-		}
-
-		if (isCursorPressed(CURSOR_UP))
-		{
-			force = add(force, gForward);
+			if (isCursorPressed(CURSOR_LEFT))
+			{
+				force = sub(force, gRight);
+			}
+	
+			if (isCursorPressed(CURSOR_RIGHT))
+			{
+				force = add(force, gRight);
+			}
+	
+			if (isCursorPressed(CURSOR_DOWN))
+			{
+				force = sub(force, gForward);
+			}
+	
+			if (isCursorPressed(CURSOR_UP))
+			{
+				force = add(force, gForward);
+			}
 		}
 	}
 	
-	ball.push(force);
-	
-	ball.update(interval);
+	if (gIsBallActive)
+	{
+		ball.push(force);
+		
+		ball.update(interval);
+	}
 
 	if (gIsBallCameraActive)
 	{

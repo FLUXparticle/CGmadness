@@ -19,6 +19,8 @@
 
 #include "Screen.hpp"
 
+#include "ColorStack.hpp"
+
 #include "texture.hpp"
 #include "camera.hpp"
 #include "objects.hpp"
@@ -27,7 +29,7 @@
 
 #include "macros.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #define EMPHASIZE_SPEED 10.0f
 
@@ -54,6 +56,8 @@ void Screen::start(Process* previous, bool push)
 		mSelectedItem = mInteractiveItems.begin();
 	}
 	show();
+
+	mAnimationTime = 0.0;
 }
 
 void Screen::show()
@@ -76,6 +80,11 @@ void Screen::popScreen()
 
 void Screen::update(float interval)
 {
+	if (mAnimationTime < 1.0)
+	{
+		mAnimationTime += 5.0f * interval * (1.0f - mAnimationTime);
+	}
+
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
@@ -144,6 +153,8 @@ void Screen::draw() const
 {
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
+	bool isAnimation = mAnimationTime < 1.0;
+
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
@@ -152,19 +163,39 @@ void Screen::draw() const
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
-		glColor3f(1.0f, 1.0f, 1.0f);
+		ColorStack::colorStack.setColor(Color4::white);
 
-		glPushMatrix();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			glPushMatrix();
+			{
+				glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-			drawLogo();
-		  FOREACH(mItems, iter)
-		  {
-		  	drawMenuItem(*iter);
-		  }
+				drawLogo();
+
+				if (isAnimation)
+				{
+					glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
+
+					Color4 filter(1.0f, 1.0f, 1.0f, mAnimationTime);
+					ColorStack::colorStack.pushColor(filter);
+				}
+
+				FOREACH(mItems, iter)
+				{
+					ColorStack::colorStack.setColor(Color4::white);
+					drawMenuItem(*iter);
+				}
+
+				if (isAnimation)
+				{
+					ColorStack::colorStack.popColor();
+				}
+			}
+			glPopMatrix();
 		}
-		glPopMatrix();
+		glDisable(GL_BLEND);
 	}
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
@@ -197,19 +228,14 @@ void Screen::drawLogo()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexLogo);
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glTranslatef(0.0f, 8.0f, 0.0f);
-				glScalef(4.0f, 1.0f, 1.0f);
+			glTranslatef(0.0f, 8.0f, 0.0f);
+			glScalef(4.0f, 1.0f, 1.0f);
 
-				drawSquare();
-			}
-			glPopMatrix();
+			drawSquare();
 		}
-		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 	glDisable(GL_TEXTURE_2D);
 }

@@ -23,6 +23,8 @@
 
 #include "functions.hpp"
 
+#include GL_H
+
 #include <math.h>
 
 float approximationSquare(const Vector3 position, const Vector3 normal,

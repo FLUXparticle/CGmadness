@@ -21,7 +21,7 @@
 
 #include "callback.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 static int gLastX;
 static int gLastY;

@@ -32,7 +32,7 @@
 #include "hw/keyboard.hpp"
 #include "common.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdlib.h>
 #include <math.h>
@@ -103,7 +103,7 @@ void Editor::saveLevel()
 	{
 		destroyCommon();
 
-		gScreenWait = new ScreenWait(CALLBACK(Editor, lightMapsReady));
+		gScreenWait = new ScreenWait( MY_CALLBACK(Editor, lightMapsReady) );
 
 		initCommon();
 		setUpdateFrequency(10);

@@ -17,9 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
+#include "hw/features.hpp"
+#include "Main.hpp"
+
+
 #include "callback.hpp"
 
-#include "Main.hpp"
 #include "process/MainProcess.hpp"
 
 #include "level.hpp"
@@ -27,14 +31,12 @@
 #include "hw/keyboard.hpp"
 #include "hw/mouse.hpp"
 
-#include "hw/features.hpp"
 
 #include "utils/Singleton.hpp"
 
 #include "tools.hpp"
 
-#include <GL/glew.h>
-#include <GL/glut.h>
+#include GLUT_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,8 +70,6 @@ int main(int argc, char *argv[])
 	glutFullScreen();
 
 	/* ---- */
-
-	glewInit();
 
 	initFeatures(argc, argv);
 

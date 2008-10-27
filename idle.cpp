@@ -19,7 +19,7 @@
 
 #include "idle.hpp"
 
-#include <GL/glut.h>
+#include GLUT_H
 
 float sgIdleProgress;
 bool sgIdleWorking = 0;

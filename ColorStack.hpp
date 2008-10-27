@@ -17,27 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#ifndef ColorStack_hpp
+#define ColorStack_hpp
 
-#include "Main.hpp"
+#include "Color.hpp"
 
-#include "utils/Callback.hpp"
+#include <list>
 
-#include "hw/keyboard.hpp"
-
-ScreenGameMain2::ScreenGameMain2(Game* parent) :
-	ScreenGameMain(parent)
+class ColorStack
 {
-	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	addItem(&bResume);
-}
+public:
+	static ColorStack colorStack;
 
-ScreenGameMain2::~ScreenGameMain2()
-{
-  // empty
-}
+public:
+  void pushColor(const Color4& color);
+  void popColor();
 
-void ScreenGameMain2::clickButtonResume()
-{
-	Main::popState();
-}
+  void setColor(const Color4& color) const;
+
+private:
+  ColorStack();
+  virtual ~ColorStack();
+
+	std::list<Color4> mStack;
+
+};
+
+#endif

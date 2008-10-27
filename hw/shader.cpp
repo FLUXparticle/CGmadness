@@ -21,13 +21,15 @@
 
 #include "files.hpp"
 
+#include <GL/glew.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 void printInfoLog(GLhandleARB obj, const char *text)
 {
-	int infologLength = 0;
-	int charsWritten = 0;
+	GLint  infologLength = 0;
+	GLsizei charsWritten = 0;
 
 	glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infologLength);
 

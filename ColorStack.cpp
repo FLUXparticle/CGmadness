@@ -17,27 +17,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#include "ColorStack.hpp"
 
-#include "Main.hpp"
+#include "macros.hpp"
 
-#include "utils/Callback.hpp"
+#include <GL/gl.h>
 
-#include "hw/keyboard.hpp"
+ColorStack ColorStack::colorStack;
 
-ScreenGameMain2::ScreenGameMain2(Game* parent) :
-	ScreenGameMain(parent)
-{
-	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	addItem(&bResume);
-}
-
-ScreenGameMain2::~ScreenGameMain2()
+ColorStack::ColorStack()
 {
   // empty
 }
 
-void ScreenGameMain2::clickButtonResume()
+ColorStack::~ColorStack()
 {
-	Main::popState();
+  // empty
+}
+
+void ColorStack::pushColor(const Color4& color)
+{
+	mStack.push_back(color);
+}
+
+void ColorStack::popColor()
+{
+	mStack.pop_back();
+}
+
+void ColorStack::setColor(const Color4& color) const
+{
+	Color4 c = color;
+
+	FOREACH(mStack, iter)
+	{
+		c *= *iter;
+	}
+
+	glColor4f(c.r, c.g, c.b, c.a);
 }

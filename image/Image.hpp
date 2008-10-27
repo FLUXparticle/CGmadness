@@ -17,29 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _color_hpp_
-#define _color_hpp_
+#ifndef Image_hpp
+#define Image_hpp
 
-typedef struct
+#include GL_H
+
+#include <fstream>
+
+class Image
 {
-	float r;
-	float g;
-	float b;
-} Color3;
+public:
+	Image();
+  virtual ~Image();
 
-typedef struct
+  const char* loadTGA(const char* filename);
+  GLuint toTexture(bool mipmapping);
+
+  const GLubyte* pixel(int x, int y) const;
+
+  int width() const;
+  int height() const;
+
+private:
+	GLubyte mComponents;
+	GLushort mWidth;
+	GLushort mHeight;
+	GLenum mFormat;
+	GLubyte* mData;
+
+  const char* loadTGA(std::ifstream& file);
+
+};
+
+inline int Image::width() const
 {
-	float r;
-	float g;
-	float b;
-	float a;
-} Color4;
+	return mWidth;
+}
 
-Color4 color4(float r, float g, float b, float a);
-
-Color3 color3(float r, float g, float b);
-Color3 color3i(int r, int g, int b);
-
-Color3 interpolateColor(Color3 col1, Color3 col2, float t);
+inline int Image::height() const
+{
+	return mHeight;
+}
 
 #endif

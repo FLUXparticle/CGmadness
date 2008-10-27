@@ -37,7 +37,7 @@ ScreenHelp::ScreenHelp(unsigned int length, LeftRight gTextHelp[], float size) :
 		addItem(&lTextHelp[i]);
 	}
 
-	bBack = Button(6.0f - length * size, CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
+	bBack = Button(6.0f - length * size, MY_CALLBACK(ScreenHelp, clickButtonBack), "back", KEY_ESC);
 	addItem(&bBack);
 }
 

@@ -28,7 +28,7 @@
 ScreenGameMain1::ScreenGameMain1(Game* parent) :
 	ScreenGameMain(parent)
 {
-	bStart = Button(6.0f, CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
+	bStart = Button(6.0f, MY_CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
 	addItem(&bStart);
 }
 

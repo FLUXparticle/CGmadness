@@ -28,12 +28,14 @@
 
 #include "functions.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #include <stdio.h>
 
 RaceTheClock::RaceTheClock()
 {
+	initStrokeThickText();
+
 	gScreenEnd = new ScreenGameEnd(this);
 }
 
@@ -53,8 +55,8 @@ void RaceTheClock::update(float interval)
 	bool wasInPieces = sgoBall.isInPieces();
 
 	Game::update(interval);
-
-	if (gIsGameRunning)
+	
+	if (mGameState == STATE_RUNNING)
 	{
 		if (!sgoBall.isInPieces())
 		{

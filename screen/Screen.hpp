@@ -62,6 +62,8 @@ private:
 	MenuItems mInteractiveItems;
 	MenuItems::iterator mSelectedItem;
 
+	float mAnimationTime;
+
 };
 
 #endif

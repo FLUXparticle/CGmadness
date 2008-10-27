@@ -17,27 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#ifndef _Color_hpp_
+#define _Color_hpp_
 
-#include "Main.hpp"
-
-#include "utils/Callback.hpp"
-
-#include "hw/keyboard.hpp"
-
-ScreenGameMain2::ScreenGameMain2(Game* parent) :
-	ScreenGameMain(parent)
+struct Color3
 {
-	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	addItem(&bResume);
-}
+	Color3();
+	Color3(float r, float g, float b);
 
-ScreenGameMain2::~ScreenGameMain2()
-{
-  // empty
-}
+	float r;
+	float g;
+	float b;
+};
 
-void ScreenGameMain2::clickButtonResume()
+struct Color4 : public Color3
 {
-	Main::popState();
-}
+public:
+	static Color4 white;
+	static Color4 gray;
+	static Color4 red;
+	static Color4 blue;
+	static Color4 yellow;
+
+public:
+	Color4();
+	Color4(float r, float g, float b, float a = 1.0f);
+
+	void operator *= (const Color4& other);
+
+	float a;
+};
+
+Color3 interpolateColor(Color3 col1, Color3 col2, float t);
+
+#endif

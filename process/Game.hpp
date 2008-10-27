@@ -31,15 +31,24 @@
 class Game : public Process, public WaterReflection, public BallReflection
 {
 public:
+	typedef enum
+	{
+		STATE_MENU,
+		STATE_WAITING,
+		STATE_COUNTDOWN,
+		STATE_RUNNING
+	} GameState;
+
+public:
   Game();
   virtual ~Game();
 
   void start(Process* previous, bool push);
   void stop();
-  
+
   void suspend();
   void resume();
-  
+
   void update(float interval);
 
   void preDisplay();
@@ -50,18 +59,24 @@ public:
 
 	void drawWaterReflection() const;
 	void drawBallReflection() const;
-	
+
 protected:
   static PlayersBall& sgoBall;
-  
+
 protected:
-	bool gIsGameRunning;
-	
+	GameState mGameState;
+
+	float mCounter;
+
 	Process* mPrevious;
 
 	SmartPointer<class ScreenGameMain1> gScreenMain1;
 	SmartPointer<class ScreenGameMain2> gScreenMain2;
 
+  void pauseGame();
+
+private:
+	int mTextureRing;
 };
 
 #endif

@@ -50,7 +50,7 @@ ScreenChoose::ScreenChoose()
 	gseLevel = SpinEdit(0, 0, mLevelLoader->maxID(), 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
 	addItem(&gseLevel);
 
-	bBack = Button(1.0f, CALLBACK(ScreenChoose, clickButtonBack), "back", KEY_ESC);
+	bBack = Button(1.0f, MY_CALLBACK(ScreenChoose, clickButtonBack), "back", KEY_ESC);
 	addItem(&bBack);
 }
 

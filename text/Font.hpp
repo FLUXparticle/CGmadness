@@ -17,27 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "ScreenGameMain2.hpp"
+#ifndef Font_hpp
+#define Font_hpp
 
-#include "Main.hpp"
+#include "math/Vector2.hpp"
 
-#include "utils/Callback.hpp"
+#define FONT_MIN_CHAR 33
+#define FONT_MAX_CHAR 126
 
-#include "hw/keyboard.hpp"
-
-ScreenGameMain2::ScreenGameMain2(Game* parent) :
-	ScreenGameMain(parent)
+class Font
 {
-	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	addItem(&bResume);
-}
+public:
+  Font(const char* imagename);
+  virtual ~Font();
 
-ScreenGameMain2::~ScreenGameMain2()
-{
-  // empty
-}
+  float widthText(const char* str) const;
+  void drawText(const char* str) const;
 
-void ScreenGameMain2::clickButtonResume()
-{
-	Main::popState();
-}
+private:
+	struct CharInfo
+	{
+		Vector2 coords[4];
+		Vector2 texcoords[4];
+	};
+
+	CharInfo mInfo[FONT_MAX_CHAR - FONT_MIN_CHAR + 1];
+	unsigned int mTexID;
+
+	float widthChar(const char ch) const;
+	void drawChar(const char ch) const;
+	const CharInfo& getInfo(const char ch) const;
+
+};
+
+#endif

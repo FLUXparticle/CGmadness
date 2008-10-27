@@ -23,7 +23,7 @@ uniform samplerCube Environment;
 
 uniform float reflection;
 
-varying vec4 diffuse, ambient;
+varying vec4 diffuse;
 varying vec3 normal;
 varying vec3 vViewVec;
 
@@ -46,5 +46,5 @@ void main() {
 	vec4 colReflection = textureCube(Environment, vec3(gl_TextureMatrix[0] * vec4(reflVec, 1)));
 
 	float fog = exp(-gl_FogFragCoord * gl_Fog.density);
-	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), 1.0) * fog;
+	gl_FragColor = vec4(vec3((1.0 - reflection) * colDiffuse + reflection * colReflection), diffuse.a) * fog;
 }

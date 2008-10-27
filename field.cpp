@@ -19,18 +19,18 @@
 
 #include "field.hpp"
 
+#include "hw/features.hpp"
+
 #include "level.hpp"
 #include "camera.hpp"
 
-#include "hw/features.hpp"
 
 #include "math/Vector2.hpp"
 #include "functions.hpp"
 
-#include "types.hpp"
+#include "macros.hpp"
 
-#include <GL/glew.h>
-#include <GL/glew.h>
+#include GL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +52,7 @@ static Color4 gDefaultColor;
 static Vector2 *gTexCoords;
 static Vector2 *gLightMapCoords;
 static Color4 *gColors;
-static unsigned int gVBuffers[6];
+static GLuint gVBuffers[6];
 
 static Vector3 *gBallShadowCoords;
 
@@ -228,9 +228,9 @@ void initBallShadow(void)
 
 void initGameField(void)
 {
-	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
-	static Color4 blue = { 0.0f, 0.0f, 1.0f, 1.0f };
-	static Color4 white = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static Color4 green(0.0f, 1.0f, 0.0f, 1.0f);
+	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
+	static Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int x;
 	int y;
@@ -449,7 +449,7 @@ void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
 void updateGameField(const PlayersBall& ball)
 {
 	gBallPosition = ball.pos();
-	
+
 	static int lastMX = 0;
 	static int lastMY = 0;
 

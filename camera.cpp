@@ -21,7 +21,7 @@
 
 #include "callback.hpp"
 
-#include <GL/glew.h>
+#include GLU_H
 
 Vector3 sgCamera(0.0f, 0.0f, 0.0f);
 Vector3 sgLookat(0.0f, 1.0f, 0.0f);
@@ -30,16 +30,13 @@ static Vector3 gUp(0.0f, 0.0f, 1.0f);
 void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 {
 	Vector3 diff;
-	float error;
 
 	/* new values */
 	diff = sub(camera, sgCamera);
-	error = len(diff);
-	sgCamera = add(sgCamera, scale(5.0f * interval * error, norm(diff)));
+	sgCamera = add(sgCamera, scale(5.0f * interval, diff));
 
 	diff = sub(lookat, sgLookat);
-	error = len(diff);
-	sgLookat = add(sgLookat, scale(5.0f * interval * error, norm(diff)));
+	sgLookat = add(sgLookat, scale(5.0f * interval, diff));
 }
 
 void setCamera()
@@ -54,7 +51,7 @@ Vector3 rotateVector(const Vector3& dir)
 	Vector3 direction;
 	
 	Vector3 f = (sgCamera - sgLookat).norm();
-	Vector3 s = gUp ^ f;
+	Vector3 s = (gUp ^ f).norm();
 	Vector3 u = f ^ s;
 	
 	direction.x = dir.x * s.x + dir.y * u.x + dir.z * f.x;

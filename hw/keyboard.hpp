@@ -33,10 +33,10 @@ unsigned char getLastChar();
 
 bool wasKeyPressed(unsigned char key);
 bool isKeyPressed(unsigned char key);
-bool isCursorPressed(int cursor);
-bool wasCursorPressed(int cursor);
-bool isFunctionPressed(int index);
-bool wasFunctionPressed(int index);
+bool isCursorPressed(unsigned int cursor);
+bool wasCursorPressed(unsigned int cursor);
+bool isFunctionPressed(unsigned int index);
+bool wasFunctionPressed(unsigned int index);
 
 void startKeyboard(void);
 

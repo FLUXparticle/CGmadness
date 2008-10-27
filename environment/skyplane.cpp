@@ -17,17 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <GL/glew.h>
+
 #include "skyplane.hpp"
 
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
 
 #include "functions.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 
 #include "texture.hpp"
-
-#include <GL/glew.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,7 +93,7 @@ void initSkyplane(void)
 
 			gPlaneVerts[idx] = Vector3(xdist, ydist, zdist);
 			gPlaneTexCoords[idx] = Vector2(u, v);
-			gPlaneColors[idx] = color4(1.0f, 1.0f, 1.0f, alpha);
+			gPlaneColors[idx] = Color4(1.0f, 1.0f, 1.0f, alpha);
 		}
 	}
 

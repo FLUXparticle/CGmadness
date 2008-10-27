@@ -27,8 +27,10 @@
 #include "objects.hpp"
 #include "text/text.hpp"
 
+#include "ColorStack.hpp"
+
 #include <stdio.h>
-#include <GL/glew.h>
+#include GL_H
 
 #define LEVELINFO_WIDTH 4.0f
 #define LEVELINFO_HEIGHT 4.0f
@@ -92,13 +94,13 @@ void LevelInfo::draw() const
 		switch (i)
 		{
 		case 0:
-			glColor3f(0.0f, 0.0f, 1.0f);
+			ColorStack::colorStack.setColor(Color4::blue);
 			break;
 		case 5:
-			glColor3f(1.0f, 1.0f, 0.0f);
+			ColorStack::colorStack.setColor(Color4::yellow);
 			break;
 		default:
-			glColor3f(1.0f, 1.0f, 1.0f);
+			ColorStack::colorStack.setColor(Color4::white);
 			break;
 		}
 
@@ -107,5 +109,5 @@ void LevelInfo::draw() const
 		glPopMatrix();
 	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	ColorStack::colorStack.setColor(Color4::white);
 }
