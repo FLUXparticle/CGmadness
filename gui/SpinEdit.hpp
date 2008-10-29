@@ -34,7 +34,7 @@ public:
 
   void change(int change);
 
-  void updateSelected(float interval);
+  void update(float interval);
 
   void draw() const;
 

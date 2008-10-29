@@ -29,14 +29,14 @@ public:
   HighScore(float z);
   virtual ~HighScore();
 
-  void acceptHighScoreName();
-  
+  bool acceptHighScoreName();
+
 	void update(float interval);
 	void draw() const;
 
 private:
 	int gShowCursor;
-	
+
 };
 
 #endif

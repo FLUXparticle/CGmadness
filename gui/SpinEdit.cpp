@@ -73,12 +73,14 @@ void SpinEdit::init()
 	gTexRight = loadTexture("data/right.tga", false);
 }
 
-SpinEdit::SpinEdit()
+SpinEdit::SpinEdit() :
+	MenuItem(false)
 {
 	// empty
 }
 
-SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change)
+SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change) :
+	MenuItem(false)
 {
 	this->width = width;
 	this->height = 1.0f;
@@ -107,7 +109,7 @@ void SpinEdit::change(int change)
 	this->fChange(this);
 }
 
-void SpinEdit::updateSelected(float interval)
+void SpinEdit::update(float interval)
 {
 	if (wasCursorPressed(CURSOR_LEFT))
 	{

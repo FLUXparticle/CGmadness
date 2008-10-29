@@ -140,11 +140,18 @@ void Screen::customUpdate(float interval)
 
 static void drawMenuItem(const MenuItem* item)
 {
+	static Color3 filter(0.3f, 0.3f, 0.3f);
 	glPushMatrix();
 	{
 		glTranslatef(item->position.x, item->position.y, 0.0f);
 
-		item->draw();
+		Color3 col = Color4::white.interpolate(item->emphasize, filter);
+		ColorStack::colorStack.pushColor(col);
+		{
+			ColorStack::colorStack.setColor(Color4::white);
+			item->draw();
+		}
+		ColorStack::colorStack.popColor();
 	}
 	glPopMatrix();
 }
@@ -184,7 +191,6 @@ void Screen::draw() const
 
 				FOREACH(mItems, iter)
 				{
-					ColorStack::colorStack.setColor(Color4::white);
 					drawMenuItem(*iter);
 				}
 

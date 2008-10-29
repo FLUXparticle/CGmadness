@@ -37,6 +37,12 @@ Color3::Color3(float r, float g, float b)
 	this->b = b;
 }
 
+Color3 Color3::interpolate(float s, const Color3& other)
+{
+	float t = 1.0f - s;
+	return Color3(s * other.r + t * r, s * other.g + t * g, s * other.b + t * b);
+}
+
 Color4::Color4()
 {
 	// empty
@@ -46,6 +52,13 @@ Color4::Color4(float r, float g, float b, float a) :
 	Color3(r, g, b)
 {
 	this->a = a;
+}
+
+Color4::Color4(const Color3& other) :
+	Color3(other),
+	a(1.0f)
+{
+	// empty
 }
 
 void Color4::operator *= (const Color4& other)
