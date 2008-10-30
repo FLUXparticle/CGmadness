@@ -32,6 +32,6 @@
 #define STRING(x) #x
 #define MACRO_STRING(x) STRING(x)
 
-#define FOREACH(type, list, iter) for (type::const_iterator iter = (list).begin(); iter != (list).end(); ++iter)
-#define FOREACH_MUTABLE(type, list, iter) for (type::iterator iter = list.begin(); iter != list.end(); ++iter)
+#define FOREACH(list, iter) for (__typeof((list).begin()) iter = (list).begin(); iter != (list).end(); ++iter)
+
 #endif

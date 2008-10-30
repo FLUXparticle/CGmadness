@@ -56,7 +56,7 @@ void Screen::start(Process* previous)
 
 void Screen::show()
 {
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
 	}
@@ -77,7 +77,7 @@ void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent
 		float x = position.x + t * direction.x;
 		float y = position.z + t * direction.z;
 
-	  FOREACH(std::list<MenuItem*>, mItems, iter)
+	  FOREACH(mItems, iter)
 	  {
 	  	MenuItem* item = *iter;
 
@@ -105,7 +105,7 @@ void Screen::update(float interval)
 
 	moveCamera(interval, camera, lookat);
 
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
   {
   	MenuItem* item = *iter;
 
@@ -173,7 +173,7 @@ void Screen::draw() const
 					ColorStack::colorStack.pushColor(filter);
 				}
 
-				FOREACH(std::list<MenuItem*>, mItems, iter)
+				FOREACH(mItems, iter)
 				{
 					ColorStack::colorStack.setColor(Color4::white);
 					drawMenuItem(*iter);

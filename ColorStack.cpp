@@ -49,7 +49,7 @@ void ColorStack::setColor(const Color4& color) const
 {
 	Color4 c = color;
 
-	FOREACH(std::list<Color4>, mStack, iter)
+	FOREACH(mStack, iter)
 	{
 		c *= *iter;
 	}
