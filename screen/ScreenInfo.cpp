@@ -26,7 +26,7 @@
 ScreenInfo::ScreenInfo(const char* message)
 {
 	bAccept = Button(5.0, MY_CALLBACK(ScreenInfo, clickButtonAccept), message, KEY_ENTER);
-	mItems.push_back(&bAccept);
+	addItem(&bAccept);
 }
 
 ScreenInfo::~ScreenInfo()

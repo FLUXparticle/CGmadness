@@ -193,6 +193,11 @@ void Screen::draw() const
 	glDisable(GL_LIGHT0);
 }
 
+void Screen::addItem(MenuItem* item)
+{
+	mItems.push_back(item);
+}
+
 void Screen::drawLogo()
 {
 	glEnable(GL_TEXTURE_2D);

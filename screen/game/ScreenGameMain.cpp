@@ -61,19 +61,19 @@ ScreenGameMain::ScreenGameMain(Game* parent) :
 	int maxLayout = PlayersBall::cntLayouts() - 1;
 	
 	gseBall = SpinEdit(maxLayout, 0, maxLayout, 4.3, 5.2f, drawMenuBall, changeBallEdit);
-	mItems.push_back(&gseBall);
+	addItem(&gseBall);
 
 	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");
-	mItems.push_back(&gcBallShadow);
+	addItem(&gcBallShadow);
 	
 	gcReflection = Check(3.0f, changeReflection, "reflection");
-	mItems.push_back(&gcReflection);
+	addItem(&gcReflection);
 
 	bHelp = Button(2.0f, MY_CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
-	mItems.push_back(&bHelp);
+	addItem(&bHelp);
 	
 	bQuit = Button(1.0f, MY_CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
-	mItems.push_back(&bQuit);
+	addItem(&bQuit);
 }
 
 ScreenGameMain::~ScreenGameMain()

@@ -47,9 +47,9 @@ public:
   void draw() const;
 
 protected:
-	std::list<MenuItem*> mItems;
-
 	Process* mPrevious;
+
+	void addItem(MenuItem* item);
 
 private:
 	static unsigned int gTexLogo;
@@ -58,6 +58,8 @@ private:
 
 private:
 	float mAnimationTime;
+
+	std::list<MenuItem*> mItems;
 
 };
 
