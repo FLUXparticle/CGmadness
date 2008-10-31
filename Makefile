@@ -42,7 +42,7 @@ GLU_H := <GL/glew.h>
 GLUT_H := <GL/glut.h>
 
 # Check if compiling with Linux or Cygwin/MinGW
-ifneq ($(findstring mingw32,$(MACHINE)),$(findstring cygwin,$(MACHINE)),)
+ifneq ($(findstring mingw32,$(MACHINE))$(findstring cygwin,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
 	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
