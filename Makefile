@@ -141,11 +141,6 @@ $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
 	@zip "$@" $^ > /dev/null 2>&1
 
-# documentation
-.PHONY: doc
-doc:
-	doxygen Doxyfile
-
 # clean up
 .PHONY: clean
 clean:
