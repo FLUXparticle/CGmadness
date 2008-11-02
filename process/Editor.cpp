@@ -103,7 +103,7 @@ void Editor::saveLevel()
 	{
 		destroyCommon();
 
-		gScreenWait = new ScreenWait( MY_CALLBACK(Editor, lightMapsReady) );
+		gScreenWait = new ScreenWait( METHOD_CALLBACK(Editor, lightMapsReady) );
 
 		initCommon();
 		setUpdateFrequency(10);

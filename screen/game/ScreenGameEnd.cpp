@@ -34,10 +34,10 @@ ScreenGameEnd::ScreenGameEnd(Game* parent) :
 	hsHighScore = HighScore(3.0f);
 	addItem(&hsHighScore);
 
-	bAgain = Button(2.0f, MY_CALLBACK(ScreenGameEnd, clickButtonAgain), "play again", KEY_ENTER);
+	bAgain = Button(2.0f, METHOD_CALLBACK(ScreenGameEnd, clickButtonAgain), "play again", KEY_ENTER);
 	addItem(&bAgain);
 	
-	bQuit2 = Button(1.0f, MY_CALLBACK(ScreenGameEnd, clickButtonQuit2), "change level", KEY_ESC);
+	bQuit2 = Button(1.0f, METHOD_CALLBACK(ScreenGameEnd, clickButtonQuit2), "change level", KEY_ESC);
 	addItem(&bQuit2);
 }
 

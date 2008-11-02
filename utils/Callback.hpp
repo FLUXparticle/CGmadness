@@ -42,7 +42,6 @@ public:
   }
 };
 
-#define CALLBACK(X, x) Caller(new Callback<X>(this, &X::x))
-#define MY_CALLBACK(X, x) Caller(new Callback<X>(this, &X::x))
+#define METHOD_CALLBACK(X, x) Caller(new Callback<X>(this, &X::x))
 
 #endif

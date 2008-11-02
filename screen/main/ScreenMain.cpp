@@ -35,18 +35,18 @@
 
 ScreenMain::ScreenMain()
 {
-	gScreenChooseInfo = new ScreenChooseInfo(MY_CALLBACK(ScreenMain, clickButtonChooseEditor));
+	gScreenChooseInfo = new ScreenChooseInfo(METHOD_CALLBACK(ScreenMain, clickButtonChooseEditor));
 
-	bCGMadness = Button(6.0f, MY_CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
+	bCGMadness = Button(6.0f, METHOD_CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
 	addItem(&bCGMadness);
 
-	bCGMEditor = Button(4.5f, MY_CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
+	bCGMEditor = Button(4.5f, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
 	addItem(&bCGMEditor);
 
-	bHelp = Button(3.0f, MY_CALLBACK(ScreenMain, clickButtonHelp), "help", 'h');
+	bHelp = Button(3.0f, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "help", 'h');
 	addItem(&bHelp);
 
-	bQuit = Button(1.5f, MY_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
+	bQuit = Button(1.5f, METHOD_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
 	addItem(&bQuit);
 }
 
