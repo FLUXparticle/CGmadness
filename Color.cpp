@@ -37,6 +37,11 @@ Color3::Color3(float r, float g, float b)
 	this->b = b;
 }
 
+Color3::operator const float* () const
+{
+	return &r;
+}
+
 Color4::Color4()
 {
 	// empty

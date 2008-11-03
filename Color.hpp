@@ -25,6 +25,8 @@ struct Color3
 	Color3();
 	Color3(float r, float g, float b);
 
+	operator const float* () const;
+
 	float r;
 	float g;
 	float b;
