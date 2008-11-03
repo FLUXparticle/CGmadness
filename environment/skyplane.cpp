@@ -93,7 +93,7 @@ void initSkyplane()
 
 			gPlaneVerts[idx] = Vector3(xdist, ydist, zdist);
 			gPlaneTexCoords[idx] = Vector2(u, v);
-			gPlaneColors[idx] = Color4(0.1f, 0.1f, 0.1f, alpha);
+			gPlaneColors[idx] = Color4(0.5f, 0.5f, 0.5f, alpha);
 		}
 	}
 

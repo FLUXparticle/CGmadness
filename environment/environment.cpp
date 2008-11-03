@@ -42,7 +42,7 @@ void initFog(void)
 	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);
 	glFogfv(GL_FOG_DENSITY, &density);
-	glFogfv(GL_FOG_COLOR, Color4::gray);
+	glFogfv(GL_FOG_COLOR, Color4::white);
 }
 
 void initEnvironment(void)

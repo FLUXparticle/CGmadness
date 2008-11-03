@@ -23,11 +23,9 @@
 
 #include "math/Vector3.hpp"
 
-#include "types.hpp"
+#include <cmath>
 
-#include <GL/glew.h>
-
-#include <stdio.h>
+#include GL_H
 
 #define DAMPENING 0.8
 
@@ -41,7 +39,7 @@
 static Vector3 gVertexBuffer[NUMVERTS];
 static GLuint gIndexBuffer[NUMINDICES];
 
-void initSkysphere(void)
+void initSkysphere()
 {
 	int i;
 	int j;
@@ -84,11 +82,11 @@ void initSkysphere(void)
 	}
 }
 
-void drawSkysphere(void)
+void drawSkysphere()
 {
 	int j;
 
-	glColor3f(0.326f, 0.341f, 0.4f);
+	glColor3f(0.486f, 0.491f, 0.7f);
 
 	glPushMatrix();
 
