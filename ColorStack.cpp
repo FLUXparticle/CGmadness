@@ -17,42 +17,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenMain_hpp
-#define ScreenMain_hpp
+#include "ColorStack.hpp"
 
-#include "screen/Screen.hpp"
+#include "macros.hpp"
 
-#include "gui/Button.hpp"
+#include <GL/gl.h>
 
-#include "utils/Singleton.hpp"
-#include "utils/SmartPointer.hpp"
+ColorStack ColorStack::colorStack;
 
-class ScreenMain : public Screen
+ColorStack::ColorStack()
 {
-public:
-  ScreenMain();
-  virtual ~ScreenMain();
+  // empty
+}
 
-private:
-	Button bCGMadness;
-	Button bCGMEditor;
-	Button bHelp;
-	Button bQuit;
+ColorStack::~ColorStack()
+{
+  // empty
+}
 
-	Singleton<class ScreenChooseGame> gScreenChooseGame;
-	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
-	Singleton<class ScreenGameHelp> gScreenGameHelp;
-	SmartPointer<class Choose> mChoose;
+void ColorStack::pushColor(const Color4& color)
+{
+	mStack.push_back(color);
+}
 
-	Singleton<class Editor> mEditor;
+void ColorStack::popColor()
+{
+	mStack.pop_back();
+}
 
-	void clickButtonCGMadness();
-	void clickButtonCGMEditor();
-	void clickButtonHelp();
-	void clickButtonQuit();
+void ColorStack::setColor(const Color4& color) const
+{
+	Color4 c = color;
 
-	void clickButtonChooseEditor();
+	FOREACH(mStack, iter)
+	{
+		c *= *iter;
+	}
 
-};
-
-#endif
+	glColor4f(c.r, c.g, c.b, c.a);
+}

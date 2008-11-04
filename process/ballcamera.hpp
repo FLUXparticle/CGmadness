@@ -26,8 +26,11 @@
 
 void resetBallCamera(void);
 
-void enableBallCamera(void);
-void disableBallCamera(void);
+void enableBall();
+void disableBall();
+
+void enableBallCamera();
+void disableBallCamera();
 
 void toggleMouseControl();
 

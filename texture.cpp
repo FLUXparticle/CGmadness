@@ -19,9 +19,9 @@
 
 #include "texture.hpp"
 
-#include GLU_H
+#include "image/Image.hpp"
 
-#include <stdio.h>
+#include GLU_H
 
 #define LINEAR_FILTER 1
 
@@ -33,202 +33,7 @@ void initTextureEnvironment(void)
 	gUseTextures = true;
 }
 
-typedef struct
-{
-	GLubyte components;
-	GLushort width;
-	GLushort height;
-	GLenum format;
-	GLubyte *data;
-} Image;
-
-typedef struct
-{
-	GLubyte lenID;
-	GLubyte typePalette;
-	GLubyte typeImage;
-	GLushort startPalette;
-	GLushort lenPalette;
-	GLubyte sizePaletteEntry;
-	GLushort startX;
-	GLushort startY;
-	GLushort width;
-	GLushort height;
-	GLubyte bitsPerPixel;
-	GLubyte attrImage;
-} TGAHeader;
-
-void copyPixel(GLubyte * data, int pos, GLubyte * pixel, int components)
-{
-	data[pos++] = pixel[2];
-	data[pos++] = pixel[1];
-	data[pos++] = pixel[0];
-	if (components > 3)
-	{
-		data[pos++] = pixel[3];
-	}
-}
-
-#define BOTTOMUP(header) ((header).attrImage & 8)
-
-void nextPixel(TGAHeader * header, int *pos)
-{
-	int components = header->bitsPerPixel / 8;
-	*pos += components;
-	if (BOTTOMUP(*header) && *pos % (header->width * components) == 0)
-	{
-		*pos -= 2 * header->width * components;
-	}
-}
-
-static GLubyte readByte(FILE* file)
-{
-  return fgetc(file);
-}
-
-GLushort readShort(FILE* file)
-{
-  int lower = readByte(file);
-  int upper = readByte(file);
-  return (upper << 8) | lower;
-}
-
-int readHeader(FILE* file, TGAHeader* header)
-{
-  header->lenID            = readByte(file);
-  header->typePalette      = readByte(file);
-  header->typeImage        = readByte(file);
-  header->startPalette     = readShort(file);
-  header->lenPalette       = readShort(file);
-  header->sizePaletteEntry = readByte(file);
-  header->startX           = readShort(file);
-  header->startY           = readShort(file);
-  header->width            = readShort(file);
-  header->height           = readShort(file);
-  header->bitsPerPixel     = readByte(file);
-  header->attrImage        = readByte(file);
-
-  return 1;
-}
-
-const char* loadTGA(FILE * file, Image * image)
-{
-	TGAHeader header;
-	int compressed;
-	int size;
-	int pixels;
-
-	if (!readHeader(file, &header))
-	{
-		return "header";
-	}
-
-	if (header.lenID != 0)
-	{
-		return "ID";
-	}
-
-	if (header.typePalette != 0)
-	{
-		return "Palette";
-	}
-
-	switch (header.typeImage)
-	{
-	case 10:
-		compressed = 1;
-		break;
-	case 2:
-		compressed = 0;
-	default:
-		return "Imagetype";
-	}
-
-	if (header.startX != 0 || header.startY != 0)
-	{
-		return "Offset";
-	}
-
-	image->width = header.width;
-	image->height = header.height;
-
-	switch (header.bitsPerPixel)
-	{
-	case 24:
-		image->components = 3;
-		image->format = GL_RGB;
-		break;
-	case 32:
-		image->components = 4;
-		image->format = GL_RGBA;
-		break;
-	default:
-		return "Components";
-	}
-
-	pixels = image->width * image->height;
-	size = pixels * image->components;
-
-	image->data = new GLubyte[size];
-
-	if (!image->data)
-	{
-		return "malloc";
-	}
-
-	if (compressed)
-	{
-		int pos = 0;
-		int pixel = 0;
-
-		if (BOTTOMUP(header))
-		{
-			pos = (image->height - 1) * image->width * image->components;
-		}
-
-		while (pixel < pixels)
-		{
-			int control = fgetc(file);
-			if (control >> 7)
-			{
-				int repeat = (control & 0x7f) + 1;
-				GLubyte value[4];
-				int i;
-
-				fread(value, 1, image->components, file);
-
-				for (i = 0; i < repeat; i++)
-				{
-					copyPixel(image->data, pos, value, image->components);
-					nextPixel(&header, &pos);
-					pixel++;
-				}
-			}
-			else
-			{
-				int plainbytes = ((control & 0x7f) + 1);
-				GLubyte value[4];
-				int i;
-
-				for (i = 0; i < plainbytes; i++)
-				{
-					fread(value, 1, image->components, file);
-					copyPixel(image->data, pos, value, image->components);
-					nextPixel(&header, &pos);
-					pixel++;
-				}
-			}
-		}
-	}
-	else
-	{
-		return "data";
-	}
-
-	return NULL;
-}
-
-unsigned int genTexture(void)
+unsigned int genTexture()
 {
 	GLuint texID;
 
@@ -250,20 +55,8 @@ unsigned int genTexture(void)
 
 unsigned int loadTexture(const char *filename, bool mipmapping)
 {
-	GLuint id;
 	Image image;
-	FILE *file = fopen(filename, "rb");
-	const char *error;
-
-	if (file)
-	{
-		error = loadTGA(file, &image);
-		fclose(file);
-	}
-	else
-	{
-		error = "open";
-	}
+	const char *error = image.loadTGA(filename);
 
 	if (error)
 	{
@@ -276,35 +69,5 @@ unsigned int loadTexture(const char *filename, bool mipmapping)
 		initTextureEnvironment();
 	}
 
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-
-	if (mipmapping)
-	{
-		gluBuild2DMipmaps(GL_TEXTURE_2D, image.components, image.width,
-											image.height, image.format, GL_UNSIGNED_BYTE, image.data);
-	}
-	else
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, image.components, image.width, image.height,
-								 0, image.format, GL_UNSIGNED_BYTE, image.data);
-	}
-
-	delete[] image.data;
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (mipmapping)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-										GL_LINEAR_MIPMAP_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	}
-
-	return id;
+	return image.toTexture(mipmapping);
 }

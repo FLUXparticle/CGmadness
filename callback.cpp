@@ -70,6 +70,14 @@ void framerate(void)
 	}
 }
 
+static void drawBitmapText(const char *str)
+{
+	for (; *str; str++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
+	}
+}
+
 void display(void)
 {
 #if(DEBUG_PREDISPLAY)
@@ -240,7 +248,7 @@ void setUpdateFrequency(int callsPerSecond)
 void startCallback(Process* process)
 {
 	gProcess = process;
-	
+
 	startTimer();
 	startDisplay();
 }

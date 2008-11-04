@@ -21,6 +21,8 @@
 
 #include "font3d/font3d.hpp"
 
+#include "ColorStack.hpp"
+
 #include GL_H
 
 Check::Check()
@@ -75,18 +77,11 @@ void Check::draw() const
 				0.0f);
 		glScalef(scale, scale, scale);
 
-		if (this->value)
-		{
-			glColor3f(1.0f, 1.0f, 1.0f);
-		}
-		else
-		{
-			glColor3f(0.5f, 0.5f, 0.5f);
-		}
+		ColorStack::colorStack.setColor((this->value) ? Color4::white : Color4::gray);
 
 		drawFont3DText(this->text);
 
-		glColor3f(1.0f, 1.0f, 1.0f);
+		ColorStack::colorStack.setColor(Color4::white);
 	}
 	glPopMatrix();
 }

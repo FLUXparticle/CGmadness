@@ -29,6 +29,8 @@
 
 #include "hw/keyboard.hpp"
 
+#include "ColorStack.hpp"
+
 #include GL_H
 
 #include <stdio.h>
@@ -123,7 +125,7 @@ void HighScore::draw() const
 
 		glTranslatef(-widthStrokeText(name) / 2.0f, 0.0f, 0.0f);
 
-		glColor3f(0.0f, 0.0f, 1.0f);
+		ColorStack::colorStack.setColor(Color4::blue);
 
 		drawStrokeThinText(name);
 	}
@@ -142,11 +144,11 @@ void HighScore::draw() const
 
 		if (i == sgLevel.lastPlayerIndex)
 		{
-			glColor3f(1.0f, 0.0f, 0.0f);
+			ColorStack::colorStack.setColor(Color4::red);
 		}
 		else
 		{
-			glColor3f(1.0f, 1.0f, 1.0f);
+			ColorStack::colorStack.setColor(Color4::white);
 		}
 
 		glPushMatrix();
@@ -183,5 +185,5 @@ void HighScore::draw() const
 		glPopMatrix();
 	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	ColorStack::colorStack.setColor(Color4::white);
 }

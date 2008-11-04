@@ -28,8 +28,8 @@
 ScreenGameMain1::ScreenGameMain1(Game* parent) :
 	ScreenGameMain(parent)
 {
-	bStart = Button(6.0f, MY_CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
-	mItems.push_back(&bStart);
+	bStart = Button(6.0f, METHOD_CALLBACK(ScreenGameMain1, clickButtonStart), "start", KEY_ENTER);
+	addItem(&bStart);
 }
 
 ScreenGameMain1::~ScreenGameMain1()

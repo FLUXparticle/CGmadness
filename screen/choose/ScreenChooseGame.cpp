@@ -28,11 +28,11 @@
 
 ScreenChooseGame::ScreenChooseGame()
 {
-	bChooseGame = Button(2.0f, MY_CALLBACK(ScreenChooseGame, clickButtonChooseGame), "choose", KEY_ENTER);
-	mItems.push_back(&bChooseGame);
+	bChooseGame = Button(2.0f, METHOD_CALLBACK(ScreenChooseGame, clickButtonChooseGame), "choose", KEY_ENTER);
+	addItem(&bChooseGame);
 	
 	hsHighScore = HighScore(3.0f);
-	mItems.push_back(&hsHighScore);
+	addItem(&hsHighScore);
 }
 
 ScreenChooseGame::~ScreenChooseGame()

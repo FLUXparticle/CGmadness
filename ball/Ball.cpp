@@ -21,6 +21,8 @@
 #include "hw/features.hpp"
 #include "Ball.hpp"
 
+#include "ColorStack.hpp"
+
 #include "level.hpp"
 #include "texture.hpp"
 #include "process/Game.hpp"
@@ -70,9 +72,9 @@ Ball::~Ball()
 void Ball::reset()
 {
 	Square roofSquare;
-	
+
 	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
-	
+
 	mPos.x = roofSquare.mid.x;
 	mPos.y = roofSquare.mid.y;
 	mPos.z = getMaxZValue(&roofSquare) + 2.5f;
@@ -233,7 +235,7 @@ void Ball::animateBall(float interval)
 	Vector3 step;
 
 	mVelocity = add(mVelocity, scale(MOVE_FORCE / mMass * interval, mPushDirection));
-	
+
 	mPushDirection = Vector3(0.0f, 0.0f, 0.0f);
 
 	mVelocity.z -= GRAVITY * interval;
@@ -372,7 +374,7 @@ void Ball::activateBallShader() const
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
-	
+
 	Vector3 normal(0.0f, 0.0f, 1.0f);
 	float light = approximation(mPos, normal);
 
@@ -380,12 +382,12 @@ void Ball::activateBallShader() const
 	{
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, sTextureBall);
-		
-		glColor3f(light, light, light);
+
+		ColorStack::colorStack.setColor(Color4(light, light, light));
 	}
 	else
 	{
-		glColor3f(light, 0.0f, 0.0f);
+		ColorStack::colorStack.setColor(Color4(light, 0.0f, 0.0f));
 	}
 }
 
@@ -395,7 +397,7 @@ void Ball::deactivateBallShader() const
 	{
 		glDisable(GL_TEXTURE_2D);
 	}
-	
+
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 }

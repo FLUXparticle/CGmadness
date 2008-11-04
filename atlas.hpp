@@ -21,7 +21,7 @@
 #define _atlas_hpp_
 
 #include "math/Vector2.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 
 #include GL_H
 

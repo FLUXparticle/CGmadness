@@ -24,7 +24,7 @@
 
 #include "math/Vector3.hpp"
 
-#include "color.hpp"
+#include "Color.hpp"
 
 extern Vector3 *sgVertices;
 extern Vector3 *sgNormals;

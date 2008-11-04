@@ -17,42 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenMain_hpp
-#define ScreenMain_hpp
+#ifndef _Color_hpp_
+#define _Color_hpp_
 
-#include "screen/Screen.hpp"
+struct Color3
+{
+	Color3();
+	Color3(float r, float g, float b);
 
-#include "gui/Button.hpp"
+	float r;
+	float g;
+	float b;
+};
 
-#include "utils/Singleton.hpp"
-#include "utils/SmartPointer.hpp"
-
-class ScreenMain : public Screen
+struct Color4 : public Color3
 {
 public:
-  ScreenMain();
-  virtual ~ScreenMain();
+	static Color4 white;
+	static Color4 gray;
+	static Color4 red;
+	static Color4 blue;
+	static Color4 yellow;
 
-private:
-	Button bCGMadness;
-	Button bCGMEditor;
-	Button bHelp;
-	Button bQuit;
+public:
+	Color4();
+	Color4(float r, float g, float b, float a = 1.0f);
 
-	Singleton<class ScreenChooseGame> gScreenChooseGame;
-	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
-	Singleton<class ScreenGameHelp> gScreenGameHelp;
-	SmartPointer<class Choose> mChoose;
+	void operator *= (const Color4& other);
 
-	Singleton<class Editor> mEditor;
-
-	void clickButtonCGMadness();
-	void clickButtonCGMEditor();
-	void clickButtonHelp();
-	void clickButtonQuit();
-
-	void clickButtonChooseEditor();
-
+	float a;
 };
+
+Color3 interpolateColor(Color3 col1, Color3 col2, float t);
 
 #endif

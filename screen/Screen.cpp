@@ -19,6 +19,8 @@
 
 #include "Screen.hpp"
 
+#include "ColorStack.hpp"
+
 #include "texture.hpp"
 #include "camera.hpp"
 #include "objects.hpp"
@@ -48,11 +50,13 @@ void Screen::start(Process* previous)
 {
 	mPrevious = previous;
 	show();
+
+	mAnimationTime = 0.0;
 }
 
 void Screen::show()
 {
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
 	}
@@ -73,10 +77,10 @@ void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent
 		float x = position.x + t * direction.x;
 		float y = position.z + t * direction.z;
 
-	  FOREACH(std::list<MenuItem*>, mItems, iter)
+	  FOREACH(mItems, iter)
 	  {
 	  	MenuItem* item = *iter;
-	  	
+
 	  	item->hover = 0;
 
 	  	if (x >= item->position.x && y >= item->position.y &&
@@ -91,15 +95,20 @@ void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent
 
 void Screen::update(float interval)
 {
+	if (mAnimationTime < 1.0)
+	{
+		mAnimationTime += 5.0f * interval * (1.0f - mAnimationTime);
+	}
+
 	Vector3 camera = Vector3(0.0f, -10.0f, 7.0f);
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
 
-  FOREACH(std::list<MenuItem*>, mItems, iter)
+  FOREACH(mItems, iter)
   {
   	MenuItem* item = *iter;
-  	
+
   	if (item->hover)
   	{
   		item->emphasize += EMPHASIZE_SPEED * interval * (1.0f - item->emphasize);
@@ -111,7 +120,7 @@ void Screen::update(float interval)
 
   	item->update(interval);
   }
-  
+
   customUpdate(interval);
 }
 
@@ -135,6 +144,8 @@ void Screen::draw() const
 {
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
+	bool isAnimation = mAnimationTime < 1.0;
+
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
@@ -143,23 +154,48 @@ void Screen::draw() const
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
-		glColor3f(1.0f, 1.0f, 1.0f);
+		ColorStack::colorStack.setColor(Color4::white);
 
-		glPushMatrix();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			glPushMatrix();
+			{
+				glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
-			drawLogo();
-		  FOREACH(std::list<MenuItem*>, mItems, iter)
-		  {
-		  	drawMenuItem(*iter);
-		  }
+				drawLogo();
+
+				if (isAnimation)
+				{
+					glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
+
+					Color4 filter(1.0f, 1.0f, 1.0f, mAnimationTime);
+					ColorStack::colorStack.pushColor(filter);
+				}
+
+				FOREACH(mItems, iter)
+				{
+					ColorStack::colorStack.setColor(Color4::white);
+					drawMenuItem(*iter);
+				}
+
+				if (isAnimation)
+				{
+					ColorStack::colorStack.popColor();
+				}
+			}
+			glPopMatrix();
 		}
-		glPopMatrix();
+		glDisable(GL_BLEND);
 	}
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
+}
+
+void Screen::addItem(MenuItem* item)
+{
+	mItems.push_back(item);
 }
 
 void Screen::drawLogo()
@@ -167,19 +203,14 @@ void Screen::drawLogo()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gTexLogo);
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glPushMatrix();
 		{
-			glPushMatrix();
-			{
-				glTranslatef(0.0f, 8.0f, 0.0f);
-				glScalef(4.0f, 1.0f, 1.0f);
+			glTranslatef(0.0f, 8.0f, 0.0f);
+			glScalef(4.0f, 1.0f, 1.0f);
 
-				drawSquare();
-			}
-			glPopMatrix();
+			drawSquare();
 		}
-		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 	glDisable(GL_TEXTURE_2D);
 }

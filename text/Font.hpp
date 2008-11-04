@@ -17,41 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenMain_hpp
-#define ScreenMain_hpp
+#ifndef Font_hpp
+#define Font_hpp
 
-#include "screen/Screen.hpp"
+#include "math/Vector2.hpp"
 
-#include "gui/Button.hpp"
+#define FONT_MIN_CHAR 33
+#define FONT_MAX_CHAR 126
 
-#include "utils/Singleton.hpp"
-#include "utils/SmartPointer.hpp"
-
-class ScreenMain : public Screen
+class Font
 {
 public:
-  ScreenMain();
-  virtual ~ScreenMain();
+  Font(const char* imagename);
+  virtual ~Font();
+
+  float widthText(const char* str) const;
+  void drawText(const char* str) const;
 
 private:
-	Button bCGMadness;
-	Button bCGMEditor;
-	Button bHelp;
-	Button bQuit;
+	struct CharInfo
+	{
+		Vector2 coords[4];
+		Vector2 texcoords[4];
+	};
 
-	Singleton<class ScreenChooseGame> gScreenChooseGame;
-	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
-	Singleton<class ScreenGameHelp> gScreenGameHelp;
-	SmartPointer<class Choose> mChoose;
+	CharInfo mInfo[FONT_MAX_CHAR - FONT_MIN_CHAR + 1];
+	unsigned int mTexID;
 
-	Singleton<class Editor> mEditor;
-
-	void clickButtonCGMadness();
-	void clickButtonCGMEditor();
-	void clickButtonHelp();
-	void clickButtonQuit();
-
-	void clickButtonChooseEditor();
+	float widthChar(const char ch) const;
+	void drawChar(const char ch) const;
+	const CharInfo& getInfo(const char ch) const;
 
 };
 

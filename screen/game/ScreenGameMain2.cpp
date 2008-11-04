@@ -28,8 +28,8 @@
 ScreenGameMain2::ScreenGameMain2(Game* parent) :
 	ScreenGameMain(parent)
 {
-	bResume = Button(6.0f, MY_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
-	mItems.push_back(&bResume);
+	bResume = Button(6.0f, METHOD_CALLBACK(ScreenGameMain2, clickButtonResume), "resume", KEY_ENTER);
+	addItem(&bResume);
 }
 
 ScreenGameMain2::~ScreenGameMain2()

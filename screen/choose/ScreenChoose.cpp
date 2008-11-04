@@ -48,10 +48,10 @@ static void drawMenuLevel()
 ScreenChoose::ScreenChoose()
 {
 	gseLevel = SpinEdit(0, 0, mLevelLoader->maxID(), 7.0, 5.0f, drawMenuLevel, changeLevelChooser);
-	mItems.push_back(&gseLevel);
+	addItem(&gseLevel);
 
-	bBack = Button(1.0f, MY_CALLBACK(ScreenChoose, clickButtonBack), "back", KEY_ESC);
-	mItems.push_back(&bBack);
+	bBack = Button(1.0f, METHOD_CALLBACK(ScreenChoose, clickButtonBack), "back", KEY_ESC);
+	addItem(&bBack);
 }
 
 ScreenChoose::~ScreenChoose()

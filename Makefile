@@ -42,7 +42,7 @@ GLU_H := <GL/glew.h>
 GLUT_H := <GL/glut.h>
 
 # Check if compiling with Linux or Cygwin/MinGW
-ifneq ($(findstring mingw32,$(MACHINE)),)
+ifneq ($(findstring mingw32,$(MACHINE))$(findstring cygwin,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
 	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
@@ -71,7 +71,7 @@ INCLUDE :=  $(subst ./,,$(shell find . -name '*.h' -or -name '*.hpp' -or -name '
 SRC     :=  $(CODE) $(INCLUDE)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
-DEV     :=  mains.pl modules.pl
+DEV     :=  $(wildcard *.pl)
 DOC     :=  license.txt AUTHORS
 DOC_DEV :=  $(DOC) README
 
@@ -143,11 +143,6 @@ zip: $(ZIP)
 $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
 	@zip "$@" $^ > /dev/null 2>&1
-
-# documentation
-.PHONY: doc
-doc:
-	doxygen Doxyfile
 
 # clean up
 .PHONY: clean

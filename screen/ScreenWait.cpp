@@ -28,7 +28,7 @@ ScreenWait::ScreenWait(const Caller& callback) :
 	gWaitCallback(callback)
 {
 	pbProgress = ProgressBar(5.0f, &sgIdleProgress);
-	mItems.push_back(&pbProgress);
+	addItem(&pbProgress);
 }
 
 ScreenWait::~ScreenWait()

@@ -25,7 +25,7 @@
 #include "math/Vector3.hpp"
 
 #include "functions.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 
 #include "texture.hpp"
 
@@ -93,7 +93,7 @@ void initSkyplane(void)
 
 			gPlaneVerts[idx] = Vector3(xdist, ydist, zdist);
 			gPlaneTexCoords[idx] = Vector2(u, v);
-			gPlaneColors[idx] = color4(1.0f, 1.0f, 1.0f, alpha);
+			gPlaneColors[idx] = Color4(1.0f, 1.0f, 1.0f, alpha);
 		}
 	}
 

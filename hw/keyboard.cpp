@@ -18,7 +18,7 @@
  */
 
 #include "keyboard.hpp"
-#include "types.hpp"
+#include "macros.hpp"
 
 #include GLUT_H
 
@@ -98,24 +98,23 @@ bool wasKeyPressed(unsigned char key)
 	return wasPressed(&gKeys[key]);
 }
 
-bool isCursorPressed(int cursor)
+bool isCursorPressed(unsigned int cursor)
 {
-	return cursor >= 0 && cursor < MAX_CURSORS && isPressed(&gCursorKeys[cursor]);
+	return cursor < MAX_CURSORS && isPressed(&gCursorKeys[cursor]);
 }
 
-bool wasCursorPressed(int cursor)
+bool wasCursorPressed(unsigned int cursor)
 {
-	return cursor >= 0 && cursor < MAX_CURSORS
-		&& wasPressed(&gCursorKeys[cursor]);
+	return cursor < MAX_CURSORS && wasPressed(&gCursorKeys[cursor]);
 }
 
-bool isFunctionPressed(int index)
+bool isFunctionPressed(unsigned int index)
 {
 	return index >= 1 && index <= MAX_FUNCTION
 		&& isPressed(&gFunctionKeys[index - 1]);
 }
 
-bool wasFunctionPressed(int index)
+bool wasFunctionPressed(unsigned int index)
 {
 	return index >= 1 && index <= MAX_FUNCTION
 		&& wasPressed(&gFunctionKeys[index - 1]);
@@ -137,8 +136,7 @@ void keyboardUp(unsigned char key, int x, int y)
 
 bool *getSpecialKeyPtr(int key)
 {
-	int i;
-	for (i = 0; i < MAX_CURSORS; i++)
+	for (unsigned int i = 0; i < MAX_CURSORS; i++)
 	{
 		if (key == gCursors[i])
 		{
@@ -146,7 +144,7 @@ bool *getSpecialKeyPtr(int key)
 		}
 	}
 
-	for (i = 0; i < MAX_FUNCTION; i++)
+	for (unsigned int i = 0; i < MAX_FUNCTION; i++)
 	{
 		if (key == gFunctions[i])
 		{
@@ -185,11 +183,11 @@ void startKeyboard(void)
 	{
 		gKeys[i] = GLUT_UP;
 	}
-	for (int i = 0; i < MAX_CURSORS; i++)
+	for (unsigned int i = 0; i < MAX_CURSORS; i++)
 	{
 		gCursorKeys[i] = GLUT_UP;
 	}
-	for (int i = 0; i < MAX_FUNCTION; i++)
+	for (unsigned int i = 0; i < MAX_FUNCTION; i++)
 	{
 		gFunctionKeys[i] = GLUT_UP;
 	}

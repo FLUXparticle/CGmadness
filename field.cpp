@@ -26,7 +26,7 @@
 #include "math/Vector2.hpp"
 #include "functions.hpp"
 
-#include "types.hpp"
+#include "macros.hpp"
 
 #include "k2tree/K2Tree.hpp"
 #include "field.hpp"
@@ -218,9 +218,9 @@ void initBallShadow(void)
 
 void initGameField(void)
 {
-	static Color4 green = { 0.0f, 1.0f, 0.0f, 1.0f };
-	static Color4 blue = { 0.0f, 0.0f, 1.0f, 1.0f };
-	static Color4 white = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static Color4 green(0.0f, 1.0f, 0.0f, 1.0f);
+	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
+	static Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int x;
 	int y;

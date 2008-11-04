@@ -17,41 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenMain_hpp
-#define ScreenMain_hpp
+#ifndef ColorStack_hpp
+#define ColorStack_hpp
 
-#include "screen/Screen.hpp"
+#include "Color.hpp"
 
-#include "gui/Button.hpp"
+#include <list>
 
-#include "utils/Singleton.hpp"
-#include "utils/SmartPointer.hpp"
-
-class ScreenMain : public Screen
+class ColorStack
 {
 public:
-  ScreenMain();
-  virtual ~ScreenMain();
+	static ColorStack colorStack;
+
+public:
+  void pushColor(const Color4& color);
+  void popColor();
+
+  void setColor(const Color4& color) const;
 
 private:
-	Button bCGMadness;
-	Button bCGMEditor;
-	Button bHelp;
-	Button bQuit;
+  ColorStack();
+  virtual ~ColorStack();
 
-	Singleton<class ScreenChooseGame> gScreenChooseGame;
-	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
-	Singleton<class ScreenGameHelp> gScreenGameHelp;
-	SmartPointer<class Choose> mChoose;
-
-	Singleton<class Editor> mEditor;
-
-	void clickButtonCGMadness();
-	void clickButtonCGMEditor();
-	void clickButtonHelp();
-	void clickButtonQuit();
-
-	void clickButtonChooseEditor();
+	std::list<Color4> mStack;
 
 };
 

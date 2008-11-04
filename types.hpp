@@ -28,8 +28,6 @@
  * super global           sg
  */
 
-#define LENGTH(x) ((int) (sizeof(x) / sizeof(*x)))
-
 #define FOV 60.0f
 
 #define MATRIX_SIZE 4
