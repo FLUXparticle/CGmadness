@@ -28,6 +28,7 @@
 
 #include "macros.hpp"
 
+#include "k2tree/K2Tree.hpp"
 #include "field.hpp"
 
 #include GL_H
@@ -60,7 +61,6 @@ static GLuint gWhiteTexture;
 static GLuint gBallShadow;
 
 static int gCntVertices;
-static int gMaxPlates;
 static int gMaxQuads;
 static int gMaxVertices;
 
@@ -70,7 +70,7 @@ static int *gCameraViewIndices;
 static int gCntBallReflectionIndices = 0;
 static int *gBallReflectionIndices;
 
-static int *gIndexVertices;
+static K2Tree* gK2Tree;
 
 static Vector3 gBallPosition;
 
@@ -123,17 +123,7 @@ void getVertIndex(int x, int y, int *start, int *end)
 {
 	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y)
 	{
-		int index = y * sgLevel.size.x + x;
-		*start = gIndexVertices[index];
-		index++;
-		if (index < gMaxPlates)
-		{
-			*end = gIndexVertices[index];
-		}
-		else
-		{
-			*end = gCntVertices;
-		}
+		gK2Tree->get(x, y, *start, *end);
 	}
 	else
 	{
@@ -235,7 +225,6 @@ void initGameField(void)
 	int x;
 	int y;
 	int i;
-	int index = 0;
 
 	glGenTextures(1, &gWhiteTexture);
 
@@ -246,7 +235,8 @@ void initGameField(void)
 	initBallShadow();
 
 	/* init level stuff */
-	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	gK2Tree = new K2Tree(sgLevel.origin, sgLevel.size.x, sgLevel.size.y);
+
 	gMaxQuads = 0;
 
 	for (y = 0; y < sgLevel.size.y; y++)
@@ -270,7 +260,6 @@ void initGameField(void)
 
 	sgVertices = new Vector3[gMaxVertices];
 	sgNormals = new Vector3[gMaxVertices];
-	gIndexVertices = new int[gMaxPlates];
 	gTexCoords = new Vector2[gMaxVertices];
 	gLightMapCoords = new Vector2[gMaxVertices];
 	gColors = new Color4[gMaxVertices];
@@ -287,7 +276,7 @@ void initGameField(void)
 		{
 			Square square;
 
-			gIndexVertices[index++] = gCntVertices;
+			int start = gCntVertices;
 
 			getRoofSquare(x, y, &square);
 
@@ -305,6 +294,8 @@ void initGameField(void)
 					addSquare(&face.squares[k]);
 				}
 			}
+
+			gK2Tree->set(x, y, start, gCntVertices);
 		}
 	}
 
@@ -350,7 +341,8 @@ void destroyGameField(void)
 	delete[] sgVertices;
 	delete[] sgNormals;
 
-	delete[] gIndexVertices;
+	delete gK2Tree;
+
 	delete[] gCameraViewIndices;
 	delete[] gBallReflectionIndices;
 	delete[] gTexCoords;
@@ -362,88 +354,6 @@ void destroyGameField(void)
 	gMaxVertices = 0;
 	gCameraViewIndices = 0;
 	gCntBallReflectionIndices = 0;
-}
-
-/*
- * render from close to far
- */
-void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
-				 Vector3 camera, int farToClose, int *indices, int *index)
-{
-	if (sizeX == 0 || sizeY == 0)
-	{
-		return;
-	}
-	else if (sizeX == 1 && sizeY == 1)
-	{
-		int start;
-		int end;
-		int q;
-		int i;
-
-		getVertIndex(startX, startY, &start, &end);
-
-		for (q = start; q < end; q += 4)
-		{
-			/*
-			 * the top square must always be drawn, because this function
-			 * is not called if only the height of the camera changes.
-			 * Fortunately it is always the first square in the array range.
-			 * WARNING: be aware of this if you change the order of sqaures.
-			 */
-			if (q == start || dot(sgNormals[q], sub(camera, sgVertices[q])) >= 0)
-			{
-				for (i = 0; i < 4; i++)
-				{
-					indices[(*index)++] = q + i;
-				}
-			}
-		}
-	}
-	else
-	{
-		int startX1 = startX;
-		int startY1 = startY;
-		int sizeX1 = sizeX;
-		int sizeY1 = sizeY;
-
-		int startX2 = startX;
-		int startY2 = startY;
-		int sizeX2 = sizeX;
-		int sizeY2 = sizeY;
-
-		int closer;
-
-		if (sizeX > sizeY)
-		{
-			sizeX1 = sizeX / 2;
-			sizeX2 = sizeX - sizeX1;
-			startX2 = startX1 + sizeX1;
-			closer = viewX < startX2;
-		}
-		else
-		{
-			sizeY1 = sizeY / 2;
-			sizeY2 = sizeY - sizeY1;
-			startY2 = startY1 + sizeY1;
-			closer = viewY < startY2;
-		}
-
-		if (farToClose ^ closer)
-		{
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
-					indices, index);
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
-					indices, index);
-		}
-		else
-		{
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
-					indices, index);
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
-					indices, index);
-		}
-	}
 }
 
 void updateGameField(const PlayersBall& ball)
@@ -461,8 +371,7 @@ void updateGameField(const PlayersBall& ball)
 		gCntCameraViewIndices = 0;
 		if (gMaxVertices > 0)
 		{
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, sgCamera, 0,
-					gCameraViewIndices, &gCntCameraViewIndices);
+			gCntCameraViewIndices = gK2Tree->paintersAlgorithemReverse(sgCamera, gCameraViewIndices);
 
 			lastMX = mx;
 			lastMY = my;
@@ -508,8 +417,7 @@ void updateGameField(const PlayersBall& ball)
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, gBallPosition, 1,
-						gBallReflectionIndices, &gCntBallReflectionIndices);
+				gCntBallReflectionIndices = gK2Tree->paintersAlgorithem(ball.pos(), gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;
