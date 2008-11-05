@@ -45,6 +45,8 @@ struct Square
 
 	float area;
 	Vector3 mid;
+
+	void updateAttributes();
 };
 
 struct SideFace

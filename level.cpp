@@ -67,27 +67,24 @@ Vector3 midpoint(const Vector3 quad[4])
 	return mid;
 }
 
-static void updateSquareAttributes(Square * square)
+static float area3Points(const Vector3& a, const Vector3& b, const Vector3& c)
 {
-	int i;
+	return 0.5f * ((b - a) ^ (c - a)).len();
+}
 
-	for (i = 0; i < 4; i++)
+void Square::updateAttributes()
+{
+	for (int i = 0; i < 4; i++)
 	{
-		square->vertices[i] = add(square->vertices[i], sgLevel.origin);
+		vertices[i] += sgLevel.origin;
 	}
 
-	square->mid = midpoint(square->vertices);
+	mid = midpoint(vertices);
 
-	square->area =
-		0.5f *
-		len(cross
-				(sub(square->vertices[1], square->vertices[0]),
-				 sub(square->vertices[3],
-						 square->vertices[0]))) + 0.5f * len(cross(sub(square->vertices[1],
-																													 square->vertices[2]),
-																											 sub(square->vertices[3],
-																													 square->
-																													 vertices[2])));
+	float area1 = area3Points(vertices[0], vertices[1], vertices[3]);
+	float area2 = area3Points(vertices[2], vertices[1], vertices[3]);
+
+	area = area1 + area2;
 }
 
 static int getFieldEdgeHeight(int x, int y, int edge)
@@ -110,7 +107,7 @@ void updatePlate(int x, int y)
 
 	if (p->dirty)
 	{
-		Square *square = &p->roof;
+		Square* square = &p->roof;
 		int i;
 		int side;
 		int dzx = p->dzx;
@@ -137,7 +134,7 @@ void updatePlate(int x, int y)
 				(float) getFieldEdgeHeight(x, y, i) / HEIGHT_STEPS;
 		}
 
-		updateSquareAttributes(square);
+		square->updateAttributes();
 
 		for (side = 0; side < 4; side++)
 		{
@@ -222,7 +219,7 @@ void updatePlate(int x, int y)
 					square->vertices[3].y = y2;
 					square->vertices[3].z = (float) top / HEIGHT_STEPS;
 
-					updateSquareAttributes(square);
+					square->updateAttributes();
 
 					bottom = top;
 				}
@@ -258,7 +255,7 @@ void updatePlate(int x, int y)
 					square->vertices[3].y = y2 * (1.0f - t2) + y3 * t2;
 					square->vertices[3].z = (float) top / HEIGHT_STEPS;
 
-					updateSquareAttributes(square);
+					square->updateAttributes();
 
 					bottom = top;
 				}

@@ -41,6 +41,7 @@ struct Vector3
   float operator*(const Vector3& b) const;
   Vector3 operator^(const Vector3& b) const;
 
+  void operator+=(const Vector3& b);
 };
 
 inline float len(const Vector3 v)

@@ -119,3 +119,10 @@ Vector3 Vector3::operator^(const Vector3& b) const
 
 	return c;
 }
+
+void Vector3::operator+=(const Vector3& b)
+{
+	x += b.x;
+	y += b.y;
+	z += b.z;
+}
