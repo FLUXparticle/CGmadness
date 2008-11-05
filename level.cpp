@@ -543,6 +543,74 @@ bool loadHighscoreFromFile(void)
 	return true;
 }
 
+void importLightmapV2(FILE* file)
+{
+	typedef int LightMap[SIZEOF_LIGHT_MAP];
+
+	const int start = sgLevel.size.x * sgLevel.size.y;
+
+	int starts[4];
+
+	starts[0] = start + 2 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+	starts[1] = start;
+	starts[2] = starts[0] + sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1);
+	starts[3] = starts[1] + sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+
+	const int cntTmpSubMaps = start + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
+
+	LightMap* tmp = new LightMap[cntTmpSubMaps];
+
+	for (int i = 0; i < cntTmpSubMaps; i++)
+	{
+		readRLE(file, tmp[i]);
+	}
+
+	int index = 0;
+
+	for (int x = 0; x < sgLevel.size.x; x++)
+	{
+		for (int y = 0; y < sgLevel.size.y; y++)
+		{
+			toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
+
+			for (int side = 0; side < 4; side++)
+			{
+				int bottom = 0;
+				int top = 0;
+
+				SideFace face;
+
+				getSideFace(x, y, side, &face);
+
+				if (face.cntSquares > 0)
+				{
+					bottom = (int) floor(face.bottom);
+					top = (int) ceil(face.top);
+				}
+
+				if (side % 2 == 0)
+				{
+					for (int j = bottom; j < top; j++)
+					{
+						int indexTmp = starts[side] + y * 2 * sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.x + x;
+						toLightMap(index++, side / 2, tmp[indexTmp]);
+					}
+				}
+				else
+				{
+					for (int j = bottom; j < top; j++)
+					{
+						int indexTmp = starts[side] + x * 2 * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.y + y;
+						toLightMap(index++, side / 2, tmp[indexTmp]);
+					}
+				}
+			}
+		}
+	}
+
+	delete[] tmp;
+}
+
 bool loadLevelFromFile(const char *filename, bool justLoad)
 {
 	FILE *file = fopen(filename, "rt");
@@ -659,82 +727,7 @@ bool loadLevelFromFile(const char *filename, bool justLoad)
 			}
 			else
 			{
-				const int start = sgLevel.size.x * sgLevel.size.y;
-				const int cntTmpSubMaps =
-					start + 4 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
-
-				int index = 0;
-
-				typedef int LightMap[SIZEOF_LIGHT_MAP];
-				LightMap *tmp;
-				int i;
-
-				int starts[4];
-				int side;
-
-				starts[0] =
-					start + 2 * sgLevel.size.x * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
-				starts[1] = start;
-				starts[2] = starts[0] + sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1);
-				starts[3] = starts[1] + sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1);
-
-				tmp = new LightMap[cntTmpSubMaps];
-
-				for (i = 0; i < cntTmpSubMaps; i++)
-				{
-					readRLE(file, tmp[i]);
-				}
-
-				for (x = 0; x < sgLevel.size.x; x++)
-				{
-					for (y = 0; y < sgLevel.size.y; y++)
-					{
-						toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
-
-						for (side = 0; side < 4; side++)
-						{
-							int bottom = 0;
-							int top = 0;
-
-							SideFace face;
-
-							getSideFace(x, y, side, &face);
-
-							if (face.cntSquares > 0)
-							{
-								bottom = (int) floor(face.bottom);
-								top = (int) ceil(face.top);
-							}
-
-							if (side % 2 == 0)
-							{
-								int j;
-								for (j = bottom; j < top; j++)
-								{
-									toLightMap(index++, side / 2,
-														 tmp[starts[side] +
-																 y * 2 * sgLevel.size.x * (MAX_LEVEL_HEIGHT +
-																													 1) +
-																 j * sgLevel.size.x + x]);
-								}
-							}
-							else
-							{
-								int j;
-								for (j = bottom; j < top; j++)
-								{
-									toLightMap(index++, side / 2,
-														 tmp[starts[side] +
-																 x * 2 * sgLevel.size.y * (MAX_LEVEL_HEIGHT +
-																													 1) +
-																 j * sgLevel.size.y + y]);
-								}
-							}
-						}
-					}
-				}
-
-				delete[] tmp;
+				importLightmapV2(file);
 			}
 
 			if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != getCRC32())
