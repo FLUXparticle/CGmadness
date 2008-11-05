@@ -156,9 +156,9 @@ void updatePlate(int x, int y)
 			int height3 = getFieldEdgeHeight(x + dx, y + dy, sideOpposite);
 			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
 
-			SideFace *face = &p->sideFaces[side];
+			SideFace* face = &p->sideFaces[side];
 
-			face->cntSquares = 0;
+			face->squares.clear();
 
 			if (height1 > height3 || height2 > height4)
 			{
@@ -199,7 +199,8 @@ void updatePlate(int x, int y)
 					int top =
 						min(minHeight, bottom - (bottom % HEIGHT_STEPS) + HEIGHT_STEPS);
 
-					square = &face->squares[face->cntSquares++];
+					face->squares.push_back(Square());
+					square = &face->squares.back();
 
 					square->normal.x = dx;
 					square->normal.y = dy;
@@ -234,7 +235,8 @@ void updatePlate(int x, int y)
 					float t1 = (float) (bottom - minHeight) / (maxHeight - minHeight);
 					float t2 = (float) (top - minHeight) / (maxHeight - minHeight);
 
-					square = &face->squares[face->cntSquares++];
+					face->squares.push_back(Square());
+					square = &face->squares.back();
 
 					square->normal.x = dx;
 					square->normal.y = dy;
@@ -582,7 +584,7 @@ void importLightmapV2(FILE* file)
 
 				getSideFace(x, y, side, &face);
 
-				if (face.cntSquares > 0)
+				if (!face.squares.empty())
 				{
 					bottom = (int) floor(face.bottom);
 					top = (int) ceil(face.top);

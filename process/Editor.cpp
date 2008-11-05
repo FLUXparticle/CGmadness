@@ -32,6 +32,8 @@
 #include "hw/keyboard.hpp"
 #include "common.hpp"
 
+#include "macros.hpp"
+
 #include GLUT_H
 
 #include <stdlib.h>
@@ -454,13 +456,10 @@ void Editor::update(float interval)
 
 void drawEditorField(bool showCursor)
 {
-	int i;
-	int j;
 	FieldCoord cur;
 	Square square;
 
-	float pos[4] =
-	{ 0.0f, 0.0f, 1.0f, 0.0f };
+	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -497,7 +496,7 @@ void drawEditorField(bool showCursor)
 
 			glBegin(GL_QUADS);
 			glNormal3fv(&square.normal.x);
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				glTexCoord2fv(&square.texcoord[i].x);
 				glVertex3fv(&square.vertices[i].x);
@@ -507,20 +506,19 @@ void drawEditorField(bool showCursor)
 			glColor3f(1.0f, 1.0f, 1.0f);
 
 			glBegin(GL_QUADS);
-			for (j = 0; j < 4; j++)
+			for (int j = 0; j < 4; j++)
 			{
 				SideFace face;
-				int k;
 
 				getSideFace(cur.x, cur.y, j, &face);
 
-				for (k = 0; k < face.cntSquares; k++)
+				FOREACH(face.squares, iter)
 				{
-					glNormal3fv(&face.squares[k].normal.x);
-					for (i = 0; i < 4; i++)
+					glNormal3fv(&iter->normal.x);
+					for (int i = 0; i < 4; i++)
 					{
-						glTexCoord2fv(&face.squares[k].texcoord[i].x);
-						glVertex3fv(&face.squares[k].vertices[i].x);
+						glTexCoord2fv(&iter->texcoord[i].x);
+						glVertex3fv(&iter->vertices[i].x);
 					}
 				}
 			}

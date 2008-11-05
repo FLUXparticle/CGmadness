@@ -28,12 +28,12 @@
 
 #include "functions.hpp"
 
+#include "macros.hpp"
+
 #include GL_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
+#include <cstdio>
+#include <cmath>
 
 #define BOTTOM -0.0f
 
@@ -54,7 +54,7 @@ static int quadsNeeded(int fx, int fy, int side)
 
 	getSideFace(fx, fy, side, &face);
 
-	if (face.cntSquares > 0)
+	if (!face.squares.empty())
 	{
 		return (int) (ceil(face.top) - floor(face.bottom));
 	}
@@ -241,7 +241,7 @@ void updateTexCoords(void)
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate *p = &sgLevel.field[x][y];
+			Plate* p = &sgLevel.field[x][y];
 
 			for (side = 0; side < 4; side++)
 			{
@@ -250,16 +250,14 @@ void updateTexCoords(void)
 				int x0 = x + sgEdgeX[side];
 				int y0 = y + sgEdgeY[side];
 
-				SideFace *face = &p->sideFaces[side];
-
-				int k = face->cntSquares - 1;
+				SideFace* face = &p->sideFaces[side];
 
 				float z1 = p->roof.vertices[side].z;
 				float z2 = p->roof.vertices[next].z;
 
-				for (k = 0; k < face->cntSquares; k++)
+				FOREACH(face->squares, iter)
 				{
-					Square *square = &face->squares[k];
+					Square* square = &(*iter);
 
 					int z0 = (int) square->vertices[1].z;
 

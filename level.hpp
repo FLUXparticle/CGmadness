@@ -25,6 +25,8 @@
 
 #include GL_H
 
+#include <vector>
+
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
 
@@ -34,7 +36,7 @@
 #define MIN_ALLOWED_CHAR 32
 #define MAX_ALLOWED_CHAR 127
 
-typedef struct
+struct Square
 {
 	Vector3 normal;
 	Vector2 lightmap[4];
@@ -43,18 +45,17 @@ typedef struct
 
 	float area;
 	Vector3 mid;
-} Square;
+};
 
-typedef struct
+struct SideFace
 {
-	int cntSquares;
-	Square squares[MAX_LEVEL_HEIGHT + 2];
+	std::vector<Square> squares;
 
 	float bottom;
 	float top;
-} SideFace;
+};
 
-typedef struct
+struct Plate
 {
 	int z;
 	int dzx;
@@ -64,23 +65,23 @@ typedef struct
 	Square roof;
 
 	SideFace sideFaces[4];
-} Plate;
+};
 
-typedef struct
+struct FieldCoord
 {
 	int x;
 	int y;
-} FieldCoord;
+};
 
-typedef struct
+struct ScoreCol
 {
 	char name[MAX_NAME_LENGTH + 1];
 	int tenthSecond;
-} ScoreCol;
+};
 
-typedef struct
+struct Level
 {
-	Plate **field;
+	Plate** field;
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
@@ -88,7 +89,7 @@ typedef struct
 	GLuint colorMap;
 	GLuint lightMap;
 
-	const char *filename;
+	const char* filename;
 	unsigned int crc32;
 
 	int cntScoreCols;
@@ -99,7 +100,7 @@ typedef struct
 
 	bool saved;
 	bool waiting;
-} Level;
+};
 
 extern const int sgEdgeX[4];
 extern const int sgEdgeY[4];

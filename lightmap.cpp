@@ -23,6 +23,8 @@
 
 #include "functions.hpp"
 
+#include "macros.hpp"
+
 #include GL_H
 
 #include <math.h>
@@ -99,13 +101,12 @@ float approximation(const Vector3 position, const Vector3 normal)
 			for (j = 0; j < 4; j++)
 			{
 				SideFace face;
-				int k;
 
 				getSideFace(x, y, j, &face);
 
-				for (k = 0; k < face.cntSquares; k++)
+				FOREACH(face.squares, iter)
 				{
-					light *= approximationSquare(position, normal, face.squares[k]);
+					light *= approximationSquare(position, normal, *iter);
 				}
 			}
 		}

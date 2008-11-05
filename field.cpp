@@ -251,7 +251,7 @@ void initGameField(void)
 
 				getSideFace(x, y, i, &face);
 
-				gMaxQuads += face.cntSquares;
+				gMaxQuads += face.squares.size();
 			}
 		}
 	}
@@ -285,13 +285,12 @@ void initGameField(void)
 			for (i = 0; i < 4; i++)
 			{
 				SideFace face;
-				int k;
 
 				getSideFace(x, y, i, &face);
 
-				for (k = 0; k < face.cntSquares; k++)
+				FOREACH(face.squares, iter)
 				{
-					addSquare(&face.squares[k]);
+					addSquare(&(*iter));
 				}
 			}
 
