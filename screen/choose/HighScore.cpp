@@ -23,9 +23,11 @@
 
 #include "utils/Singleton.hpp"
 
-#include "level.hpp"
 #include "objects.hpp"
 #include "text/text.hpp"
+
+#include "level/level.hpp"
+#include "level/io.hpp"
 
 #include "hw/keyboard.hpp"
 

@@ -19,7 +19,7 @@
 
 #include "lightmap.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "functions.hpp"
 

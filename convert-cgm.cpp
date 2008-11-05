@@ -17,7 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "level.hpp"
+#include "level/types.hpp"
+#include "level/io.hpp"
 
 #include "tools.hpp"
 
@@ -25,29 +26,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-void usage(void)
+void usage()
 {
 	printf("usage: convert-cgm [parameters...] <cgm-files...>\n");
-	printf
-		("  --size x y  resize all levels after this parameter to given size\n");
+	printf("  --size x y  resize all levels after this parameter to given size\n");
 	printf("\n");
-	printf
-		("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
+	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
 	printf("\n");
 }
 
 int main(int argc, char *argv[])
 {
-	char *file = NULL;
-	int i;
-
 	message();
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 
+	const char* file = NULL;
+
 	/* read parameters */
-	for (i = 1; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 		if (strcmp(argv[i], "--size") == 0 && i + 2 < argc)
 		{

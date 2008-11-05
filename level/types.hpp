@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _level_hpp_
-#define _level_hpp_
+#ifndef _types_hpp_
+#define _types_hpp_
 
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
@@ -104,26 +104,6 @@ struct Level
 	bool waiting;
 };
 
-extern const int sgEdgeX[4];
-extern const int sgEdgeY[4];
-
 extern Level sgLevel;
-
-void initLevel(void);
-void destroyLevel(void);
-
-void newLevel(void);
-
-bool loadHighscoreFromFile(void);
-bool loadLevelFromFile(const char *filename, bool justLoad);
-
-bool saveHighscoreToFile(void);
-bool saveLevelToFile(void);
-
-void updatePlate(int x, int y);
-void getRoofSquare(int x, int y, Square * square);
-void getSideFace(int x, int y, int side, SideFace * face);
-
-float getMaxZValue(const Square * square);
 
 #endif

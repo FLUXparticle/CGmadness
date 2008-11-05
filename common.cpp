@@ -22,7 +22,7 @@
 #include "atlas.hpp"
 #include "idle.hpp"
 #include "lightmap.hpp"
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "progress.hpp"
 
@@ -64,7 +64,7 @@ static int quadsNeeded(int fx, int fy, int side)
 	}
 }
 
-void initCommon(void)
+void initCommon()
 {
 	int countSubLightMaps = 0;
 
@@ -106,7 +106,7 @@ void initCommon(void)
 	}
 }
 
-void destroyCommon(void)
+void destroyCommon()
 {
 	delete[] gSubAtlasFloor;
 	delete[] gSubAtlasSides;
@@ -195,7 +195,7 @@ void updateLightMap(int useProgressBar)
 	}
 }
 
-void updateTexCoords(void)
+void updateTexCoords()
 {
 	int x;
 	int y;

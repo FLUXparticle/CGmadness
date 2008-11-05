@@ -22,17 +22,17 @@
 #include <stdlib.h>
 
 template<class T>
-SmartPointer<T>::SmartPointer()
+SmartPointer<T>::SmartPointer() :
+	mPtr(NULL)
 {
 	mCounter = new unsigned int(1);
-	mPtr = NULL;
 }
 
 template<class T>
-SmartPointer<T>::SmartPointer(T* ptr)
+SmartPointer<T>::SmartPointer(T* ptr) :
+	mPtr(ptr)
 {
 	mCounter = new unsigned int(1);
-	mPtr = ptr;
 }
 
 template<class T>
@@ -64,7 +64,19 @@ T& SmartPointer<T>::operator* ()
 }
 
 template<class T>
+T* SmartPointer<T>::operator-> ()
+{
+	return mPtr;
+}
+
+template<class T>
 SmartPointer<T>::operator T* ()
+{
+	return mPtr;
+}
+
+template<class T>
+SmartPointer<T>::operator const T* () const
 {
 	return mPtr;
 }

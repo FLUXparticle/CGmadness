@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _vector_hpp_
-#define _vector_hpp_
-
 #include "types.hpp"
 
-void initProjectMat(Matrix m, float fov);
-
-#endif
+Level sgLevel;

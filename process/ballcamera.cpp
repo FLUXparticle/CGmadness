@@ -23,8 +23,6 @@
 #include "hw/keyboard.hpp"
 #include "camera.hpp"
 
-#include "math/vector.hpp"
-
 #include "functions.hpp"
 
 #include GLUT_H
@@ -160,7 +158,7 @@ void toggleMouseControl()
 void updateBall(Ball& ball, float interval)
 {
 	Vector3 force(0.0f, 0.0f, 0.0f);
-	
+
 	if (gIsBallControlActive)
 	{
 		/* ball controls */
@@ -170,17 +168,17 @@ void updateBall(Ball& ball, float interval)
 			{
 				force = sub(force, gRight);
 			}
-	
+
 			if (isKeyPressed('d'))
 			{
 				force = add(force, gRight);
 			}
-	
+
 			if (isKeyPressed('s'))
 			{
 				force = sub(force, gForward);
 			}
-	
+
 			if (isKeyPressed('w'))
 			{
 				force = add(force, gForward);
@@ -192,28 +190,28 @@ void updateBall(Ball& ball, float interval)
 			{
 				force = sub(force, gRight);
 			}
-	
+
 			if (isCursorPressed(CURSOR_RIGHT))
 			{
 				force = add(force, gRight);
 			}
-	
+
 			if (isCursorPressed(CURSOR_DOWN))
 			{
 				force = sub(force, gForward);
 			}
-	
+
 			if (isCursorPressed(CURSOR_UP))
 			{
 				force = add(force, gForward);
 			}
 		}
 	}
-	
+
 	if (gIsBallActive)
 	{
 		ball.push(force);
-		
+
 		ball.update(interval);
 	}
 

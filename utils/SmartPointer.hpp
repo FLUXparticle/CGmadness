@@ -32,7 +32,10 @@ public:
   void operator= (const SmartPointer<T>& other);
 
   T& operator* ();
+  T* operator-> ();
+  
   operator T* ();
+  operator const T* () const;
   
 private:
 	T* mPtr;

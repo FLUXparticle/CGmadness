@@ -23,7 +23,7 @@
 
 #include "ColorStack.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 #include "texture.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"

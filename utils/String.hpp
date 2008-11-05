@@ -17,41 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataDigits.hpp"
+#ifndef String_hpp
+#define String_hpp
 
-#include "Digits0.inc"
-#include "Digits1.inc"
-#include "Digits2.inc"
-#include "Digits3.inc"
-#include "Digits4.inc"
-#include "Digits5.inc"
-#include "Digits6.inc"
-#include "Digits7.inc"
-#include "Digits8.inc"
-#include "Digits9.inc"
+#include "SmartPointer.hpp"
 
-float widthDigits[10] = {
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
+class String
+{
+public:
+	static String toString(int value);
+	
+public:
+  String();
+  String(const char* str);
+  String(const String& str);
+  virtual ~String();
+
+  int length() const;
+
+  operator const char*() const;
+  bool operator==(const char* other) const;
+  
+  String operator+(const char* other) const;
+  String operator+(const String& other) const;
+
+private:
+	SmartPointer<char> mStr;
+
 };
 
-funcDraw drawDigits[10] = {
-	drawDigits0,
-	drawDigits1,
-	drawDigits2,
-	drawDigits3,
-	drawDigits4,
-	drawDigits5,
-	drawDigits6,
-	drawDigits7,
-	drawDigits8,
-	drawDigits9,
-};
+inline String::operator const char*() const
+{
+	return mStr;
+}
+
+#endif

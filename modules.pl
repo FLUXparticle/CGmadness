@@ -109,7 +109,6 @@ for $templatefile (@templates) {
 
 	($file1) = grep /^(.*\/)?$classtemplate.hpp$/,@source;
 	if (!$file1) {
-		print STDERR "filename: $filename\n";
 		print STDERR "classtemplate: $classtemplate\n";
 		print STDERR "files: @source\n";
 		exit 1;
@@ -118,12 +117,8 @@ for $templatefile (@templates) {
 	($file2) = grep /^(.*\/)?$templateparam.hpp$/,@source;
 
 	if (!defined $file1) {
-		print STDERR "$filename\n";
+		print STDERR '!defined $file1'."\n";
 		exit 1;
-	}
-
-	if (!defined $file2 && $filename =~ /\.hpp$/) {
-		$file2 = $filename;
 	}
 
 	local $include = "-include $file1";

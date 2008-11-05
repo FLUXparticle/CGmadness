@@ -17,34 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "vector.hpp"
+#ifndef level_hpp
+#define level_hpp
 
-#include <math.h>
+#include "types.hpp"
 
-/*
- * projection matrix without farplane
- */
-void initProjectMat(Matrix m, float fov)
-{
-	int x;
-	int y;
-	float f = 1.0f / tan(fov / 2.0f * M_PI / 180.0f);
-	static float near = 0.01f;
+extern const int sgEdgeX[4];
+extern const int sgEdgeY[4];
 
-	for (x = 0; x < 4; x++)
-	{
-		for (y = 0; y < 4; y++)
-		{
-			m[x][y] = 0.0f;
-		}
-	}
+void initLevel();
+void destroyLevel();
 
-	m[0][0] = f;
+void newLevel();
 
-	m[1][1] = f;
+void updatePlate(int x, int y);
+void getRoofSquare(int x, int y, Square* square);
+void getSideFace(int x, int y, int side, SideFace* face);
 
-	m[2][2] = -1;
-	m[2][3] = -1;
+float getMaxZValue(const Square* square);
 
-	m[3][2] = -2 * near;
-}
+#endif

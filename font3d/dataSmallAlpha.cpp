@@ -19,8 +19,6 @@
 
 #include "dataSmallAlpha.hpp"
 
-#include "hw/varray.hpp"
-
 #include "SmallAlpha0.inc"
 #include "SmallAlpha1.inc"
 #include "SmallAlpha2.inc"

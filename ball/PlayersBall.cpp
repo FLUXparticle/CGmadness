@@ -28,11 +28,11 @@
 
 #include "ColorStack.hpp"
 
-#include "math/vector.hpp"
+#include "math/Matrix.hpp"
 
 #include "debug.hpp"
 
-#include <string.h>
+#include <cstring>
 
 #define CUBE_MAP_SIZE 128
 

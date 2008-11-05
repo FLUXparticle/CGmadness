@@ -19,7 +19,9 @@
 
 #include "LevelLoader.hpp"
 
-#include "level.hpp"
+#include "level/io.hpp"
+#include "level/level.hpp"
+
 #include "common.hpp"
 
 #include "texture.hpp"

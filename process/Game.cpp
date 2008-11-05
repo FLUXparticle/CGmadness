@@ -26,7 +26,7 @@
 
 #include "Main.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "ballcamera.hpp"
 #include "field.hpp"

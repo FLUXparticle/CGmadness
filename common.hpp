@@ -20,10 +20,10 @@
 #ifndef _common_hpp_
 #define _common_hpp_
 
-void initCommon(void);
-void destroyCommon(void);
+void initCommon();
+void destroyCommon();
 
 void updateLightMap(int useProgressBar);
-void updateTexCoords(void);
+void updateTexCoords();
 
 #endif

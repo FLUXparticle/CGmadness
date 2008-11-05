@@ -17,41 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataDigits.hpp"
+#ifndef Matrix_hpp
+#define Matrix_hpp
 
-#include "Digits0.inc"
-#include "Digits1.inc"
-#include "Digits2.inc"
-#include "Digits3.inc"
-#include "Digits4.inc"
-#include "Digits5.inc"
-#include "Digits6.inc"
-#include "Digits7.inc"
-#include "Digits8.inc"
-#include "Digits9.inc"
+#define MATRIX_SIZE 4
 
-float widthDigits[10] = {
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-};
+typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
 
-funcDraw drawDigits[10] = {
-	drawDigits0,
-	drawDigits1,
-	drawDigits2,
-	drawDigits3,
-	drawDigits4,
-	drawDigits5,
-	drawDigits6,
-	drawDigits7,
-	drawDigits8,
-	drawDigits9,
-};
+void initProjectMat(Matrix m, float fov);
+
+#endif

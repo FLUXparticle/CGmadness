@@ -26,7 +26,7 @@
 
 #include "process/MainProcess.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "hw/keyboard.hpp"
 #include "hw/mouse.hpp"

@@ -19,8 +19,6 @@
 
 #include "dataBigAlpha.hpp"
 
-#include "hw/varray.hpp"
-
 #include "BigAlpha0.inc"
 #include "BigAlpha1.inc"
 #include "BigAlpha2.inc"

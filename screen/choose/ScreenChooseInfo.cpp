@@ -23,7 +23,7 @@
 
 #include "utils/Singleton.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 #include "Main.hpp"
 
 #include "text/text.hpp"

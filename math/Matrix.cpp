@@ -17,41 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataDigits.hpp"
+#include "Matrix.hpp"
 
-#include "Digits0.inc"
-#include "Digits1.inc"
-#include "Digits2.inc"
-#include "Digits3.inc"
-#include "Digits4.inc"
-#include "Digits5.inc"
-#include "Digits6.inc"
-#include "Digits7.inc"
-#include "Digits8.inc"
-#include "Digits9.inc"
+#include <math.h>
 
-float widthDigits[10] = {
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-};
+/*
+ * projection matrix without farplane
+ */
+void initProjectMat(Matrix m, float fov)
+{
+	int x;
+	int y;
+	float f = 1.0f / tan(fov / 2.0f * M_PI / 180.0f);
+	static float near = 0.01f;
 
-funcDraw drawDigits[10] = {
-	drawDigits0,
-	drawDigits1,
-	drawDigits2,
-	drawDigits3,
-	drawDigits4,
-	drawDigits5,
-	drawDigits6,
-	drawDigits7,
-	drawDigits8,
-	drawDigits9,
-};
+	for (x = 0; x < 4; x++)
+	{
+		for (y = 0; y < 4; y++)
+		{
+			m[x][y] = 0.0f;
+		}
+	}
+
+	m[0][0] = f;
+
+	m[1][1] = f;
+
+	m[2][2] = -1;
+	m[2][3] = -1;
+
+	m[3][2] = -2 * near;
+}

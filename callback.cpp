@@ -22,8 +22,6 @@
 #include "text/text.hpp"
 #include "camera.hpp"
 
-#include "math/vector.hpp"
-
 #include GLUT_H
 
 #include <stdio.h>
@@ -31,6 +29,8 @@
 
 #define FRAMES_PER_SECOND 60
 #define TIME_STEP (1000 / FRAMES_PER_SECOND)
+
+#define FOV 60.0f
 
 #define DEBUG_PREDISPLAY 0
 #define NO_FRAME_LIMIT 0

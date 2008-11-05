@@ -25,7 +25,9 @@
 
 #include "utils/Callback.hpp"
 
-#include "level.hpp"
+#include "level/io.hpp"
+#include "level/level.hpp"
+
 #include "ballcamera.hpp"
 #include "field.hpp"
 #include "camera.hpp"
