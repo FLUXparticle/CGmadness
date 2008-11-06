@@ -28,12 +28,8 @@ extern const int sgEdgeY[4];
 void initLevel();
 void destroyLevel();
 
-void newLevel();
-
-void updatePlate(int x, int y);
+Plate* getPlate(int x, int y);
 void getRoofSquare(int x, int y, Square* square);
 void getSideFace(int x, int y, int side, SideFace* face);
-
-float getMaxZValue(const Square* square);
 
 #endif

@@ -37,8 +37,6 @@
 #include <math.h>
 #include <string.h>
 
-#define SHOW_COLLISION_QUADS 0
-
 #define MOVE_FORCE 5.0f
 #define GRAVITY 9.81f
 #define JUMP_FORCE (50.0f * MOVE_FORCE)
@@ -67,6 +65,19 @@ Ball::Ball() :
 Ball::~Ball()
 {
   // empty
+}
+
+static float getMaxZValue(const Square* square)
+{
+	float res = square->vertices[0].z;
+	for (int i = 1; i < 4; i++)
+	{
+		if (square->vertices[i].z > res)
+		{
+			res = square->vertices[i].z;
+		}
+	}
+	return res;
 }
 
 void Ball::reset()
@@ -222,12 +233,9 @@ bool collisionPoint(const Vector3 sphere, const Vector3* quad,
 
 void Ball::animateBall(float interval)
 {
-	int collision = 0;
-	int q;
+	bool collision = false;
 	int x;
 	int y;
-	int dx;
-	int dy;
 
 	Vector3 normal(0.0f, 0.0f, 0.0f);
 
@@ -250,28 +258,24 @@ void Ball::animateBall(float interval)
 	y = (int) floor(ball.y - sgLevel.origin.y);
 
 	/* check only fields near by the ball. check field under ball first!!! */
-	for (dx = 1; dx <= 3; dx++)
+	for (int dx = 1; dx <= 3; dx++)
 	{
-		for (dy = 1; dy <= 3; dy++)
+		for (int dy = 1; dy <= 3; dy++)
 		{
 			int start;
 			int end;
 
 			getVertIndex(x + (dx % 3) - 1, y + (dy % 3) - 1, &start, &end);
 
-			for (q = start; q < end; q += 4)
+			for (int q = start; q < end; q += 4)
 			{
-				Vector3 *quad = &sgVertices[q];
+				Vector3* quad = &sgVertices[q];
 				Vector3 dir = sgNormals[q];
 
 				Vector3 a;
 
 				if (collisionPoint(ball, quad, dir, mRadius, &a))
 				{
-#if SHOW_COLLISION_QUADS
-					static Color4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
-#endif
-
 					/* dist = vector from ball center to quad */
 					Vector3 dist = sub(a, ball);
 					float l = len(dist);
@@ -290,11 +294,7 @@ void Ball::animateBall(float interval)
 					ball = add(ball, move);
 
 					normal = add(normal, move);
-					collision = 1;
-
-#if SHOW_COLLISION_QUADS
-					setSquareColor(q, red);
-#endif
+					collision = true;
 				}
 			}
 		}

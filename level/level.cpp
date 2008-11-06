@@ -26,9 +26,6 @@
 
 #include GL_H
 
-#include <stdio.h>
-#include <string.h>
-
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
@@ -78,15 +75,13 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 	return 0;
 }
 
-void updatePlate(int x, int y)
+Plate* getPlate(int x, int y)
 {
-	Plate *p = &sgLevel.field[x][y];
+	Plate* p = &sgLevel.field[x][y];
 
 	if (p->dirty)
 	{
 		Square* square = &p->roof;
-		int i;
-		int side;
 		int dzx = p->dzx;
 		int dzy = p->dzy;
 
@@ -103,7 +98,7 @@ void updatePlate(int x, int y)
 
 		square->normal = norm(cross(ex, ey));
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			square->vertices[i].x = x + sgEdgeX[i];
 			square->vertices[i].y = y + sgEdgeY[i];
@@ -113,7 +108,7 @@ void updatePlate(int x, int y)
 
 		square->updateAttributes();
 
-		for (side = 0; side < 4; side++)
+		for (int side = 0; side < 4; side++)
 		{
 			int next = (side + 1) % 4;
 			int prev = (side + 3) % 4;
@@ -240,32 +235,18 @@ void updatePlate(int x, int y)
 
 		}
 
-		p->dirty = 0;
+		p->dirty = false;
 	}
+
+	return p;
 }
 
-float getMaxZValue(const Square * square)
+void initLevel()
 {
-	int i;
-	float res = square->vertices[0].z;
-	for (i = 1; i < 4; i++)
-	{
-		if (square->vertices[i].z > res)
-		{
-			res = square->vertices[i].z;
-		}
-	}
-	return res;
-}
-
-void initLevel(void)
-{
-	int x;
-
-	sgLevel.field = new Plate *[sgLevel.size.x];
+	sgLevel.field = new Plate*[sgLevel.size.x];
 	sgLevel.field[0] = new Plate[sgLevel.size.x * sgLevel.size.y];
 
-	for (x = 1; x < sgLevel.size.x; x++)
+	for (int x = 1; x < sgLevel.size.x; x++)
 	{
 		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
 	}
@@ -275,7 +256,7 @@ void initLevel(void)
 	sgLevel.origin.z = 0.0f;
 }
 
-void destroyLevel(void)
+void destroyLevel()
 {
 	delete[] sgLevel.field[0];
 	delete[] sgLevel.field;
@@ -286,49 +267,14 @@ void destroyLevel(void)
 	destroyCommon();
 }
 
-void getRoofSquare(int x, int y, Square * square)
+void getRoofSquare(int x, int y, Square* square)
 {
-	Plate *p = &sgLevel.field[x][y];
-	updatePlate(x, y);
+	Plate* p = getPlate(x, y);
 	*square = p->roof;
 }
 
-void getSideFace(int x, int y, int side, SideFace * face)
+void getSideFace(int x, int y, int side, SideFace* face)
 {
-	Plate *p = &sgLevel.field[x][y];
-	updatePlate(x, y);
-
+	Plate* p = getPlate(x, y);
 	*face = p->sideFaces[side];
-}
-
-void newLevel(void)
-{
-	int x, y;
-
-	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x,
-					sgLevel.size.y);
-
-	sgLevel.start.x = 0;
-	sgLevel.start.y = 0;
-
-	sgLevel.finish.x = sgLevel.size.x - 1;
-	sgLevel.finish.y = sgLevel.size.y - 1;
-
-	initLevel();
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			Plate *p = &sgLevel.field[x][y];
-			p->z = 0;
-			p->dzx = 0;
-			p->dzy = 0;
-			p->dirty = 1;
-		}
-	}
-
-	initCommon();
-
-	updateLightMap(0);
 }

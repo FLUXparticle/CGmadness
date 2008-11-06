@@ -68,16 +68,6 @@ void initAtlas(int cntSubTextures)
 
 	gLightMapData = new float[gLightMapSizeX * gLightMapSizeY];
 
-#if 0
-	{
-		int i;
-		for (i = 0; i < gLightMapSizeX * gLightMapSizeY; i++)
-		{
-			gLightMapData[i] = i & 1;
-		}
-	}
-#endif
-
 	gAllocatedSubTextures = 0;
 	gMaxSubLightMaps = cntSubTextures;
 

@@ -292,6 +292,38 @@ void importLightmapV2(FILE* file)
 	delete[] tmp;
 }
 
+void newLevel()
+{
+	int x, y;
+
+	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x,
+					sgLevel.size.y);
+
+	sgLevel.start.x = 0;
+	sgLevel.start.y = 0;
+
+	sgLevel.finish.x = sgLevel.size.x - 1;
+	sgLevel.finish.y = sgLevel.size.y - 1;
+
+	initLevel();
+
+	for (x = 0; x < sgLevel.size.x; x++)
+	{
+		for (y = 0; y < sgLevel.size.y; y++)
+		{
+			Plate *p = &sgLevel.field[x][y];
+			p->z = 0;
+			p->dzx = 0;
+			p->dzy = 0;
+			p->dirty = true;
+		}
+	}
+
+	initCommon();
+
+	updateLightMap(0);
+}
+
 bool loadLevelFromFile(const char* filename, bool justLoad)
 {
 	FILE* file = fopen(filename, "rt");
@@ -360,7 +392,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 				p->dzy = 0;
 			}
 
-			p->dirty = 1;
+			p->dirty = true;
 		}
 
 		/* shrinking */

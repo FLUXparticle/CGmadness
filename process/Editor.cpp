@@ -183,7 +183,7 @@ void markerChanged(void)
 		{
 			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
 			{
-				sgLevel.field[x][y].dirty = 1;
+				sgLevel.field[x][y].dirty = true;
 			}
 		}
 	}

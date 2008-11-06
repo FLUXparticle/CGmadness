@@ -42,8 +42,8 @@
 #define WITH_STENCIL_TEST 0
 #define TWO_PASS 0
 
-Vector3 *sgVertices;
-Vector3 *sgNormals;
+Vector3* sgVertices;
+Vector3* sgNormals;
 
 static Vector2 gDefaultTexCoord;
 static Vector2 gDefaultLightMapCoord;
@@ -134,9 +134,7 @@ void getVertIndex(int x, int y, int *start, int *end)
 
 void setSquareColor(int q, Color4 col)
 {
-	int i;
-
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		gColors[q + i] = col;
 	}
@@ -160,7 +158,7 @@ void setRoofColor(int x, int y, Color4 col)
 #define SAMPLES_XY 64
 #define SAMPLES_Z 64
 
-void initBallShadow(void)
+void initBallShadow()
 {
 	GLfloat ballShadowData[SAMPLES_Z][SAMPLES_XY][SAMPLES_XY];
 
@@ -216,7 +214,7 @@ void initBallShadow(void)
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void initGameField(void)
+void initGameField()
 {
 	static Color4 green(0.0f, 1.0f, 0.0f, 1.0f);
 	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
@@ -335,7 +333,7 @@ void initGameField(void)
 	gBallReflectionIndices = new int[gCntVertices];
 }
 
-void destroyGameField(void)
+void destroyGameField()
 {
 	delete[] sgVertices;
 	delete[] sgNormals;
@@ -379,17 +377,13 @@ void updateGameField(const PlayersBall& ball)
 
 	if (!hasBallShadowShader() && useBallShadow())
 	{
-		int q;
-
-		for (q = 0; q < gCntVertices; q += 4)
+		for (int q = 0; q < gCntVertices; q += 4)
 		{
 			Vector3 vz = sgNormals[q];
 			Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q]));
 			Vector3 vy = norm(cross(vx, vz));
 
-			int i;
-
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				Vector3 vertex = sgVertices[q + i];
 				Vector3 d = sub(gBallPosition, vertex);
@@ -552,17 +546,6 @@ void drawGameField(bool ballReflection)
 
 	glActiveTexture(GL_TEXTURE0);
 	glDisable(GL_TEXTURE_2D);
-
-#if 0
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(5.0f);
-
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT,
-								 ballReflection ? gBallReflectionIndices : gCameraViewIndices);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#endif
 
 	if (hasVertexbuffer())
 	{

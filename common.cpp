@@ -37,13 +37,13 @@
 
 #define BOTTOM -0.0f
 
-typedef struct
+struct CellLightMap
 {
 	SubAtlas sides[4];
-} CellLightMap;
+};
 
-static SubAtlas *gSubAtlasFloor;
-static CellLightMap *gSubAtlasSides;
+static SubAtlas* gSubAtlasFloor;
+static CellLightMap* gSubAtlasSides;
 
 #define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasFloor[(_y) * sgLevel.size.x + (_x)])
 #define SUB_ATLAS_SIDES(_x, _y) (gSubAtlasSides[(_y) * sgLevel.size.x + (_x)])
@@ -197,27 +197,19 @@ void updateLightMap(int useProgressBar)
 
 void updateTexCoords()
 {
-	int x;
-	int y;
-	int side;
-
 	float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
 	float b = 1.0f / (2 * LIGHT_MAP_SIZE);
 
 	/*****/
 
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate *p = &sgLevel.field[x][y];
-			Square *square = &p->roof;
+			Plate* p = getPlate(x, y);
+			Square* square = &p->roof;
 
-			int i;
-
-			updatePlate(x, y);
-
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				square->texcoord[i].x =
 					sgEdgeX[i] *
@@ -237,13 +229,13 @@ void updateTexCoords()
 		}
 	}
 
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate* p = &sgLevel.field[x][y];
+			Plate* p = getPlate(x, y);
 
-			for (side = 0; side < 4; side++)
+			for (int side = 0; side < 4; side++)
 			{
 				int next = (side + 1) % 4;
 
@@ -261,8 +253,7 @@ void updateTexCoords()
 
 					int z0 = (int) square->vertices[1].z;
 
-					int i;
-					for (i = 0; i < 4; i++)
+					for (int i = 0; i < 4; i++)
 					{
 						float tx =
 							(sgEdgeX[next] - sgEdgeX[side]) * (square->vertices[i].x -

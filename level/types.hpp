@@ -63,7 +63,7 @@ struct Plate
 	int dzx;
 	int dzy;
 
-	int dirty;
+	bool dirty;
 	Square roof;
 
 	SideFace sideFaces[4];

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _field_hpp_
-#define _field_hpp_
+#ifndef field_hpp
+#define field_hpp
 
 #include "ball/PlayersBall.hpp"
 
@@ -26,18 +26,15 @@
 
 #include "Color.hpp"
 
-extern Vector3 *sgVertices;
-extern Vector3 *sgNormals;
+extern Vector3* sgVertices;
+extern Vector3* sgNormals;
 
-void setSquareColor(int q, Color4 col);
-
-void initGameField(void);
-void destroyGameField(void);
+void initGameField();
+void destroyGameField();
 
 void updateGameField(const PlayersBall& ball);
-
 void drawGameField(bool ballReflection);
 
-void getVertIndex(int x, int y, int *start, int *end);
+void getVertIndex(int x, int y, int* start, int* end);
 
 #endif

@@ -56,38 +56,30 @@ float approximationSquare(const Vector3 position, const Vector3 normal,
 
 float approximation(const Vector3 position, const Vector3 normal)
 {
-	Vector3 z = Vector3(0.0f, 0.0f, 1.0f);
+	Vector3 z(0.0f, 0.0f, 1.0f);
 	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
-	int x;
-	int y;
-
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			int check = 0;
-
-			Square square;
-			int j;
-
-			if (len
-					(sub
-					 (position,
-						add(Vector3(x + 0.5f, y + 0.5f, position.z),
-								sgLevel.origin))) > 6.0f)
+			if ((position - sgLevel.origin - Vector3(x + 0.5f, y + 0.5f, position.z)).len()
+			    > 6.0f)
 			{
 				continue;
 			}
 
+			bool check = false;
+			Square square;
 
 			getRoofSquare(x, y, &square);
 
-			for (j = 0; j < 4 && !check; j++)
+			for (int j = 0; j < 4; j++)
 			{
-				if (dot(sub(square.vertices[j], position), normal) > 0.0f)
+				if (dot(square.vertices[j] - position, normal) > 0.0f)
 				{
-					check = 1;
+					check = true;
+					break;
 				}
 			}
 
@@ -98,7 +90,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 
 			light *= approximationSquare(position, normal, square);
 
-			for (j = 0; j < 4; j++)
+			for (int j = 0; j < 4; j++)
 			{
 				SideFace face;
 
