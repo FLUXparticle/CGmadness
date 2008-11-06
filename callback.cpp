@@ -22,6 +22,8 @@
 #include "text/text.hpp"
 #include "camera.hpp"
 
+#include "hw/keyboard.hpp"
+
 #include GLUT_H
 
 #include <stdio.h>
@@ -50,6 +52,8 @@ static bool gSceneDirty = 1;
 static float gFPS = 0.0f;
 
 static Matrix gProjectionText;
+
+static bool gFreeze = false;
 
 void framerate(void)
 {
@@ -155,7 +159,10 @@ void display(void)
 
 	glEnable(GL_DEPTH_TEST);
 
-	glutSwapBuffers();
+	if (!gFreeze)
+	{
+		glutSwapBuffers();
+	}
 	framerate();
 
 	gSceneDirty = false;
@@ -222,6 +229,11 @@ void timer(int startTime)
 
 		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
+	}
+
+	if (wasFunctionPressed(12))
+	{
+		gFreeze = !gFreeze;
 	}
 }
 
