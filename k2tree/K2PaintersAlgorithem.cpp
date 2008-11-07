@@ -37,7 +37,7 @@ int K2PaintersAlgorithem::decide(int close, int far)
 	return far;
 }
 
-int K2PaintersAlgorithem::hit(int index, const Range& range)
+int K2PaintersAlgorithem::hit(int index)
 {
 	return pop();
 }

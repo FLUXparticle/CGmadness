@@ -46,7 +46,7 @@ void K2Iterator::operator++()
 		}
 		else if (range.sizeX == 1 && range.sizeY == 1)
 		{
-			mContinue = hit(mIndex, range);
+			mContinue = hit(mIndex);
 			break;
 		}
 		else if (range.right == 0)

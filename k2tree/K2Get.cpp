@@ -35,7 +35,7 @@ int K2Get::decide(int close, int far)
 	return close;
 }
 
-int K2Get::hit(int index, const Range& range)
+int K2Get::hit(int index)
 {
 	return -1;
 }

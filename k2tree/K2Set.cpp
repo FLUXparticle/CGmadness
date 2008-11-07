@@ -47,7 +47,7 @@ int K2Set::decide(int close, int far)
 	return close;
 }
 
-int K2Set::hit(int index, const Range& range)
+int K2Set::hit(int index)
 {
 	return -1;
 }

@@ -46,7 +46,7 @@ private:
 	int mContinue;
 
 	virtual int decide(int close, int far) = 0;
-	virtual int hit(int index, const Range& range) = 0;
+	virtual int hit(int index) = 0;
 	virtual int miss(int index) = 0;
 
 };

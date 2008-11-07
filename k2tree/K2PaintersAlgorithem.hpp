@@ -33,7 +33,7 @@ public:
 	virtual ~K2PaintersAlgorithem();
 
 	int decide(int close, int far);
-	int hit(int index, const Range& range);
+	int hit(int index);
 	int miss(int index);
 
 protected:
