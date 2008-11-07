@@ -21,43 +21,55 @@
 #define K2Tree_hpp
 
 #include "math/Vector3.hpp"
-
 #include "Range.hpp"
 
 #include <vector>
 
-class K2Tree {
+class K2Tree
+{
 public:
-  K2Tree(Vector3 origin, int x, int y);
-  virtual ~K2Tree();
+	K2Tree(Vector3 origin, int sizeX, int sizeY);
+	virtual ~K2Tree();
 
-  void set(int x, int y, int start, int end);
-  void get(int x, int y, int &start, int &end) const;
+	void set(int x, int y, int start, int end);
+	void get(int x, int y, int &start, int &end) const;
 
-  int paintersAlgorithem(Vector3 viewer, int indices[]) const;
-  int paintersAlgorithemReverse(Vector3 viewer, int indices[]) const;
+	int paintersAlgorithem(const Vector3& viewer, int indices[]) const;
+	int paintersAlgorithemReverse(Vector3 viewer, int indices[]) const;
 
-  const Range& getRange(int index) const;
+	const Range& range(int index) const;
+	Range& range(int index);
+
+	int root() const;
 
 private:
+	int mRoot;
 	Vector3 mOrigin;
 
-	int mX;
-	int mY;
+	int mSizeX;
+	int mSizeY;
 
 	std::vector<Range> mRanges;
 
 	int newNode(const Range &range);
 
-	void find(int x, int y, class K2Command& cmd) const;
-
 	friend class K2Set;
 
 };
 
-inline const Range& K2Tree::getRange(int index) const
+inline const Range& K2Tree::range(int index) const
 {
 	return mRanges[index];
+}
+
+inline Range& K2Tree::range(int index)
+{
+	return mRanges[index];
+}
+
+inline int K2Tree::root() const
+{
+	return mRoot;
 }
 
 #endif

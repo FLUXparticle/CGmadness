@@ -26,14 +26,16 @@
 
 #include "Range.hpp"
 
-#include <math.h>
+#include "field.hpp"
 
-K2Tree::K2Tree(Vector3 origin, int x, int y) :
+#include <cstdio>
+
+K2Tree::K2Tree(Vector3 origin, int sizeX, int sizeY) :
 	mOrigin(origin),
-	mX(x),
-	mY(y)
+	mSizeX(sizeX),
+	mSizeY(sizeY)
 {
-	newNode(Range(0, 0, mX, mY));
+	mRoot = newNode(Range(0, 0, mSizeX, mSizeY));
 }
 
 K2Tree::~K2Tree()
@@ -43,24 +45,22 @@ K2Tree::~K2Tree()
 
 void K2Tree::set(int x, int y, int start, int end)
 {
-	K2Set cmd(*this);
-	
-	find(x, y, cmd);
-	
-	Range &range = mRanges[cmd.index()];
-	
+	Vector2 q(x + 0.5f, y + 0.5f);
+	K2Set iter(*this, q);
+
+	Range &range = *iter;
+
 	range.left = start;
 	range.right = end;
 }
 
 void K2Tree::get(int x, int y, int &start, int &end) const
 {
-	K2Get cmd;
-	
-	find(x, y, cmd);
-	
-	const Range &range = mRanges[cmd.index()];
-	
+	Vector2 q(x + 0.5f, y + 0.5f);
+	K2Get iter(*this, q);
+
+	const Range &range = *iter;
+
 	start = range.left;
 	end = range.right;
 }
@@ -68,72 +68,58 @@ void K2Tree::get(int x, int y, int &start, int &end) const
 int K2Tree::newNode(const Range &range)
 {
 	int index = mRanges.size();
-		
+
 	mRanges.push_back(range);
-	
+
 	return index;
 }
 
-int K2Tree::paintersAlgorithem(Vector3 viewer, int indices[]) const
+int painter(K2PaintersAlgorithem& iter, const Vector3& viewer, int indices[])
 {
-	K2PaintersAlgorithem painter(viewer, indices);
-	
-	Vector3 diff = sub(viewer, mOrigin);
-	
-	int vx = (int) floor(diff.x);
-	int vy = (int) floor(diff.y);
-	
-	find(vx, vy, painter);
-	
-	return painter.count();
+	int counter = 0;
+
+	for (; iter.hasNext(); ++iter)
+	{
+		const Range &range = *iter;
+
+		int start = range.left;
+		int end = range.right;
+
+		for (int q = start; q < end; q += 4)
+		{
+			/*
+			 * the top square must always be drawn, because this function
+			 * is not called if only the height of the camera changes.
+			 * Fortunately it is always the first square in the array range.
+			 * WARNING: be aware of this if you change the order of sqaures.
+			 */
+			if (q == start || dot(sgNormals[q], sub(viewer, sgVertices[q])) >= 0)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					indices[counter++] = q + i;
+				}
+			}
+		}
+	}
+
+	return counter;
+}
+
+int K2Tree::paintersAlgorithem(const Vector3& viewer, int indices[]) const
+{
+	Vector3 diff = viewer - mOrigin;
+	Vector2 q(diff.x, diff.y);
+	K2PaintersAlgorithem iter(*this, q);
+
+	return painter(iter, viewer, indices);
 }
 
 int K2Tree::paintersAlgorithemReverse(Vector3 viewer, int indices[]) const
 {
-	K2PaintersAlgorithemReverse painter(viewer, indices);
-	
-	Vector3 diff = sub(viewer, mOrigin);
-	
-	int vx = (int) floor(diff.x);
-	int vy = (int) floor(diff.y);
-	
-	find(vx, vy, painter);
-	
-	return painter.count();
-}
+	Vector3 diff = viewer - mOrigin;
+	Vector2 q(diff.x, diff.y);
+	K2PaintersAlgorithemReverse iter(*this, q);
 
-void K2Tree::find(int x, int y, K2Command& cmd) const
-{
-	int index = 0;
-	
-	do
-	{
-		const Range& cur = mRanges[index];
-		
-		if (cur.sizeX == 0 || cur.sizeY == 0)
-		{
-			return;
-		}
-		else if (cur.sizeX == 1 && cur.sizeY == 1)
-		{
-			index = cmd.hit(index, cur);
-		}
-		else if (cur.right == 0)
-		{
-			index = cmd.miss(index);
-		}
-		else
-		{
-			const Range& right = mRanges[cur.right];
-			
-			if ((cur.sizeX > cur.sizeY && x < right.startX) || (cur.sizeX <= cur.sizeY && y < right.startY))
-			{
-				index = cmd.decide(cur.left, cur.right);
-			}
-			else
-			{
-				index = cmd.decide(cur.right, cur.left);
-			}
-		}
-	} while (index >= 0);
+	return painter(iter, viewer, indices);
 }

@@ -19,8 +19,8 @@
 
 #include "K2PaintersAlgorithemReverse.hpp"
 
-K2PaintersAlgorithemReverse::K2PaintersAlgorithemReverse(Vector3 viewer, int indices[]) :
-	K2PaintersAlgorithem(viewer, indices)
+K2PaintersAlgorithemReverse::K2PaintersAlgorithemReverse(const K2Tree& tree, const Vector2& viewer) :
+	K2PaintersAlgorithem(tree, viewer)
 {
   // empty
 }
@@ -33,7 +33,7 @@ K2PaintersAlgorithemReverse::~K2PaintersAlgorithemReverse()
 int K2PaintersAlgorithemReverse::decide(int close, int far)
 {
 	mStack.push(far);
-	
+
 	return close;
 }
 

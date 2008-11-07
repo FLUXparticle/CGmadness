@@ -19,14 +19,15 @@
 
 #include "K2Get.hpp"
 
-K2Get::K2Get()
+K2Get::K2Get(const K2Tree& tree, const Vector2& q) :
+	K2Iterator(tree, q)
 {
-	mIndex = -1;
+	// empty
 }
 
 K2Get::~K2Get()
 {
-  // empty
+	// empty
 }
 
 int K2Get::decide(int close, int far)
@@ -36,7 +37,6 @@ int K2Get::decide(int close, int far)
 
 int K2Get::hit(int index, const Range& range)
 {
-	mIndex = index;
 	return -1;
 }
 

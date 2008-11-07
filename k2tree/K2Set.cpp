@@ -19,16 +19,28 @@
 
 #include "K2Set.hpp"
 
-K2Set::K2Set(K2Tree& tree) :
-	mTree(tree)
+K2Set::K2Set(K2Tree& tree, const Vector2& q) :
+	K2Iterator(tree, q),
+	mMutableTree(tree)
 {
-	mIndex = -1;
+	// empty
 }
 
 K2Set::~K2Set()
 {
 	// empty
 }
+
+Range& K2Set::operator*()
+{
+	if (mIndex < 0)
+	{
+		operator++();
+	}
+
+	return mMutableTree.range(mIndex);
+}
+
 
 int K2Set::decide(int close, int far)
 {
@@ -37,17 +49,16 @@ int K2Set::decide(int close, int far)
 
 int K2Set::hit(int index, const Range& range)
 {
-	mIndex = index;
 	return -1;
 }
 
 int K2Set::miss(int index)
 {
-	Range& cur = mTree.mRanges[index];
-	
-	Range left = cur; 
-	Range right = cur; 
-	
+	Range& cur = mMutableTree.range(index);
+
+	Range left = cur;
+	Range right = cur;
+
 	if (cur.sizeX > cur.sizeY)
 	{
 		left.sizeX = cur.sizeX / 2;
@@ -60,9 +71,9 @@ int K2Set::miss(int index)
 		right.sizeY = cur.sizeY - left.sizeY;
 		right.startY = left.startY + left.sizeY;
 	}
-	
-	cur.left = mTree.newNode(left);
-	cur.right = mTree.newNode(right);
-	
+
+	cur.left = mMutableTree.newNode(left);
+	cur.right = mMutableTree.newNode(right);
+
 	return index;
 }

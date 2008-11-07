@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _macros_hpp_
-#define _macros_hpp_
+#ifndef macros_hpp
+#define macros_hpp
 
 #include <cstdio>
 

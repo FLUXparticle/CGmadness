@@ -20,27 +20,19 @@
 #ifndef K2Get_hpp
 #define K2Get_hpp
 
-#include "K2Command.hpp"
+#include "K2Iterator.hpp"
 
-class K2Get : public K2Command {
+class K2Get: public K2Iterator
+{
 public:
-  K2Get();
-  virtual ~K2Get();
+	K2Get(const K2Tree& tree, const Vector2& q);
+	virtual ~K2Get();
 
+private:
 	int decide(int close, int far);
 	int hit(int index, const Range& range);
 	int miss(int index);
-	
-	int index() const;
-	
-private:
-	int mIndex;
 
 };
-
-inline int K2Get::index() const
-{
-	return mIndex;
-}
 
 #endif

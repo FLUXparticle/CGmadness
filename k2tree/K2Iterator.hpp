@@ -17,21 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Command_hpp
-#define K2Command_hpp
+#ifndef K2Iterator_hpp
+#define K2Iterator_hpp
 
+#include "K2Tree.hpp"
 #include "Range.hpp"
 
-class K2Command {
+#include "math/Vector2.hpp"
+
+class K2Iterator
+{
 public:
-  K2Command();
-  virtual ~K2Command();
+  K2Iterator(const K2Tree& tree, const Vector2& q);
+  virtual ~K2Iterator();
+
+  void operator++();
+
+  bool hasNext() const;
+  const Range& operator*();
+
+protected:
+	int mIndex;
+
+private:
+	const K2Tree& mTree;
+	const Vector2& mQ;
+
+	int mContinue;
 
 	virtual int decide(int close, int far) = 0;
 	virtual int hit(int index, const Range& range) = 0;
 	virtual int miss(int index) = 0;
-	
-private:
 
 };
 
