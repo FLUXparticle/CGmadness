@@ -33,11 +33,6 @@ K2Set::~K2Set()
 
 Range& K2Set::operator*()
 {
-	if (mIndex < 0)
-	{
-		operator++();
-	}
-
 	return mMutableTree.range(mIndex);
 }
 

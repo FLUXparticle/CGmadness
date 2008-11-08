@@ -48,10 +48,13 @@ void K2Tree::set(int x, int y, int start, int end)
 	Vector2 q(x + 0.5f, y + 0.5f);
 	K2Set iter(*this, q);
 
-	Range &range = *iter;
+	if (iter.next())
+	{
+		Range &range = *iter;
 
-	range.left = start;
-	range.right = end;
+		range.left = start;
+		range.right = end;
+	}
 }
 
 void K2Tree::get(int x, int y, int &start, int &end) const
@@ -59,10 +62,13 @@ void K2Tree::get(int x, int y, int &start, int &end) const
 	Vector2 q(x + 0.5f, y + 0.5f);
 	K2Get iter(*this, q);
 
-	const Range &range = *iter;
+	if (iter.next())
+	{
+		const Range &range = *iter;
 
-	start = range.left;
-	end = range.right;
+		start = range.left;
+		end = range.right;
+	}
 }
 
 int K2Tree::newNode(const Range &range)
@@ -78,7 +84,7 @@ int painter(K2PaintersAlgorithem& iter, const Vector3& viewer, int indices[])
 {
 	int counter = 0;
 
-	for (; iter.hasNext(); ++iter)
+	while (iter.next())
 	{
 		const Range &range = *iter;
 

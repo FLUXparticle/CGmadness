@@ -33,7 +33,7 @@ K2Iterator::~K2Iterator()
   // empty
 }
 
-void K2Iterator::operator++()
+bool K2Iterator::next()
 {
 	mIndex = mContinue;
 	while (mIndex >= 0)
@@ -47,7 +47,7 @@ void K2Iterator::operator++()
 		else if (range.sizeX == 1 && range.sizeY == 1)
 		{
 			mContinue = hit(mIndex);
-			break;
+			return true;
 		}
 		else if (range.right == 0)
 		{
@@ -69,19 +69,11 @@ void K2Iterator::operator++()
 
 		mIndex = mContinue;
 	}
-}
 
-bool K2Iterator::hasNext() const
-{
-	return mIndex >= 0 || mContinue >= 0;
+	return false;
 }
 
 const Range& K2Iterator::operator*()
 {
-	if (mIndex < 0)
-	{
-		operator++();
-	}
-
 	return mTree.range(mIndex);
 }

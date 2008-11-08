@@ -31,9 +31,7 @@ public:
   K2Iterator(const K2Tree& tree, const Vector2& q);
   virtual ~K2Iterator();
 
-  void operator++();
-
-  bool hasNext() const;
+  bool next();
   const Range& operator*();
 
 protected:
