@@ -32,6 +32,8 @@
 
 #include "functions.hpp"
 
+#include "macros.hpp"
+
 #include GL_H
 
 #include <math.h>
@@ -262,15 +264,12 @@ void Ball::animateBall(float interval)
 	{
 		for (int dy = 1; dy <= 3; dy++)
 		{
-			int start;
-			int end;
+			QuadList list = getQuadList(x + (dx % 3) - 1, y + (dy % 3) - 1);
 
-			getVertIndex(x + (dx % 3) - 1, y + (dy % 3) - 1, &start, &end);
-
-			for (int q = start; q < end; q += 4)
+			FOREACH(list, iter)
 			{
-				Vector3* quad = &sgVertices[q];
-				Vector3 dir = sgNormals[q];
+				const Vector3* quad = (*iter).mVertices;
+				const Vector3& dir = (*iter).mNormals[0];
 
 				Vector3 a;
 

@@ -24,6 +24,8 @@
 #include "skyplane.hpp"
 #include "water.hpp"
 
+#include "Color.hpp"
+
 #include "field.hpp"
 
 #include GL_H

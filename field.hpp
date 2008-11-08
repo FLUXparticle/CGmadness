@@ -24,10 +24,43 @@
 
 #include "math/Vector3.hpp"
 
-#include "Color.hpp"
+struct Quad
+{
+	const Vector3* mVertices;
+	const Vector3* mNormals;
 
-extern Vector3* sgVertices;
-extern Vector3* sgNormals;
+	Quad(const Vector3* vertices, const Vector3* normals);
+};
+
+class QuadList
+{
+public:
+	class QuadIterator
+	{
+	public:
+		QuadIterator(int index);
+
+		Quad operator*() const;
+		bool operator!=(const QuadIterator& other) const;
+
+		void operator++();
+
+	private:
+		int mIndex;
+
+	};
+
+public:
+	QuadList(int start, int end);
+
+	QuadIterator begin() const;
+	QuadIterator end() const;
+
+private:
+	int mStart;
+	int mEnd;
+
+};
 
 void initGameField();
 void destroyGameField();
@@ -35,6 +68,6 @@ void destroyGameField();
 void updateGameField(const PlayersBall& ball);
 void drawGameField(bool ballReflection);
 
-void getVertIndex(int x, int y, int* start, int* end);
+QuadList getQuadList(int x, int y);
 
 #endif
