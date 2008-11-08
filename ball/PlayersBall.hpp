@@ -38,19 +38,19 @@ class PlayersBall : public Ball
 {
 public:
 	static PlayersBall sgoBall;
-	
+
 	static void init();
-	
+
 	static int cntLayouts();
-	
+
 public:
 	void initCubeMap();
-	
+
 	bool hasCubeMap() const;
 	bool useBallReflection() const;
-	
+
   void reset();
-  
+
   int& layout();
   int layout() const;
 
@@ -61,27 +61,27 @@ public:
 
 private:
 	static std::vector<int> gBallLayouts;
-	
+
 private:
 	int mCubeMapBall;
 	bool mIsReflectionDirty;
-	
+
 	int mBallLayout;
 
 	RenderTarget mTargetCube[6];
 	Viewport mViewportCube[6];
-	
+
   PlayersBall();
   virtual ~PlayersBall();
 
   void drawBall() const;
   void drawExplosion() const;
-  
+
   void activateBallShader() const;
   void deactivateBallShader() const;
-  
+
 	bool useBallShader() const;
-	
+
 	int ballLayout() const;
 
 };

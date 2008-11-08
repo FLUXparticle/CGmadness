@@ -392,6 +392,7 @@ void Editor::enableTestMode()
 
 	resetBallCamera();
 	enableBallCamera();
+	enableBall();
 
 	initGameField();
 
@@ -402,6 +403,7 @@ void Editor::disableTestMode()
 {
 	destroyGameField();
 	disableBallCamera();
+	disableBall();
 
 	mState = STATE_EDITING;
 }

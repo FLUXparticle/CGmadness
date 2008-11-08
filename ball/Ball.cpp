@@ -91,6 +91,11 @@ void Ball::push(const Vector3& direction)
 	mPushDirection = norm(direction);
 }
 
+void Ball::jump()
+{
+	mJump = true;
+}
+
 void Ball::update(float interval)
 {
 	if (!mIsBallInPieces)
@@ -235,9 +240,6 @@ void Ball::animateBall(float interval)
 	Vector3 step;
 
 	mVelocity = add(mVelocity, scale(MOVE_FORCE / mMass * interval, mPushDirection));
-
-	mPushDirection = Vector3(0.0f, 0.0f, 0.0f);
-
 	mVelocity.z -= GRAVITY * interval;
 
 	/* collision detection */
@@ -321,8 +323,7 @@ void Ball::animateBall(float interval)
 		{
 			mVelocity = add(mVelocity, rebound);
 
-			/* jump */
-			if (isKeyPressed(' '))
+			if (mJump)
 			{
 				mVelocity = add(mVelocity, scale(JUMP_FORCE / mMass * interval, normal));
 			}
@@ -354,6 +355,9 @@ void Ball::animateBall(float interval)
 	{
 		explodeBall();
 	}
+
+	mPushDirection = Vector3(0.0f, 0.0f, 0.0f);
+	mJump = false;
 }
 
 void Ball::drawBall() const

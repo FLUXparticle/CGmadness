@@ -36,22 +36,25 @@ public:
   static void init();
 
 	static bool hasBallTexture();
-	
+
 public:
   Ball();
   virtual ~Ball();
-  
+
   const Vector3& pos() const;
   bool hasHitGoal() const;
   bool isInPieces() const;
-  
+
   virtual void reset();
-  
+
   void push(const Vector3& direction);
+  void jump();
   virtual void update(float interval);
-  
+
   void drawGameBall() const;
-  
+
+	void explodeBall();
+
 protected:
 	static int sTextureBall;
 
@@ -67,19 +70,17 @@ protected:
 
 	bool mIsBallInPieces;
 	bool mHasBallHitGoal;
-	
+
 	Vector3 mPushDirection;
+	bool mJump;
 
 	BallObject mBallObject;
 	Explosion mExplosion;
-	
+
   virtual void drawBall() const;
   virtual void drawExplosion() const;
-  
-	void explodeBall();
-	
 	void animateBall(float interval);
-	
+
   virtual void activateBallShader() const;
   virtual void deactivateBallShader() const;
 
