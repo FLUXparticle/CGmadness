@@ -20,8 +20,10 @@
 #include "gui.hpp"
 
 #include "SpinEdit.hpp"
+#include "text/text.hpp"
 
 void initGUI()
 {
 	SpinEdit::init();
+	initStrokeThickText();
 }

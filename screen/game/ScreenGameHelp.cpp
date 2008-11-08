@@ -28,11 +28,12 @@ static LeftRight gTextHelp[] =
 	{"W A S D", "Camera"},
 	{"R F", "Zoom"},
 	{"Enter", "Reset"},
+	{"2xEnter", "Skip Animation"},
 	{"Esc", "Menu"},
 };
 
 ScreenGameHelp::ScreenGameHelp() :
-	ScreenHelp(LENGTH(gTextHelp), gTextHelp)
+	ScreenHelp(LENGTH(gTextHelp), gTextHelp, 0.8f)
 {
   // empty
 }

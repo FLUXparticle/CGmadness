@@ -19,7 +19,7 @@
 
 #include "Label.hpp"
 
-#include "font3d/font3d.hpp"
+#include "text/text.hpp"
 
 #include GL_H
 
@@ -33,12 +33,12 @@ Label::Label(float x, float z, float size, bool alignRight, const char* text)
 	this->text = text;
 	this->size = size;
 
-	this->width = widthFont3DText(this->text) * scaleText * size;
-	this->height = 0.9f * size;
+	this->height = 0.5f * size;
+	this->width = widthStrokeText(this->text) * height;
 
 	if (alignRight)
 	{
-		this->position = Vector2(x - this->width, z);
+		this->position = Vector2(x - width, z);
 	}
 	else
 	{
@@ -53,13 +53,13 @@ Label::~Label()
 
 void Label::draw() const
 {
-	float scale = scaleText * this->size;
+	float scale = height;
 
 	glPushMatrix();
 	{
 		glScalef(scale, scale, scale);
-	
-		drawFont3DText(this->text);
+
+		drawStrokeThickText(text);
 	}
 	glPopMatrix();
 }
