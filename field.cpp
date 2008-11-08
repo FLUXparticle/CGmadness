@@ -298,9 +298,7 @@ void initGameField()
 
 			for (i = 0; i < 4; i++)
 			{
-				SideFace face;
-
-				getSideFace(x, y, i, &face);
+				const SideFace& face = getSideFace(x, y, i);
 
 				gMaxQuads += face.squares.size();
 			}
@@ -325,19 +323,15 @@ void initGameField()
 	{
 		for (x = 0; x < sgLevel.size.x; x++)
 		{
-			Square square;
+			const Square& square = getRoofSquare(x, y);
 
 			int start = gCntVertices;
-
-			getRoofSquare(x, y, &square);
 
 			addSquare(&square);
 
 			for (i = 0; i < 4; i++)
 			{
-				SideFace face;
-
-				getSideFace(x, y, i, &face);
+				const SideFace& face = getSideFace(x, y, i);
 
 				FOREACH(face.squares, iter)
 				{

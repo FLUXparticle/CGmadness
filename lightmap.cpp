@@ -70,9 +70,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 			}
 
 			bool check = false;
-			Square square;
-
-			getRoofSquare(x, y, &square);
+			const Square& square = getRoofSquare(x, y);
 
 			for (int j = 0; j < 4; j++)
 			{
@@ -92,9 +90,7 @@ float approximation(const Vector3 position, const Vector3 normal)
 
 			for (int j = 0; j < 4; j++)
 			{
-				SideFace face;
-
-				getSideFace(x, y, j, &face);
+				const SideFace& face = getSideFace(x, y, j);
 
 				FOREACH(face.squares, iter)
 				{

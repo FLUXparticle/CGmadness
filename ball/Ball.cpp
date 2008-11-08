@@ -84,9 +84,7 @@ static float getMaxZValue(const Square* square)
 
 void Ball::reset()
 {
-	Square roofSquare;
-
-	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
+	const Square& roofSquare = getRoofSquare(sgLevel.start.x, sgLevel.start.y);
 
 	mPos.x = roofSquare.mid.x;
 	mPos.y = roofSquare.mid.y;

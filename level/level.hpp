@@ -29,7 +29,7 @@ void initLevel();
 void destroyLevel();
 
 Plate* getPlate(int x, int y);
-void getRoofSquare(int x, int y, Square* square);
-void getSideFace(int x, int y, int side, SideFace* face);
+const Square& getRoofSquare(int x, int y);
+const SideFace& getSideFace(int x, int y, int side);
 
 #endif

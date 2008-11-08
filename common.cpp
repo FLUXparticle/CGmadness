@@ -50,9 +50,7 @@ static CellLightMap* gSubAtlasSides;
 
 static int quadsNeeded(int fx, int fy, int side)
 {
-	SideFace face;
-
-	getSideFace(fx, fy, side, &face);
+	const SideFace& face = getSideFace(fx, fy, side);
 
 	if (!face.squares.empty())
 	{
@@ -116,10 +114,9 @@ void destroyCommon()
 
 Orientation orientationFloor(int fx, int fy)
 {
-	Square square;
-	Orientation floor;
+	const Square& square = getRoofSquare(fx, fy);
 
-	getRoofSquare(fx, fy, &square);
+	Orientation floor;
 
 	floor.origin = square.vertices[0];
 	floor.vx = sub(square.vertices[1], square.vertices[0]);
@@ -131,14 +128,12 @@ Orientation orientationFloor(int fx, int fy)
 
 Orientation orientationSide(int fx, int fy, int side)
 {
+	const SideFace& face = getSideFace(fx, fy, side);
+
 	int next = (side + 1) % 4;
 	int prev = (side + 3) % 4;
 
-	SideFace face;
-
 	Orientation orientation;
-
-	getSideFace(fx, fy, side, &face);
 
 	orientation.origin =
 		add(Vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom)),

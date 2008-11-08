@@ -267,14 +267,14 @@ void destroyLevel()
 	destroyCommon();
 }
 
-void getRoofSquare(int x, int y, Square* square)
+const Square& getRoofSquare(int x, int y)
 {
 	Plate* p = getPlate(x, y);
-	*square = p->roof;
+	return p->roof;
 }
 
-void getSideFace(int x, int y, int side, SideFace* face)
+const SideFace& getSideFace(int x, int y, int side)
 {
 	Plate* p = getPlate(x, y);
-	*face = p->sideFaces[side];
+	return p->sideFaces[side];
 }

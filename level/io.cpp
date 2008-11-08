@@ -259,9 +259,7 @@ void importLightmapV2(FILE* file)
 				int bottom = 0;
 				int top = 0;
 
-				SideFace face;
-
-				getSideFace(x, y, side, &face);
+				const SideFace& face = getSideFace(x, y, side);
 
 				if (!face.squares.empty())
 				{

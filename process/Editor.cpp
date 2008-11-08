@@ -459,7 +459,6 @@ void Editor::update(float interval)
 void drawEditorField(bool showCursor)
 {
 	FieldCoord cur;
-	Square square;
 
 	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
@@ -494,7 +493,7 @@ void drawEditorField(bool showCursor)
 				glColor3f(1.0f, 1.0f, 1.0f);
 			}
 
-			getRoofSquare(cur.x, cur.y, &square);
+			const Square& square = getRoofSquare(cur.x, cur.y);
 
 			glBegin(GL_QUADS);
 			glNormal3fv(&square.normal.x);
@@ -510,9 +509,7 @@ void drawEditorField(bool showCursor)
 			glBegin(GL_QUADS);
 			for (int j = 0; j < 4; j++)
 			{
-				SideFace face;
-
-				getSideFace(cur.x, cur.y, j, &face);
+				const SideFace& face = getSideFace(cur.x, cur.y, j);
 
 				FOREACH(face.squares, iter)
 				{
