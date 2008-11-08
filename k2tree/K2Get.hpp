@@ -25,7 +25,7 @@
 class K2Get: public K2Iterator
 {
 public:
-	K2Get(const K2Tree& tree, const Vector2& q);
+	K2Get(const K2Tree& tree, const Vector3& q);
 	virtual ~K2Get();
 
 private:

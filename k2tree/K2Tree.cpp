@@ -43,7 +43,7 @@ K2Tree::~K2Tree()
 
 void K2Tree::set(int x, int y, int start, int end)
 {
-	Vector2 q(x + 0.5f, y + 0.5f);
+	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
 	K2Set iter(*this, q);
 
 	if (iter.next())
@@ -57,7 +57,7 @@ void K2Tree::set(int x, int y, int start, int end)
 
 void K2Tree::get(int x, int y, int &start, int &end) const
 {
-	Vector2 q(x + 0.5f, y + 0.5f);
+	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
 	K2Get iter(*this, q);
 
 	if (iter.next())

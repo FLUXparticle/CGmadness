@@ -19,7 +19,7 @@
 
 #include "K2Set.hpp"
 
-K2Set::K2Set(K2Tree& tree, const Vector2& q) :
+K2Set::K2Set(K2Tree& tree, const Vector3& q) :
 	K2Iterator(tree, q),
 	mMutableTree(tree)
 {

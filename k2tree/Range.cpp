@@ -17,36 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Iterator_hpp
-#define K2Iterator_hpp
-
-#include "K2Tree.hpp"
 #include "Range.hpp"
 
-#include "math/Vector3.hpp"
+#include "functions.hpp"
 
-class K2Iterator
+Range::Range(int startX, int startY, int sizeX, int sizeY)
 {
-public:
-  K2Iterator(const K2Tree& tree, const Vector3& q);
-  virtual ~K2Iterator();
+	this->startX = startX;
+	this->startY = startY;
+	this->sizeX = sizeX;
+	this->sizeY = sizeY;
 
-  bool next();
-  const Range& operator*();
+	left = 0;
+	right = 0;
+}
 
-protected:
-	int mIndex;
-
-private:
-	const K2Tree& mTree;
-	const Vector3& mQ;
-
-	int mContinue;
-
-	virtual int decide(int close, int far) = 0;
-	virtual int hit(int index) = 0;
-	virtual int miss(int index) = 0;
-
-};
-
-#endif
+bool Range::contains(const Vector3& q) const
+{
+	return between(q.x, (float) startX, (float) startX + sizeX) &&
+	       between(q.y, (float) startY, (float) startY + sizeY);
+}

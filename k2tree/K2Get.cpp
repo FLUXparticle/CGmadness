@@ -19,7 +19,7 @@
 
 #include "K2Get.hpp"
 
-K2Get::K2Get(const K2Tree& tree, const Vector2& q) :
+K2Get::K2Get(const K2Tree& tree, const Vector3& q) :
 	K2Iterator(tree, q)
 {
 	// empty

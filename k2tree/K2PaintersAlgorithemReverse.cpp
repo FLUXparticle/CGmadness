@@ -19,7 +19,7 @@
 
 #include "K2PaintersAlgorithemReverse.hpp"
 
-K2PaintersAlgorithemReverse::K2PaintersAlgorithemReverse(const K2Tree& tree, const Vector2& viewer) :
+K2PaintersAlgorithemReverse::K2PaintersAlgorithemReverse(const K2Tree& tree, const Vector3& viewer) :
 	K2PaintersAlgorithem(tree, viewer)
 {
   // empty

@@ -25,7 +25,7 @@
 class K2Set: public K2Iterator
 {
 public:
-	K2Set(K2Tree& tree, const Vector2& q);
+	K2Set(K2Tree& tree, const Vector3& q);
 	virtual ~K2Set();
 
   Range& operator*();

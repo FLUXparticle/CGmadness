@@ -19,7 +19,7 @@
 
 #include "K2Iterator.hpp"
 
-K2Iterator::K2Iterator(const K2Tree& tree, const Vector2& q) :
+K2Iterator::K2Iterator(const K2Tree& tree, const Vector3& q) :
 	mIndex(-1),
 	mTree(tree),
 	mQ(q),
@@ -55,9 +55,9 @@ bool K2Iterator::next()
 		}
 		else
 		{
-			const Range& right = mTree.range(range.right);
+			const Range& left = mTree.range(range.left);
 
-			if ((range.sizeX > range.sizeY && mQ.x < right.startX) || (range.sizeX <= range.sizeY && mQ.y < right.startY))
+			if (left.contains(mQ))
 			{
 				mContinue = decide(range.left, range.right);
 			}

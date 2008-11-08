@@ -25,7 +25,7 @@
 class K2PaintersAlgorithemReverse: public K2PaintersAlgorithem
 {
 public:
-	K2PaintersAlgorithemReverse(const K2Tree& tree, const Vector2& viewer);
+	K2PaintersAlgorithemReverse(const K2Tree& tree, const Vector3& viewer);
 	virtual ~K2PaintersAlgorithemReverse();
 
 	int decide(int close, int far);

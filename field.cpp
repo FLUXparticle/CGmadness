@@ -447,7 +447,7 @@ void updateGameField(const PlayersBall& ball)
 		gCntCameraViewIndices = 0;
 		if (gMaxVertices > 0)
 		{
-			Vector2 q(mx + 0.5f, my + 0.5f);
+			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
 			K2PaintersAlgorithemReverse iter(*gK2Tree, q);
 
 			gCntCameraViewIndices = painter(iter, sgCamera, gCameraViewIndices);
@@ -492,7 +492,7 @@ void updateGameField(const PlayersBall& ball)
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				Vector2 q(bx + 0.5f, by + 0.5f);
+				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
 				K2PaintersAlgorithem iter(*gK2Tree, q);
 
 				gCntBallReflectionIndices = painter(iter, ball.pos(), gBallReflectionIndices);

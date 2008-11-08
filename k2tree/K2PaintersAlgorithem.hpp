@@ -29,7 +29,7 @@
 class K2PaintersAlgorithem: public K2Iterator
 {
 public:
-	K2PaintersAlgorithem(const K2Tree& tree, const Vector2& viewer);
+	K2PaintersAlgorithem(const K2Tree& tree, const Vector3& viewer);
 	virtual ~K2PaintersAlgorithem();
 
 	int decide(int close, int far);

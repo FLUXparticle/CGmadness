@@ -19,7 +19,7 @@
 
 #include "K2PaintersAlgorithem.hpp"
 
-K2PaintersAlgorithem::K2PaintersAlgorithem(const K2Tree& tree, const Vector2& viewer) :
+K2PaintersAlgorithem::K2PaintersAlgorithem(const K2Tree& tree, const Vector3& viewer) :
 	K2Iterator(tree, viewer)
 {
 	mStack.push(-1);
