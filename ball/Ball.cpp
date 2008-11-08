@@ -277,8 +277,8 @@ void Ball::animateBall(float interval)
 				if (collisionPoint(ball, quad, dir, mRadius, &a))
 				{
 					/* dist = vector from ball center to quad */
-					Vector3 dist = sub(a, ball);
-					float l = len(dist);
+					Vector3 dist = a - ball;
+					float l = dist.len();
 
 					/* move = vector to move the ball out of quad */
 					Vector3 move = scale(-((mRadius - l) / l), dist);

@@ -34,9 +34,6 @@ public:
 	void set(int x, int y, int start, int end);
 	void get(int x, int y, int &start, int &end) const;
 
-	int paintersAlgorithem(const Vector3& viewer, int indices[]) const;
-	int paintersAlgorithemReverse(Vector3 viewer, int indices[]) const;
-
 	const Range& range(int index) const;
 	Range& range(int index);
 

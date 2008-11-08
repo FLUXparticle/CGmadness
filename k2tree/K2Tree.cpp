@@ -21,8 +21,6 @@
 
 #include "K2Get.hpp"
 #include "K2Set.hpp"
-#include "K2PaintersAlgorithem.hpp"
-#include "K2PaintersAlgorithemReverse.hpp"
 
 #include "Range.hpp"
 
@@ -78,54 +76,4 @@ int K2Tree::newNode(const Range &range)
 	mRanges.push_back(range);
 
 	return index;
-}
-
-int painter(K2PaintersAlgorithem& iter, const Vector3& viewer, int indices[])
-{
-	int counter = 0;
-
-	while (iter.next())
-	{
-		const Range &range = *iter;
-
-		int start = range.left;
-		int end = range.right;
-
-		for (int q = start; q < end; q += 4)
-		{
-			/*
-			 * the top square must always be drawn, because this function
-			 * is not called if only the height of the camera changes.
-			 * Fortunately it is always the first square in the array range.
-			 * WARNING: be aware of this if you change the order of sqaures.
-			 */
-			if (q == start || dot(sgNormals[q], sub(viewer, sgVertices[q])) >= 0)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					indices[counter++] = q + i;
-				}
-			}
-		}
-	}
-
-	return counter;
-}
-
-int K2Tree::paintersAlgorithem(const Vector3& viewer, int indices[]) const
-{
-	Vector3 diff = viewer - mOrigin;
-	Vector2 q(diff.x, diff.y);
-	K2PaintersAlgorithem iter(*this, q);
-
-	return painter(iter, viewer, indices);
-}
-
-int K2Tree::paintersAlgorithemReverse(Vector3 viewer, int indices[]) const
-{
-	Vector3 diff = viewer - mOrigin;
-	Vector2 q(diff.x, diff.y);
-	K2PaintersAlgorithemReverse iter(*this, q);
-
-	return painter(iter, viewer, indices);
 }

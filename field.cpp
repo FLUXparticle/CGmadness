@@ -19,9 +19,10 @@
 
 #include "hw/features.hpp"
 
+#include "field.hpp"
+
 #include "level/level.hpp"
 #include "camera.hpp"
-
 
 #include "math/Vector2.hpp"
 #include "functions.hpp"
@@ -29,7 +30,8 @@
 #include "macros.hpp"
 
 #include "k2tree/K2Tree.hpp"
-#include "field.hpp"
+#include "k2tree/K2PaintersAlgorithem.hpp"
+#include "k2tree/K2PaintersAlgorithemReverse.hpp"
 
 #include GL_H
 
@@ -65,10 +67,10 @@ static int gMaxQuads;
 static int gMaxVertices;
 
 static int gCntCameraViewIndices = 0;
-static int *gCameraViewIndices;
+static int* gCameraViewIndices;
 
 static int gCntBallReflectionIndices = 0;
-static int *gBallReflectionIndices;
+static int* gBallReflectionIndices;
 
 static K2Tree* gK2Tree;
 
@@ -353,6 +355,38 @@ void destroyGameField()
 	gCntBallReflectionIndices = 0;
 }
 
+int painter(K2PaintersAlgorithem& iter, const Vector3& viewer, int indices[])
+{
+	int counter = 0;
+
+	while (iter.next())
+	{
+		const Range &range = *iter;
+
+		int start = range.left;
+		int end = range.right;
+
+		for (int q = start; q < end; q += 4)
+		{
+			/*
+			 * the top square must always be drawn, because this function
+			 * is not called if only the height of the camera changes.
+			 * Fortunately it is always the first square in the array range.
+			 * WARNING: be aware of this if you change the order of sqaures.
+			 */
+			if (q == start || dot(sgNormals[q], sub(viewer, sgVertices[q])) >= 0)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					indices[counter++] = q + i;
+				}
+			}
+		}
+	}
+
+	return counter;
+}
+
 void updateGameField(const PlayersBall& ball)
 {
 	gBallPosition = ball.pos();
@@ -368,7 +402,10 @@ void updateGameField(const PlayersBall& ball)
 		gCntCameraViewIndices = 0;
 		if (gMaxVertices > 0)
 		{
-			gCntCameraViewIndices = gK2Tree->paintersAlgorithemReverse(sgCamera, gCameraViewIndices);
+			Vector2 q(mx + 0.5f, my + 0.5f);
+			K2PaintersAlgorithemReverse iter(*gK2Tree, q);
+
+			gCntCameraViewIndices = painter(iter, sgCamera, gCameraViewIndices);
 
 			lastMX = mx;
 			lastMY = my;
@@ -410,7 +447,10 @@ void updateGameField(const PlayersBall& ball)
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				gCntBallReflectionIndices = gK2Tree->paintersAlgorithem(ball.pos(), gBallReflectionIndices);
+				Vector2 q(bx + 0.5f, by + 0.5f);
+				K2PaintersAlgorithem iter(*gK2Tree, q);
+
+				gCntBallReflectionIndices = painter(iter, ball.pos(), gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;
