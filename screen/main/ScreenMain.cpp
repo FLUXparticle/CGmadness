@@ -37,13 +37,13 @@ ScreenMain::ScreenMain()
 {
 	gScreenChooseInfo = new ScreenChooseInfo(METHOD_CALLBACK(ScreenMain, clickButtonChooseEditor));
 
-	bCGMadness = Button(6.0f, METHOD_CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
-	addItem(&bCGMadness);
+	bRaceTheClock = Button(6.0f, METHOD_CALLBACK(ScreenMain, clickButtonRaceTheClock), "Race the Clock", KEY_ENTER);
+	addItem(&bRaceTheClock);
 
-	bCGMEditor = Button(4.5f, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
+	bCGMEditor = Button(4.5f, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "Editor", 'e');
 	addItem(&bCGMEditor);
 
-	bHelp = Button(3.0f, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "help", 'h');
+	bHelp = Button(3.0f, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "Help", 'h');
 	addItem(&bHelp);
 
 	bQuit = Button(1.5f, METHOD_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
@@ -55,7 +55,7 @@ ScreenMain::~ScreenMain()
   // empty
 }
 
-void ScreenMain::clickButtonCGMadness()
+void ScreenMain::clickButtonRaceTheClock()
 {
 	mChoose = new Choose(gScreenChooseGame);
 	Main::setState(mChoose, true);
