@@ -425,7 +425,7 @@ void updateGameField(const PlayersBall& ball)
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
 				KdPaintersAlgorithm iter(*gKdTree, q);
 
-				gCntBallReflectionIndices = painter(iter, ball.pos(), gBallReflectionIndices);
+				gCntBallReflectionIndices = painter(iter, gBallPosition, gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;

@@ -58,17 +58,23 @@ int KdSet::miss(int index)
 
 	Vector3 size = cur.max - cur.min;
 
-	if (size.x > size.y)
+	if (size.x >= size.y && size.x >= size.z)
 	{
 		float mid = floor((cur.min.x + cur.max.x) / 2.0f);
 		left.max.x = mid;
 		right.min.x = mid;
 	}
-	else
+	else if (size.y >= size.x && size.y >= size.z)
 	{
 		float mid = floor((cur.min.y + cur.max.y) / 2.0f);
 		left.max.y = mid;
 		right.min.y = mid;
+	}
+	else
+	{
+		float mid = floor((cur.min.z + cur.max.z) / 2.0f);
+		left.max.z = mid;
+		right.min.z = mid;
 	}
 
 	mMutableTree.split(index, left, right);

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _functions_hpp_
-#define _functions_hpp_
+#ifndef functions_hpp
+#define functions_hpp
 
 template <class T>
 T sqr(T x)
