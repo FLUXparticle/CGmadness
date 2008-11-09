@@ -19,9 +19,20 @@
 
 #include "KdTree.hpp"
 
-KdTree::KdTree()
+#include "K2Get.hpp"
+#include "K2Set.hpp"
+
+#include "KdCell.hpp"
+
+KdTree::KdTree(Vector3 origin, int sizeX, int sizeY) :
+	mOrigin(origin),
+	mSizeX(sizeX),
+	mSizeY(sizeY)
 {
-  // empty
+	Vector3 min(0.0f, 0.0f, 0.0f);
+	Vector3 max(mSizeX, mSizeY, 1.0f);
+
+	mRoot = newNode(KdCell(min, max));
 }
 
 KdTree::~KdTree()
@@ -29,3 +40,44 @@ KdTree::~KdTree()
   // empty
 }
 
+void KdTree::set(int x, int y, const QuadList& list)
+{
+	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
+	K2Set iter(*this, q);
+
+	if (iter.next())
+	{
+		*iter = list;
+	}
+}
+
+const QuadList& KdTree::get(int x, int y) const
+{
+	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
+	K2Get iter(*this, q);
+
+	if (iter.next())
+	{
+		return *iter;
+	}
+
+	return mEmpty;
+}
+
+int KdTree::newNode(const KdCell& cell)
+{
+	int index = mCells.size();
+
+	mCells.push_back(cell);
+
+	return index;
+}
+
+void KdTree::split(int index, const KdCell& left, const KdCell& right)
+{
+	int idxLeft = newNode(left);
+	int idxRight = newNode(right);
+
+	mCells[index].left = idxLeft;
+	mCells[index].right = idxRight;
+}

@@ -19,7 +19,7 @@
 
 #include "K2Iterator.hpp"
 
-K2Iterator::K2Iterator(const K2Tree& tree, const Vector3& q) :
+K2Iterator::K2Iterator(const KdTree& tree, const Vector3& q) :
 	mIndex(-1),
 	mTree(tree),
 	mQ(q),

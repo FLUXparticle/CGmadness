@@ -20,7 +20,7 @@
 #ifndef K2Iterator_hpp
 #define K2Iterator_hpp
 
-#include "K2Tree.hpp"
+#include "KdTree.hpp"
 #include "KdCell.hpp"
 
 #include "math/Vector3.hpp"
@@ -28,7 +28,7 @@
 class K2Iterator
 {
 public:
-  K2Iterator(const K2Tree& tree, const Vector3& q);
+  K2Iterator(const KdTree& tree, const Vector3& q);
   virtual ~K2Iterator();
 
   bool next();
@@ -38,7 +38,7 @@ protected:
 	int mIndex;
 
 private:
-	const K2Tree& mTree;
+	const KdTree& mTree;
 	const Vector3& mQ;
 
 	int mContinue;

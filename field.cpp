@@ -24,7 +24,7 @@
 #include "level/level.hpp"
 #include "camera.hpp"
 
-#include "kdtree/K2Tree.hpp"
+#include "kdtree/KdTree.hpp"
 #include "kdtree/K2PaintersAlgorithem.hpp"
 #include "kdtree/K2PaintersAlgorithemReverse.hpp"
 
@@ -69,7 +69,7 @@ static int* gCameraViewIndices;
 static int gCntBallReflectionIndices = 0;
 static int* gBallReflectionIndices;
 
-static K2Tree* gK2Tree;
+static KdTree* gKdTree;
 
 static Vector3 gBallPosition;
 
@@ -119,12 +119,12 @@ static void addSquare(const Square* square)
 
 const QuadList& getQuadList(int x, int y)
 {
-	return gK2Tree->get(x, y);
+	return gKdTree->get(x, y);
 }
 
 static void setRoofColor(int x, int y, const Color4& col)
 {
-	const QuadList& list = gK2Tree->get(x, y);
+	const QuadList& list = gKdTree->get(x, y);
 
 	int q = (*list.begin()).mVertices - gVertices;
 
@@ -217,7 +217,7 @@ void initGameField()
 	initBallShadow();
 
 	/* init level stuff */
-	gK2Tree = new K2Tree(sgLevel.origin, sgLevel.size.x, sgLevel.size.y);
+	gKdTree = new KdTree(sgLevel.origin, sgLevel.size.x, sgLevel.size.y);
 
 	gMaxQuads = 0;
 
@@ -270,7 +270,7 @@ void initGameField()
 				}
 			}
 
-			gK2Tree->set(x, y, QuadList(start, gCntVertices, gVertices, gNormals));
+			gKdTree->set(x, y, QuadList(start, gCntVertices, gVertices, gNormals));
 		}
 	}
 
@@ -316,7 +316,7 @@ void destroyGameField()
 	delete[] gVertices;
 	delete[] gNormals;
 
-	delete gK2Tree;
+	delete gKdTree;
 
 	delete[] gCameraViewIndices;
 	delete[] gBallReflectionIndices;
@@ -378,7 +378,7 @@ void updateGameField(const PlayersBall& ball)
 		if (gMaxVertices > 0)
 		{
 			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
-			K2PaintersAlgorithemReverse iter(*gK2Tree, q);
+			K2PaintersAlgorithemReverse iter(*gKdTree, q);
 
 			gCntCameraViewIndices = painter(iter, sgCamera, gCameraViewIndices);
 
@@ -423,7 +423,7 @@ void updateGameField(const PlayersBall& ball)
 			if (gMaxVertices > 0)
 			{
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
-				K2PaintersAlgorithem iter(*gK2Tree, q);
+				K2PaintersAlgorithem iter(*gKdTree, q);
 
 				gCntBallReflectionIndices = painter(iter, ball.pos(), gBallReflectionIndices);
 

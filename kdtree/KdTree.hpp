@@ -17,17 +17,61 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KdTree_hpp
-#define KdTree_hpp
+#ifndef K2Tree_hpp
+#define K2Tree_hpp
+
+#include "KdTree.hpp"
+
+#include "math/Vector3.hpp"
+#include "KdCell.hpp"
+
+#include <vector>
 
 class KdTree
 {
 public:
-  KdTree();
-  virtual ~KdTree();
+	KdTree(Vector3 origin, int sizeX, int sizeY);
+	virtual ~KdTree();
+
+	void set(int x, int y, const QuadList& list);
+	const QuadList& get(int x, int y) const;
+
+	const KdCell& cell(int index) const;
+	KdCell& cell(int index);
+
+	int root() const;
 
 private:
+	int mRoot;
+	Vector3 mOrigin;
+
+	int mSizeX;
+	int mSizeY;
+
+	QuadList mEmpty;
+
+	std::vector<KdCell> mCells;
+
+	int newNode(const KdCell& cell);
+	void split(int index, const KdCell& left, const KdCell& right);
+
+	friend class K2Set;
 
 };
+
+inline const KdCell& KdTree::cell(int index) const
+{
+	return mCells[index];
+}
+
+inline KdCell& KdTree::cell(int index)
+{
+	return mCells[index];
+}
+
+inline int KdTree::root() const
+{
+	return mRoot;
+}
 
 #endif
