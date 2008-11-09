@@ -17,30 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2Get.hpp"
+#ifndef KdPaintersAlgorithemReverse_hpp
+#define KdPaintersAlgorithemReverse_hpp
 
-K2Get::K2Get(const KdTree& tree, const Vector3& q) :
-	K2Iterator(tree, q)
-{
-	// empty
-}
+#include "KdPaintersAlgorithem.hpp"
 
-K2Get::~K2Get()
+class KdPaintersAlgorithemReverse: public KdPaintersAlgorithem
 {
-	// empty
-}
+public:
+	KdPaintersAlgorithemReverse(const KdTree& tree, const Vector3& viewer);
+	virtual ~KdPaintersAlgorithemReverse();
 
-int K2Get::decide(int close, int far)
-{
-	return close;
-}
+	int decide(int close, int far);
 
-int K2Get::hit(int index)
-{
-	return -1;
-}
+private:
 
-int K2Get::miss(int index)
-{
-	return -1;
-}
+};
+
+#endif

@@ -17,61 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2Set.hpp"
+#include "KdGet.hpp"
 
-#include <cmath>
-
-K2Set::K2Set(KdTree& tree, const Vector3& q) :
-	K2Iterator(tree, q),
-	mMutableTree(tree)
+KdGet::KdGet(const KdTree& tree, const Vector3& q) :
+	KdIterator(tree, q)
 {
 	// empty
 }
 
-K2Set::~K2Set()
+KdGet::~KdGet()
 {
 	// empty
 }
 
-QuadList& K2Set::operator*()
-{
-	return mMutableTree.cell(mIndex).list;
-}
-
-
-int K2Set::decide(int close, int far)
+int KdGet::decide(int close, int far)
 {
 	return close;
 }
 
-int K2Set::hit(int index)
+int KdGet::hit(int index)
 {
 	return -1;
 }
 
-int K2Set::miss(int index)
+int KdGet::miss(int index)
 {
-	KdCell& cur = mMutableTree.cell(index);
-
-	KdCell left = cur;
-	KdCell right = cur;
-
-	Vector3 size = cur.max - cur.min;
-
-	if (size.x > size.y)
-	{
-		float mid = floor((cur.min.x + cur.max.x) / 2.0f);
-		left.max.x = mid;
-		right.min.x = mid;
-	}
-	else
-	{
-		float mid = floor((cur.min.y + cur.max.y) / 2.0f);
-		left.max.y = mid;
-		right.min.y = mid;
-	}
-
-	mMutableTree.split(index, left, right);
-
-	return index;
+	return -1;
 }

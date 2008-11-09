@@ -19,8 +19,8 @@
 
 #include "KdTree.hpp"
 
-#include "K2Get.hpp"
-#include "K2Set.hpp"
+#include "KdGet.hpp"
+#include "KdSet.hpp"
 
 #include "KdCell.hpp"
 
@@ -43,7 +43,7 @@ KdTree::~KdTree()
 void KdTree::set(int x, int y, const QuadList& list)
 {
 	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
-	K2Set iter(*this, q);
+	KdSet iter(*this, q);
 
 	if (iter.next())
 	{
@@ -54,7 +54,7 @@ void KdTree::set(int x, int y, const QuadList& list)
 const QuadList& KdTree::get(int x, int y) const
 {
 	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
-	K2Get iter(*this, q);
+	KdGet iter(*this, q);
 
 	if (iter.next())
 	{

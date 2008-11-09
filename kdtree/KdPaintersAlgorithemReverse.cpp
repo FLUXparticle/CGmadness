@@ -17,36 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Iterator_hpp
-#define K2Iterator_hpp
+#include "KdPaintersAlgorithemReverse.hpp"
 
-#include "KdTree.hpp"
-#include "KdCell.hpp"
-
-#include "math/Vector3.hpp"
-
-class K2Iterator
+KdPaintersAlgorithemReverse::KdPaintersAlgorithemReverse(const KdTree& tree, const Vector3& viewer) :
+	KdPaintersAlgorithem(tree, viewer)
 {
-public:
-  K2Iterator(const KdTree& tree, const Vector3& q);
-  virtual ~K2Iterator();
+  // empty
+}
 
-  bool next();
-  const QuadList& operator*() const;
+KdPaintersAlgorithemReverse::~KdPaintersAlgorithemReverse()
+{
+  // empty
+}
 
-protected:
-	int mIndex;
+int KdPaintersAlgorithemReverse::decide(int close, int far)
+{
+	mStack.push(far);
 
-private:
-	const KdTree& mTree;
-	const Vector3& mQ;
+	return close;
+}
 
-	int mContinue;
-
-	virtual int decide(int close, int far) = 0;
-	virtual int hit(int index) = 0;
-	virtual int miss(int index) = 0;
-
-};
-
-#endif

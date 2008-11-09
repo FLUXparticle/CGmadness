@@ -17,23 +17,61 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2PaintersAlgorithemReverse.hpp"
+#include "KdSet.hpp"
 
-K2PaintersAlgorithemReverse::K2PaintersAlgorithemReverse(const KdTree& tree, const Vector3& viewer) :
-	K2PaintersAlgorithem(tree, viewer)
+#include <cmath>
+
+KdSet::KdSet(KdTree& tree, const Vector3& q) :
+	KdIterator(tree, q),
+	mMutableTree(tree)
 {
-  // empty
+	// empty
 }
 
-K2PaintersAlgorithemReverse::~K2PaintersAlgorithemReverse()
+KdSet::~KdSet()
 {
-  // empty
+	// empty
 }
 
-int K2PaintersAlgorithemReverse::decide(int close, int far)
+QuadList& KdSet::operator*()
 {
-	mStack.push(far);
+	return mMutableTree.cell(mIndex).list;
+}
 
+
+int KdSet::decide(int close, int far)
+{
 	return close;
 }
 
+int KdSet::hit(int index)
+{
+	return -1;
+}
+
+int KdSet::miss(int index)
+{
+	KdCell& cur = mMutableTree.cell(index);
+
+	KdCell left = cur;
+	KdCell right = cur;
+
+	Vector3 size = cur.max - cur.min;
+
+	if (size.x > size.y)
+	{
+		float mid = floor((cur.min.x + cur.max.x) / 2.0f);
+		left.max.x = mid;
+		right.min.x = mid;
+	}
+	else
+	{
+		float mid = floor((cur.min.y + cur.max.y) / 2.0f);
+		left.max.y = mid;
+		right.min.y = mid;
+	}
+
+	mMutableTree.split(index, left, right);
+
+	return index;
+}

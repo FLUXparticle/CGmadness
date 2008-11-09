@@ -17,41 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2PaintersAlgorithem.hpp"
+#ifndef KdIterator_hpp
+#define KdIterator_hpp
 
-K2PaintersAlgorithem::K2PaintersAlgorithem(const KdTree& tree, const Vector3& viewer) :
-	K2Iterator(tree, viewer)
+#include "KdTree.hpp"
+#include "KdCell.hpp"
+
+#include "math/Vector3.hpp"
+
+class KdIterator
 {
-	mStack.push(-1);
-}
+public:
+  KdIterator(const KdTree& tree, const Vector3& q);
+  virtual ~KdIterator();
 
-K2PaintersAlgorithem::~K2PaintersAlgorithem()
-{
-  // empty
-}
+  bool next();
+  const QuadList& operator*() const;
 
-int K2PaintersAlgorithem::decide(int close, int far)
-{
-	mStack.push(close);
+protected:
+	int mIndex;
 
-	return far;
-}
+private:
+	const KdTree& mTree;
+	const Vector3& mQ;
 
-int K2PaintersAlgorithem::hit(int index)
-{
-	return pop();
-}
+	int mContinue;
 
-int K2PaintersAlgorithem::miss(int index)
-{
-	return pop();
-}
+	virtual int decide(int close, int far) = 0;
+	virtual int hit(int index) = 0;
+	virtual int miss(int index) = 0;
 
-int K2PaintersAlgorithem::pop()
-{
-	int index = mStack.top();
+};
 
-	mStack.pop();
-
-	return index;
-}
+#endif

@@ -17,9 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2Iterator.hpp"
+#include "KdIterator.hpp"
 
-K2Iterator::K2Iterator(const KdTree& tree, const Vector3& q) :
+KdIterator::KdIterator(const KdTree& tree, const Vector3& q) :
 	mIndex(-1),
 	mTree(tree),
 	mQ(q),
@@ -28,12 +28,12 @@ K2Iterator::K2Iterator(const KdTree& tree, const Vector3& q) :
   // empty
 }
 
-K2Iterator::~K2Iterator()
+KdIterator::~KdIterator()
 {
   // empty
 }
 
-bool K2Iterator::next()
+bool KdIterator::next()
 {
 	mIndex = mContinue;
 	while (mIndex >= 0)
@@ -75,7 +75,7 @@ bool K2Iterator::next()
 	return false;
 }
 
-const QuadList& K2Iterator::operator*() const
+const QuadList& KdIterator::operator*() const
 {
 	return mTree.cell(mIndex).list;
 }

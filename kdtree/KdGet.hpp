@@ -17,25 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Set_hpp
-#define K2Set_hpp
+#ifndef KdGet_hpp
+#define KdGet_hpp
 
-#include "K2Iterator.hpp"
+#include "KdIterator.hpp"
 
-class K2Set: public K2Iterator
+class KdGet: public KdIterator
 {
 public:
-	K2Set(KdTree& tree, const Vector3& q);
-	virtual ~K2Set();
-
-	QuadList& operator*();
+	KdGet(const KdTree& tree, const Vector3& q);
+	virtual ~KdGet();
 
 private:
-	KdTree& mMutableTree;
-
 	int decide(int close, int far);
 	int hit(int index);
 	int miss(int index);
+
 };
 
 #endif

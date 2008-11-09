@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Tree_hpp
-#define K2Tree_hpp
+#ifndef KdTree_hpp
+#define KdTree_hpp
 
 #include "KdTree.hpp"
 
@@ -55,7 +55,7 @@ private:
 	int newNode(const KdCell& cell);
 	void split(int index, const KdCell& left, const KdCell& right);
 
-	friend class K2Set;
+	friend class KdSet;
 
 };
 

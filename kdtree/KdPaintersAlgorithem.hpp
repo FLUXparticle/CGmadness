@@ -17,21 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Get_hpp
-#define K2Get_hpp
+#ifndef KdPaintersAlgorithem_hpp
+#define KdPaintersAlgorithem_hpp
 
-#include "K2Iterator.hpp"
+#include "KdIterator.hpp"
 
-class K2Get: public K2Iterator
+#include "math/Vector3.hpp"
+
+#include <stack>
+
+class KdPaintersAlgorithem: public KdIterator
 {
 public:
-	K2Get(const KdTree& tree, const Vector3& q);
-	virtual ~K2Get();
+	KdPaintersAlgorithem(const KdTree& tree, const Vector3& viewer);
+	virtual ~KdPaintersAlgorithem();
 
-private:
 	int decide(int close, int far);
 	int hit(int index);
 	int miss(int index);
+
+protected:
+	std::stack<int> mStack;
+
+private:
+	int pop();
 
 };
 
