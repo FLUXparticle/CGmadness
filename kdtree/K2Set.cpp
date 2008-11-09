@@ -19,6 +19,8 @@
 
 #include "K2Set.hpp"
 
+#include <cmath>
+
 K2Set::K2Set(K2Tree& tree, const Vector3& q) :
 	K2Iterator(tree, q),
 	mMutableTree(tree)
@@ -49,22 +51,24 @@ int K2Set::hit(int index)
 
 int K2Set::miss(int index)
 {
-	K2Cell& cur = mMutableTree.cell(index);
+	KdCell& cur = mMutableTree.cell(index);
 
-	K2Cell left = cur;
-	K2Cell right = cur;
+	KdCell left = cur;
+	KdCell right = cur;
 
-	if (cur.sizeX > cur.sizeY)
+	Vector3 size = cur.max - cur.min;
+
+	if (size.x > size.y)
 	{
-		left.sizeX = cur.sizeX / 2;
-		right.sizeX = cur.sizeX - left.sizeX;
-		right.startX = left.startX + left.sizeX;
+		float mid = floor((cur.min.x + cur.max.x) / 2.0f);
+		left.max.x = mid;
+		right.min.x = mid;
 	}
 	else
 	{
-		left.sizeY = cur.sizeY / 2;
-		right.sizeY = cur.sizeY - left.sizeY;
-		right.startY = left.startY + left.sizeY;
+		float mid = floor((cur.min.y + cur.max.y) / 2.0f);
+		left.max.y = mid;
+		right.min.y = mid;
 	}
 
 	mMutableTree.split(index, left, right);

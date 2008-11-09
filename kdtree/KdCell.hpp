@@ -22,17 +22,20 @@
 
 #include "quadlist/QuadList.hpp"
 
+#include "math/Vector3.hpp"
+
 struct KdCell
 {
 	int left;
 	int right;
 
+	Vector3 min;
+	Vector3 max;
+
 	QuadList list;
 
   KdCell();
-	virtual ~KdCell();
-
-	virtual bool contains(const Vector3& q) const = 0;
+  KdCell(const Vector3& min, const Vector3& max);
 
 };
 

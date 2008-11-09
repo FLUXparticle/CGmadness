@@ -38,9 +38,11 @@ bool K2Iterator::next()
 	mIndex = mContinue;
 	while (mIndex >= 0)
 	{
-		const K2Cell& cell = mTree.cell(mIndex);
+		const KdCell& cell = mTree.cell(mIndex);
 
-		if (cell.sizeX == 1 && cell.sizeY == 1)
+		Vector3 size = cell.max - cell.min;
+
+		if (size.x * size.y * size.z <= 1)
 		{
 			mContinue = hit(mIndex);
 			return true;
@@ -51,14 +53,11 @@ bool K2Iterator::next()
 		}
 		else
 		{
-			const K2Cell& left = mTree.cell(cell.left);
-			const K2Cell& right = mTree.cell(cell.right);
+			const KdCell& left = mTree.cell(cell.left);
+			const KdCell& right = mTree.cell(cell.right);
 
-			Vector3 startL(left.startX, left.startY, 0.0f);
-			Vector3 startR(right.startX, right.startY, 0.0f);
-
-			Vector3 n = (startR - startL).norm();
-			float d = startR * n;
+			Vector3 n = (right.min - left.min).norm();
+			float d = right.min * n;
 
 			if (n * mQ < d)
 			{

@@ -29,7 +29,10 @@ K2Tree::K2Tree(Vector3 origin, int sizeX, int sizeY) :
 	mSizeX(sizeX),
 	mSizeY(sizeY)
 {
-	mRoot = newNode(K2Cell(0, 0, mSizeX, mSizeY));
+	Vector3 min(0.0f, 0.0f, 0.0f);
+	Vector3 max(mSizeX, mSizeY, 1.0f);
+
+	mRoot = newNode(KdCell(min, max));
 }
 
 K2Tree::~K2Tree()
@@ -61,7 +64,7 @@ const QuadList& K2Tree::get(int x, int y) const
 	return mEmpty;
 }
 
-int K2Tree::newNode(const K2Cell& cell)
+int K2Tree::newNode(const KdCell& cell)
 {
 	int index = mCells.size();
 
@@ -70,7 +73,7 @@ int K2Tree::newNode(const K2Cell& cell)
 	return index;
 }
 
-void K2Tree::split(int index, const K2Cell& left, const K2Cell& right)
+void K2Tree::split(int index, const KdCell& left, const KdCell& right)
 {
 	int idxLeft = newNode(left);
 	int idxRight = newNode(right);

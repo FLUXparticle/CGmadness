@@ -23,7 +23,7 @@
 #include "KdTree.hpp"
 
 #include "math/Vector3.hpp"
-#include "K2Cell.hpp"
+#include "KdCell.hpp"
 
 #include <vector>
 
@@ -36,8 +36,8 @@ public:
 	void set(int x, int y, const QuadList& list);
 	const QuadList& get(int x, int y) const;
 
-	const K2Cell& cell(int index) const;
-	K2Cell& cell(int index);
+	const KdCell& cell(int index) const;
+	KdCell& cell(int index);
 
 	int root() const;
 
@@ -50,21 +50,21 @@ private:
 
 	QuadList mEmpty;
 
-	std::vector<K2Cell> mCells;
+	std::vector<KdCell> mCells;
 
-	int newNode(const K2Cell& cell);
-	void split(int index, const K2Cell& left, const K2Cell& right);
+	int newNode(const KdCell& cell);
+	void split(int index, const KdCell& left, const KdCell& right);
 
 	friend class K2Set;
 
 };
 
-inline const K2Cell& K2Tree::cell(int index) const
+inline const KdCell& K2Tree::cell(int index) const
 {
 	return mCells[index];
 }
 
-inline K2Cell& K2Tree::cell(int index)
+inline KdCell& K2Tree::cell(int index)
 {
 	return mCells[index];
 }

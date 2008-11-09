@@ -26,7 +26,11 @@ KdCell::KdCell() :
 	// empty
 }
 
-KdCell::~KdCell()
+KdCell::KdCell(const Vector3& min, const Vector3& max) :
+	left(-1),
+	right(-1),
+	min(min),
+	max(max)
 {
 	// empty
 }
