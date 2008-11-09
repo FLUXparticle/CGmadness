@@ -17,20 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "KdPaintersAlgorithemReverse.hpp"
+#include "KdPaintersAlgorithmReverse.hpp"
 
-KdPaintersAlgorithemReverse::KdPaintersAlgorithemReverse(const KdTree& tree, const Vector3& viewer) :
-	KdPaintersAlgorithem(tree, viewer)
+KdPaintersAlgorithmReverse::KdPaintersAlgorithmReverse(const KdTree& tree, const Vector3& viewer) :
+	KdPaintersAlgorithm(tree, viewer)
 {
   // empty
 }
 
-KdPaintersAlgorithemReverse::~KdPaintersAlgorithemReverse()
+KdPaintersAlgorithmReverse::~KdPaintersAlgorithmReverse()
 {
   // empty
 }
 
-int KdPaintersAlgorithemReverse::decide(int close, int far)
+int KdPaintersAlgorithmReverse::decide(int close, int far)
 {
 	mStack.push(far);
 

@@ -17,37 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "KdPaintersAlgorithem.hpp"
+#include "KdPaintersAlgorithm.hpp"
 
-KdPaintersAlgorithem::KdPaintersAlgorithem(const KdTree& tree, const Vector3& viewer) :
+KdPaintersAlgorithm::KdPaintersAlgorithm(const KdTree& tree, const Vector3& viewer) :
 	KdIterator(tree, viewer)
 {
 	mStack.push(-1);
 }
 
-KdPaintersAlgorithem::~KdPaintersAlgorithem()
+KdPaintersAlgorithm::~KdPaintersAlgorithm()
 {
   // empty
 }
 
-int KdPaintersAlgorithem::decide(int close, int far)
+int KdPaintersAlgorithm::decide(int close, int far)
 {
 	mStack.push(close);
 
 	return far;
 }
 
-int KdPaintersAlgorithem::hit(int index)
+int KdPaintersAlgorithm::hit(int index)
 {
 	return pop();
 }
 
-int KdPaintersAlgorithem::miss(int index)
+int KdPaintersAlgorithm::miss(int index)
 {
 	return pop();
 }
 
-int KdPaintersAlgorithem::pop()
+int KdPaintersAlgorithm::pop()
 {
 	int index = mStack.top();
 

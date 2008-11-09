@@ -25,8 +25,8 @@
 #include "camera.hpp"
 
 #include "kdtree/KdTree.hpp"
-#include "kdtree/KdPaintersAlgorithem.hpp"
-#include "kdtree/KdPaintersAlgorithemReverse.hpp"
+#include "kdtree/KdPaintersAlgorithm.hpp"
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
 
 #include "Color.hpp"
 
@@ -331,7 +331,7 @@ void destroyGameField()
 	gCntBallReflectionIndices = 0;
 }
 
-static int painter(KdPaintersAlgorithem& iter, const Vector3& viewer, int indices[])
+static int painter(KdPaintersAlgorithm& iter, const Vector3& viewer, int indices[])
 {
 	int counter = 0;
 
@@ -378,7 +378,7 @@ void updateGameField(const PlayersBall& ball)
 		if (gMaxVertices > 0)
 		{
 			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
-			KdPaintersAlgorithemReverse iter(*gKdTree, q);
+			KdPaintersAlgorithmReverse iter(*gKdTree, q);
 
 			gCntCameraViewIndices = painter(iter, sgCamera, gCameraViewIndices);
 
@@ -423,7 +423,7 @@ void updateGameField(const PlayersBall& ball)
 			if (gMaxVertices > 0)
 			{
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
-				KdPaintersAlgorithem iter(*gKdTree, q);
+				KdPaintersAlgorithm iter(*gKdTree, q);
 
 				gCntBallReflectionIndices = painter(iter, ball.pos(), gBallReflectionIndices);
 

@@ -17,30 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KdPaintersAlgorithem_hpp
-#define KdPaintersAlgorithem_hpp
+#ifndef KdPaintersAlgorithmReverse_hpp
+#define KdPaintersAlgorithmReverse_hpp
 
-#include "KdIterator.hpp"
+#include "KdPaintersAlgorithm.hpp"
 
-#include "math/Vector3.hpp"
-
-#include <stack>
-
-class KdPaintersAlgorithem: public KdIterator
+class KdPaintersAlgorithmReverse: public KdPaintersAlgorithm
 {
 public:
-	KdPaintersAlgorithem(const KdTree& tree, const Vector3& viewer);
-	virtual ~KdPaintersAlgorithem();
+	KdPaintersAlgorithmReverse(const KdTree& tree, const Vector3& viewer);
+	virtual ~KdPaintersAlgorithmReverse();
 
 	int decide(int close, int far);
-	int hit(int index);
-	int miss(int index);
-
-protected:
-	std::stack<int> mStack;
 
 private:
-	int pop();
 
 };
 
