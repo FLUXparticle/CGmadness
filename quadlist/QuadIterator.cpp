@@ -17,23 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Range.hpp"
+#include "QuadIterator.hpp"
 
-#include "functions.hpp"
-
-Range::Range(int startX, int startY, int sizeX, int sizeY)
+QuadIterator::QuadIterator(int index, const Vector3* vertices, const Vector3* normals) :
+	mIndex(index),
+	mVertices(vertices),
+	mNormals(normals)
 {
-	this->startX = startX;
-	this->startY = startY;
-	this->sizeX = sizeX;
-	this->sizeY = sizeY;
-
-	left = 0;
-	right = 0;
+	// empty
 }
 
-bool Range::contains(const Vector3& q) const
+Quad QuadIterator::operator*() const
 {
-	return between(q.x, (float) startX, (float) startX + sizeX) &&
-	       between(q.y, (float) startY, (float) startY + sizeY);
+	return Quad(mVertices + mIndex, mNormals + mIndex);
+}
+
+bool QuadIterator::operator==(const QuadIterator& other) const
+{
+	return mIndex == other.mIndex;
+}
+
+bool QuadIterator::operator!=(const QuadIterator& other) const
+{
+	return !(operator==(other));
+}
+
+void QuadIterator::operator++()
+{
+	mIndex += 4;
 }

@@ -17,21 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef field_hpp
-#define field_hpp
+#ifndef K2Set_hpp
+#define K2Set_hpp
 
-#include "ball/PlayersBall.hpp"
+#include "K2Iterator.hpp"
 
-#include "math/Vector3.hpp"
+class K2Set: public K2Iterator
+{
+public:
+	K2Set(K2Tree& tree, const Vector3& q);
+	virtual ~K2Set();
 
-#include "quadlist/QuadList.hpp"
+	QuadList& operator*();
 
-void initGameField();
-void destroyGameField();
+private:
+	K2Tree& mMutableTree;
 
-void updateGameField(const PlayersBall& ball);
-void drawGameField(bool ballReflection);
-
-const QuadList& getQuadList(int x, int y);
+	int decide(int close, int far);
+	int hit(int index);
+	int miss(int index);
+};
 
 #endif

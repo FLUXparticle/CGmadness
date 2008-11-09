@@ -24,9 +24,9 @@
 #include "level/level.hpp"
 #include "camera.hpp"
 
-#include "k2tree/K2Tree.hpp"
-#include "k2tree/K2PaintersAlgorithem.hpp"
-#include "k2tree/K2PaintersAlgorithemReverse.hpp"
+#include "kdtree/K2Tree.hpp"
+#include "kdtree/K2PaintersAlgorithem.hpp"
+#include "kdtree/K2PaintersAlgorithemReverse.hpp"
 
 #include "Color.hpp"
 
@@ -117,90 +117,21 @@ static void addSquare(const Square* square)
 	}
 }
 
-Quad::Quad(const Vector3* vertices, const Vector3* normals) :
-	mVertices(vertices),
-	mNormals(normals)
+const QuadList& getQuadList(int x, int y)
 {
-	// empty
+	return gK2Tree->get(x, y);
 }
 
-QuadList::QuadIterator::QuadIterator(int index) :
-	mIndex(index)
+static void setRoofColor(int x, int y, const Color4& col)
 {
-	// empty
-}
+	const QuadList& list = gK2Tree->get(x, y);
 
-Quad QuadList::QuadIterator::operator*() const
-{
-	return Quad(gVertices + mIndex, gNormals + mIndex);
-}
+	int q = (*list.begin()).mVertices - gVertices;
 
-bool QuadList::QuadIterator::operator!=(const QuadIterator& other) const
-{
-	return mIndex != other.mIndex;
-}
-
-void QuadList::QuadIterator::operator++()
-{
-	mIndex += 4;
-}
-
-QuadList::QuadList(int start, int end) :
-	mStart(start),
-	mEnd(end)
-{
-	// empty
-}
-
-QuadList::QuadIterator QuadList::begin() const
-{
-	return QuadIterator(mStart);
-}
-
-QuadList::QuadIterator QuadList::end() const
-{
-	return QuadIterator(mEnd);
-}
-
-static void getVertIndex(int x, int y, int* start, int* end)
-{
-	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y)
-	{
-		gK2Tree->get(x, y, *start, *end);
-	}
-	else
-	{
-		*start = 0;
-		*end = 0;
-	}
-}
-
-QuadList getQuadList(int x, int y)
-{
-	int start;
-	int end;
-
-	getVertIndex(x, y, &start, &end);
-
-	return QuadList(start, end);
-}
-
-static void setSquareColor(int q, Color4 col)
-{
 	for (int i = 0; i < 4; i++)
 	{
 		gColors[q + i] = col;
 	}
-}
-
-static void setRoofColor(int x, int y, Color4 col)
-{
-	int start;
-	int end;
-
-	getVertIndex(x, y, &start, &end);
-
-	setSquareColor(start, col);
 }
 
 #define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * gCntVertices, (x), GL_STATIC_DRAW_ARB);
@@ -339,7 +270,7 @@ void initGameField()
 				}
 			}
 
-			gK2Tree->set(x, y, start, gCntVertices);
+			gK2Tree->set(x, y, QuadList(start, gCntVertices, gVertices, gNormals));
 		}
 	}
 
@@ -406,24 +337,23 @@ static int painter(K2PaintersAlgorithem& iter, const Vector3& viewer, int indice
 
 	while (iter.next())
 	{
-		const Range &range = *iter;
+		const QuadList &list = *iter;
 
-		int start = range.left;
-		int end = range.right;
-
-		for (int q = start; q < end; q += 4)
+		FOREACH(list, quaditer)
 		{
+			const Quad& quad = *quaditer;
 			/*
 			 * the top square must always be drawn, because this function
 			 * is not called if only the height of the camera changes.
 			 * Fortunately it is always the first square in the array range.
 			 * WARNING: be aware of this if you change the order of sqaures.
 			 */
-			if (q == start || dot(gNormals[q], sub(viewer, gVertices[q])) >= 0)
+			if (quaditer == list.begin() || quad.mNormals[0] * (viewer - quad.mVertices[0]) >= 0)
 			{
+				int q = quad.mVertices - gVertices;
 				for (int i = 0; i < 4; i++)
 				{
-					indices[counter++] = q + i;
+					indices[counter++] = q++;
 				}
 			}
 		}

@@ -17,58 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2Set.hpp"
+#ifndef QuadIterator_hpp
+#define QuadIterator_hpp
 
-K2Set::K2Set(K2Tree& tree, const Vector3& q) :
-	K2Iterator(tree, q),
-	mMutableTree(tree)
+#include "Quad.hpp"
+
+#include "math/Vector3.hpp"
+
+class QuadIterator
 {
-	// empty
-}
+public:
+	QuadIterator(int index, const Vector3* vertices, const Vector3* normals);
 
-K2Set::~K2Set()
-{
-	// empty
-}
+	Quad operator*() const;
+	bool operator==(const QuadIterator& other) const;
+	bool operator!=(const QuadIterator& other) const;
 
-Range& K2Set::operator*()
-{
-	return mMutableTree.range(mIndex);
-}
+	void operator++();
 
+private:
+	int mIndex;
+	const Vector3* mVertices;
+	const Vector3* mNormals;
 
-int K2Set::decide(int close, int far)
-{
-	return close;
-}
+};
 
-int K2Set::hit(int index)
-{
-	return -1;
-}
-
-int K2Set::miss(int index)
-{
-	Range& cur = mMutableTree.range(index);
-
-	Range left = cur;
-	Range right = cur;
-
-	if (cur.sizeX > cur.sizeY)
-	{
-		left.sizeX = cur.sizeX / 2;
-		right.sizeX = cur.sizeX - left.sizeX;
-		right.startX = left.startX + left.sizeX;
-	}
-	else
-	{
-		left.sizeY = cur.sizeY / 2;
-		right.sizeY = cur.sizeY - left.sizeY;
-		right.startY = left.startY + left.sizeY;
-	}
-
-	cur.left = mMutableTree.newNode(left);
-	cur.right = mMutableTree.newNode(right);
-
-	return index;
-}
+#endif

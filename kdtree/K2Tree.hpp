@@ -17,36 +17,61 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Iterator_hpp
-#define K2Iterator_hpp
+#ifndef K2Tree_hpp
+#define K2Tree_hpp
 
-#include "K2Tree.hpp"
-#include "Range.hpp"
+#include "KdTree.hpp"
 
 #include "math/Vector3.hpp"
+#include "K2Cell.hpp"
 
-class K2Iterator
+#include <vector>
+
+class K2Tree: public KdTree
 {
 public:
-  K2Iterator(const K2Tree& tree, const Vector3& q);
-  virtual ~K2Iterator();
+	K2Tree(Vector3 origin, int sizeX, int sizeY);
+	virtual ~K2Tree();
 
-  bool next();
-  const Range& operator*();
+	void set(int x, int y, const QuadList& list);
+	const QuadList& get(int x, int y) const;
 
-protected:
-	int mIndex;
+	const K2Cell& cell(int index) const;
+	K2Cell& cell(int index);
+
+	int root() const;
 
 private:
-	const K2Tree& mTree;
-	const Vector3& mQ;
+	int mRoot;
+	Vector3 mOrigin;
 
-	int mContinue;
+	int mSizeX;
+	int mSizeY;
 
-	virtual int decide(int close, int far) = 0;
-	virtual int hit(int index) = 0;
-	virtual int miss(int index) = 0;
+	QuadList mEmpty;
+
+	std::vector<K2Cell> mCells;
+
+	int newNode(const K2Cell& cell);
+	void split(int index, const K2Cell& left, const K2Cell& right);
+
+	friend class K2Set;
 
 };
+
+inline const K2Cell& K2Tree::cell(int index) const
+{
+	return mCells[index];
+}
+
+inline K2Cell& K2Tree::cell(int index)
+{
+	return mCells[index];
+}
+
+inline int K2Tree::root() const
+{
+	return mRoot;
+}
 
 #endif

@@ -17,24 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef Range_hpp
-#define Range_hpp
+#ifndef KdTree_hpp
+#define KdTree_hpp
 
-#include "math/Vector3.hpp"
-
-struct Range
+class KdTree
 {
-	int startX;
-	int startY;
-	int sizeX;
-	int sizeY;
+public:
+  KdTree();
+  virtual ~KdTree();
 
-	int left;
-	int right;
-
-	Range(int startX, int startY, int sizeX, int sizeY);
-
-	bool contains(const Vector3& q) const;
+private:
 
 };
 

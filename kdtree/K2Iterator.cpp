@@ -38,32 +38,35 @@ bool K2Iterator::next()
 	mIndex = mContinue;
 	while (mIndex >= 0)
 	{
-		const Range& range = mTree.range(mIndex);
+		const K2Cell& cell = mTree.cell(mIndex);
 
-		if (range.sizeX == 0 || range.sizeY == 0)
-		{
-			mContinue = -1;
-		}
-		else if (range.sizeX == 1 && range.sizeY == 1)
+		if (cell.sizeX == 1 && cell.sizeY == 1)
 		{
 			mContinue = hit(mIndex);
 			return true;
 		}
-		else if (range.right == 0)
+		else if (cell.left < 0)
 		{
 			mContinue = miss(mIndex);
 		}
 		else
 		{
-			const Range& left = mTree.range(range.left);
+			const K2Cell& left = mTree.cell(cell.left);
+			const K2Cell& right = mTree.cell(cell.right);
 
-			if (left.contains(mQ))
+			Vector3 startL(left.startX, left.startY, 0.0f);
+			Vector3 startR(right.startX, right.startY, 0.0f);
+
+			Vector3 n = (startR - startL).norm();
+			float d = startR * n;
+
+			if (n * mQ < d)
 			{
-				mContinue = decide(range.left, range.right);
+				mContinue = decide(cell.left, cell.right);
 			}
 			else
 			{
-				mContinue = decide(range.right, range.left);
+				mContinue = decide(cell.right, cell.left);
 			}
 		}
 
@@ -73,7 +76,7 @@ bool K2Iterator::next()
 	return false;
 }
 
-const Range& K2Iterator::operator*()
+const QuadList& K2Iterator::operator*() const
 {
-	return mTree.range(mIndex);
+	return mTree.cell(mIndex).list;
 }

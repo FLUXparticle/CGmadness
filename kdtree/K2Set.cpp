@@ -17,63 +17,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "K2Tree.hpp"
-
-#include "K2Get.hpp"
 #include "K2Set.hpp"
 
-#include "Range.hpp"
-
-#include "field.hpp"
-
-#include <cstdio>
-
-K2Tree::K2Tree(Vector3 origin, int sizeX, int sizeY) :
-	mOrigin(origin),
-	mSizeX(sizeX),
-	mSizeY(sizeY)
+K2Set::K2Set(K2Tree& tree, const Vector3& q) :
+	K2Iterator(tree, q),
+	mMutableTree(tree)
 {
-	mRoot = newNode(Range(0, 0, mSizeX, mSizeY));
+	// empty
 }
 
-K2Tree::~K2Tree()
+K2Set::~K2Set()
 {
-  // empty
+	// empty
 }
 
-void K2Tree::set(int x, int y, int start, int end)
+QuadList& K2Set::operator*()
 {
-	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
-	K2Set iter(*this, q);
+	return mMutableTree.cell(mIndex).list;
+}
 
-	if (iter.next())
+
+int K2Set::decide(int close, int far)
+{
+	return close;
+}
+
+int K2Set::hit(int index)
+{
+	return -1;
+}
+
+int K2Set::miss(int index)
+{
+	K2Cell& cur = mMutableTree.cell(index);
+
+	K2Cell left = cur;
+	K2Cell right = cur;
+
+	if (cur.sizeX > cur.sizeY)
 	{
-		Range &range = *iter;
-
-		range.left = start;
-		range.right = end;
+		left.sizeX = cur.sizeX / 2;
+		right.sizeX = cur.sizeX - left.sizeX;
+		right.startX = left.startX + left.sizeX;
 	}
-}
-
-void K2Tree::get(int x, int y, int &start, int &end) const
-{
-	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
-	K2Get iter(*this, q);
-
-	if (iter.next())
+	else
 	{
-		const Range &range = *iter;
-
-		start = range.left;
-		end = range.right;
+		left.sizeY = cur.sizeY / 2;
+		right.sizeY = cur.sizeY - left.sizeY;
+		right.startY = left.startY + left.sizeY;
 	}
-}
 
-int K2Tree::newNode(const Range &range)
-{
-	int index = mRanges.size();
-
-	mRanges.push_back(range);
+	mMutableTree.split(index, left, right);
 
 	return index;
 }

@@ -17,21 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef field_hpp
-#define field_hpp
+#ifndef K2Cell_hpp
+#define K2Cell_hpp
 
-#include "ball/PlayersBall.hpp"
+#include "KdCell.hpp"
 
-#include "math/Vector3.hpp"
+struct K2Cell: public KdCell
+{
+	int startX;
+	int startY;
+	int sizeX;
+	int sizeY;
 
-#include "quadlist/QuadList.hpp"
+	K2Cell(int startX, int startY, int sizeX, int sizeY);
+	virtual ~K2Cell();
 
-void initGameField();
-void destroyGameField();
+	bool contains(const Vector3& q) const;
 
-void updateGameField(const PlayersBall& ball);
-void drawGameField(bool ballReflection);
-
-const QuadList& getQuadList(int x, int y);
+};
 
 #endif

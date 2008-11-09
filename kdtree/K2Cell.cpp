@@ -17,56 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef K2Tree_hpp
-#define K2Tree_hpp
+#include "K2Cell.hpp"
 
-#include "math/Vector3.hpp"
-#include "Range.hpp"
+#include "functions.hpp"
 
-#include <vector>
-
-class K2Tree
+K2Cell::K2Cell(int startX, int startY, int sizeX, int sizeY)
 {
-public:
-	K2Tree(Vector3 origin, int sizeX, int sizeY);
-	virtual ~K2Tree();
-
-	void set(int x, int y, int start, int end);
-	void get(int x, int y, int &start, int &end) const;
-
-	const Range& range(int index) const;
-	Range& range(int index);
-
-	int root() const;
-
-private:
-	int mRoot;
-	Vector3 mOrigin;
-
-	int mSizeX;
-	int mSizeY;
-
-	std::vector<Range> mRanges;
-
-	int newNode(const Range &range);
-
-	friend class K2Set;
-
-};
-
-inline const Range& K2Tree::range(int index) const
-{
-	return mRanges[index];
+	this->startX = startX;
+	this->startY = startY;
+	this->sizeX = sizeX;
+	this->sizeY = sizeY;
 }
 
-inline Range& K2Tree::range(int index)
+K2Cell::~K2Cell()
 {
-	return mRanges[index];
+	// empty
 }
 
-inline int K2Tree::root() const
+bool K2Cell::contains(const Vector3& q) const
 {
-	return mRoot;
+	return between(q.x, (float) startX, (float) startX + sizeX) && between(q.y,
+	    (float) startY, (float) startY + sizeY);
 }
-
-#endif

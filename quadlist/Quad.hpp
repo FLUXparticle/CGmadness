@@ -17,21 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef field_hpp
-#define field_hpp
-
-#include "ball/PlayersBall.hpp"
+#ifndef Quad_hpp
+#define Quad_hpp
 
 #include "math/Vector3.hpp"
 
-#include "quadlist/QuadList.hpp"
+struct Quad
+{
+	const Vector3* mVertices;
+	const Vector3* mNormals;
 
-void initGameField();
-void destroyGameField();
-
-void updateGameField(const PlayersBall& ball);
-void drawGameField(bool ballReflection);
-
-const QuadList& getQuadList(int x, int y);
+	Quad(const Vector3* vertices, const Vector3* normals);
+};
 
 #endif

@@ -17,21 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef field_hpp
-#define field_hpp
+#include "KdCell.hpp"
 
-#include "ball/PlayersBall.hpp"
+KdCell::KdCell() :
+	left(-1),
+	right(-1)
+{
+	// empty
+}
 
-#include "math/Vector3.hpp"
-
-#include "quadlist/QuadList.hpp"
-
-void initGameField();
-void destroyGameField();
-
-void updateGameField(const PlayersBall& ball);
-void drawGameField(bool ballReflection);
-
-const QuadList& getQuadList(int x, int y);
-
-#endif
+KdCell::~KdCell()
+{
+	// empty
+}
