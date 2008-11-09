@@ -24,9 +24,11 @@
 #include "level/level.hpp"
 #include "camera.hpp"
 
-#include "kdtree/KdTree.hpp"
 #include "kdtree/KdPaintersAlgorithm.hpp"
 #include "kdtree/KdPaintersAlgorithmReverse.hpp"
+#include "kdtree/KdSphereIntersection.hpp"
+
+#include "kdtree/KdTree.hpp"
 
 #include "Color.hpp"
 
@@ -217,7 +219,7 @@ void initGameField()
 	initBallShadow();
 
 	/* init level stuff */
-	gKdTree = new KdTree(sgLevel.origin, sgLevel.size.x, sgLevel.size.y);
+	gKdTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 
 	gMaxQuads = 0;
 
@@ -331,13 +333,13 @@ void destroyGameField()
 	gCntBallReflectionIndices = 0;
 }
 
-static int painter(KdPaintersAlgorithm& iter, const Vector3& viewer, int indices[])
+static int painter(KdTraverse& iter, const Vector3& viewer, int indices[])
 {
 	int counter = 0;
 
 	while (iter.next())
 	{
-		const QuadList &list = *iter;
+		const QuadList& list = *iter;
 
 		FOREACH(list, quaditer)
 		{

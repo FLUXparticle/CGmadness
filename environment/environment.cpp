@@ -26,8 +26,6 @@
 
 #include "Color.hpp"
 
-#include "field.hpp"
-
 #include GL_H
 
 #define REFLECTION 1

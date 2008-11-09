@@ -20,27 +20,17 @@
 #ifndef KdPaintersAlgorithm_hpp
 #define KdPaintersAlgorithm_hpp
 
-#include "KdIterator.hpp"
+#include "KdTraverse.hpp"
 
 #include "math/Vector3.hpp"
 
-#include <stack>
-
-class KdPaintersAlgorithm: public KdIterator
+class KdPaintersAlgorithm: public KdTraverse
 {
 public:
 	KdPaintersAlgorithm(const KdTree& tree, const Vector3& viewer);
 	virtual ~KdPaintersAlgorithm();
 
 	int decide(int close, int far);
-	int hit(int index);
-	int miss(int index);
-
-protected:
-	std::stack<int> mStack;
-
-private:
-	int pop();
 
 };
 

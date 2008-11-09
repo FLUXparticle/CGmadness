@@ -37,10 +37,10 @@ public:
 protected:
 	int mIndex;
 
-private:
 	const KdTree& mTree;
 	const Vector3& mQ;
 
+private:
 	int mContinue;
 
 	virtual int decide(int close, int far) = 0;

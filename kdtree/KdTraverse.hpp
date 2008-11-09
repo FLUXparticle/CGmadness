@@ -17,60 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KdTree_hpp
-#define KdTree_hpp
+#ifndef KdTraverse_hpp
+#define KdTraverse_hpp
 
-#include "KdTree.hpp"
+#include "KdIterator.hpp"
 
-#include "math/Vector3.hpp"
-#include "KdCell.hpp"
+#include <stack>
 
-#include <vector>
-
-class KdTree
+class KdTraverse: public KdIterator
 {
 public:
-	KdTree(int sizeX, int sizeY);
-	virtual ~KdTree();
+	KdTraverse(const KdTree& tree, const Vector3& q);
+	virtual ~KdTraverse();
 
-	void set(int x, int y, const QuadList& list);
-	const QuadList& get(int x, int y) const;
+	int hit(int index);
+	int miss(int index);
 
-	const KdCell& cell(int index) const;
-	KdCell& cell(int index);
-
-	int root() const;
+protected:
+	std::stack<int> mStack;
 
 private:
-	int mRoot;
-
-	int mSizeX;
-	int mSizeY;
-
-	QuadList mEmpty;
-
-	std::vector<KdCell> mCells;
-
-	int newNode(const KdCell& cell);
-	void split(int index, const KdCell& left, const KdCell& right);
-
-	friend class KdSet;
+	int pop();
 
 };
-
-inline const KdCell& KdTree::cell(int index) const
-{
-	return mCells[index];
-}
-
-inline KdCell& KdTree::cell(int index)
-{
-	return mCells[index];
-}
-
-inline int KdTree::root() const
-{
-	return mRoot;
-}
 
 #endif

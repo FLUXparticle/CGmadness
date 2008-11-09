@@ -24,8 +24,7 @@
 
 #include "KdCell.hpp"
 
-KdTree::KdTree(Vector3 origin, int sizeX, int sizeY) :
-	mOrigin(origin),
+KdTree::KdTree(int sizeX, int sizeY) :
 	mSizeX(sizeX),
 	mSizeY(sizeY)
 {

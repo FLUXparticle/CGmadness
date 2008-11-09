@@ -20,7 +20,7 @@
 #include "KdPaintersAlgorithmReverse.hpp"
 
 KdPaintersAlgorithmReverse::KdPaintersAlgorithmReverse(const KdTree& tree, const Vector3& viewer) :
-	KdPaintersAlgorithm(tree, viewer)
+	KdTraverse(tree, viewer)
 {
   // empty
 }
@@ -36,4 +36,3 @@ int KdPaintersAlgorithmReverse::decide(int close, int far)
 
 	return close;
 }
-

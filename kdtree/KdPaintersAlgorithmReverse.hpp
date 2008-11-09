@@ -20,9 +20,9 @@
 #ifndef KdPaintersAlgorithmReverse_hpp
 #define KdPaintersAlgorithmReverse_hpp
 
-#include "KdPaintersAlgorithm.hpp"
+#include "KdTraverse.hpp"
 
-class KdPaintersAlgorithmReverse: public KdPaintersAlgorithm
+class KdPaintersAlgorithmReverse: public KdTraverse
 {
 public:
 	KdPaintersAlgorithmReverse(const KdTree& tree, const Vector3& viewer);

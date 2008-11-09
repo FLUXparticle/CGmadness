@@ -17,60 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KdTree_hpp
-#define KdTree_hpp
+#include "KdTraverse.hpp"
 
-#include "KdTree.hpp"
-
-#include "math/Vector3.hpp"
-#include "KdCell.hpp"
-
-#include <vector>
-
-class KdTree
+KdTraverse::KdTraverse(const KdTree& tree, const Vector3& q) :
+	KdIterator(tree, q)
 {
-public:
-	KdTree(int sizeX, int sizeY);
-	virtual ~KdTree();
-
-	void set(int x, int y, const QuadList& list);
-	const QuadList& get(int x, int y) const;
-
-	const KdCell& cell(int index) const;
-	KdCell& cell(int index);
-
-	int root() const;
-
-private:
-	int mRoot;
-
-	int mSizeX;
-	int mSizeY;
-
-	QuadList mEmpty;
-
-	std::vector<KdCell> mCells;
-
-	int newNode(const KdCell& cell);
-	void split(int index, const KdCell& left, const KdCell& right);
-
-	friend class KdSet;
-
-};
-
-inline const KdCell& KdTree::cell(int index) const
-{
-	return mCells[index];
+	mStack.push(-1);
 }
 
-inline KdCell& KdTree::cell(int index)
+KdTraverse::~KdTraverse()
 {
-	return mCells[index];
+	// empty
 }
 
-inline int KdTree::root() const
+int KdTraverse::hit(int index)
 {
-	return mRoot;
+	return pop();
 }
 
-#endif
+int KdTraverse::miss(int index)
+{
+	return pop();
+}
+
+int KdTraverse::pop()
+{
+	int index = mStack.top();
+
+	mStack.pop();
+
+	return index;
+}

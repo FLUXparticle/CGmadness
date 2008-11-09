@@ -20,9 +20,9 @@
 #include "KdPaintersAlgorithm.hpp"
 
 KdPaintersAlgorithm::KdPaintersAlgorithm(const KdTree& tree, const Vector3& viewer) :
-	KdIterator(tree, viewer)
+	KdTraverse(tree, viewer)
 {
-	mStack.push(-1);
+  // empty
 }
 
 KdPaintersAlgorithm::~KdPaintersAlgorithm()
@@ -35,23 +35,4 @@ int KdPaintersAlgorithm::decide(int close, int far)
 	mStack.push(close);
 
 	return far;
-}
-
-int KdPaintersAlgorithm::hit(int index)
-{
-	return pop();
-}
-
-int KdPaintersAlgorithm::miss(int index)
-{
-	return pop();
-}
-
-int KdPaintersAlgorithm::pop()
-{
-	int index = mStack.top();
-
-	mStack.pop();
-
-	return index;
 }

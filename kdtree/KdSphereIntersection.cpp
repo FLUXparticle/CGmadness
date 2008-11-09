@@ -17,60 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KdTree_hpp
-#define KdTree_hpp
+#include "KdSphereIntersection.hpp"
 
-#include "KdTree.hpp"
+#include "functions.hpp"
 
-#include "math/Vector3.hpp"
-#include "KdCell.hpp"
-
-#include <vector>
-
-class KdTree
+KdSphereIntersection::KdSphereIntersection(const KdTree& tree, const Vector3& center, float radius) :
+	KdTraverse(tree, center),
+	mRadius(radius)
 {
-public:
-	KdTree(int sizeX, int sizeY);
-	virtual ~KdTree();
-
-	void set(int x, int y, const QuadList& list);
-	const QuadList& get(int x, int y) const;
-
-	const KdCell& cell(int index) const;
-	KdCell& cell(int index);
-
-	int root() const;
-
-private:
-	int mRoot;
-
-	int mSizeX;
-	int mSizeY;
-
-	QuadList mEmpty;
-
-	std::vector<KdCell> mCells;
-
-	int newNode(const KdCell& cell);
-	void split(int index, const KdCell& left, const KdCell& right);
-
-	friend class KdSet;
-
-};
-
-inline const KdCell& KdTree::cell(int index) const
-{
-	return mCells[index];
+  // empty
 }
 
-inline KdCell& KdTree::cell(int index)
+KdSphereIntersection::~KdSphereIntersection()
 {
-	return mCells[index];
+  // empty
 }
 
-inline int KdTree::root() const
+int KdSphereIntersection::decide(int close, int far)
 {
-	return mRoot;
-}
+	const KdCell& cellClose = mTree.cell(close);
+	const KdCell& cellFar = mTree.cell(far);
 
-#endif
+	Vector3 n = (cellFar.min - cellClose.min).norm();
+	float d = max(n * cellClose.min, n * cellClose.max);
+
+	if (d - (n * mQ) <= mRadius)
+	{
+		mStack.push(far);
+	}
+
+	return close;
+}
