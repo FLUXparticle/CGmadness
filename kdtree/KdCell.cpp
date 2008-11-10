@@ -19,9 +19,14 @@
 
 #include "KdCell.hpp"
 
-KdCell::KdCell() :
-	left(-1),
-	right(-1)
+KdCell::Range::Range()
+{
+	// empty
+}
+
+KdCell::Range::Range(int start, int end) :
+	start(start),
+	end(end)
 {
 	// empty
 }

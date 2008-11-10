@@ -119,17 +119,18 @@ static void addSquare(const Square* square)
 	}
 }
 
-const QuadList& getQuadList(int x, int y)
+QuadList getQuadList(int x, int y)
 {
-	return gKdTree->get(x, y);
+	const KdCell::Range& range = gKdTree->get(x, y);
+
+	return QuadList(range.start, range.end, gVertices, gNormals);
 }
 
 static void setRoofColor(int x, int y, const Color4& col)
 {
-	const QuadList& list = gKdTree->get(x, y);
+	const KdCell::Range& range = gKdTree->get(x, y);
 
-	int q = (*list.begin()).mVertices - gVertices;
-
+	int q = range.start;
 	for (int i = 0; i < 4; i++)
 	{
 		gColors[q + i] = col;
@@ -272,7 +273,7 @@ void initGameField()
 				}
 			}
 
-			gKdTree->set(x, y, QuadList(start, gCntVertices, gVertices, gNormals));
+			gKdTree->set(x, y, KdCell::Range(start, gCntVertices));
 		}
 	}
 
@@ -339,7 +340,8 @@ static int painter(KdTraverse& iter, const Vector3& viewer, int indices[])
 
 	while (iter.next())
 	{
-		const QuadList& list = *iter;
+		const KdCell::Range& range = *iter;
+		QuadList list(range.start, range.end, gVertices, gNormals);
 
 		FOREACH(list, quaditer)
 		{

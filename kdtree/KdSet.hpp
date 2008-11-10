@@ -28,7 +28,7 @@ public:
 	KdSet(KdTree& tree, const Vector3& q);
 	virtual ~KdSet();
 
-	QuadList& operator*();
+	KdCell::Range& operator*();
 
 private:
 	KdTree& mMutableTree;

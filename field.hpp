@@ -32,6 +32,6 @@ void destroyGameField();
 void updateGameField(const PlayersBall& ball);
 void drawGameField(bool ballReflection);
 
-const QuadList& getQuadList(int x, int y);
+QuadList getQuadList(int x, int y);
 
 #endif

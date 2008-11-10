@@ -20,8 +20,6 @@
 #ifndef KdCell_hpp
 #define KdCell_hpp
 
-#include "quadlist/QuadList.hpp"
-
 #include "math/Vector3.hpp"
 
 struct KdCell
@@ -32,9 +30,15 @@ struct KdCell
 	Vector3 min;
 	Vector3 max;
 
-	QuadList list;
+	struct Range
+	{
+		int start;
+		int end;
 
-  KdCell();
+		Range();
+		Range(int start, int end);
+	} range;
+
   KdCell(const Vector3& min, const Vector3& max);
 
 };

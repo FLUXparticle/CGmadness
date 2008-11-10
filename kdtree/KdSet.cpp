@@ -33,9 +33,9 @@ KdSet::~KdSet()
 	// empty
 }
 
-QuadList& KdSet::operator*()
+KdCell::Range& KdSet::operator*()
 {
-	return mMutableTree.cell(mIndex).list;
+	return mMutableTree.cell(mIndex).range;
 }
 
 

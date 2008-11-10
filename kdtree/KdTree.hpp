@@ -33,8 +33,8 @@ public:
 	KdTree(int sizeX, int sizeY);
 	virtual ~KdTree();
 
-	void set(int x, int y, const QuadList& list);
-	const QuadList& get(int x, int y) const;
+	void set(int x, int y, const KdCell::Range& range);
+	const KdCell::Range& get(int x, int y) const;
 
 	const KdCell& cell(int index) const;
 	KdCell& cell(int index);
@@ -47,7 +47,7 @@ private:
 	int mSizeX;
 	int mSizeY;
 
-	QuadList mEmpty;
+	KdCell::Range mEmpty;
 
 	std::vector<KdCell> mCells;
 

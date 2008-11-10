@@ -75,7 +75,7 @@ bool KdIterator::next()
 	return false;
 }
 
-const QuadList& KdIterator::operator*() const
+const KdCell::Range& KdIterator::operator*() const
 {
-	return mTree.cell(mIndex).list;
+	return mTree.cell(mIndex).range;
 }

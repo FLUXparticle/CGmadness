@@ -39,18 +39,18 @@ KdTree::~KdTree()
   // empty
 }
 
-void KdTree::set(int x, int y, const QuadList& list)
+void KdTree::set(int x, int y, const KdCell::Range& range)
 {
 	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
 	KdSet iter(*this, q);
 
 	if (iter.next())
 	{
-		*iter = list;
+		*iter = range;
 	}
 }
 
-const QuadList& KdTree::get(int x, int y) const
+const KdCell::Range& KdTree::get(int x, int y) const
 {
 	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
 	KdGet iter(*this, q);

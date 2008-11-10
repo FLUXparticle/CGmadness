@@ -32,7 +32,7 @@ public:
   virtual ~KdIterator();
 
   bool next();
-  const QuadList& operator*() const;
+  const KdCell::Range& operator*() const;
 
 protected:
 	int mIndex;
