@@ -47,7 +47,7 @@ int nextPowerOfTwo(int i)
 	return j;
 }
 
-int getCntAllocatedSubLightMaps(void)
+int getCntAllocatedSubLightMaps()
 {
 	return gAllocatedSubTextures;
 }
@@ -85,7 +85,7 @@ void destroyAtlas(void)
 	gAllocatedSubTextures = 0;
 }
 
-float *getSubLightMapPixelPointer(int index, int sx, int sy)
+float* getSubLightMapPixelPointer(int index, int sx, int sy)
 {
 	int x = (index % gCols) * LIGHT_MAP_SIZE + sx;
 	int y = (index / gCols) * LIGHT_MAP_SIZE + sy;
@@ -155,7 +155,7 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 
 /*****/
 
-void allocSubAtlas(SubAtlas * subAtlas, int sizeX, int sizeY)
+void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY)
 {
 	subAtlas->sizeX = sizeX;
 	subAtlas->sizeY = sizeY;
@@ -165,7 +165,7 @@ void allocSubAtlas(SubAtlas * subAtlas, int sizeX, int sizeY)
 	assert(gAllocatedSubTextures <= gMaxSubLightMaps);
 }
 
-void setLightMap(SubAtlas * subAtlas, int x, int y, float value)
+void setLightMap(const SubAtlas* subAtlas, int x, int y, float value)
 {
 	int index;
 
@@ -178,7 +178,7 @@ void setLightMap(SubAtlas * subAtlas, int x, int y, float value)
 	setSubLightMapPixel(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
 }
 
-Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords)
+void transformCoords(const SubAtlas* subAtlas, Vector2& coords)
 {
 	if (gCols > 0 && gRows > 0)
 	{
@@ -192,10 +192,6 @@ Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords)
 		assert(coords.x >= 0.0f && coords.x <= subAtlas->sizeX);
 		assert(coords.y >= 0.0f && coords.y <= subAtlas->sizeY);
 
-		return transformSubCoords(index, v);
-	}
-	else
-	{
-		return coords;
+		coords = transformSubCoords(index, v);
 	}
 }

@@ -36,6 +36,7 @@ private:
 	int decide(int close, int far);
 	int hit(int index);
 	int miss(int index);
+
 };
 
 #endif

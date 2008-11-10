@@ -39,13 +39,13 @@
 
 struct CellLightMap
 {
-	SubAtlas sides[4];
+	int sides[5];
 };
 
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
 
-#define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasFloor[(_y) * sgLevel.size.x + (_x)])
+#define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasSides[(_y) * sgLevel.size.x + (_x)].sides[4])
 #define SUB_ATLAS_SIDES(_x, _y) (gSubAtlasSides[(_y) * sgLevel.size.x + (_x)])
 
 static int quadsNeeded(int fx, int fy, int side)
@@ -64,28 +64,31 @@ static int quadsNeeded(int fx, int fy, int side)
 
 void initCommon()
 {
-	int countSubLightMaps = 0;
 
 	int x;
 	int y;
 	int side;
 
-	gSubAtlasFloor = new SubAtlas[sgLevel.size.x * sgLevel.size.y];
 	gSubAtlasSides = new CellLightMap[sgLevel.size.x * sgLevel.size.y];
 
-	countSubLightMaps += sgLevel.size.x * sgLevel.size.y;
+	int countSubLightMaps = 0;
 
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
+			SUB_ATLAS_FLOOR(x, y) = countSubLightMaps;
+			countSubLightMaps++;
+
 			for (side = 0; side < 4; side++)
 			{
-				countSubLightMaps += quadsNeeded(x, y, side);
+				SUB_ATLAS_SIDES(x, y).sides[side] = countSubLightMaps;
+				countSubLightMaps += max(quadsNeeded(x, y, side), 1);
 			}
 		}
 	}
 
+	gSubAtlasFloor = new SubAtlas[countSubLightMaps];
 
 	initAtlas(countSubLightMaps);
 
@@ -93,12 +96,11 @@ void initCommon()
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
-			allocSubAtlas(&SUB_ATLAS_FLOOR(x, y), 1, 1);
+			allocSubAtlas(&gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)], 1, 1);
 
 			for (side = 0; side < 4; side++)
 			{
-				allocSubAtlas(&SUB_ATLAS_SIDES(x, y).sides[side], 1,
-											quadsNeeded(x, y, side));
+				allocSubAtlas(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], 1, quadsNeeded(x, y, side));
 			}
 		}
 	}
@@ -156,12 +158,12 @@ static void updateLightMapIdle(int step)
 	if (side < 0)
 	{
 		Orientation floor = orientationFloor(x, y);
-		genAmbientOcclusionTexture(&SUB_ATLAS_FLOOR(x, y), floor);
+		genAmbientOcclusionTexture(&gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)], floor);
 	}
 	else
 	{
 		Orientation orientation = orientationSide(x, y, side);
-		genAmbientOcclusionTexture(&SUB_ATLAS_SIDES(x, y).sides[side], orientation);
+		genAmbientOcclusionTexture(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], orientation);
 	}
 }
 
@@ -217,8 +219,7 @@ void updateTexCoords()
 				{
 					square->lightmap[i].x = a * sgEdgeX[i] + b;
 					square->lightmap[i].y = a * sgEdgeY[i] + b;
-					square->lightmap[i] =
-						transformCoords(&SUB_ATLAS_FLOOR(x, y), square->lightmap[i]);
+					transformCoords(&gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)], square->lightmap[i]);
 				}
 			}
 		}
@@ -269,9 +270,7 @@ void updateTexCoords()
 						{
 							square->lightmap[i].x = a * txy + b;
 							square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
-							square->lightmap[i] =
-								transformCoords(&SUB_ATLAS_SIDES(x, y).sides[side],
-																square->lightmap[i]);
+							transformCoords(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], square->lightmap[i]);
 						}
 					}
 				}

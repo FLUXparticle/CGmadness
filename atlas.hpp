@@ -29,16 +29,16 @@
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
-typedef struct
+struct SubAtlas
 {
 	int sizeX;
 	int sizeY;
 	int idxSubLightMap;
-} SubAtlas;
+};
 
 void initAtlas(int cntSubTextures);
 
-int getCntAllocatedSubLightMaps(void);
+int getCntAllocatedSubLightMaps();
 
 void destroyAtlas(void);
 
@@ -51,10 +51,10 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 const float* getLightMapData();
 
-void allocSubAtlas(SubAtlas * subAtlas, int sizeX, int sizeY);
+void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY);
 
-void setLightMap(SubAtlas * subAtlas, int x, int y, float value);
+void setLightMap(const SubAtlas* subAtlas, int x, int y, float value);
 
-Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords);
+void transformCoords(const SubAtlas* subAtlas, Vector2& coords);
 
 #endif
