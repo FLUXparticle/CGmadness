@@ -120,10 +120,10 @@ static void addSquare(const Square* square)
 	}
 }
 
-QuadList getQuadList(int x, int y)
+QuadList getSphereIntersection(const Vector3& center, float radius)
 {
-	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
-	KdGet* iter = new KdGet(*gKdTree, q);
+	Vector3 c = center - sgLevel.origin;
+	KdIterator* iter = new KdSphereIntersection(*gKdTree, c, radius);
 
 	return QuadList(iter, gVertices, gNormals);
 }
@@ -376,7 +376,8 @@ void updateGameField(const PlayersBall& ball)
 		if (gMaxVertices > 0)
 		{
 			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
-			QuadList list(new KdPaintersAlgorithmReverse(*gKdTree, q), gVertices, gNormals);
+			KdIterator* iter = new KdPaintersAlgorithmReverse(*gKdTree, q);
+			QuadList list(iter, gVertices, gNormals);
 
 			gCntCameraViewIndices = painter(list, sgCamera, gCameraViewIndices);
 
@@ -421,7 +422,8 @@ void updateGameField(const PlayersBall& ball)
 			if (gMaxVertices > 0)
 			{
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
-				QuadList list(new KdPaintersAlgorithm(*gKdTree, q), gVertices, gNormals);
+				KdIterator* iter = new KdPaintersAlgorithm(*gKdTree, q);
+				QuadList list(iter, gVertices, gNormals);
 
 				gCntBallReflectionIndices = painter(list, gBallPosition, gBallReflectionIndices);
 

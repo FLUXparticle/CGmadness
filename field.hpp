@@ -32,6 +32,6 @@ void destroyGameField();
 void updateGameField(const PlayersBall& ball);
 void drawGameField(bool ballReflection);
 
-QuadList getQuadList(int x, int y);
+QuadList getSphereIntersection(const Vector3& center, float radius);
 
 #endif

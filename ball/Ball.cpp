@@ -234,8 +234,6 @@ bool collisionPoint(const Vector3 sphere, const Vector3* quad,
 void Ball::animateBall(float interval)
 {
 	bool collision = false;
-	int x;
-	int y;
 
 	Vector3 normal(0.0f, 0.0f, 0.0f);
 
@@ -254,47 +252,38 @@ void Ball::animateBall(float interval)
 
 	ball = add(mPos, step);
 
-	x = (int) floor(ball.x - sgLevel.origin.x);
-	y = (int) floor(ball.y - sgLevel.origin.y);
-
 	/* check only fields near by the ball. check field under ball first!!! */
-	for (int dx = 1; dx <= 3; dx++)
+	QuadList list = getSphereIntersection(mPos, BALL_RADIUS);
+
+	while (list.next())
 	{
-		for (int dy = 1; dy <= 3; dy++)
+		Quad quad = *list;
+		const Vector3* q = quad.mVertices;
+		const Vector3& dir = quad.mNormals[0];
+
+		Vector3 a;
+
+		if (collisionPoint(ball, q, dir, mRadius, &a))
 		{
-			QuadList list = getQuadList(x + (dx % 3) - 1, y + (dy % 3) - 1);
+			/* dist = vector from ball center to quad */
+			Vector3 dist = a - ball;
+			float l = dist.len();
 
-			while (list.next())
-			{
-				Quad quad = *list;
-				const Vector3* q = quad.mVertices;
-				const Vector3& dir = quad.mNormals[0];
+			/* move = vector to move the ball out of quad */
+			Vector3 move = scale(-((mRadius - l) / l), dist);
 
-				Vector3 a;
+			/* some rotation for a better look */
+			Vector3 right = norm(cross(dir, step));
+			Vector3 forward = norm(cross(right, dir));
 
-				if (collisionPoint(ball, q, dir, mRadius, &a))
-				{
-					/* dist = vector from ball center to quad */
-					Vector3 dist = a - ball;
-					float l = dist.len();
+			mAngularRate =
+				scale(dot(sub(ball, mPos), forward) /
+						(2.0f * M_PI * mRadius) * 360.0f / interval, right);
 
-					/* move = vector to move the ball out of quad */
-					Vector3 move = scale(-((mRadius - l) / l), dist);
+			ball = add(ball, move);
 
-					/* some rotation for a better look */
-					Vector3 right = norm(cross(dir, step));
-					Vector3 forward = norm(cross(right, dir));
-
-					mAngularRate =
-						scale(dot(sub(ball, mPos), forward) /
-									(2.0f * M_PI * mRadius) * 360.0f / interval, right);
-
-					ball = add(ball, move);
-
-					normal = add(normal, move);
-					collision = true;
-				}
-			}
+			normal = add(normal, move);
+			collision = true;
 		}
 	}
 
@@ -325,6 +314,9 @@ void Ball::animateBall(float interval)
 				mVelocity = add(mVelocity, scale(JUMP_FORCE / mMass * interval, normal));
 			}
 		}
+
+		int x = (int) floor(ball.x - sgLevel.origin.x);
+		int y = (int) floor(ball.y - sgLevel.origin.y);
 
 		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
