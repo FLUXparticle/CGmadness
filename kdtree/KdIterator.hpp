@@ -38,7 +38,7 @@ protected:
 	int mIndex;
 
 	const KdTree& mTree;
-	const Vector3& mQ;
+	Vector3 mQ;
 
 private:
 	int mContinue;

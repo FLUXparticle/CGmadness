@@ -20,24 +20,28 @@
 #ifndef QuadList_hpp
 #define QuadList_hpp
 
-#include "QuadIterator.hpp"
+#include "Quad.hpp"
+#include "kdtree/KdIterator.hpp"
 
 #include "math/Vector3.hpp"
+
+#include "utils/SmartPointer.hpp"
 
 class QuadList
 {
 public:
-	QuadList();
-	QuadList(int start, int end, const Vector3* vertices, const Vector3* normals);
+	QuadList(KdIterator* iterator, const Vector3* vertices, const Vector3* normals);
 
-	QuadIterator begin() const;
-	QuadIterator end() const;
+  bool next();
+  Quad operator*() const;
 
 private:
-	int mStart;
-	int mEnd;
+	SmartPointer<KdIterator> mIterator;
 	const Vector3* mVertices;
 	const Vector3* mNormals;
+
+	int mIndex;
+	int mEnd;
 
 };
 

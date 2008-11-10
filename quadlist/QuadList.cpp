@@ -19,26 +19,38 @@
 
 #include "QuadList.hpp"
 
-QuadList::QuadList()
-{
-	// empty
-}
-
-QuadList::QuadList(int start, int end, const Vector3* vertices, const Vector3* normals) :
-	mStart(start),
-	mEnd(end),
+QuadList::QuadList(KdIterator* iterator, const Vector3* vertices, const Vector3* normals) :
+	mIterator(iterator),
 	mVertices(vertices),
-	mNormals(normals)
+	mNormals(normals),
+	mIndex(0),
+	mEnd(0)
 {
 	// empty
 }
 
-QuadIterator QuadList::begin() const
+bool QuadList::next()
 {
-	return QuadIterator(mStart, mVertices, mNormals);
+	mIndex += 4;
+
+	if (mIndex < mEnd)
+	{
+		return true;
+	}
+	else if (mIterator->next())
+	{
+		const KdCell::Range& range = **mIterator;
+
+		mIndex = range.start;
+		mEnd = range.end;
+
+		return true;
+	}
+
+	return false;
 }
 
-QuadIterator QuadList::end() const
+Quad QuadList::operator*() const
 {
-	return QuadIterator(mEnd, mVertices, mNormals);
+	return Quad(mVertices + mIndex, mNormals + mIndex);
 }

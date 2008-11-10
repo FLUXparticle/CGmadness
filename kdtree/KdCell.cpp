@@ -19,7 +19,9 @@
 
 #include "KdCell.hpp"
 
-KdCell::Range::Range()
+KdCell::Range::Range() :
+	start(0),
+	end(0)
 {
 	// empty
 }

@@ -24,6 +24,7 @@
 #include "level/level.hpp"
 #include "camera.hpp"
 
+#include "kdtree/KdGet.hpp"
 #include "kdtree/KdPaintersAlgorithm.hpp"
 #include "kdtree/KdPaintersAlgorithmReverse.hpp"
 #include "kdtree/KdSphereIntersection.hpp"
@@ -121,9 +122,10 @@ static void addSquare(const Square* square)
 
 QuadList getQuadList(int x, int y)
 {
-	const KdCell::Range& range = gKdTree->get(x, y);
+	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
+	KdGet* iter = new KdGet(*gKdTree, q);
 
-	return QuadList(range.start, range.end, gVertices, gNormals);
+	return QuadList(iter, gVertices, gNormals);
 }
 
 static void setRoofColor(int x, int y, const Color4& col)
@@ -334,31 +336,23 @@ void destroyGameField()
 	gCntBallReflectionIndices = 0;
 }
 
-static int painter(KdTraverse& iter, const Vector3& viewer, int indices[])
+static int painter(QuadList& list, const Vector3& viewer, int indices[])
 {
 	int counter = 0;
 
-	while (iter.next())
+	while (list.next())
 	{
-		const KdCell::Range& range = *iter;
-		QuadList list(range.start, range.end, gVertices, gNormals);
-
-		FOREACH(list, quaditer)
+		Quad quad = *list;
+		/*
+		 * the top square must always be drawn, because this function
+		 * is not called if only the height of the camera changes.
+		 */
+		if (quad.mNormals[0].z > 0.0f || quad.mNormals[0] * (viewer - quad.mVertices[0]) >= 0)
 		{
-			const Quad& quad = *quaditer;
-			/*
-			 * the top square must always be drawn, because this function
-			 * is not called if only the height of the camera changes.
-			 * Fortunately it is always the first square in the array range.
-			 * WARNING: be aware of this if you change the order of sqaures.
-			 */
-			if (quaditer == list.begin() || quad.mNormals[0] * (viewer - quad.mVertices[0]) >= 0)
+			int q = quad.mVertices - gVertices;
+			for (int i = 0; i < 4; i++)
 			{
-				int q = quad.mVertices - gVertices;
-				for (int i = 0; i < 4; i++)
-				{
-					indices[counter++] = q++;
-				}
+				indices[counter++] = q++;
 			}
 		}
 	}
@@ -382,9 +376,9 @@ void updateGameField(const PlayersBall& ball)
 		if (gMaxVertices > 0)
 		{
 			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
-			KdPaintersAlgorithmReverse iter(*gKdTree, q);
+			QuadList list(new KdPaintersAlgorithmReverse(*gKdTree, q), gVertices, gNormals);
 
-			gCntCameraViewIndices = painter(iter, sgCamera, gCameraViewIndices);
+			gCntCameraViewIndices = painter(list, sgCamera, gCameraViewIndices);
 
 			lastMX = mx;
 			lastMY = my;
@@ -427,9 +421,9 @@ void updateGameField(const PlayersBall& ball)
 			if (gMaxVertices > 0)
 			{
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
-				KdPaintersAlgorithm iter(*gKdTree, q);
+				QuadList list(new KdPaintersAlgorithm(*gKdTree, q), gVertices, gNormals);
 
-				gCntBallReflectionIndices = painter(iter, gBallPosition, gBallReflectionIndices);
+				gCntBallReflectionIndices = painter(list, gBallPosition, gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;

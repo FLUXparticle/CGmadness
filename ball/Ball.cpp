@@ -264,14 +264,15 @@ void Ball::animateBall(float interval)
 		{
 			QuadList list = getQuadList(x + (dx % 3) - 1, y + (dy % 3) - 1);
 
-			FOREACH(list, iter)
+			while (list.next())
 			{
-				const Vector3* quad = (*iter).mVertices;
-				const Vector3& dir = (*iter).mNormals[0];
+				Quad quad = *list;
+				const Vector3* q = quad.mVertices;
+				const Vector3& dir = quad.mNormals[0];
 
 				Vector3 a;
 
-				if (collisionPoint(ball, quad, dir, mRadius, &a))
+				if (collisionPoint(ball, q, dir, mRadius, &a))
 				{
 					/* dist = vector from ball center to quad */
 					Vector3 dist = a - ball;
