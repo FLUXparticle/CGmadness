@@ -51,14 +51,12 @@ int getCntAllocatedSubLightMaps();
 
 void destroyAtlas();
 
-void getAtlasInfo(unsigned int* sizeX, unsigned int* sizeY, const float** data);
+void lightMapToTexture(unsigned int texID);
 
 void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
 void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
-
-const float* getLightMapData();
 
 void allocSubAtlas(SubAtlas* subAtlas);
 

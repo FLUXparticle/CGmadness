@@ -194,18 +194,6 @@ void Game::draw() const
 	}
 }
 
-void lightMapToTexture(unsigned int texID)
-{
-	unsigned int sizeX;
-	unsigned int sizeY;
-	const float* data;
-
-	getAtlasInfo(&sizeX, &sizeY, &data);
-
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
-}
-
 void Game::start(Process* previous)
 {
 	mPrevious = previous;
