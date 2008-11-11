@@ -292,10 +292,8 @@ void importLightmapV2(FILE* file)
 
 void newLevel()
 {
-	int x, y;
-
 	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x,
-					sgLevel.size.y);
+	    sgLevel.size.y);
 
 	sgLevel.start.x = 0;
 	sgLevel.start.y = 0;
@@ -305,11 +303,11 @@ void newLevel()
 
 	initLevel();
 
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate *p = &sgLevel.field[x][y];
+			Plate* p = &sgLevel.field[x][y];
 			p->z = 0;
 			p->dzx = 0;
 			p->dzy = 0;

@@ -44,10 +44,6 @@ struct CellLightMap
 
 static int gCountSubLightMaps;
 static SubAtlas* gSubAtlas;
-static CellLightMap* gSubAtlasCells;
-
-#define SUB_ATLAS_FLOOR(_x, _y) (gSubAtlasCells[(_y) * sgLevel.size.x + (_x)].sides[4])
-#define SUB_ATLAS_SIDES(_x, _y) (gSubAtlasCells[(_y) * sgLevel.size.x + (_x)])
 
 static int quadsNeeded(int fx, int fy, int side)
 {
@@ -105,20 +101,16 @@ void initCommon()
 	int y;
 	int side;
 
-	gSubAtlasCells = new CellLightMap[sgLevel.size.x * sgLevel.size.y];
-
 	gCountSubLightMaps = 0;
 
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
-			SUB_ATLAS_FLOOR(x, y) = gCountSubLightMaps;
 			gCountSubLightMaps++;
 
 			for (side = 0; side < 4; side++)
 			{
-				SUB_ATLAS_SIDES(x, y).sides[side] = gCountSubLightMaps;
 				gCountSubLightMaps += quadsNeeded(x, y, side);
 			}
 		}
@@ -128,25 +120,45 @@ void initCommon()
 
 	initAtlas(gCountSubLightMaps);
 
+	int index = 0;
 	SubAtlas* atlas;
 	for (x = 0; x < sgLevel.size.x; x++)
 	{
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
-			atlas = &gSubAtlas[SUB_ATLAS_FLOOR(x, y)];
+			atlas = &gSubAtlas[index++];
 			allocSubAtlas(atlas);
 			atlas->orientation = orientationFloor(x, y);
+
+			Plate* p = getPlate(x, y);
+			Square* square = &p->roof;
+			square->atlas = atlas;
 
 			for (side = 0; side < 4; side++)
 			{
 				int quads = quadsNeeded(x, y, side);
 				Orientation orientation = orientationSide(x, y, side);
+
+				int start = index;
+
 				for (int i = 0; i < quads; ++i)
 				{
-					atlas = &gSubAtlas[SUB_ATLAS_SIDES(x, y).sides[side] + i];
+					atlas = &gSubAtlas[index++];
 					allocSubAtlas(atlas);
 					atlas->orientation = orientation;
 					orientation.origin += orientation.vy;
+				}
+
+				SideFace* face = &p->sideFaces[side];
+
+				FOREACH(face->squares, iter)
+				{
+					square = &(*iter);
+
+					int z0 = (int) floor(square->vertices[1].z);
+					int i = (int) z0 - floor(face->bottom);
+
+					square->atlas = &gSubAtlas[start + i];
 				}
 			}
 		}
@@ -156,7 +168,6 @@ void initCommon()
 void destroyCommon()
 {
 	delete[] gSubAtlas;
-	delete[] gSubAtlasCells;
 
 	destroyAtlas();
 }
@@ -219,7 +230,7 @@ void updateTexCoords()
 				{
 					square->lightmap[i].x = a * sgEdgeX[i] + b;
 					square->lightmap[i].y = a * sgEdgeY[i] + b;
-					transformCoords(&gSubAtlas[SUB_ATLAS_FLOOR(x, y)], square->lightmap[i]);
+					transformCoords(square->atlas, square->lightmap[i]);
 				}
 			}
 		}
@@ -270,8 +281,7 @@ void updateTexCoords()
 						{
 							square->lightmap[i].x = a * txy + b;
 							square->lightmap[i].y = a * tz + b;
-							int index = (int) z0 - floor(face->bottom);
-							transformCoords(&gSubAtlas[SUB_ATLAS_SIDES(x, y).sides[side] + index], square->lightmap[i]);
+							transformCoords(square->atlas, square->lightmap[i]);
 						}
 					}
 				}

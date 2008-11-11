@@ -17,8 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#ifndef types_hpp
+#define types_hpp
+
+#include "atlas.hpp"
 
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
@@ -42,6 +44,8 @@ struct Square
 	Vector2 lightmap[4];
 	Vector2 texcoord[4];
 	Vector3 vertices[4];
+
+	SubAtlas* atlas;
 
 	float area;
 	Vector3 mid;
