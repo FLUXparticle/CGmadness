@@ -24,14 +24,6 @@
 
 #include "math/Vector3.hpp"
 
-struct Orientation
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-};
-
 float approximation(const Vector3& position, const Vector3& normal);
 
 void genAmbientOcclusionTexture(const SubAtlas* lightMap, Orientation orientation);

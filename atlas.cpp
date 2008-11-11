@@ -155,43 +155,29 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 
 /*****/
 
-void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY)
+void allocSubAtlas(SubAtlas* subAtlas)
 {
-	subAtlas->sizeX = sizeX;
-	subAtlas->sizeY = sizeY;
 	subAtlas->idxSubLightMap = gAllocatedSubTextures;
-	gAllocatedSubTextures += sizeX * sizeY;
+	gAllocatedSubTextures++;
 
 	assert(gAllocatedSubTextures <= gMaxSubLightMaps);
 }
 
 void setLightMap(const SubAtlas* subAtlas, int x, int y, float value)
 {
-	int index;
+	assert(x >= 0 && x < LIGHT_MAP_SIZE);
+	assert(y >= 0 && y < LIGHT_MAP_SIZE);
 
-	assert(x >= 0 && x < subAtlas->sizeX * LIGHT_MAP_SIZE);
-	assert(y >= 0 && y < subAtlas->sizeY * LIGHT_MAP_SIZE);
-
-	index =
-		subAtlas->idxSubLightMap + (y / LIGHT_MAP_SIZE) * subAtlas->sizeX +
-		(x / LIGHT_MAP_SIZE);
-	setSubLightMapPixel(index, x % LIGHT_MAP_SIZE, y % LIGHT_MAP_SIZE, value);
+	setSubLightMapPixel(subAtlas->idxSubLightMap, x, y, value);
 }
 
 void transformCoords(const SubAtlas* subAtlas, Vector2& coords)
 {
 	if (gCols > 0 && gRows > 0)
 	{
-		float fx = coords.x;
-		float fy = coords.y;
-		int x = (int) floor(fx);
-		int y = (int) floor(fy);
-		int index = subAtlas->idxSubLightMap + y * subAtlas->sizeX + x;
-		Vector2 v = Vector2(fx - x, fy - y);
+		assert(coords.x >= 0.0f && coords.x <= 1.0f);
+		assert(coords.y >= 0.0f && coords.y <= 1.0f);
 
-		assert(coords.x >= 0.0f && coords.x <= subAtlas->sizeX);
-		assert(coords.y >= 0.0f && coords.y <= subAtlas->sizeY);
-
-		coords = transformSubCoords(index, v);
+		coords = transformSubCoords(subAtlas->idxSubLightMap, coords);
 	}
 }

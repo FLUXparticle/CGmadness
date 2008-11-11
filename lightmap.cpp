@@ -105,22 +105,15 @@ float approximation(const Vector3& position, const Vector3& normal)
 
 void genAmbientOcclusionTexture(const SubAtlas* lightMap, Orientation orientation)
 {
-	int x;
-	int y;
-
-	for (x = 0; x < lightMap->sizeX * LIGHT_MAP_SIZE; x++)
+	for (int x = 0; x < LIGHT_MAP_SIZE; x++)
 	{
-		for (y = 0; y < lightMap->sizeY * LIGHT_MAP_SIZE; y++)
+		for (int y = 0; y < LIGHT_MAP_SIZE; y++)
 		{
-			float sx =
-				(x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
-																															 1);
-			float sy =
-				(y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
-																															 1);
+			float sx = (float) x / (LIGHT_MAP_SIZE - 1);
+			float sy = (float) y / (LIGHT_MAP_SIZE - 1);
 
-			Vector3 off = add(scale(sx, orientation.vx), scale(sy, orientation.vy));
-			Vector3 rayPosition = add(orientation.origin, off);
+			Vector3 off = orientation.vx * sx + orientation.vy * sy;
+			Vector3 rayPosition = orientation.origin + off;
 
 			float light = approximation(rayPosition, orientation.normal);
 

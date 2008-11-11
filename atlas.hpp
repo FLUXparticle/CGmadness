@@ -21,6 +21,8 @@
 #define _atlas_hpp_
 
 #include "math/Vector2.hpp"
+#include "math/Vector3.hpp"
+
 #include "Color.hpp"
 
 #include GL_H
@@ -29,10 +31,17 @@
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
+struct Orientation
+{
+	Vector3 origin;
+	Vector3 vx;
+	Vector3 vy;
+	Vector3 normal;
+};
+
 struct SubAtlas
 {
-	int sizeX;
-	int sizeY;
+	Orientation orientation;
 	int idxSubLightMap;
 };
 
@@ -40,7 +49,7 @@ void initAtlas(int cntSubTextures);
 
 int getCntAllocatedSubLightMaps();
 
-void destroyAtlas(void);
+void destroyAtlas();
 
 void getAtlasInfo(unsigned int* sizeX, unsigned int* sizeY, const float** data);
 
@@ -51,7 +60,7 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 const float* getLightMapData();
 
-void allocSubAtlas(SubAtlas* subAtlas, int sizeX, int sizeY);
+void allocSubAtlas(SubAtlas* subAtlas);
 
 void setLightMap(const SubAtlas* subAtlas, int x, int y, float value);
 

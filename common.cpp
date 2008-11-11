@@ -42,6 +42,7 @@ struct CellLightMap
 	int sides[5];
 };
 
+static int gCountSubLightMaps;
 static SubAtlas* gSubAtlasFloor;
 static CellLightMap* gSubAtlasSides;
 
@@ -62,59 +63,7 @@ static int quadsNeeded(int fx, int fy, int side)
 	}
 }
 
-void initCommon()
-{
-
-	int x;
-	int y;
-	int side;
-
-	gSubAtlasSides = new CellLightMap[sgLevel.size.x * sgLevel.size.y];
-
-	int countSubLightMaps = 0;
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			SUB_ATLAS_FLOOR(x, y) = countSubLightMaps;
-			countSubLightMaps++;
-
-			for (side = 0; side < 4; side++)
-			{
-				SUB_ATLAS_SIDES(x, y).sides[side] = countSubLightMaps;
-				countSubLightMaps += max(quadsNeeded(x, y, side), 1);
-			}
-		}
-	}
-
-	gSubAtlasFloor = new SubAtlas[countSubLightMaps];
-
-	initAtlas(countSubLightMaps);
-
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			allocSubAtlas(&gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)], 1, 1);
-
-			for (side = 0; side < 4; side++)
-			{
-				allocSubAtlas(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], 1, quadsNeeded(x, y, side));
-			}
-		}
-	}
-}
-
-void destroyCommon()
-{
-	delete[] gSubAtlasFloor;
-	delete[] gSubAtlasSides;
-
-	destroyAtlas();
-}
-
-Orientation orientationFloor(int fx, int fy)
+static Orientation orientationFloor(int fx, int fy)
 {
 	const Square& square = getRoofSquare(fx, fy);
 
@@ -128,7 +77,7 @@ Orientation orientationFloor(int fx, int fy)
 	return floor;
 }
 
-Orientation orientationSide(int fx, int fy, int side)
+static Orientation orientationSide(int fx, int fy, int side)
 {
 	const SideFace& face = getSideFace(fx, fy, side);
 
@@ -149,27 +98,78 @@ Orientation orientationSide(int fx, int fy, int side)
 	return orientation;
 }
 
+void initCommon()
+{
+
+	int x;
+	int y;
+	int side;
+
+	gSubAtlasSides = new CellLightMap[sgLevel.size.x * sgLevel.size.y];
+
+	gCountSubLightMaps = 0;
+
+	for (x = 0; x < sgLevel.size.x; x++)
+	{
+		for (y = 0; y < sgLevel.size.y; y++)
+		{
+			SUB_ATLAS_FLOOR(x, y) = gCountSubLightMaps;
+			gCountSubLightMaps++;
+
+			for (side = 0; side < 4; side++)
+			{
+				SUB_ATLAS_SIDES(x, y).sides[side] = gCountSubLightMaps;
+				gCountSubLightMaps += quadsNeeded(x, y, side);
+			}
+		}
+	}
+
+	gSubAtlasFloor = new SubAtlas[gCountSubLightMaps];
+
+	initAtlas(gCountSubLightMaps);
+
+	SubAtlas* atlas;
+	for (x = 0; x < sgLevel.size.x; x++)
+	{
+		for (y = 0; y < sgLevel.size.y; y++)
+		{
+			atlas = &gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)];
+			allocSubAtlas(atlas);
+			atlas->orientation = orientationFloor(x, y);
+
+			for (side = 0; side < 4; side++)
+			{
+				int quads = quadsNeeded(x, y, side);
+				Orientation orientation = orientationSide(x, y, side);
+				for (int i = 0; i < quads; ++i)
+				{
+					atlas = &gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side] + i];
+					allocSubAtlas(atlas);
+					atlas->orientation = orientation;
+					orientation.origin += orientation.vy;
+				}
+			}
+		}
+	}
+}
+
+void destroyCommon()
+{
+	delete[] gSubAtlasFloor;
+	delete[] gSubAtlasSides;
+
+	destroyAtlas();
+}
+
 static void updateLightMapIdle(int step)
 {
-	int side = step % 5 - 1;
-	int y = step / 5 % sgLevel.size.y;
-	int x = step / 5 / sgLevel.size.y;
-
-	if (side < 0)
-	{
-		Orientation floor = orientationFloor(x, y);
-		genAmbientOcclusionTexture(&gSubAtlasFloor[SUB_ATLAS_FLOOR(x, y)], floor);
-	}
-	else
-	{
-		Orientation orientation = orientationSide(x, y, side);
-		genAmbientOcclusionTexture(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], orientation);
-	}
+	SubAtlas* atlas = &gSubAtlasFloor[step];
+	genAmbientOcclusionTexture(atlas, atlas->orientation);
 }
 
 void updateLightMap(int useProgressBar)
 {
-	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
+	int cntSteps = gCountSubLightMaps;
 
 	if (useProgressBar)
 	{
@@ -269,8 +269,9 @@ void updateTexCoords()
 						if (sgLevel.lightMap)
 						{
 							square->lightmap[i].x = a * txy + b;
-							square->lightmap[i].y = z0 + a * tz + b - floor(face->bottom);
-							transformCoords(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side]], square->lightmap[i]);
+							square->lightmap[i].y = a * tz + b;
+							int index = (int) z0 - floor(face->bottom);
+							transformCoords(&gSubAtlasFloor[SUB_ATLAS_SIDES(x, y).sides[side] + index], square->lightmap[i]);
 						}
 					}
 				}
