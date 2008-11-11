@@ -20,8 +20,6 @@
 #ifndef types_hpp
 #define types_hpp
 
-#include "atlas.hpp"
-
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
 
@@ -37,6 +35,20 @@
 
 #define MIN_ALLOWED_CHAR 32
 #define MAX_ALLOWED_CHAR 127
+
+struct Orientation
+{
+	Vector3 origin;
+	Vector3 vx;
+	Vector3 vy;
+	Vector3 normal;
+};
+
+struct SubAtlas
+{
+	Orientation orientation;
+	int idxSubLightMap;
+};
 
 struct Square
 {

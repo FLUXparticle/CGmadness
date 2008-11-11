@@ -17,15 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _lightmap_hpp_
-#define _lightmap_hpp_
+#ifndef lightmap_hpp
+#define lightmap_hpp
 
-#include "atlas.hpp"
+#include "level/types.hpp"
 
 #include "math/Vector3.hpp"
 
 float approximation(const Vector3& position, const Vector3& normal);
 
-void genAmbientOcclusionTexture(const SubAtlas* lightMap, Orientation orientation);
+void genAmbientOcclusionTexture(const SubAtlas* lightMap);
 
 #endif

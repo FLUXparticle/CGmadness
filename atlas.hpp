@@ -31,20 +31,6 @@
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
-struct Orientation
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-};
-
-struct SubAtlas
-{
-	Orientation orientation;
-	int idxSubLightMap;
-};
-
 void initAtlas(int cntSubTextures);
 
 int getCntAllocatedSubLightMaps();
@@ -58,10 +44,10 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
 
-void allocSubAtlas(SubAtlas* subAtlas);
+int allocSubAtlas();
 
-void setLightMap(const SubAtlas* subAtlas, int x, int y, float value);
+void setLightMap(int index, int x, int y, float value);
 
-void transformCoords(const SubAtlas* subAtlas, Vector2& coords);
+void transformCoords(int index, Vector2& coords);
 
 #endif

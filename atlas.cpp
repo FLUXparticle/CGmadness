@@ -129,29 +129,30 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 
 /*****/
 
-void allocSubAtlas(SubAtlas* subAtlas)
+int allocSubAtlas()
 {
-	subAtlas->idxSubLightMap = gAllocatedSubTextures;
-	gAllocatedSubTextures++;
+	int idxSubLightMap = gAllocatedSubTextures++;
 
-	assert(gAllocatedSubTextures <= gMaxSubLightMaps);
+	assert(idxSubLightMap < gMaxSubLightMaps);
+
+	return idxSubLightMap;
 }
 
-void setLightMap(const SubAtlas* subAtlas, int x, int y, float value)
+void setLightMap(int index, int x, int y, float value)
 {
 	assert(x >= 0 && x < LIGHT_MAP_SIZE);
 	assert(y >= 0 && y < LIGHT_MAP_SIZE);
 
-	getSubLightMapPixel(subAtlas->idxSubLightMap, x, y) = value;
+	getSubLightMapPixel(index, x, y) = value;
 }
 
-void transformCoords(const SubAtlas* subAtlas, Vector2& coords)
+void transformCoords(int index, Vector2& coords)
 {
 	if (gCols > 0 && gRows > 0)
 	{
 		assert(coords.x >= 0.0f && coords.x <= 1.0f);
 		assert(coords.y >= 0.0f && coords.y <= 1.0f);
 
-		coords = transformSubCoords(subAtlas->idxSubLightMap, coords);
+		coords = transformSubCoords(index, coords);
 	}
 }

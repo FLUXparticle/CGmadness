@@ -37,11 +37,6 @@
 
 #define BOTTOM -0.0f
 
-struct CellLightMap
-{
-	int sides[5];
-};
-
 static int gCountSubLightMaps;
 static SubAtlas* gSubAtlas;
 
@@ -127,7 +122,7 @@ void initCommon()
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
 			atlas = &gSubAtlas[index++];
-			allocSubAtlas(atlas);
+			atlas->idxSubLightMap = allocSubAtlas();
 			atlas->orientation = orientationFloor(x, y);
 
 			Plate* p = getPlate(x, y);
@@ -144,7 +139,7 @@ void initCommon()
 				for (int i = 0; i < quads; ++i)
 				{
 					atlas = &gSubAtlas[index++];
-					allocSubAtlas(atlas);
+					atlas->idxSubLightMap = allocSubAtlas();
 					atlas->orientation = orientation;
 					orientation.origin += orientation.vy;
 				}
@@ -174,8 +169,7 @@ void destroyCommon()
 
 static void updateLightMapIdle(int step)
 {
-	SubAtlas* atlas = &gSubAtlas[step];
-	genAmbientOcclusionTexture(atlas, atlas->orientation);
+	genAmbientOcclusionTexture(&gSubAtlas[step]);
 }
 
 void updateLightMap(int useProgressBar)
@@ -230,7 +224,7 @@ void updateTexCoords()
 				{
 					square->lightmap[i].x = a * sgEdgeX[i] + b;
 					square->lightmap[i].y = a * sgEdgeY[i] + b;
-					transformCoords(square->atlas, square->lightmap[i]);
+					transformCoords(square->atlas->idxSubLightMap, square->lightmap[i]);
 				}
 			}
 		}
@@ -281,7 +275,7 @@ void updateTexCoords()
 						{
 							square->lightmap[i].x = a * txy + b;
 							square->lightmap[i].y = a * tz + b;
-							transformCoords(square->atlas, square->lightmap[i]);
+							transformCoords(square->atlas->idxSubLightMap, square->lightmap[i]);
 						}
 					}
 				}
