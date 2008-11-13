@@ -29,6 +29,7 @@
 #include "hw/keyboard.hpp"
 #include "field.hpp"
 #include "lightmap.hpp"
+#include "math/closestpoint.hpp"
 
 #include "functions.hpp"
 
@@ -156,81 +157,6 @@ void Ball::explodeBall()
 	mIsBallInPieces = true;
 }
 
-
-bool collisionPoint(const Vector3 sphere, const Vector3* quad,
-									 const Vector3 normal, float radius, Vector3* collision)
-{
-	float dToPlane = dot(sphere, normal) - dot(quad[0], normal);
-	int inside = 1;
-
-	int i;
-
-	if (fabs(dToPlane) >= radius)
-	{
-		return false;
-	}
-
-	for (i = 0; i < 4; i++)
-	{
-		int j = (i + 1) % 4;
-		Vector3 edge = sub(quad[j], quad[i]);
-
-		if (len(edge) > 0.0f)
-		{
-			Vector3 n = norm(cross(edge, normal));
-
-			if (dot(sphere, n) - dot(quad[i], n) >= 0.0f)
-			{
-				Vector3 a = sub(sphere, quad[i]);
-				Vector3 nn = norm(cross(cross(edge, a), edge));
-				float dToEdge = dot(sphere, nn) - dot(quad[i], nn);
-				float f = dot(a, edge) / sqr(len(edge));
-
-				inside = 0;
-
-				if (dToEdge >= radius)
-				{
-					return false;
-				}
-
-				if (f <= 0.0f)
-				{
-					if (len(sub(sphere, quad[i])) < radius)
-					{
-						*collision = quad[i];
-
-						return true;
-					}
-				}
-				else if (f >= 1.0f)
-				{
-					if (len(sub(sphere, quad[j])) < radius)
-					{
-						*collision = quad[j];
-
-						return true;
-					}
-				}
-				else
-				{
-					*collision = sub(sphere, scale(dToEdge, nn));
-
-					return true;
-				}
-			}
-		}
-	}
-
-	if (inside)
-	{
-		*collision = sub(sphere, scale(dToPlane, normal));
-
-		return true;
-	}
-
-	return false;
-}
-
 void Ball::animateBall(float interval)
 {
 	bool collision = false;
@@ -261,9 +187,15 @@ void Ball::animateBall(float interval)
 		const Vector3* q = quad.mVertices;
 		const Vector3& dir = quad.mNormals[0];
 
-		Vector3 a;
+		Vector3 a1 = closestPointTriangle(ball, q[0], q[1], q[2]);
+		Vector3 a2 = closestPointTriangle(ball, q[2], q[3], q[0]);
 
-		if (collisionPoint(ball, q, dir, mRadius, &a))
+		float d1 = (ball - a1).len();
+		float d2 = (ball - a2).len();
+
+		Vector3 a = (d1 <= d2) ? a1 : a2;
+
+		if ((a - ball).len() <= BALL_RADIUS)
 		{
 			/* dist = vector from ball center to quad */
 			Vector3 dist = a - ball;
