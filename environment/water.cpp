@@ -37,7 +37,7 @@ void initWater(void)
 
 void updateWater(float interval)
 {
-	gWaterAnim += interval * 0.00f;
+	gWaterAnim += interval * 0.05f;
 
 	if (gWaterAnim > 2.0f)
 	{
@@ -47,10 +47,10 @@ void updateWater(float interval)
 
 void multiTexCoord2f(float u, float v)
 {
-	glMultiTexCoord2f(GL_TEXTURE0, 1.0f * gWaterAnim + u / 64.0f,
-										1.0f * gWaterAnim + v / 64.0f + 0.33f);
-	glMultiTexCoord2f(GL_TEXTURE1, 0.5f * gWaterAnim + u / 64.0f,
-										0.5f * gWaterAnim + v / 64.0f);
+	glMultiTexCoord2f(GL_TEXTURE0, 1.0f * gWaterAnim + 0.25f * u,
+										1.0f * gWaterAnim + 0.25f * v + 0.33f);
+	glMultiTexCoord2f(GL_TEXTURE1, 0.5f * gWaterAnim + 0.25f * u,
+										0.5f * gWaterAnim + 0.25f * v);
 }
 
 void drawWaterPolygones(void)

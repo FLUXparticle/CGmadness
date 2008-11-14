@@ -86,7 +86,7 @@ void drawSkysphere()
 {
 	int j;
 
-	glColor3f(0.486f, 0.491f, 0.7f);
+	glColor3f(0.651f, 0.682f, 1.0f);
 
 	glPushMatrix();
 
