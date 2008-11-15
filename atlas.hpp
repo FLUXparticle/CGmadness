@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _atlas_hpp_
-#define _atlas_hpp_
+#ifndef atlas_hpp
+#define atlas_hpp
 
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
@@ -43,8 +43,6 @@ void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
 void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
-
-int allocSubAtlas();
 
 void setLightMap(int index, int x, int y, float value);
 

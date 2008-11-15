@@ -29,7 +29,6 @@ static int gRows;
 static int gLightMapSizeX;
 static int gLightMapSizeY;
 static float* gLightMapData;
-static int gAllocatedSubTextures;
 static int gMaxSubLightMaps = 0;
 
 static int nextPowerOfTwo(int i)
@@ -46,7 +45,7 @@ static int nextPowerOfTwo(int i)
 
 int getCntAllocatedSubLightMaps()
 {
-	return gAllocatedSubTextures;
+	return gMaxSubLightMaps;
 }
 
 void initAtlas(int cntSubTextures)
@@ -65,7 +64,6 @@ void initAtlas(int cntSubTextures)
 
 	gLightMapData = new float[gLightMapSizeX * gLightMapSizeY];
 
-	gAllocatedSubTextures = 0;
 	gMaxSubLightMaps = cntSubTextures;
 
 	PRINT_INT(gLightMapSizeX);
@@ -79,7 +77,6 @@ void destroyAtlas()
 
 	gCols = 0;
 	gRows = 0;
-	gAllocatedSubTextures = 0;
 }
 
 float& getSubLightMapPixel(int index, int sx, int sy)
@@ -128,15 +125,6 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 }
 
 /*****/
-
-int allocSubAtlas()
-{
-	int idxSubLightMap = gAllocatedSubTextures++;
-
-	assert(idxSubLightMap < gMaxSubLightMaps);
-
-	return idxSubLightMap;
-}
 
 void setLightMap(int index, int x, int y, float value)
 {

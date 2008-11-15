@@ -23,6 +23,6 @@
 void initCommon();
 void destroyCommon();
 
-void updateLightMap(int useProgressBar);
+void updateLightMap(bool useProgressBar);
 
 #endif

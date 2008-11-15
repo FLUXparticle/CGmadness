@@ -114,6 +114,11 @@ void initCommon()
 
 	initAtlas(gCountSubLightMaps);
 
+	for (int i = 0; i < gCountSubLightMaps; ++i)
+	{
+		gSubAtlas[i].idxSubLightMap = i;
+	}
+
 	int index = 0;
 	SubAtlas* atlas;
 	for (x = 0; x < sgLevel.size.x; x++)
@@ -121,7 +126,6 @@ void initCommon()
 		for (y = 0; y < sgLevel.size.y; y++)
 		{
 			atlas = &gSubAtlas[index++];
-			atlas->idxSubLightMap = allocSubAtlas();
 			atlas->orientation = orientationFloor(x, y);
 
 			Plate* p = getPlate(x, y);
@@ -138,7 +142,6 @@ void initCommon()
 				for (int i = 0; i < quads; ++i)
 				{
 					atlas = &gSubAtlas[index++];
-					atlas->idxSubLightMap = allocSubAtlas();
 					atlas->orientation = orientation;
 					orientation.origin += orientation.vy;
 				}
@@ -171,7 +174,7 @@ static void updateLightMapIdle(int step)
 	genAmbientOcclusionTexture(&gSubAtlas[step]);
 }
 
-void updateLightMap(int useProgressBar)
+void updateLightMap(bool useProgressBar)
 {
 	int cntSteps = gCountSubLightMaps;
 
@@ -181,12 +184,10 @@ void updateLightMap(int useProgressBar)
 	}
 	else
 	{
-		int step;
-
 		printf("calculating lightmaps...\n");
 		resetProgress();
 
-		for (step = 0; step < cntSteps;)
+		for (int step = 0; step < cntSteps;)
 		{
 			updateLightMapIdle(step);
 
