@@ -74,7 +74,7 @@ static int* gCameraViewIndices;
 static int gCntBallReflectionIndices = 0;
 static int* gBallReflectionIndices;
 
-static KdTree* gKdTree;
+static KdTree* gKdFieldTree;
 
 static Vector3 gBallPosition;
 
@@ -125,14 +125,14 @@ static void addSquare(const Square* square)
 QuadList getSphereIntersection(const Vector3& center, float radius)
 {
 	Vector3 c = center - sgLevel.origin;
-	KdIterator* iter = new KdSphereIntersection(*gKdTree, c, radius);
+	KdIterator* iter = new KdSphereIntersection(*gKdFieldTree, c, radius);
 
 	return QuadList(iter, gVertices, gNormals);
 }
 
 static void setRoofColor(int x, int y, const Color4& col)
 {
-	const KdCell::Range& range = gKdTree->get(x, y);
+	const KdCell::Range& range = gKdFieldTree->get(x, y);
 
 	int q = range.start;
 	for (int i = 0; i < 4; i++)
@@ -211,10 +211,6 @@ void initGameField()
 	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
 	static Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
-	int x;
-	int y;
-	int i;
-
 	glGenTextures(1, &gWhiteTexture);
 
 	glBindTexture(GL_TEXTURE_2D, gWhiteTexture);
@@ -224,17 +220,17 @@ void initGameField()
 	initBallShadow();
 
 	/* init level stuff */
-	gKdTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
+	gKdFieldTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 
 	gMaxQuads = 0;
 
-	for (y = 0; y < sgLevel.size.y; y++)
+	for (int y = 0; y < sgLevel.size.y; y++)
 	{
-		for (x = 0; x < sgLevel.size.x; x++)
+		for (int x = 0; x < sgLevel.size.x; x++)
 		{
 			gMaxQuads++;
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				const SideFace& face = getSideFace(x, y, i);
 
@@ -257,9 +253,9 @@ void initGameField()
 
 	setColor(white);
 
-	for (y = 0; y < sgLevel.size.y; y++)
+	for (int y = 0; y < sgLevel.size.y; y++)
 	{
-		for (x = 0; x < sgLevel.size.x; x++)
+		for (int x = 0; x < sgLevel.size.x; x++)
 		{
 			const Square& square = getRoofSquare(x, y);
 
@@ -267,7 +263,7 @@ void initGameField()
 
 			addSquare(&square);
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				const SideFace& face = getSideFace(x, y, i);
 
@@ -277,7 +273,7 @@ void initGameField()
 				}
 			}
 
-			gKdTree->set(x, y, KdCell::Range(start, gCntVertices));
+			gKdFieldTree->set(x, y, KdCell::Range(start, gCntVertices));
 		}
 	}
 
@@ -323,7 +319,7 @@ void destroyGameField()
 	delete[] gVertices;
 	delete[] gNormals;
 
-	delete gKdTree;
+	delete gKdFieldTree;
 
 	delete[] gCameraViewIndices;
 	delete[] gBallReflectionIndices;
@@ -378,7 +374,7 @@ void updateGameField(const PlayersBall& ball)
 		if (gMaxVertices > 0)
 		{
 			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
-			KdIterator* iter = new KdPaintersAlgorithmReverse(*gKdTree, q);
+			KdIterator* iter = new KdPaintersAlgorithmReverse(*gKdFieldTree, q);
 			QuadList list(iter, gVertices, gNormals);
 
 			gCntCameraViewIndices = painter(list, sgCamera, gCameraViewIndices);
@@ -424,7 +420,7 @@ void updateGameField(const PlayersBall& ball)
 			if (gMaxVertices > 0)
 			{
 				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
-				KdIterator* iter = new KdPaintersAlgorithm(*gKdTree, q);
+				KdIterator* iter = new KdPaintersAlgorithm(*gKdFieldTree, q);
 				QuadList list(iter, gVertices, gNormals);
 
 				gCntBallReflectionIndices = painter(list, gBallPosition, gBallReflectionIndices);

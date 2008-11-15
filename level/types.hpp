@@ -77,16 +77,20 @@ struct SideFace
 	int top;
 };
 
+struct Block
+{
+	bool dirty;
+	Square roof;
+	SideFace sideFaces[4];
+};
+
 struct Plate
 {
 	int z;
 	int dzx;
 	int dzy;
 
-	bool dirty;
-	Square roof;
-
-	SideFace sideFaces[4];
+	Block block;
 };
 
 struct FieldCoord

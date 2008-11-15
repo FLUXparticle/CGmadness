@@ -24,12 +24,6 @@
 
 struct KdCell
 {
-	int left;
-	int right;
-
-	Vector3 min;
-	Vector3 max;
-
 	struct Range
 	{
 		int start;
@@ -37,7 +31,15 @@ struct KdCell
 
 		Range();
 		Range(int start, int end);
-	} range;
+	};
+
+	int left;
+	int right;
+
+	Vector3 min;
+	Vector3 max;
+
+	Range range;
 
   KdCell(const Vector3& min, const Vector3& max);
 

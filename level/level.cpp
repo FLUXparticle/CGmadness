@@ -22,6 +22,8 @@
 #include "common.hpp"
 #include "atlas.hpp"
 
+#include "kdtree/KdTree.hpp"
+
 #include "functions.hpp"
 
 #include GL_H
@@ -31,16 +33,18 @@
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
+static KdTree* gKdLevelTree;
+
 Vector3 midpoint(const Vector3 quad[4])
 {
-	Vector3 mid(0.0f, 0.0f, 0.0f);
+	Vector3 mid = quad[0];
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (int i = 1; i < 4; i++)
 	{
-		mid = add(mid, scale(1.0f / 4.0f, quad[i]));
+		mid += quad[i];
 	}
 
-	return mid;
+	return mid / 4.0f;
 }
 
 static float area3Points(const Vector3& a, const Vector3& b, const Vector3& c)
@@ -79,13 +83,13 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 	return 0;
 }
 
-Plate* getPlate(int x, int y)
+Block* getBlock(int x, int y)
 {
-	Plate* p = &sgLevel.field[x][y];
+	Block* b = &sgLevel.field[x][y].block;
 
-	if (p->dirty)
+	if (b->dirty)
 	{
-		Square* square = &p->roof;
+		Square* square = &b->roof;
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -124,11 +128,11 @@ Plate* getPlate(int x, int y)
 			int height3 = getFieldEdgeHeight(x + dx, y + dy, sideOpposite);
 			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
 
-			SideFace* face = &p->sideFaces[side];
+			SideFace* face = &b->sideFaces[side];
 
 			Orientation sideDecal;
 
-			const Square& roof = p->roof;
+			const Square& roof = b->roof;
 			sideDecal.origin = roof.vertices[side];
 			sideDecal.vx = roof.vertices[next] - roof.vertices[side];
 			sideDecal.vy = Vector3(0.0f, 0.0f, -1.0f);
@@ -242,10 +246,10 @@ Plate* getPlate(int x, int y)
 
 		}
 
-		p->dirty = false;
+		b->dirty = false;
 	}
 
-	return p;
+	return b;
 }
 
 void initLevel()
@@ -261,12 +265,16 @@ void initLevel()
 	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
 	sgLevel.origin.y = 10.0f;
 	sgLevel.origin.z = 0.0f;
+
+	gKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 }
 
 void destroyLevel()
 {
 	delete[] sgLevel.field[0];
 	delete[] sgLevel.field;
+
+	delete gKdLevelTree;
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
@@ -276,12 +284,12 @@ void destroyLevel()
 
 const Square& getRoofSquare(int x, int y)
 {
-	Plate* p = getPlate(x, y);
-	return p->roof;
+	Block* b = getBlock(x, y);
+	return b->roof;
 }
 
 const SideFace& getSideFace(int x, int y, int side)
 {
-	Plate* p = getPlate(x, y);
-	return p->sideFaces[side];
+	Block* b = getBlock(x, y);
+	return b->sideFaces[side];
 }

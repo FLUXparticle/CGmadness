@@ -55,14 +55,12 @@ static int readByte(FILE* file)
 static int readInt(FILE* file)
 {
 	int value = -1;
-	int tmp;
-	int i;
 
 	if (fscanf(file, "%i", &value) == 1)
 	{
-		tmp = value;
+		int tmp = value;
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			nextByte(tmp);
 			tmp >>= 8;
@@ -87,15 +85,13 @@ void readFieldPlate(FILE * file, Plate * plate)
 
 void readRLEByte(FILE * file, int *repeat, int *value)
 {
-	int i;
-
 	if (fscanf(file, "%ix%i", repeat, value) < 2)
 	{
 		*value = *repeat;
 		*repeat = 1;
 	}
 
-	for (i = 0; i < *repeat; i++)
+	for (int i = 0; i < *repeat; i++)
 	{
 		nextByte(*value);
 	}
@@ -104,7 +100,6 @@ void readRLEByte(FILE * file, int *repeat, int *value)
 void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 {
 	int s = 0;
-	int i;
 
 	while (s < SIZEOF_LIGHT_MAP)
 	{
@@ -113,7 +108,7 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 
 		readRLEByte(file, &repeat, &value);
 
-		for (i = 0; i < repeat; i++)
+		for (int i = 0; i < repeat; i++)
 		{
 			data[s + i] = value;
 		}
@@ -124,13 +119,11 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 
 void readString(FILE * file, char *str)
 {
-	int i;
-
 	char *s = str;
 
 	fgetc(file);
 
-	for (i = 0; i < MAX_NAME_LENGTH; i++)
+	for (int i = 0; i < MAX_NAME_LENGTH; i++)
 	{
 		int b = fgetc(file);
 
@@ -152,11 +145,10 @@ void readString(FILE * file, char *str)
 void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 {
 	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
-	int i;
 
 	if (flip)
 	{
-		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		for (int i = 0; i < SIZEOF_LIGHT_MAP; i++)
 		{
 			dataFloat[i + LIGHT_MAP_SIZE - 1 - 2 * (i % LIGHT_MAP_SIZE)] =
 				(float) dataInt[i] / 255;
@@ -164,7 +156,7 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	}
 	else
 	{
-		for (i = 0; i < SIZEOF_LIGHT_MAP; i++)
+		for (int i = 0; i < SIZEOF_LIGHT_MAP; i++)
 		{
 			dataFloat[i] = (float) dataInt[i] / 255;
 		}
@@ -175,7 +167,6 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 
 bool loadHighscoreFromFile(void)
 {
-	int i;
 	unsigned int version;
 	unsigned int crc32;
 
@@ -206,7 +197,7 @@ bool loadHighscoreFromFile(void)
 
 	sgLevel.cntScoreCols = readByte(file);
 
-	for (i = 0; i < sgLevel.cntScoreCols; i++)
+	for (int i = 0; i < sgLevel.cntScoreCols; i++)
 	{
 		sgLevel.scores[i].tenthSecond = readInt(file);
 		readString(file, sgLevel.scores[i].name);
@@ -311,7 +302,7 @@ void newLevel()
 			p->z = 0;
 			p->dzx = 0;
 			p->dzy = 0;
-			p->dirty = true;
+			p->block.dirty = true;
 		}
 	}
 
@@ -324,7 +315,6 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 {
 	FILE* file = fopen(filename, "rt");
 
-	int x, y;
 	FieldCoord fileCoords;
 	unsigned int version;
 	unsigned int crc32;
@@ -372,9 +362,9 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	initLevel();
 
 	/* reading data */
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
 			Plate *p = &sgLevel.field[x][y];
 			if (x < fileCoords.x && y < fileCoords.y)
@@ -388,7 +378,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 				p->dzy = 0;
 			}
 
-			p->dirty = true;
+			p->block.dirty = true;
 		}
 
 		/* shrinking */
@@ -396,7 +386,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 		{
 			Plate dummyPlate;
 
-			for (y = sgLevel.size.y; y < fileCoords.y; y++)
+			for (int y = sgLevel.size.y; y < fileCoords.y; y++)
 			{
 				readFieldPlate(file, &dummyPlate);
 			}
@@ -597,8 +587,6 @@ bool saveLevelToFile(void)
 {
 	FILE *file = fopen(sgLevel.filename, "wt");
 
-	int x, y;
-
 	if (!file)
 	{
 		return false;
@@ -615,9 +603,9 @@ bool saveLevelToFile(void)
 	writeFieldCoord(file, sgLevel.size);
 
 	/* write data */
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
 			Plate *p = &sgLevel.field[x][y];
 			writeFieldPlate(file, p);
@@ -629,17 +617,14 @@ bool saveLevelToFile(void)
 	{
 		int cntSubLightMaps = getCntAllocatedSubLightMaps();
 
-		int i;
-		int j;
-
-		for (i = 0; i < cntSubLightMaps; i++)
+		for (int i = 0; i < cntSubLightMaps; i++)
 		{
 			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
 			int dataInt[SIZEOF_LIGHT_MAP];
 
 			getSubLightMap(i, dataFloat);
 
-			for (j = 0; j < SIZEOF_LIGHT_MAP; j++)
+			for (int j = 0; j < SIZEOF_LIGHT_MAP; j++)
 			{
 				dataInt[j] = (int) (clamp(dataFloat[j], 0.0f, 1.0f) * 255);
 			}

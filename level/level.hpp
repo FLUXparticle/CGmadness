@@ -28,7 +28,7 @@ extern const int sgEdgeY[4];
 void initLevel();
 void destroyLevel();
 
-Plate* getPlate(int x, int y);
+Block* getBlock(int x, int y);
 const Square& getRoofSquare(int x, int y);
 const SideFace& getSideFace(int x, int y, int side);
 

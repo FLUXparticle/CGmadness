@@ -170,18 +170,15 @@ void updateEditorCamera(float interval, Vector3 marker)
 	moveCamera(interval, dest, marker);
 }
 
-void markerChanged(void)
+static void markerChanged()
 {
-	int x;
-	int y;
-
-	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	for (int x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
 	{
-		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
+		for (int y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
 		{
 			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
 			{
-				sgLevel.field[x][y].dirty = true;
+				sgLevel.field[x][y].block.dirty = true;
 			}
 		}
 	}
@@ -192,18 +189,13 @@ void markerChanged(void)
 
 void changeMarkerArea(int incz, int incdzx, int incdzy)
 {
-	int x;
-	int y;
-	int incx;
-	int incy;
+	int incx = -(gCurEnd.x - gCurStart.x) * incdzx;
 
-	incx = -(gCurEnd.x - gCurStart.x) * incdzx;
-
-	for (x = gCurStart.x; x <= gCurEnd.x; x++)
+	for (int x = gCurStart.x; x <= gCurEnd.x; x++)
 	{
-		incy = -(gCurEnd.y - gCurStart.y) * incdzy;
+		int incy = -(gCurEnd.y - gCurStart.y) * incdzy;
 
-		for (y = gCurStart.y; y <= gCurEnd.y; y++)
+		for (int y = gCurStart.y; y <= gCurEnd.y; y++)
 		{
 			Plate *p = &sgLevel.field[x][y];
 			int z = p->z;
@@ -231,14 +223,11 @@ void changeMarkerArea(int incz, int incdzx, int incdzy)
 	markerChanged();
 }
 
-void flattenMarkerArea(void)
+static void flattenMarkerArea()
 {
-	int x;
-	int y;
-
-	for (x = gCurStart.x; x <= gCurEnd.x; x++)
+	for (int x = gCurStart.x; x <= gCurEnd.x; x++)
 	{
-		for (y = gCurStart.y; y <= gCurEnd.y; y++)
+		for (int y = gCurStart.y; y <= gCurEnd.y; y++)
 		{
 			Plate *p = &sgLevel.field[x][y];
 
