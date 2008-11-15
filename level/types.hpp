@@ -74,8 +74,8 @@ struct SideFace
 {
 	std::vector<Square> squares;
 
-	float bottom;
-	float top;
+	int bottom;
+	int top;
 };
 
 struct Plate

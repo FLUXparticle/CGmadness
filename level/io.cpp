@@ -263,8 +263,8 @@ void importLightmapV2(FILE* file)
 
 				if (!face.squares.empty())
 				{
-					bottom = (int) floor(face.bottom);
-					top = (int) ceil(face.top);
+					bottom = face.bottom;
+					top = face.top;
 				}
 
 				if (side % 2 == 0)

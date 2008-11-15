@@ -167,8 +167,8 @@ Plate* getPlate(int x, int y)
 					y3 = y2;
 				}
 
-				face->bottom = (float) startHeight / HEIGHT_STEPS;
-				face->top = (float) maxHeight / HEIGHT_STEPS;
+				face->bottom = startHeight / HEIGHT_STEPS;
+				face->top = ((maxHeight - 1) / HEIGHT_STEPS) + 1;
 
 				for (bottom = startHeight; bottom < minHeight;)
 				{

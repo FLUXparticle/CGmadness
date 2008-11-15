@@ -46,7 +46,7 @@ static int quadsNeeded(int fx, int fy, int side)
 
 	if (!face.squares.empty())
 	{
-		return (int) (ceil(face.top) - floor(face.bottom));
+		return face.top - face.bottom;
 	}
 	else
 	{
@@ -78,7 +78,7 @@ static Orientation orientationSide(int fx, int fy, int side)
 	Orientation orientation;
 
 	orientation.origin =
-		add(Vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], floor(face.bottom)),
+		add(Vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], face.bottom),
 				sgLevel.origin);
 	orientation.vx =
 		Vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
@@ -150,7 +150,7 @@ void initCommon()
 					square = &(*iter);
 
 					int z0 = (int) floor(square->vertices[1].z);
-					int i = (int) z0 - floor(face->bottom);
+					int i = z0 - face->bottom;
 
 					square->atlas = &gSubAtlas[start + i];
 				}
