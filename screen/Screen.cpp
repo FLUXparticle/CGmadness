@@ -146,13 +146,9 @@ void Screen::draw() const
 
 	bool isAnimation = mAnimationTime < 1.0;
 
-	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
-
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
 		ColorStack::colorStack.setColor(Color4::white);
 
@@ -188,9 +184,7 @@ void Screen::draw() const
 		}
 		glDisable(GL_BLEND);
 	}
-	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0);
 }
 
 void Screen::addItem(MenuItem* item)

@@ -273,7 +273,7 @@ void initGameField()
 				}
 			}
 
-			gKdFieldTree->set(x, y, KdCell::Range(start, gCntVertices));
+			gKdFieldTree->get(x, y) = KdCell::Range(start, gCntVertices);
 		}
 	}
 

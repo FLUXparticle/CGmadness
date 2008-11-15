@@ -178,7 +178,7 @@ static void markerChanged()
 		{
 			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
 			{
-				sgLevel.field[x][y].block.dirty = true;
+				sgLevel.field[x][y].dirty = true;
 			}
 		}
 	}
@@ -442,11 +442,9 @@ void drawEditorField(bool showCursor)
 
 	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
@@ -454,7 +452,6 @@ void drawEditorField(bool showCursor)
 	{
 		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
 		{
-
 			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
 					<= gCurEnd.y && cur.y >= gCurStart.y)
 			{
@@ -470,7 +467,7 @@ void drawEditorField(bool showCursor)
 			}
 			else
 			{
-				glColor3f(1.0f, 1.0f, 1.0f);
+				glColor3fv(Color4::white);
 			}
 
 			const Square& square = getRoofSquare(cur.x, cur.y);
@@ -506,7 +503,6 @@ void drawEditorField(bool showCursor)
 	}
 
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 }
 

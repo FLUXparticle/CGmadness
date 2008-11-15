@@ -33,7 +33,7 @@ public:
 	KdTree(int sizeX, int sizeY);
 	virtual ~KdTree();
 
-	void set(int x, int y, const KdCell::Range& range);
+	KdCell::Range& get(int x, int y);
 	const KdCell::Range& get(int x, int y) const;
 
 	const KdCell& cell(int index) const;

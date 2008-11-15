@@ -302,7 +302,7 @@ void newLevel()
 			p->z = 0;
 			p->dzx = 0;
 			p->dzy = 0;
-			p->block.dirty = true;
+			p->dirty = true;
 		}
 	}
 
@@ -378,7 +378,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 				p->dzy = 0;
 			}
 
-			p->block.dirty = true;
+			p->dirty = true;
 		}
 
 		/* shrinking */

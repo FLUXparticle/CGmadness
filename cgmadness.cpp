@@ -87,10 +87,12 @@ int main(int argc, char *argv[])
 
 	{
 		float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glEnable(GL_LIGHT0);
 	}
 
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
 
 	/* ---- */
 
@@ -98,13 +100,13 @@ int main(int argc, char *argv[])
 	startMouse();
 
 	Main::init();
-	
+
 	Singleton<Main> main;
 	Singleton<MainProcess> process;
 	main->setFirstProcess(process);
 
 	startCallback(main);
-	
+
 	glutMainLoop();
 
 	return 0;

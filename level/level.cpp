@@ -33,6 +33,7 @@
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
+static Block* gBlocks;
 static KdTree* gKdLevelTree;
 
 Vector3 midpoint(const Vector3 quad[4])
@@ -85,9 +86,12 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 
 Block* getBlock(int x, int y)
 {
-	Block* b = &sgLevel.field[x][y].block;
+	KdCell::Range& range = gKdLevelTree->get(x, y);
+	Block* b = &gBlocks[range.start];
 
-	if (b->dirty)
+	Plate* p = &sgLevel.field[x][y];
+
+	if (p->dirty)
 	{
 		Square* square = &b->roof;
 
@@ -246,7 +250,7 @@ Block* getBlock(int x, int y)
 
 		}
 
-		b->dirty = false;
+		p->dirty = false;
 	}
 
 	return b;
@@ -266,7 +270,20 @@ void initLevel()
 	sgLevel.origin.y = 10.0f;
 	sgLevel.origin.z = 0.0f;
 
+	gBlocks = new Block[sgLevel.size.x * sgLevel.size.y];
 	gKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
+
+	int index = 0;
+	for (int x = 0; x < sgLevel.size.x; x++)
+	{
+		for (int y = 0; y < sgLevel.size.y; y++)
+		{
+			KdCell::Range& range = gKdLevelTree->get(x, y);
+
+			range.start = index++;
+			range.end = index;
+		}
+	}
 }
 
 void destroyLevel()
@@ -274,6 +291,7 @@ void destroyLevel()
 	delete[] sgLevel.field[0];
 	delete[] sgLevel.field;
 
+	delete[] gBlocks;
 	delete gKdLevelTree;
 
 	sgLevel.size.x = -1;

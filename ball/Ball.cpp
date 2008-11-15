@@ -359,11 +359,9 @@ void Ball::drawExplosion() const
 void Ball::activateBallShader() const
 {
 	float lightPos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 
 	Vector3 normal(0.0f, 0.0f, 1.0f);
 	float light = approximation(mPos, normal);
@@ -388,6 +386,5 @@ void Ball::deactivateBallShader() const
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 }

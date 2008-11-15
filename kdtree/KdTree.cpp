@@ -39,15 +39,14 @@ KdTree::~KdTree()
   // empty
 }
 
-void KdTree::set(int x, int y, const KdCell::Range& range)
+KdCell::Range& KdTree::get(int x, int y)
 {
 	Vector3 q(x + 0.5f, y + 0.5f, 0.0f);
 	KdSet iter(*this, q);
 
-	if (iter.next())
-	{
-		*iter = range;
-	}
+	iter.next();
+
+	return *iter;
 }
 
 const KdCell::Range& KdTree::get(int x, int y) const
