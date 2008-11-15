@@ -50,7 +50,6 @@ static int gCamAngle = 0;
 static const int gSin[] = { 0, 1, 0, -1 };
 static const int gCos[] = { 1, 0, -1, 0 };
 
-static bool gDirtyTexCoords;
 static bool gDirtyLightmaps;
 
 Editor::Editor()
@@ -72,9 +71,6 @@ void Editor::start(Process* previous)
 	{
 		gDirtyLightmaps = false;
 	}
-
-	updateTexCoords();
-	gDirtyTexCoords = false;
 
 	gCurStart.x = 0;
 	gCurStart.y = 0;
@@ -192,7 +188,6 @@ void markerChanged(void)
 
 	sgLevel.saved = false;
 	gDirtyLightmaps = true;
-	gDirtyTexCoords = true;
 }
 
 void changeMarkerArea(int incz, int incdzx, int incdzy)
@@ -445,12 +440,6 @@ void Editor::update(float interval)
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
-
-		if (gDirtyTexCoords)
-		{
-			updateTexCoords();
-			gDirtyTexCoords = false;
-		}
 		break;
 	}
 	default:
@@ -501,7 +490,7 @@ void drawEditorField(bool showCursor)
 			glNormal3fv(square.normal);
 			for (int i = 0; i < 4; i++)
 			{
-				glTexCoord2fv(square.texcoord[i]);
+				glTexCoord2fv(square.texCoords(i));
 				glVertex3fv(square.vertices[i]);
 			}
 			glEnd();
@@ -518,7 +507,7 @@ void drawEditorField(bool showCursor)
 					glNormal3fv(iter->normal);
 					for (int i = 0; i < 4; i++)
 					{
-						glTexCoord2fv(iter->texcoord[i]);
+						glTexCoord2fv(iter->texCoords(i));
 						glVertex3fv(iter->vertices[i]);
 					}
 				}

@@ -56,7 +56,6 @@ void LevelLoader::loadLevelByID(int id)
 
 		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id], true))
 		{
-			updateTexCoords();
 			gLoadedLevel = id;
 
 			if (sgLevel.borderTexture == 0)

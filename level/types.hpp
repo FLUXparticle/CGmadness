@@ -59,15 +59,15 @@ struct Square
 
 	Orientation texDecal;
 
-	Vector2 texcoord[4];
-	Vector2 lightmap[4];
-
 	SubAtlas* atlas;
 
 	float area;
 	Vector3 mid;
 
 	void updateAttributes();
+
+	Vector2 texCoords(int vertex) const;
+	Vector2 lightmapCoords(int vertex) const;
 };
 
 struct SideFace

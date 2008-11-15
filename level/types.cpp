@@ -19,6 +19,8 @@
 
 #include "types.hpp"
 
+#include "atlas.hpp"
+
 Level sgLevel;
 
 Vector3 Orientation::decomposition(const Vector3& v) const
@@ -31,4 +33,28 @@ Vector3 Orientation::decomposition(const Vector3& v) const
 	float dz = (vx ^ vy) * a;
 
 	return Vector3(dx / d, dy / d, dz / d);
+}
+
+Vector2 Square::texCoords(int vertex) const
+{
+	Vector3 decomp = texDecal.decomposition(vertices[vertex]);
+
+	return Vector2(decomp.x, decomp.y);
+}
+
+Vector2 Square::lightmapCoords(int vertex) const
+{
+	static float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
+	static float b = 1.0f / (2 * LIGHT_MAP_SIZE);
+
+	Vector3 decomp = atlas->orientation.decomposition(vertices[vertex]);
+
+	Vector2 result;
+
+	result.x = a * decomp.x + b;
+	result.y = a * decomp.y + b;
+
+	transformCoords(atlas->idxSubLightMap, result);
+
+	return result;
 }

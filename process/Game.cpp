@@ -201,8 +201,6 @@ void Game::start(Process* previous)
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
 
-	updateTexCoords();
-
 	initGameField();
 
 	resetGame();

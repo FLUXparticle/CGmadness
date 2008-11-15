@@ -114,8 +114,8 @@ static void addSquare(const Square* square)
 
 	for (int i = 0; i < 4; i++)
 	{
-		setTexCoord(square->texcoord[i]);
-		setLightMapCoord(square->lightmap[i]);
+		setTexCoord(square->texCoords(i));
+		setLightMapCoord(square->lightmapCoords(i));
 		addVertex(square->vertices[i]);
 	}
 }
