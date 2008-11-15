@@ -42,6 +42,8 @@ struct Orientation
 	Vector3 vx;
 	Vector3 vy;
 	Vector3 normal;
+
+	Vector3 decomposition(const Vector3& v) const;
 };
 
 struct SubAtlas
@@ -52,10 +54,13 @@ struct SubAtlas
 
 struct Square
 {
-	Vector3 normal;
-	Vector2 lightmap[4];
-	Vector2 texcoord[4];
 	Vector3 vertices[4];
+	Vector3 normal;
+
+	Orientation texDecal;
+
+	Vector2 texcoord[4];
+	Vector2 lightmap[4];
 
 	SubAtlas* atlas;
 

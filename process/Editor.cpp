@@ -34,12 +34,14 @@
 #include "hw/keyboard.hpp"
 #include "common.hpp"
 
+#include "Color.hpp"
+
 #include "macros.hpp"
 
 #include GLUT_H
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
@@ -478,15 +480,15 @@ void drawEditorField(bool showCursor)
 			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
 					<= gCurEnd.y && cur.y >= gCurStart.y)
 			{
-				glColor3f(1.0f, 0.0f, 0.0f);
+				glColor3fv(Color4::red);
 			}
 			else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
 			{
-				glColor3f(0.0f, 1.0f, 0.0f);
+				glColor3fv(Color4::green);
 			}
 			else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
 			{
-				glColor3f(0.0f, 0.0f, 1.0f);
+				glColor3fv(Color4::blue);
 			}
 			else
 			{
@@ -496,11 +498,11 @@ void drawEditorField(bool showCursor)
 			const Square& square = getRoofSquare(cur.x, cur.y);
 
 			glBegin(GL_QUADS);
-			glNormal3fv(&square.normal.x);
+			glNormal3fv(square.normal);
 			for (int i = 0; i < 4; i++)
 			{
-				glTexCoord2fv(&square.texcoord[i].x);
-				glVertex3fv(&square.vertices[i].x);
+				glTexCoord2fv(square.texcoord[i]);
+				glVertex3fv(square.vertices[i]);
 			}
 			glEnd();
 
@@ -513,11 +515,11 @@ void drawEditorField(bool showCursor)
 
 				FOREACH(face.squares, iter)
 				{
-					glNormal3fv(&iter->normal.x);
+					glNormal3fv(iter->normal);
 					for (int i = 0; i < 4; i++)
 					{
-						glTexCoord2fv(&iter->texcoord[i].x);
-						glVertex3fv(&iter->vertices[i].x);
+						glTexCoord2fv(iter->texcoord[i]);
+						glVertex3fv(iter->vertices[i]);
 					}
 				}
 			}

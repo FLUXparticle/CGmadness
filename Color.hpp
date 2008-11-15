@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _Color_hpp_
-#define _Color_hpp_
+#ifndef Color_hpp
+#define Color_hpp
 
 struct Color3
 {
@@ -38,6 +38,7 @@ public:
 	static Color4 white;
 	static Color4 gray;
 	static Color4 red;
+	static Color4 green;
 	static Color4 blue;
 	static Color4 yellow;
 

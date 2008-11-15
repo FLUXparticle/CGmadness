@@ -213,12 +213,10 @@ void updateTexCoords()
 
 			for (int i = 0; i < 4; i++)
 			{
-				square->texcoord[i].x =
-					sgEdgeX[i] *
-					(int) (len(sub(square->vertices[1], square->vertices[0])) + 0.5f);
-				square->texcoord[i].y =
-					sgEdgeY[i] *
-					(int) (len(sub(square->vertices[3], square->vertices[0])) + 0.5f);
+				Vector3 decomp = square->texDecal.decomposition(square->vertices[i]);
+
+				square->texcoord[i].x = decomp.x;
+				square->texcoord[i].y = decomp.y;
 
 				if (sgLevel.lightMap)
 				{
@@ -245,9 +243,6 @@ void updateTexCoords()
 
 				SideFace* face = &p->sideFaces[side];
 
-				float z1 = p->roof.vertices[side].z;
-				float z2 = p->roof.vertices[next].z;
-
 				FOREACH(face->squares, iter)
 				{
 					Square* square = &(*iter);
@@ -266,10 +261,10 @@ void updateTexCoords()
 
 						float txy = tx + ty;
 
-						square->texcoord[i].x = txy;
-						square->texcoord[i].y =
-							((1.0f - txy) * z1 + txy * z2) - square->vertices[i].z -
-							sgLevel.origin.z;
+						Vector3 decomp = square->texDecal.decomposition(square->vertices[i]);
+
+						square->texcoord[i].x = decomp.x;
+						square->texcoord[i].y = decomp.y;
 
 						if (sgLevel.lightMap)
 						{

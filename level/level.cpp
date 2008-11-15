@@ -26,6 +26,8 @@
 
 #include GL_H
 
+#include <cmath>
+
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
@@ -65,10 +67,12 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 {
 	if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
 	{
-		Plate *p = &sgLevel.field[x][y];
+		int dx = sgEdgeX[edge] * 2 - 1;
+		int dy = sgEdgeY[edge] * 2 - 1;
 
-		return 5 + p->z + (sgEdgeX[edge] * 2 - 1) * p->dzx + (sgEdgeY[edge] * 2 -
-																													1) * p->dzy;
+		const Plate& p = sgLevel.field[x][y];
+
+		return 5 + p.z + dx * p.dzx + dy * p.dzy;
 	}
 
 	/* value out of range */
@@ -82,31 +86,26 @@ Plate* getPlate(int x, int y)
 	if (p->dirty)
 	{
 		Square* square = &p->roof;
-		int dzx = p->dzx;
-		int dzy = p->dzy;
-
-		Vector3 ex;
-		Vector3 ey;
-
-		ex.x = 0.5f;
-		ex.y = 0.0f;
-		ex.z = (float) dzx / HEIGHT_STEPS;
-
-		ey.x = 0.0f;
-		ey.y = 0.5f;
-		ey.z = (float) dzy / HEIGHT_STEPS;
-
-		square->normal = norm(cross(ex, ey));
 
 		for (int i = 0; i < 4; i++)
 		{
-			square->vertices[i].x = x + sgEdgeX[i];
-			square->vertices[i].y = y + sgEdgeY[i];
-			square->vertices[i].z =
-				(float) getFieldEdgeHeight(x, y, i) / HEIGHT_STEPS;
+			Vector3& v = square->vertices[i];
+			v.x = x + sgEdgeX[i];
+			v.y = y + sgEdgeY[i];
+			v.z = (float) getFieldEdgeHeight(x, y, i) / HEIGHT_STEPS;
 		}
 
+		Vector3 ex = square->vertices[1] - square->vertices[0];
+		Vector3 ey = square->vertices[3] - square->vertices[0];
+
+		square->normal = norm(cross(ex, ey));
+
 		square->updateAttributes();
+
+		square->texDecal.origin = square->vertices[0];
+		square->texDecal.vx = ex / floor(ex.len() + 0.5f);
+		square->texDecal.vy = ey / floor(ey.len() + 0.5f);
+		square->texDecal.normal = square->normal;
 
 		for (int side = 0; side < 4; side++)
 		{
@@ -126,6 +125,14 @@ Plate* getPlate(int x, int y)
 			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
 
 			SideFace* face = &p->sideFaces[side];
+
+			Orientation sideDecal;
+
+			const Square& roof = p->roof;
+			sideDecal.origin = roof.vertices[side];
+			sideDecal.vx = roof.vertices[next] - roof.vertices[side];
+			sideDecal.vy = Vector3(0.0f, 0.0f, -1.0f);
+			sideDecal.normal = Vector3(dx, dy, 0.0f);
 
 			face->squares.clear();
 
@@ -171,9 +178,7 @@ Plate* getPlate(int x, int y)
 					face->squares.push_back(Square());
 					square = &face->squares.back();
 
-					square->normal.x = dx;
-					square->normal.y = dy;
-					square->normal.z = 0.0f;
+					square->normal = sideDecal.normal;
 
 					square->vertices[0].x = x1;
 					square->vertices[0].y = y1;
@@ -191,6 +196,8 @@ Plate* getPlate(int x, int y)
 					square->vertices[3].y = y2;
 					square->vertices[3].z = (float) top / HEIGHT_STEPS;
 
+					square->texDecal = sideDecal;
+
 					square->updateAttributes();
 
 					bottom = top;
@@ -207,9 +214,7 @@ Plate* getPlate(int x, int y)
 					face->squares.push_back(Square());
 					square = &face->squares.back();
 
-					square->normal.x = dx;
-					square->normal.y = dy;
-					square->normal.z = 0.0f;
+					square->normal = sideDecal.normal;
 
 					square->vertices[0].x = x1 * (1.0f - t2) + x3 * t2;
 					square->vertices[0].y = y1 * (1.0f - t2) + y3 * t2;
@@ -226,6 +231,8 @@ Plate* getPlate(int x, int y)
 					square->vertices[3].x = x2 * (1.0f - t2) + x3 * t2;
 					square->vertices[3].y = y2 * (1.0f - t2) + y3 * t2;
 					square->vertices[3].z = (float) top / HEIGHT_STEPS;
+
+					square->texDecal = sideDecal;
 
 					square->updateAttributes();
 
