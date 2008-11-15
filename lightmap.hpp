@@ -26,6 +26,6 @@
 
 float approximation(const Vector3& position, const Vector3& normal);
 
-void genAmbientOcclusionTexture(const SubAtlas* lightMap);
+void genAmbientOcclusionTexture(const SubAtlas& lightMap);
 
 #endif

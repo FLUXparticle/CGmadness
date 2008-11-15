@@ -59,7 +59,7 @@ struct Square
 
 	Orientation texDecal;
 
-	SubAtlas* atlas;
+	unsigned int idxAtlas;
 
 	float area;
 	Vector3 mid;
@@ -67,7 +67,6 @@ struct Square
 	void updateAttributes();
 
 	Vector2 texCoords(int vertex) const;
-	Vector2 lightmapCoords(int vertex) const;
 };
 
 struct SideFace

@@ -104,9 +104,9 @@ float approximation(const Vector3& position, const Vector3& normal)
 	return light;
 }
 
-void genAmbientOcclusionTexture(const SubAtlas* lightMap)
+void genAmbientOcclusionTexture(const SubAtlas& lightMap)
 {
-	const Orientation& orientation = lightMap->orientation;
+	const Orientation& orientation = lightMap.orientation;
 	for (int x = 0; x < LIGHT_MAP_SIZE; x++)
 	{
 		for (int y = 0; y < LIGHT_MAP_SIZE; y++)
@@ -119,7 +119,7 @@ void genAmbientOcclusionTexture(const SubAtlas* lightMap)
 
 			float light = approximation(rayPosition, orientation.normal);
 
-			setLightMap(lightMap->idxSubLightMap, x, y, light);
+			setLightMap(lightMap.idxSubLightMap, x, y, light);
 		}
 	}
 }

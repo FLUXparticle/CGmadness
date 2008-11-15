@@ -41,20 +41,3 @@ Vector2 Square::texCoords(int vertex) const
 
 	return Vector2(decomp.x, decomp.y);
 }
-
-Vector2 Square::lightmapCoords(int vertex) const
-{
-	static float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
-	static float b = 1.0f / (2 * LIGHT_MAP_SIZE);
-
-	Vector3 decomp = atlas->orientation.decomposition(vertices[vertex]);
-
-	Vector2 result;
-
-	result.x = a * decomp.x + b;
-	result.y = a * decomp.y + b;
-
-	transformCoords(atlas->idxSubLightMap, result);
-
-	return result;
-}

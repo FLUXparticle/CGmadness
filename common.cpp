@@ -37,22 +37,7 @@
 
 #define BOTTOM -0.0f
 
-static int gCountSubLightMaps;
-static SubAtlas* gSubAtlas;
-
-static int quadsNeeded(int fx, int fy, int side)
-{
-	const SideFace& face = getSideFace(fx, fy, side);
-
-	if (!face.squares.empty())
-	{
-		return face.top - face.bottom;
-	}
-	else
-	{
-		return 0;
-	}
-}
+static std::vector<SubAtlas> gSubAtlas;
 
 static Orientation orientationFloor(int fx, int fy)
 {
@@ -89,62 +74,47 @@ static Orientation orientationSide(int fx, int fy, int side)
 	return orientation;
 }
 
+Vector2 squareLightmapCoords(const Square& square, int vertex)
+{
+	static float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
+	static float b = 1.0f / (2 * LIGHT_MAP_SIZE);
+
+	SubAtlas* atlas = &gSubAtlas[square.idxAtlas];
+
+	Vector3 decomp = atlas->orientation.decomposition(square.vertices[vertex]);
+
+	Vector2 result;
+
+	result.x = a * decomp.x + b;
+	result.y = a * decomp.y + b;
+
+	transformCoords(atlas->idxSubLightMap, result);
+
+	return result;
+}
+
 void initCommon()
 {
-	int x;
-	int y;
-	int side;
+	gSubAtlas.clear();
 
-	gCountSubLightMaps = 0;
-
-	for (x = 0; x < sgLevel.size.x; x++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			gCountSubLightMaps++;
-
-			for (side = 0; side < 4; side++)
-			{
-				gCountSubLightMaps += quadsNeeded(x, y, side);
-			}
-		}
-	}
-
-	gSubAtlas = new SubAtlas[gCountSubLightMaps];
-
-	initAtlas(gCountSubLightMaps);
-
-	for (int i = 0; i < gCountSubLightMaps; ++i)
-	{
-		gSubAtlas[i].idxSubLightMap = i;
-	}
-
-	int index = 0;
-	SubAtlas* atlas;
-	for (x = 0; x < sgLevel.size.x; x++)
-	{
-		for (y = 0; y < sgLevel.size.y; y++)
-		{
-			atlas = &gSubAtlas[index++];
-			atlas->orientation = orientationFloor(x, y);
+			SubAtlas atlas;
+			atlas.orientation = orientationFloor(x, y);
+			atlas.idxSubLightMap = gSubAtlas.size();
+			gSubAtlas.push_back(atlas);
 
 			Plate* p = getPlate(x, y);
 			Square* square = &p->roof;
-			square->atlas = atlas;
+			square->idxAtlas = atlas.idxSubLightMap;
 
-			for (side = 0; side < 4; side++)
+			for (int side = 0; side < 4; side++)
 			{
-				int quads = quadsNeeded(x, y, side);
 				Orientation orientation = orientationSide(x, y, side);
 
-				int start = index;
-
-				for (int i = 0; i < quads; ++i)
-				{
-					atlas = &gSubAtlas[index++];
-					atlas->orientation = orientation;
-					orientation.origin += orientation.vy;
-				}
+				unsigned int start = gSubAtlas.size();
 
 				SideFace* face = &p->sideFaces[side];
 
@@ -153,30 +123,42 @@ void initCommon()
 					square = &(*iter);
 
 					int z0 = (int) floor(square->vertices[1].z);
-					int i = z0 - face->bottom;
+					unsigned int i = z0 - face->bottom;
 
-					square->atlas = &gSubAtlas[start + i];
+					while (gSubAtlas.size() <= start + i)
+					{
+						SubAtlas atlas;
+						atlas.orientation = orientation;
+						atlas.orientation.origin += atlas.orientation.vy
+						    * (gSubAtlas.size() - start);
+						atlas.idxSubLightMap = gSubAtlas.size();
+						gSubAtlas.push_back(atlas);
+					}
+
+					square->idxAtlas = start + i;
 				}
 			}
 		}
 	}
+
+	initAtlas(gSubAtlas.size());
 }
 
 void destroyCommon()
 {
-	delete[] gSubAtlas;
+	gSubAtlas.clear();
 
 	destroyAtlas();
 }
 
 static void updateLightMapIdle(int step)
 {
-	genAmbientOcclusionTexture(&gSubAtlas[step]);
+	genAmbientOcclusionTexture(gSubAtlas[step]);
 }
 
 void updateLightMap(bool useProgressBar)
 {
-	int cntSteps = gCountSubLightMaps;
+	int cntSteps = gSubAtlas.size();
 
 	if (useProgressBar)
 	{

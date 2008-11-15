@@ -31,6 +31,8 @@
 
 #include "kdtree/KdTree.hpp"
 
+#include "common.hpp"
+
 #include "Color.hpp"
 
 #include "math/Vector2.hpp"
@@ -115,7 +117,7 @@ static void addSquare(const Square* square)
 	for (int i = 0; i < 4; i++)
 	{
 		setTexCoord(square->texCoords(i));
-		setLightMapCoord(square->lightmapCoords(i));
+		setLightMapCoord(squareLightmapCoords(*square, i));
 		addVertex(square->vertices[i]);
 	}
 }
