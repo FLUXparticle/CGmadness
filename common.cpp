@@ -61,8 +61,8 @@ static Orientation orientationFloor(int fx, int fy)
 	Orientation floor;
 
 	floor.origin = square.vertices[0];
-	floor.vx = sub(square.vertices[1], square.vertices[0]);
-	floor.vy = sub(square.vertices[3], square.vertices[0]);
+	floor.vx = square.vertices[1] - square.vertices[0];
+	floor.vy = square.vertices[3] - square.vertices[0];
 	floor.normal = square.normal;
 
 	return floor;
@@ -91,7 +91,6 @@ static Orientation orientationSide(int fx, int fy, int side)
 
 void initCommon()
 {
-
 	int x;
 	int y;
 	int side;
@@ -197,34 +196,38 @@ void updateLightMap(int useProgressBar)
 	}
 }
 
+void updateSquareTexCoords(Square& square)
+{
+	static float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
+	static float b = 1.0f / (2 * LIGHT_MAP_SIZE);
+
+	for (int i = 0; i < 4; i++)
+	{
+		Vector3 decomp = square.texDecal.decomposition(square.vertices[i]);
+
+		square.texcoord[i].x = decomp.x;
+		square.texcoord[i].y = decomp.y;
+
+		if (sgLevel.lightMap)
+		{
+			const Orientation& o = square.atlas->orientation;
+			decomp = o.decomposition(square.vertices[i]);
+
+			square.lightmap[i].x = a * decomp.x + b;
+			square.lightmap[i].y = a * decomp.y + b;
+			transformCoords(square.atlas->idxSubLightMap, square.lightmap[i]);
+		}
+	}
+}
+
 void updateTexCoords()
 {
-	float a = (float) (LIGHT_MAP_SIZE - 1) / LIGHT_MAP_SIZE;
-	float b = 1.0f / (2 * LIGHT_MAP_SIZE);
-
-	/*****/
-
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
 			Plate* p = getPlate(x, y);
-			Square* square = &p->roof;
-
-			for (int i = 0; i < 4; i++)
-			{
-				Vector3 decomp = square->texDecal.decomposition(square->vertices[i]);
-
-				square->texcoord[i].x = decomp.x;
-				square->texcoord[i].y = decomp.y;
-
-				if (sgLevel.lightMap)
-				{
-					square->lightmap[i].x = a * sgEdgeX[i] + b;
-					square->lightmap[i].y = a * sgEdgeY[i] + b;
-					transformCoords(square->atlas->idxSubLightMap, square->lightmap[i]);
-				}
-			}
+			updateSquareTexCoords(p->roof);
 		}
 	}
 
@@ -236,43 +239,11 @@ void updateTexCoords()
 
 			for (int side = 0; side < 4; side++)
 			{
-				int next = (side + 1) % 4;
-
-				int x0 = x + sgEdgeX[side];
-				int y0 = y + sgEdgeY[side];
-
 				SideFace* face = &p->sideFaces[side];
 
 				FOREACH(face->squares, iter)
 				{
-					Square* square = &(*iter);
-
-					int z0 = (int) square->vertices[1].z;
-
-					for (int i = 0; i < 4; i++)
-					{
-						float tx =
-							(sgEdgeX[next] - sgEdgeX[side]) * (square->vertices[i].x -
-																								 sgLevel.origin.x - x0);
-						float ty =
-							(sgEdgeY[next] - sgEdgeY[side]) * (square->vertices[i].y -
-																								 sgLevel.origin.y - y0);
-						float tz = square->vertices[i].z - z0;
-
-						float txy = tx + ty;
-
-						Vector3 decomp = square->texDecal.decomposition(square->vertices[i]);
-
-						square->texcoord[i].x = decomp.x;
-						square->texcoord[i].y = decomp.y;
-
-						if (sgLevel.lightMap)
-						{
-							square->lightmap[i].x = a * txy + b;
-							square->lightmap[i].y = a * tz + b;
-							transformCoords(square->atlas->idxSubLightMap, square->lightmap[i]);
-						}
-					}
+					updateSquareTexCoords(*iter);
 				}
 			}
 		}
