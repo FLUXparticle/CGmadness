@@ -30,7 +30,7 @@
 
 #include GL_H
 
-#include <math.h>
+#include <cmath>
 
 float approximationSquare(const Vector3 position, const Vector3 normal,
 													const Square square)

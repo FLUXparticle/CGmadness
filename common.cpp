@@ -106,8 +106,8 @@ void initCommon()
 			atlas.idxSubLightMap = gSubAtlas.size();
 			gSubAtlas.push_back(atlas);
 
-			Block* b = getBlock(x, y);
-			Square* square = &b->roof;
+			Block& b = getBlock(x, y);
+			Square* square = &b.roof;
 			square->idxAtlas = atlas.idxSubLightMap;
 
 			for (int side = 0; side < 4; side++)
@@ -116,7 +116,7 @@ void initCommon()
 
 				unsigned int start = gSubAtlas.size();
 
-				SideFace* face = &b->sideFaces[side];
+				SideFace* face = &b.sideFaces[side];
 
 				FOREACH(face->squares, iter)
 				{

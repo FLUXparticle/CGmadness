@@ -306,8 +306,6 @@ void newLevel()
 		}
 	}
 
-	updateLevelTree();
-
 	initCommon();
 
 	updateLightMap(false);
@@ -396,8 +394,6 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	}
 
 	sgLevel.crc32 = getCRC32();
-
-	updateLevelTree();
 
 	initCommon();
 

@@ -79,6 +79,9 @@ struct SideFace
 
 struct Block
 {
+	int x;
+	int y;
+
 	Square roof;
 	SideFace sideFaces[4];
 };

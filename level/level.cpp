@@ -82,14 +82,18 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 	return 0;
 }
 
-Block* getBlock(int x, int y)
+Block& getBlock(int index)
 {
-	Block* b = &gBlocks[y * sgLevel.size.x + x];
+	Block& b = gBlocks[index];
+
+	int x = b.x;
+	int y = b.y;
+
 	Plate* p = &sgLevel.field[x][y];
 
 	if (p->dirty)
 	{
-		Square* square = &b->roof;
+		Square* square = &b.roof;
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -128,11 +132,11 @@ Block* getBlock(int x, int y)
 			int height3 = getFieldEdgeHeight(x + dx, y + dy, sideOpposite);
 			int height4 = getFieldEdgeHeight(x + dx, y + dy, nextOpposite);
 
-			SideFace* face = &b->sideFaces[side];
+			SideFace* face = &b.sideFaces[side];
 
 			Orientation sideDecal;
 
-			const Square& roof = b->roof;
+			const Square& roof = b.roof;
 			sideDecal.origin = roof.vertices[side];
 			sideDecal.vx = roof.vertices[next] - roof.vertices[side];
 			sideDecal.vy = Vector3(0.0f, 0.0f, -1.0f);
@@ -268,18 +272,16 @@ void initLevel()
 
 	gBlocks = new Block[sgLevel.size.x * sgLevel.size.y];
 	sgKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
-}
 
-void updateLevelTree()
-{
 	int index = 0;
-	for (int y = 0; y < sgLevel.size.y; y++)
+	for (int x = 0; x < sgLevel.size.x; x++)
 	{
-		for (int x = 0; x < sgLevel.size.x; x++)
+		for (int y = 0; y < sgLevel.size.y; y++)
 		{
 			KdCell::Range& range = sgKdLevelTree->get(x, y);
 
-			getBlock(x, y);
+			gBlocks[index].x = x;
+			gBlocks[index].y = y;
 
 			range.start = index++;
 			range.end = index;
@@ -301,19 +303,20 @@ void destroyLevel()
 	destroyCommon();
 }
 
-const Block& getBlock(int index)
+Block& getBlock(int x, int y)
 {
-	return gBlocks[index];
+	int index = sgKdLevelTree->get(x, y).start;
+	return getBlock(index);
 }
 
 const Square& getRoofSquare(int x, int y)
 {
-	Block* b = getBlock(x, y);
-	return b->roof;
+	Block& b = getBlock(x, y);
+	return b.roof;
 }
 
 const SideFace& getSideFace(int x, int y, int side)
 {
-	Block* b = getBlock(x, y);
-	return b->sideFaces[side];
+	Block& b = getBlock(x, y);
+	return b.sideFaces[side];
 }
