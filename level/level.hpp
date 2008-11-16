@@ -22,13 +22,19 @@
 
 #include "types.hpp"
 
+#include "kdtree/KdTree.hpp"
+
 extern const int sgEdgeX[4];
 extern const int sgEdgeY[4];
 
+extern KdTree* sgKdLevelTree;
+
 void initLevel();
+void updateLevelTree();
 void destroyLevel();
 
 Block* getBlock(int x, int y);
+const Block& getBlock(int index);
 const Square& getRoofSquare(int x, int y);
 const SideFace& getSideFace(int x, int y, int side);
 

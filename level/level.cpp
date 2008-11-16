@@ -22,8 +22,6 @@
 #include "common.hpp"
 #include "atlas.hpp"
 
-#include "kdtree/KdTree.hpp"
-
 #include "functions.hpp"
 
 #include GL_H
@@ -34,7 +32,7 @@ const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
 static Block* gBlocks;
-static KdTree* gKdLevelTree;
+KdTree* sgKdLevelTree;
 
 Vector3 midpoint(const Vector3 quad[4])
 {
@@ -86,9 +84,7 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 
 Block* getBlock(int x, int y)
 {
-	KdCell::Range& range = gKdLevelTree->get(x, y);
-	Block* b = &gBlocks[range.start];
-
+	Block* b = &gBlocks[y * sgLevel.size.x + x];
 	Plate* p = &sgLevel.field[x][y];
 
 	if (p->dirty)
@@ -271,14 +267,19 @@ void initLevel()
 	sgLevel.origin.z = 0.0f;
 
 	gBlocks = new Block[sgLevel.size.x * sgLevel.size.y];
-	gKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
+	sgKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
+}
 
+void updateLevelTree()
+{
 	int index = 0;
-	for (int x = 0; x < sgLevel.size.x; x++)
+	for (int y = 0; y < sgLevel.size.y; y++)
 	{
-		for (int y = 0; y < sgLevel.size.y; y++)
+		for (int x = 0; x < sgLevel.size.x; x++)
 		{
-			KdCell::Range& range = gKdLevelTree->get(x, y);
+			KdCell::Range& range = sgKdLevelTree->get(x, y);
+
+			getBlock(x, y);
 
 			range.start = index++;
 			range.end = index;
@@ -292,12 +293,17 @@ void destroyLevel()
 	delete[] sgLevel.field;
 
 	delete[] gBlocks;
-	delete gKdLevelTree;
+	delete sgKdLevelTree;
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
 
 	destroyCommon();
+}
+
+const Block& getBlock(int index)
+{
+	return gBlocks[index];
 }
 
 const Square& getRoofSquare(int x, int y)

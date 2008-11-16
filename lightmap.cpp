@@ -22,6 +22,8 @@
 #include "level/level.hpp"
 #include "atlas.hpp"
 
+#include "kdtree/KdSphereIntersection.hpp"
+
 #include "functions.hpp"
 
 #include "macros.hpp"
@@ -60,43 +62,37 @@ float approximation(const Vector3& position, const Vector3& normal)
 	Vector3 z(0.0f, 0.0f, 1.0f);
 	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
-	for (int x = 0; x < sgLevel.size.x; x++)
+	KdSphereIntersection iter(*sgKdLevelTree, position - sgLevel.origin, 5.5f);
+
+	while (iter.next())
 	{
-		for (int y = 0; y < sgLevel.size.y; y++)
+		const Block& b = getBlock((*iter).start);
+		const Square& square = b.roof;
+
+		bool check = false;
+		for (int j = 0; j < 4; j++)
 		{
-			if ((position - sgLevel.origin - Vector3(x + 0.5f, y + 0.5f, position.z)).len()
-			    > 6.0f)
+			if (dot(square.vertices[j] - position, normal) > 0.0f)
 			{
-				continue;
+				check = true;
+				break;
 			}
+		}
 
-			bool check = false;
-			const Square& square = getRoofSquare(x, y);
+		if (!check)
+		{
+			continue;
+		}
 
-			for (int j = 0; j < 4; j++)
+		light *= approximationSquare(position, normal, square);
+
+		for (int side = 0; side < 4; side++)
+		{
+			const SideFace& face = b.sideFaces[side];
+
+			FOREACH(face.squares, iter)
 			{
-				if (dot(square.vertices[j] - position, normal) > 0.0f)
-				{
-					check = true;
-					break;
-				}
-			}
-
-			if (!check)
-			{
-				continue;
-			}
-
-			light *= approximationSquare(position, normal, square);
-
-			for (int j = 0; j < 4; j++)
-			{
-				const SideFace& face = getSideFace(x, y, j);
-
-				FOREACH(face.squares, iter)
-				{
-					light *= approximationSquare(position, normal, *iter);
-				}
+				light *= approximationSquare(position, normal, *iter);
 			}
 		}
 	}

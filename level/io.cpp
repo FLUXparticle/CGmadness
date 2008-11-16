@@ -306,9 +306,11 @@ void newLevel()
 		}
 	}
 
+	updateLevelTree();
+
 	initCommon();
 
-	updateLightMap(0);
+	updateLightMap(false);
 }
 
 bool loadLevelFromFile(const char* filename, bool justLoad)
@@ -395,6 +397,8 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 
 	sgLevel.crc32 = getCRC32();
 
+	updateLevelTree();
+
 	initCommon();
 
 	if (version >= 2 && !resize)
@@ -439,7 +443,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	}
 	else
 	{
-		updateLightMap(0);
+		updateLightMap(false);
 	}
 
 	fclose(file);
@@ -534,9 +538,12 @@ void writeRLE(FILE * file, const int data[SIZEOF_LIGHT_MAP])
 		}
 		else
 		{
+			if (s > 0)
+			{
+				fputc(' ', file);
+			}
 			writeRLEInt(file, l, data[s]);
 
-			fputc(' ', file);
 			s += l;
 			l = 1;
 		}

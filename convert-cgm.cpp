@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
 {
 	message();
 
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
-
 	const char* file = NULL;
 
 	/* read parameters */
 	for (int i = 1; i < argc; i++)
 	{
+		sgLevel.size.x = -1;
+		sgLevel.size.y = -1;
+
 		if (strcmp(argv[i], "--size") == 0 && i + 2 < argc)
 		{
 			i++;

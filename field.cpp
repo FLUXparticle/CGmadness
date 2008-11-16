@@ -122,7 +122,7 @@ static void addSquare(const Square* square)
 	}
 }
 
-QuadList getSphereIntersection(const Vector3& center, float radius)
+QuadList getFieldSphereIntersection(const Vector3& center, float radius)
 {
 	Vector3 c = center - sgLevel.origin;
 	KdIterator* iter = new KdSphereIntersection(*gKdFieldTree, c, radius);

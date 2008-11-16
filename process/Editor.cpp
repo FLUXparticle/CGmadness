@@ -110,7 +110,7 @@ void Editor::saveLevel()
 		initCommon();
 		setUpdateFrequency(10);
 		Main::setState(gScreenWait, false);
-		updateLightMap(1);
+		updateLightMap(true);
 	}
 	else
 	{

@@ -253,7 +253,7 @@ void Ball::animateBall(float interval)
 	ball = add(mPos, step);
 
 	/* check only fields near by the ball. check field under ball first!!! */
-	QuadList list = getSphereIntersection(mPos, BALL_RADIUS);
+	QuadList list = getFieldSphereIntersection(mPos, BALL_RADIUS);
 
 	while (list.next())
 	{
