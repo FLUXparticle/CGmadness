@@ -107,7 +107,7 @@ struct ScoreCol
 
 struct Level
 {
-	Block* blocks;
+	std::vector<Block> blocks;
 	KdTree* kdLevelTree;
 	FieldCoord start;
 	FieldCoord finish;
@@ -117,6 +117,7 @@ struct Level
 	GLuint lightMap;
 
 	const char* filename;
+	char author[MAX_NAME_LENGTH + 1];
 	unsigned int crc32;
 
 	int cntScoreCols;

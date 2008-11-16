@@ -258,36 +258,19 @@ Block& getBlock(int index)
 
 void initLevel()
 {
-	sgLevel.blocks = new Block[sgLevel.size.x * sgLevel.size.y];
+	sgLevel.blocks.clear();
 	sgLevel.kdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 
 	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
 	sgLevel.origin.y = 10.0f;
 	sgLevel.origin.z = 0.0f;
-
-	int index = 0;
-	for (int x = 0; x < sgLevel.size.x; x++)
-	{
-		for (int y = 0; y < sgLevel.size.y; y++)
-		{
-			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
-
-			sgLevel.blocks[index].x = x;
-			sgLevel.blocks[index].y = y;
-
-			range.start = index++;
-			range.end = index;
-		}
-	}
 }
 
 void destroyLevel()
 {
-	delete[] sgLevel.blocks;
 	delete sgLevel.kdLevelTree;
 
-	sgLevel.size.x = -1;
-	sgLevel.size.y = -1;
+	sgLevel.blocks.clear();
 
 	destroyCommon();
 }

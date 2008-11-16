@@ -29,6 +29,7 @@ int readInt(FILE* file);
 void readString(FILE* file, char* str);
 void readRLE(FILE* file, int* data);
 void readFieldCoord(FILE* file, FieldCoord& coord);
+void readFieldBlockV3(FILE* file, Block& block);
 void readFieldBlock(FILE* file, Block& block);
 
 void writeByte(FILE* file, int value);

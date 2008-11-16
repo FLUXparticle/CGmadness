@@ -26,11 +26,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define RESIZE 0
+
 void usage()
 {
 	printf("usage: convert-cgm [parameters...] <cgm-files...>\n");
+#if (RESIZE)
 	printf("  --size x y  resize all levels after this parameter to given size\n");
 	printf("\n");
+#endif
 	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
 	printf("\n");
 }
@@ -44,19 +48,18 @@ int main(int argc, char *argv[])
 	/* read parameters */
 	for (int i = 1; i < argc; i++)
 	{
-		sgLevel.size.x = -1;
-		sgLevel.size.y = -1;
-
+#if (RESIZE)
 		if (strcmp(argv[i], "--size") == 0 && i + 2 < argc)
 		{
 			i++;
 			sgLevel.size.x = atoi(argv[i++]);
 			sgLevel.size.y = atoi(argv[i++]);
 		}
+#endif
 
 		file = argv[i];
 
-		if (loadLevelFromFile(file, 0) && saveLevelToFile())
+		if (loadLevelFromFile(file, false) && saveLevelToFile())
 		{
 			printf("'%s' processed successfully.\n", file);
 		}

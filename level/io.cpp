@@ -30,14 +30,16 @@
 
 #include "functions.hpp"
 
+#include "macros.hpp"
+
 #define EXT_HIGHSCORE ".highscore"
 
-#define THIS_CGM_VERSION 3
+#define THIS_CGM_VERSION 4
 #define THIS_HIGHSCORE_VERSION 1
 
 #define MAX_LEVEL_SIZE 100
 
-static void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
+static void toLightMap(int index, bool flip, int dataInt[SIZEOF_LIGHT_MAP])
 {
 	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
 
@@ -138,7 +140,7 @@ static void importLightmapV2(FILE* file)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			toLightMap(index++, 0, tmp[y * sgLevel.size.x + x]);
+			toLightMap(index++, false, tmp[y * sgLevel.size.x + x]);
 
 			for (int side = 0; side < 4; side++)
 			{
@@ -158,7 +160,7 @@ static void importLightmapV2(FILE* file)
 					for (int j = bottom; j < top; j++)
 					{
 						int indexTmp = starts[side] + y * 2 * sgLevel.size.x * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.x + x;
-						toLightMap(index++, side / 2, tmp[indexTmp]);
+						toLightMap(index++, (side / 2) != 0, tmp[indexTmp]);
 					}
 				}
 				else
@@ -166,7 +168,7 @@ static void importLightmapV2(FILE* file)
 					for (int j = bottom; j < top; j++)
 					{
 						int indexTmp = starts[side] + x * 2 * sgLevel.size.y * (MAX_LEVEL_HEIGHT + 1) + j * sgLevel.size.y + y;
-						toLightMap(index++, side / 2, tmp[indexTmp]);
+						toLightMap(index++, (side / 2) != 0, tmp[indexTmp]);
 					}
 				}
 			}
@@ -189,16 +191,26 @@ static void newLevel()
 
 	initLevel();
 
-	int index = 0;
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Block* b = &sgLevel.blocks[index++];
-			b->z = 0;
-			b->dzx = 0;
-			b->dzy = 0;
-			b->dirty = true;
+			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
+
+			range.start = sgLevel.blocks.size();
+			{
+				Block b;
+
+				b.x = x;
+				b.y = y;
+				b.z = 0;
+				b.dzx = 0;
+				b.dzy = 0;
+				b.dirty = true;
+
+				sgLevel.blocks.push_back(b);
+			}
+			range.end = sgLevel.blocks.size();
 		}
 	}
 
@@ -211,10 +223,8 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 {
 	FILE* file = fopen(filename, "rt");
 
-	FieldCoord fileCoords;
 	unsigned int version;
 	unsigned int crc32;
-	int resize = 1;
 
 	sgLevel.filename = filename;
 
@@ -246,46 +256,63 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	/* read attributes */
 	readFieldCoord(file, sgLevel.start);
 	readFieldCoord(file, sgLevel.finish);
-	readFieldCoord(file, fileCoords);
+	readFieldCoord(file, sgLevel.size);
 
-	/* read size from file, if not given through program parameters */
-	if (justLoad || sgLevel.size.x < 0 || sgLevel.size.y < 0)
+	if (version >= 4)
 	{
-		sgLevel.size = fileCoords;
-		resize = 0;
+		readString(file, sgLevel.author);
 	}
 
 	initLevel();
 
 	/* reading data */
-	int index = 0;
-	for (int x = 0; x < sgLevel.size.x; x++)
+	if (version >= 4)
 	{
-		for (int y = 0; y < sgLevel.size.y; y++)
+		int countBlocks = readInt(file);
+
+		for (int i = 0; i < countBlocks; ++i)
 		{
-			Block& b = sgLevel.blocks[index++];
-			if (x < fileCoords.x && y < fileCoords.y)
+			KdCell::Range range;
+			int x;
+			int y;
+
+			range.start = sgLevel.blocks.size();
 			{
+				Block b;
+
 				readFieldBlock(file, b);
-			}
-			else
-			{													/* growing */
-				b.z = 0;
-				b.dzx = 0;
-				b.dzy = 0;
-			}
+				b.dirty = true;
 
-			b.dirty = true;
+				x = b.x;
+				y = b.y;
+
+				sgLevel.blocks.push_back(b);
+			}
+			range.end = sgLevel.blocks.size();
+
+			sgLevel.kdLevelTree->get(x, y) = range;
 		}
-
-		/* shrinking */
-		if (fileCoords.y > sgLevel.size.y)
+	}
+	else
+	{
+		for (int x = 0; x < sgLevel.size.x; x++)
 		{
-			Block dummyPlate;
-
-			for (int y = sgLevel.size.y; y < fileCoords.y; y++)
+			for (int y = 0; y < sgLevel.size.y; y++)
 			{
-				readFieldBlock(file, dummyPlate);
+				KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
+
+				range.start = sgLevel.blocks.size();
+				{
+					Block b;
+
+					b.x = x;
+					b.y = y;
+					readFieldBlockV3(file, b);
+					b.dirty = true;
+
+					sgLevel.blocks.push_back(b);
+				}
+				range.end = sgLevel.blocks.size();
 			}
 		}
 	}
@@ -294,7 +321,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 
 	initCommon();
 
-	if (version >= 2 && !resize)
+	if (version >= 2)
 	{
 		if (fscanf(file, "%x\n", &crc32) != 1 || crc32 != getCRC32())
 		{
@@ -316,7 +343,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 
 					readRLE(file, dataInt);
 
-					toLightMap(index, 0, dataInt);
+					toLightMap(index, false, dataInt);
 
 					index++;
 				}
@@ -409,15 +436,16 @@ bool saveLevelToFile()
 	writeFieldCoord(file, sgLevel.finish);
 	writeFieldCoord(file, sgLevel.size);
 
+	writeString(file, sgLevel.author);
+	fputc('\n', file);
+
+	writeInt(file, sgLevel.blocks.size());
+	fputc('\n', file);
+
 	/* write data */
-	int index = 0;
-	for (int x = 0; x < sgLevel.size.x; x++)
+	FOREACH(sgLevel.blocks, iter)
 	{
-		for (int y = 0; y < sgLevel.size.y; y++)
-		{
-			const Block& b = sgLevel.blocks[index++];
-			writeFieldBlock(file, b);
-		}
+		writeFieldBlock(file, *iter);
 	}
 
 	fprintf(file, "%08X\n", getCRC32());

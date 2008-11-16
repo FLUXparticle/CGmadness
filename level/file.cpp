@@ -117,8 +117,17 @@ void readFieldCoord(FILE* file, FieldCoord& coord)
 	coord.y = readByte(file);
 }
 
+void readFieldBlockV3(FILE* file, Block& block)
+{
+	block.z = readByte(file);
+	block.dzx = readByte(file);
+	block.dzy = readByte(file);
+}
+
 void readFieldBlock(FILE* file, Block& block)
 {
+	block.x = readByte(file);
+	block.y = readByte(file);
 	block.z = readByte(file);
 	block.dzx = readByte(file);
 	block.dzy = readByte(file);
@@ -164,6 +173,10 @@ void writeFieldCoord(FILE* file, const FieldCoord& coord)
 
 void writeFieldBlock(FILE* file, const Block& block)
 {
+	writeByte(file, block.x);
+	fputc(' ', file);
+	writeByte(file, block.y);
+	fputc(' ', file);
 	writeByte(file, block.z);
 	fputc(' ', file);
 	writeByte(file, block.dzx);
