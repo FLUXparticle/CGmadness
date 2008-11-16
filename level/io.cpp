@@ -19,7 +19,7 @@
 
 #include "io.hpp"
 
-#include "types.hpp"
+#include "file.hpp"
 #include "crc32.hpp"
 #include "level.hpp"
 
@@ -30,117 +30,12 @@
 
 #include "functions.hpp"
 
-#include <cstdio>
-#include <cmath>
-
 #define EXT_HIGHSCORE ".highscore"
 
 #define THIS_CGM_VERSION 3
 #define THIS_HIGHSCORE_VERSION 1
 
 #define MAX_LEVEL_SIZE 100
-
-static int readByte(FILE* file)
-{
-	int value = -1;
-
-	if (fscanf(file, "%i", &value) == 1)
-	{
-		nextByte(value);
-	}
-
-	return value;
-}
-
-static int readInt(FILE* file)
-{
-	int value = -1;
-
-	if (fscanf(file, "%i", &value) == 1)
-	{
-		int tmp = value;
-
-		for (int i = 0; i < 4; i++)
-		{
-			nextByte(tmp);
-			tmp >>= 8;
-		}
-	}
-
-	return value;
-}
-
-static void readFieldCoord(FILE* file, FieldCoord* coord)
-{
-	coord->x = readByte(file);
-	coord->y = readByte(file);
-}
-
-static void readFieldBlock(FILE* file, Block* block)
-{
-	block->z = readByte(file);
-	block->dzx = readByte(file);
-	block->dzy = readByte(file);
-}
-
-static void readRLEByte(FILE * file, int *repeat, int *value)
-{
-	if (fscanf(file, "%ix%i", repeat, value) < 2)
-	{
-		*value = *repeat;
-		*repeat = 1;
-	}
-
-	for (int i = 0; i < *repeat; i++)
-	{
-		nextByte(*value);
-	}
-}
-
-static void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
-{
-	int s = 0;
-
-	while (s < SIZEOF_LIGHT_MAP)
-	{
-		int repeat;
-		int value;
-
-		readRLEByte(file, &repeat, &value);
-
-		for (int i = 0; i < repeat; i++)
-		{
-			data[s + i] = value;
-		}
-
-		s += repeat;
-	}
-}
-
-static void readString(FILE * file, char *str)
-{
-	char *s = str;
-
-	fgetc(file);
-
-	for (int i = 0; i < MAX_NAME_LENGTH; i++)
-	{
-		int b = fgetc(file);
-
-		if (b < MIN_ALLOWED_CHAR)
-		{
-			break;
-		}
-
-		*s = b;
-		nextByte(b);
-
-		s++;
-	}
-
-	*s = '\0';
-}
-
 
 static void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 {
@@ -349,9 +244,9 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	resetCRC32();
 
 	/* read attributes */
-	readFieldCoord(file, &sgLevel.start);
-	readFieldCoord(file, &sgLevel.finish);
-	readFieldCoord(file, &fileCoords);
+	readFieldCoord(file, sgLevel.start);
+	readFieldCoord(file, sgLevel.finish);
+	readFieldCoord(file, fileCoords);
 
 	/* read size from file, if not given through program parameters */
 	if (justLoad || sgLevel.size.x < 0 || sgLevel.size.y < 0)
@@ -368,19 +263,19 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Block* b = &sgLevel.blocks[index++];
+			Block& b = sgLevel.blocks[index++];
 			if (x < fileCoords.x && y < fileCoords.y)
 			{
 				readFieldBlock(file, b);
 			}
 			else
 			{													/* growing */
-				b->z = 0;
-				b->dzx = 0;
-				b->dzy = 0;
+				b.z = 0;
+				b.dzx = 0;
+				b.dzy = 0;
 			}
 
-			b->dirty = true;
+			b.dirty = true;
 		}
 
 		/* shrinking */
@@ -390,7 +285,7 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 
 			for (int y = sgLevel.size.y; y < fileCoords.y; y++)
 			{
-				readFieldBlock(file, &dummyPlate);
+				readFieldBlock(file, dummyPlate);
 			}
 		}
 	}
@@ -454,99 +349,6 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	sgLevel.saved = true;
 
 	return true;
-}
-
-static void writeByte(FILE* file, int value)
-{
-	fprintf(file, "%i", value);
-	nextByte(value);
-}
-
-static void writeInt(FILE* file, int value)
-{
-	int i;
-
-	fprintf(file, "%i", value);
-
-	for (i = 0; i < 4; i++)
-	{
-		nextByte(value);
-		value >>= 8;
-	}
-}
-
-static void writeString(FILE* file, char *value)
-{
-	const char *s;
-
-	for (s = value; *s; s++)
-	{
-		fputc(*s, file);
-		nextByte(*s);
-	}
-}
-
-static void writeFieldCoord(FILE* file, const FieldCoord coord)
-{
-	writeByte(file, coord.x);
-	fputc(' ', file);
-	writeByte(file, coord.y);
-	fputc('\n', file);
-}
-
-static void writeFieldBlock(FILE* file, const Block& block)
-{
-	writeByte(file, block.z);
-	fputc(' ', file);
-	writeByte(file, block.dzx);
-	fputc(' ', file);
-	writeByte(file, block.dzy);
-	fputc('\n', file);
-}
-
-static void writeRLEInt(FILE* file, int repeat, int value)
-{
-	int i;
-
-	if (repeat > 1)
-	{
-		fprintf(file, "%ix%i", repeat, value);
-	}
-	else
-	{
-		fprintf(file, "%i", value);
-	}
-
-	for (i = 0; i < repeat; i++)
-	{
-		nextByte(value);
-	}
-}
-
-static void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
-{
-	int s = 0;
-	int l = 1;
-
-	while (s < SIZEOF_LIGHT_MAP)
-	{
-		if (s + l < SIZEOF_LIGHT_MAP && data[s] == data[s + l])
-		{
-			l++;
-		}
-		else
-		{
-			if (s > 0)
-			{
-				fputc(' ', file);
-			}
-			writeRLEInt(file, l, data[s]);
-
-			s += l;
-			l = 1;
-		}
-	}
-	fputc('\n', file);
 }
 
 bool saveHighscoreToFile()

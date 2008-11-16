@@ -17,40 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "crc32.hpp"
+#ifndef file_hpp
+#define file_hpp
 
-#define CRC32_POLYNOMIAL 0xEDB88320
+#include "types.hpp"
 
-unsigned int gRegister;
+#include <cstdio>
 
-void resetCRC32()
-{
-	gRegister = 0xffffffff;
-}
+int readByte(FILE* file);
+int readInt(FILE* file);
+void readString(FILE* file, char* str);
+void readRLE(FILE* file, int* data);
+void readFieldCoord(FILE* file, FieldCoord& coord);
+void readFieldBlock(FILE* file, Block& block);
 
-void nextByte(unsigned char byte)
-{
-	int i;
-	for (i = 0; i < 8; i++)
-	{
-		int bit = (byte >> i) & 1;
-		int regBit = gRegister & 1;
+void writeByte(FILE* file, int value);
+void writeInt(FILE* file, int value);
+void writeString(FILE* file, char* value);
+void writeFieldCoord(FILE* file, const FieldCoord& coord);
+void writeFieldBlock(FILE* file, const Block& block);
+void writeRLE(FILE* file, const int* data);
 
-		gRegister >>= 1;
-
-		if (regBit != bit)
-		{
-			gRegister ^= CRC32_POLYNOMIAL;
-		}
-	}
-}
-
-unsigned int getCRC32()
-{
-	return gRegister;
-}
-
-void setCRC32(unsigned int crc32)
-{
-	gRegister = crc32;
-}
+#endif
