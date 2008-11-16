@@ -250,10 +250,10 @@ void Ball::animateBall(float interval)
 
 	step = scale(interval, mVelocity);
 
-	ball = add(mPos, step);
+	ball = mPos + step;
 
 	/* check only fields near by the ball. check field under ball first!!! */
-	QuadList list = getFieldSphereIntersection(mPos, BALL_RADIUS);
+	QuadList list = getFieldSphereIntersection(ball, BALL_RADIUS);
 
 	while (list.next())
 	{
