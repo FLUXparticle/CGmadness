@@ -23,6 +23,8 @@
 #include "screen/ScreenWait.hpp"
 #include "screen/ScreenInfo.hpp"
 
+#include "kdtree/KdRangeTraverse.hpp"
+
 #include "utils/Callback.hpp"
 
 #include "level/io.hpp"
@@ -172,15 +174,14 @@ void updateEditorCamera(float interval, Vector3 marker)
 
 static void markerChanged()
 {
-	for (int x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	Vector3 min(gCurStart.x - 0.5f, gCurStart.y - 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 1.5f, gCurEnd.y + 1.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+
+	while (iter.next())
 	{
-		for (int y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
-		{
-			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
-			{
-				sgLevel.field[x][y].dirty = true;
-			}
-		}
+		Block& b = sgLevel.blocks[(*iter).start];
+		b.dirty = true;
 	}
 
 	sgLevel.saved = false;
@@ -189,35 +190,33 @@ static void markerChanged()
 
 void changeMarkerArea(int incz, int incdzx, int incdzy)
 {
-	int incx = -(gCurEnd.x - gCurStart.x) * incdzx;
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
 
-	for (int x = gCurStart.x; x <= gCurEnd.x; x++)
+	while (iter.next())
 	{
-		int incy = -(gCurEnd.y - gCurStart.y) * incdzy;
+		Block& b = sgLevel.blocks[(*iter).start];
+		int x = b.x;
+		int y = b.y;
+		int z = b.z;
+		int dzx = b.dzx;
+		int dzy = b.dzy;
 
-		for (int y = gCurStart.y; y <= gCurEnd.y; y++)
+		int incx = -(gCurEnd.x + gCurStart.x - 2 * x) * incdzx;
+		int incy = -(gCurEnd.y + gCurStart.y - 2 * y) * incdzy;
+
+		z += incz + incx + incy;
+		dzx += incdzx;
+		dzy += incdzy;
+
+		if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
+				<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
 		{
-			Plate *p = &sgLevel.field[x][y];
-			int z = p->z;
-			int dzx = p->dzx;
-			int dzy = p->dzy;
-
-			z += incz + incx + incy;
-			dzx += incdzx;
-			dzy += incdzy;
-
-			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
-					<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
-			{
-				p->z = z;
-				p->dzx = dzx;
-				p->dzy = dzy;
-			}
-
-			incy += 2 * incdzy;
+			b.z = z;
+			b.dzx = dzx;
+			b.dzy = dzy;
 		}
-
-		incx += 2 * incdzx;
 	}
 
 	markerChanged();
@@ -225,31 +224,32 @@ void changeMarkerArea(int incz, int incdzx, int incdzy)
 
 static void flattenMarkerArea()
 {
-	for (int x = gCurStart.x; x <= gCurEnd.x; x++)
-	{
-		for (int y = gCurStart.y; y <= gCurEnd.y; y++)
-		{
-			Plate *p = &sgLevel.field[x][y];
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
 
-			p->dzx = 0;
-			p->dzy = 0;
-		}
+	while (iter.next())
+	{
+		Block& b = sgLevel.blocks[(*iter).start];
+
+		b.dzx = 0;
+		b.dzy = 0;
 	}
 
 	markerChanged();
 }
 
-void modBetween(int *value, int mod, int min, int max)
+void modBetween(int& value, int mod, int min, int max)
 {
-	*value += mod;
+	value += mod;
 
-	if (*value < min)
+	if (value < min)
 	{
-		*value = min;
+		value = min;
 	}
-	else if (*value >= max)
+	else if (value >= max)
 	{
-		*value = max - 1;
+		value = max - 1;
 	}
 }
 
@@ -257,16 +257,16 @@ void moveMarker(int markermode, int dx, int dy)
 {
 	if (markermode)
 	{
-		modBetween(&gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
-		modBetween(&gCurEnd.y, dy, gCurStart.y, sgLevel.size.y);
+		modBetween(gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
+		modBetween(gCurEnd.y, dy, gCurStart.y, sgLevel.size.y);
 	}
 	else
 	{
 		int sx = gCurEnd.x - gCurStart.x;
 		int sy = gCurEnd.y - gCurStart.y;
 
-		modBetween(&gCurStart.x, dx, 0, sgLevel.size.x - sx);
-		modBetween(&gCurStart.y, dy, 0, sgLevel.size.y - sy);
+		modBetween(gCurStart.x, dx, 0, sgLevel.size.x - sx);
+		modBetween(gCurStart.y, dy, 0, sgLevel.size.y - sy);
 
 		gCurEnd.x = gCurStart.x + sx;
 		gCurEnd.y = gCurStart.y + sy;
@@ -422,10 +422,11 @@ void Editor::update(float interval)
 			enableTestMode();
 		}
 
+		KdCell::Range range = sgLevel.kdLevelTree->get(gCurStart.x, gCurStart.y);
+
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z
-				/ HEIGHT_STEPS;
+		markerPos.z = (float) sgLevel.blocks[range.start].z / HEIGHT_STEPS;
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);

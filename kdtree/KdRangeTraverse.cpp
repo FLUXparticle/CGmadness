@@ -17,20 +17,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef level_hpp
-#define level_hpp
+#include "KdRangeTraverse.hpp"
 
-#include "types.hpp"
+#include "functions.hpp"
 
-extern const int sgEdgeX[4];
-extern const int sgEdgeY[4];
+KdRangeTraverse::KdRangeTraverse(const KdTree& tree, const Vector3& min, const Vector3& max) :
+	KdTraverse(tree, min),
+	mMin(min),
+	mMax(max)
+{
+	// empty
+}
 
-void initLevel();
-void destroyLevel();
+KdRangeTraverse::~KdRangeTraverse()
+{
+	// empty
+}
 
-Block& getBlock(int x, int y);
-Block& getBlock(int index);
-const Square& getRoofSquare(int x, int y);
-const SideFace& getSideFace(int x, int y, int side);
+int KdRangeTraverse::decide(int close, int far)
+{
+	const KdCell& cellClose = mTree.cell(close);
+	const KdCell& cellFar = mTree.cell(far);
 
-#endif
+	Vector3 n = (cellFar.min - cellClose.min).norm();
+	float d = max(n * cellClose.min, n * cellClose.max);
+
+	if (n * mMax >= d)
+	{
+		mStack.push(far);
+	}
+
+	return close;
+}

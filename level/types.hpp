@@ -20,6 +20,8 @@
 #ifndef types_hpp
 #define types_hpp
 
+#include "kdtree/KdTree.hpp"
+
 #include "math/Vector2.hpp"
 #include "math/Vector3.hpp"
 
@@ -81,18 +83,14 @@ struct Block
 {
 	int x;
 	int y;
-
-	Square roof;
-	SideFace sideFaces[4];
-};
-
-struct Plate
-{
 	int z;
 	int dzx;
 	int dzy;
 
 	bool dirty;
+
+	Square roof;
+	SideFace sideFaces[4];
 };
 
 struct FieldCoord
@@ -109,7 +107,8 @@ struct ScoreCol
 
 struct Level
 {
-	Plate** field;
+	Block* blocks;
+	KdTree* kdLevelTree;
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;

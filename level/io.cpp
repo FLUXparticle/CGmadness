@@ -70,20 +70,20 @@ static int readInt(FILE* file)
 	return value;
 }
 
-void readFieldCoord(FILE* file, FieldCoord* coord)
+static void readFieldCoord(FILE* file, FieldCoord* coord)
 {
 	coord->x = readByte(file);
 	coord->y = readByte(file);
 }
 
-void readFieldPlate(FILE * file, Plate * plate)
+static void readFieldBlock(FILE* file, Block* block)
 {
-	plate->z = readByte(file);
-	plate->dzx = readByte(file);
-	plate->dzy = readByte(file);
+	block->z = readByte(file);
+	block->dzx = readByte(file);
+	block->dzy = readByte(file);
 }
 
-void readRLEByte(FILE * file, int *repeat, int *value)
+static void readRLEByte(FILE * file, int *repeat, int *value)
 {
 	if (fscanf(file, "%ix%i", repeat, value) < 2)
 	{
@@ -97,7 +97,7 @@ void readRLEByte(FILE * file, int *repeat, int *value)
 	}
 }
 
-void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
+static void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 {
 	int s = 0;
 
@@ -117,7 +117,7 @@ void readRLE(FILE* file, int data[SIZEOF_LIGHT_MAP])
 	}
 }
 
-void readString(FILE * file, char *str)
+static void readString(FILE * file, char *str)
 {
 	char *s = str;
 
@@ -142,7 +142,7 @@ void readString(FILE * file, char *str)
 }
 
 
-void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
+static void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 {
 	GLfloat dataFloat[SIZEOF_LIGHT_MAP];
 
@@ -165,7 +165,7 @@ void toLightMap(int index, int flip, int dataInt[SIZEOF_LIGHT_MAP])
 	setSubLightMap(index, dataFloat);
 }
 
-bool loadHighscoreFromFile(void)
+bool loadHighscoreFromFile()
 {
 	unsigned int version;
 	unsigned int crc32;
@@ -215,7 +215,7 @@ bool loadHighscoreFromFile(void)
 	return true;
 }
 
-void importLightmapV2(FILE* file)
+static void importLightmapV2(FILE* file)
 {
 	typedef int LightMap[SIZEOF_LIGHT_MAP];
 
@@ -281,7 +281,7 @@ void importLightmapV2(FILE* file)
 	delete[] tmp;
 }
 
-void newLevel()
+static void newLevel()
 {
 	fprintf(stderr, "creating new level: (%d, %d)\n", sgLevel.size.x,
 	    sgLevel.size.y);
@@ -294,15 +294,16 @@ void newLevel()
 
 	initLevel();
 
+	int index = 0;
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate* p = &sgLevel.field[x][y];
-			p->z = 0;
-			p->dzx = 0;
-			p->dzy = 0;
-			p->dirty = true;
+			Block* b = &sgLevel.blocks[index++];
+			b->z = 0;
+			b->dzx = 0;
+			b->dzy = 0;
+			b->dirty = true;
 		}
 	}
 
@@ -362,33 +363,34 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	initLevel();
 
 	/* reading data */
+	int index = 0;
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate *p = &sgLevel.field[x][y];
+			Block* b = &sgLevel.blocks[index++];
 			if (x < fileCoords.x && y < fileCoords.y)
 			{
-				readFieldPlate(file, p);
+				readFieldBlock(file, b);
 			}
 			else
 			{													/* growing */
-				p->z = 0;
-				p->dzx = 0;
-				p->dzy = 0;
+				b->z = 0;
+				b->dzx = 0;
+				b->dzy = 0;
 			}
 
-			p->dirty = true;
+			b->dirty = true;
 		}
 
 		/* shrinking */
 		if (fileCoords.y > sgLevel.size.y)
 		{
-			Plate dummyPlate;
+			Block dummyPlate;
 
 			for (int y = sgLevel.size.y; y < fileCoords.y; y++)
 			{
-				readFieldPlate(file, &dummyPlate);
+				readFieldBlock(file, &dummyPlate);
 			}
 		}
 	}
@@ -454,13 +456,13 @@ bool loadLevelFromFile(const char* filename, bool justLoad)
 	return true;
 }
 
-void writeByte(FILE * file, int value)
+static void writeByte(FILE* file, int value)
 {
 	fprintf(file, "%i", value);
 	nextByte(value);
 }
 
-void writeInt(FILE * file, int value)
+static void writeInt(FILE* file, int value)
 {
 	int i;
 
@@ -473,7 +475,7 @@ void writeInt(FILE * file, int value)
 	}
 }
 
-void writeString(FILE * file, char *value)
+static void writeString(FILE* file, char *value)
 {
 	const char *s;
 
@@ -484,7 +486,7 @@ void writeString(FILE * file, char *value)
 	}
 }
 
-void writeFieldCoord(FILE * file, const FieldCoord coord)
+static void writeFieldCoord(FILE* file, const FieldCoord coord)
 {
 	writeByte(file, coord.x);
 	fputc(' ', file);
@@ -492,17 +494,17 @@ void writeFieldCoord(FILE * file, const FieldCoord coord)
 	fputc('\n', file);
 }
 
-void writeFieldPlate(FILE * file, const Plate * plate)
+static void writeFieldBlock(FILE* file, const Block& block)
 {
-	writeByte(file, plate->z);
+	writeByte(file, block.z);
 	fputc(' ', file);
-	writeByte(file, plate->dzx);
+	writeByte(file, block.dzx);
 	fputc(' ', file);
-	writeByte(file, plate->dzy);
+	writeByte(file, block.dzy);
 	fputc('\n', file);
 }
 
-void writeRLEInt(FILE * file, int repeat, int value)
+static void writeRLEInt(FILE* file, int repeat, int value)
 {
 	int i;
 
@@ -521,7 +523,7 @@ void writeRLEInt(FILE * file, int repeat, int value)
 	}
 }
 
-void writeRLE(FILE * file, const int data[SIZEOF_LIGHT_MAP])
+static void writeRLE(FILE* file, const int data[SIZEOF_LIGHT_MAP])
 {
 	int s = 0;
 	int l = 1;
@@ -547,7 +549,7 @@ void writeRLE(FILE * file, const int data[SIZEOF_LIGHT_MAP])
 	fputc('\n', file);
 }
 
-bool saveHighscoreToFile(void)
+bool saveHighscoreToFile()
 {
 	String filename = String(sgLevel.filename) + EXT_HIGHSCORE;
 	FILE* file = fopen(filename, "wt");
@@ -586,7 +588,7 @@ bool saveHighscoreToFile(void)
 	return true;
 }
 
-bool saveLevelToFile(void)
+bool saveLevelToFile()
 {
 	FILE *file = fopen(sgLevel.filename, "wt");
 
@@ -606,12 +608,13 @@ bool saveLevelToFile(void)
 	writeFieldCoord(file, sgLevel.size);
 
 	/* write data */
+	int index = 0;
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			Plate *p = &sgLevel.field[x][y];
-			writeFieldPlate(file, p);
+			const Block& b = sgLevel.blocks[index++];
+			writeFieldBlock(file, b);
 		}
 	}
 

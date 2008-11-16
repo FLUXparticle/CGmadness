@@ -17,20 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef level_hpp
-#define level_hpp
+#ifndef KdRangeTraverse_hpp
+#define KdRangeTraverse_hpp
 
-#include "types.hpp"
+#include "KdTraverse.hpp"
 
-extern const int sgEdgeX[4];
-extern const int sgEdgeY[4];
+class KdRangeTraverse: public KdTraverse
+{
+public:
+	KdRangeTraverse(const KdTree& tree, const Vector3& min, const Vector3& max);
+	virtual ~KdRangeTraverse();
 
-void initLevel();
-void destroyLevel();
+	int decide(int close, int far);
 
-Block& getBlock(int x, int y);
-Block& getBlock(int index);
-const Square& getRoofSquare(int x, int y);
-const SideFace& getSideFace(int x, int y, int side);
+private:
+	Vector3 mMin;
+	Vector3 mMax;
+
+};
 
 #endif

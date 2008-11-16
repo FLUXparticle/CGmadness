@@ -62,7 +62,7 @@ float approximation(const Vector3& position, const Vector3& normal)
 	Vector3 z(0.0f, 0.0f, 1.0f);
 	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
-	KdSphereIntersection iter(*sgKdLevelTree, position - sgLevel.origin, 5.5f);
+	KdSphereIntersection iter(*sgLevel.kdLevelTree, position - sgLevel.origin, 5.5f);
 
 	while (iter.next())
 	{

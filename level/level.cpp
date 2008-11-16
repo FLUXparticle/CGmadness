@@ -31,9 +31,6 @@
 const int sgEdgeX[4] = { 0, 1, 1, 0 };
 const int sgEdgeY[4] = { 0, 0, 1, 1 };
 
-static Block* gBlocks;
-KdTree* sgKdLevelTree;
-
 Vector3 midpoint(const Vector3 quad[4])
 {
 	Vector3 mid = quad[0];
@@ -70,12 +67,17 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 {
 	if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
 	{
-		int dx = sgEdgeX[edge] * 2 - 1;
-		int dy = sgEdgeY[edge] * 2 - 1;
+		const KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
 
-		const Plate& p = sgLevel.field[x][y];
+		if (range.start < range.end)
+		{
+			int dx = sgEdgeX[edge] * 2 - 1;
+			int dy = sgEdgeY[edge] * 2 - 1;
 
-		return 5 + p.z + dx * p.dzx + dy * p.dzy;
+			const Block& b = sgLevel.blocks[range.start];
+
+			return 5 + b.z + dx * b.dzx + dy * b.dzy;
+		}
 	}
 
 	/* value out of range */
@@ -84,14 +86,12 @@ static int getFieldEdgeHeight(int x, int y, int edge)
 
 Block& getBlock(int index)
 {
-	Block& b = gBlocks[index];
+	Block& b = sgLevel.blocks[index];
 
 	int x = b.x;
 	int y = b.y;
 
-	Plate* p = &sgLevel.field[x][y];
-
-	if (p->dirty)
+	if (b.dirty)
 	{
 		Square* square = &b.roof;
 
@@ -250,7 +250,7 @@ Block& getBlock(int index)
 
 		}
 
-		p->dirty = false;
+		b.dirty = false;
 	}
 
 	return b;
@@ -258,30 +258,22 @@ Block& getBlock(int index)
 
 void initLevel()
 {
-	sgLevel.field = new Plate*[sgLevel.size.x];
-	sgLevel.field[0] = new Plate[sgLevel.size.x * sgLevel.size.y];
-
-	for (int x = 1; x < sgLevel.size.x; x++)
-	{
-		sgLevel.field[x] = &sgLevel.field[x - 1][sgLevel.size.y];
-	}
+	sgLevel.blocks = new Block[sgLevel.size.x * sgLevel.size.y];
+	sgLevel.kdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 
 	sgLevel.origin.x = -sgLevel.size.x / 2.0f;
 	sgLevel.origin.y = 10.0f;
 	sgLevel.origin.z = 0.0f;
-
-	gBlocks = new Block[sgLevel.size.x * sgLevel.size.y];
-	sgKdLevelTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
 
 	int index = 0;
 	for (int x = 0; x < sgLevel.size.x; x++)
 	{
 		for (int y = 0; y < sgLevel.size.y; y++)
 		{
-			KdCell::Range& range = sgKdLevelTree->get(x, y);
+			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
 
-			gBlocks[index].x = x;
-			gBlocks[index].y = y;
+			sgLevel.blocks[index].x = x;
+			sgLevel.blocks[index].y = y;
 
 			range.start = index++;
 			range.end = index;
@@ -291,11 +283,8 @@ void initLevel()
 
 void destroyLevel()
 {
-	delete[] sgLevel.field[0];
-	delete[] sgLevel.field;
-
-	delete[] gBlocks;
-	delete sgKdLevelTree;
+	delete[] sgLevel.blocks;
+	delete sgLevel.kdLevelTree;
 
 	sgLevel.size.x = -1;
 	sgLevel.size.y = -1;
@@ -305,7 +294,7 @@ void destroyLevel()
 
 Block& getBlock(int x, int y)
 {
-	int index = sgKdLevelTree->get(x, y).start;
+	int index = sgLevel.kdLevelTree->get(x, y).start;
 	return getBlock(index);
 }
 
