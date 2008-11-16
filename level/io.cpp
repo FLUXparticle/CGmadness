@@ -23,6 +23,9 @@
 #include "crc32.hpp"
 #include "level.hpp"
 
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
+#include "kdtree/KdList.hpp"
+
 #include "atlas.hpp"
 #include "common.hpp"
 
@@ -443,9 +446,15 @@ bool saveLevelToFile()
 	fputc('\n', file);
 
 	/* write data */
-	FOREACH(sgLevel.blocks, iter)
 	{
-		writeFieldBlock(file, *iter);
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		while (list.next())
+		{
+			writeFieldBlock(file, sgLevel.blocks[*list]);
+		}
 	}
 
 	fprintf(file, "%08X\n", getCRC32());

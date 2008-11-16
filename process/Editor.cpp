@@ -24,6 +24,7 @@
 #include "screen/ScreenInfo.hpp"
 
 #include "kdtree/KdRangeTraverse.hpp"
+#include "kdtree/KdList.hpp"
 
 #include "utils/Callback.hpp"
 
@@ -177,10 +178,11 @@ static void markerChanged()
 	Vector3 min(gCurStart.x - 0.5f, gCurStart.y - 0.5f, 0.0f);
 	Vector3 max(gCurEnd.x + 1.5f, gCurEnd.y + 1.5f, 0.0f);
 	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
 
-	while (iter.next())
+	while (list.next())
 	{
-		Block& b = sgLevel.blocks[(*iter).start];
+		Block& b = sgLevel.blocks[*list];
 		b.dirty = true;
 	}
 
@@ -193,10 +195,11 @@ void changeMarkerArea(int incz, int incdzx, int incdzy)
 	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
 	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
 	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
 
-	while (iter.next())
+	while (list.next())
 	{
-		Block& b = sgLevel.blocks[(*iter).start];
+		Block& b = sgLevel.blocks[*list];
 		int x = b.x;
 		int y = b.y;
 		int z = b.z;
@@ -227,11 +230,11 @@ static void flattenMarkerArea()
 	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
 	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
 	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
 
-	while (iter.next())
+	while (list.next())
 	{
-		Block& b = sgLevel.blocks[(*iter).start];
-
+		Block& b = sgLevel.blocks[*list];
 		b.dzx = 0;
 		b.dzy = 0;
 	}
@@ -422,11 +425,22 @@ void Editor::update(float interval)
 			enableTestMode();
 		}
 
-		KdCell::Range range = sgLevel.kdLevelTree->get(gCurStart.x, gCurStart.y);
+		Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+		Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+		KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+		KdList list(iter);
 
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z = (float) sgLevel.blocks[range.start].z / HEIGHT_STEPS;
+
+		if (list.next())
+		{
+			markerPos.z = (float) sgLevel.blocks[*list].z / HEIGHT_STEPS;
+		}
+		else
+		{
+			markerPos.z = (float) 0.5f;
+		}
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);

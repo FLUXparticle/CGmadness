@@ -17,29 +17,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QuadIterator_hpp
-#define QuadIterator_hpp
+#include "KdList.hpp"
 
-#include "Quad.hpp"
-
-#include "math/Vector3.hpp"
-
-class QuadIterator
+KdList::KdList(KdIterator& iterator) :
+	mIterator(iterator),
+	mIndex(0),
+	mEnd(0)
 {
-public:
-	QuadIterator(int index, const Vector3* vertices, const Vector3* normals);
+	// empty
+}
 
-	Quad operator*() const;
-	bool operator==(const QuadIterator& other) const;
-	bool operator!=(const QuadIterator& other) const;
+KdList::~KdList()
+{
+	// empty
+}
 
-	void operator++();
+bool KdList::next()
+{
+	mIndex++;
+	if (mIndex < mEnd)
+	{
+		return true;
+	}
 
-private:
-	int mIndex;
-	const Vector3* mVertices;
-	const Vector3* mNormals;
+	while (mIterator.next())
+	{
+		const KdCell::Range& range = *mIterator;
 
-};
+		mIndex = range.start;
+		mEnd = range.end;
 
-#endif
+		if (mIndex < mEnd)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int KdList::operator*() const
+{
+	return mIndex;
+}

@@ -17,32 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "QuadIterator.hpp"
+#ifndef KdList_hpp
+#define KdList_hpp
 
-QuadIterator::QuadIterator(int index, const Vector3* vertices, const Vector3* normals) :
-	mIndex(index),
-	mVertices(vertices),
-	mNormals(normals)
-{
-	// empty
-}
+#include "kdtree/KdIterator.hpp"
 
-Quad QuadIterator::operator*() const
-{
-	return Quad(mVertices + mIndex, mNormals + mIndex);
-}
+#include "utils/SmartPointer.hpp"
 
-bool QuadIterator::operator==(const QuadIterator& other) const
+class KdList
 {
-	return mIndex == other.mIndex;
-}
+public:
+	KdList(KdIterator& iterator);
+	virtual ~KdList();
 
-bool QuadIterator::operator!=(const QuadIterator& other) const
-{
-	return !(operator==(other));
-}
+  bool next();
+  int operator*() const;
 
-void QuadIterator::operator++()
-{
-	mIndex += 4;
-}
+private:
+	KdIterator& mIterator;
+
+	int mIndex;
+	int mEnd;
+
+};
+
+#endif
