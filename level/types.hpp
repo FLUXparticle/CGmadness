@@ -36,7 +36,7 @@
 #define MAX_NAME_LENGTH 20
 
 #define MIN_ALLOWED_CHAR 32
-#define MAX_ALLOWED_CHAR 127
+#define MAX_ALLOWED_CHAR 126
 
 struct Orientation
 {
@@ -79,6 +79,12 @@ struct SideFace
 	int top;
 };
 
+struct Range
+{
+	int start;
+	int end;
+};
+
 struct Block
 {
 	int x;
@@ -88,6 +94,8 @@ struct Block
 	int dzy;
 
 	bool dirty;
+
+	Range subatlas;
 
 	Square roof;
 	SideFace sideFaces[4];

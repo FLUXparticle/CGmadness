@@ -28,6 +28,7 @@
 #include "kdtree/KdPaintersAlgorithm.hpp"
 #include "kdtree/KdPaintersAlgorithmReverse.hpp"
 #include "kdtree/KdSphereIntersection.hpp"
+#include "kdtree/KdList.hpp"
 
 #include "kdtree/KdTree.hpp"
 
@@ -224,15 +225,19 @@ void initGameField()
 
 	gMaxQuads = 0;
 
-	for (int y = 0; y < sgLevel.size.y; y++)
 	{
-		for (int x = 0; x < sgLevel.size.x; x++)
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		while (list.next())
 		{
+			const Block& b = getBlock(*list);
 			gMaxQuads++;
 
 			for (int i = 0; i < 4; i++)
 			{
-				const SideFace& face = getSideFace(x, y, i);
+				const SideFace& face = b.sideFaces[i];
 
 				gMaxQuads += face.squares.size();
 			}
@@ -253,11 +258,15 @@ void initGameField()
 
 	setColor(white);
 
-	for (int y = 0; y < sgLevel.size.y; y++)
 	{
-		for (int x = 0; x < sgLevel.size.x; x++)
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		while (list.next())
 		{
-			const Square& square = getRoofSquare(x, y);
+			const Block& b = getBlock(*list);
+			const Square& square = b.roof;
 
 			int start = gCntVertices;
 
@@ -265,7 +274,7 @@ void initGameField()
 
 			for (int i = 0; i < 4; i++)
 			{
-				const SideFace& face = getSideFace(x, y, i);
+				const SideFace& face = b.sideFaces[i];
 
 				FOREACH(face.squares, iter)
 				{
@@ -273,7 +282,7 @@ void initGameField()
 				}
 			}
 
-			gKdFieldTree->get(x, y) = KdCell::Range(start, gCntVertices);
+			gKdFieldTree->get(b.x, b.y) = KdCell::Range(start, gCntVertices);
 		}
 	}
 

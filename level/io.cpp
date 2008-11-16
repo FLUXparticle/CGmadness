@@ -35,6 +35,8 @@
 
 #include "macros.hpp"
 
+#include <list>
+
 #define EXT_HIGHSCORE ".highscore"
 
 #define THIS_CGM_VERSION 4
@@ -222,7 +224,7 @@ static void newLevel()
 	updateLightMap(false);
 }
 
-bool loadLevelFromFile(const char* filename, bool justLoad)
+bool loadLevelFromFile(const char* filename)
 {
 	FILE* file = fopen(filename, "rt");
 
@@ -442,10 +444,8 @@ bool saveLevelToFile()
 	writeString(file, sgLevel.author);
 	fputc('\n', file);
 
-	writeInt(file, sgLevel.blocks.size());
-	fputc('\n', file);
-
 	/* write data */
+	std::list<int> indices;
 	{
 		Vector3 origin(0.0f, 0.0f, 0.0f);
 		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
@@ -453,16 +453,25 @@ bool saveLevelToFile()
 
 		while (list.next())
 		{
-			writeFieldBlock(file, sgLevel.blocks[*list]);
+			indices.push_back(*list);
 		}
+	}
+
+	writeInt(file, indices.size());
+	fputc('\n', file);
+
+	FOREACH(indices, iter)
+	{
+		writeFieldBlock(file, sgLevel.blocks[*iter]);
 	}
 
 	fprintf(file, "%08X\n", getCRC32());
 
+	FOREACH(indices, iter)
 	{
-		int cntSubLightMaps = getCntAllocatedSubLightMaps();
+		Range subatlas = sgLevel.blocks[*iter].subatlas;
 
-		for (int i = 0; i < cntSubLightMaps; i++)
+		for (int i = subatlas.start; i < subatlas.end; i++)
 		{
 			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
 			int dataInt[SIZEOF_LIGHT_MAP];
@@ -476,9 +485,9 @@ bool saveLevelToFile()
 
 			writeRLE(file, dataInt);
 		}
-
-		fprintf(file, "%08X\n", getCRC32());
 	}
+
+	fprintf(file, "%08X\n", getCRC32());
 
 	if (fclose(file) != 0)
 	{

@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 		file = argv[i];
 
-		if (loadLevelFromFile(file, false) && saveLevelToFile())
+		if (loadLevelFromFile(file) && saveLevelToFile())
 		{
 			printf("'%s' processed successfully.\n", file);
 		}

@@ -24,6 +24,9 @@
 #include "lightmap.hpp"
 #include "level/level.hpp"
 
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
+#include "kdtree/KdList.hpp"
+
 #include "progress.hpp"
 
 #include "functions.hpp"
@@ -39,9 +42,9 @@
 
 static std::vector<SubAtlas> gSubAtlas;
 
-static Orientation orientationFloor(int fx, int fy)
+static Orientation orientationFloor(const Block& block)
 {
-	const Square& square = getRoofSquare(fx, fy);
+	const Square& square = block.roof;
 
 	Orientation floor;
 
@@ -53,9 +56,9 @@ static Orientation orientationFloor(int fx, int fy)
 	return floor;
 }
 
-static Orientation orientationSide(int fx, int fy, int side)
+static Orientation orientationSide(const Block& block, int side)
 {
-	const SideFace& face = getSideFace(fx, fy, side);
+	const SideFace& face = block.sideFaces[side];
 
 	int next = (side + 1) % 4;
 	int prev = (side + 3) % 4;
@@ -63,7 +66,7 @@ static Orientation orientationSide(int fx, int fy, int side)
 	Orientation orientation;
 
 	orientation.origin =
-		add(Vector3(fx + sgEdgeX[side], fy + sgEdgeY[side], face.bottom),
+		add(Vector3(block.x + sgEdgeX[side], block.y + sgEdgeY[side], face.bottom),
 				sgLevel.origin);
 	orientation.vx =
 		Vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
@@ -97,22 +100,23 @@ void initCommon()
 {
 	gSubAtlas.clear();
 
-	for (int x = 0; x < sgLevel.size.x; x++)
+	for (unsigned int index = 0; index < sgLevel.blocks.size(); ++index)
 	{
-		for (int y = 0; y < sgLevel.size.y; y++)
+		Block& b = getBlock(index);
+
+		b.subatlas.start = gSubAtlas.size();
 		{
 			SubAtlas atlas;
-			atlas.orientation = orientationFloor(x, y);
+			atlas.orientation = orientationFloor(b);
 			atlas.idxSubLightMap = gSubAtlas.size();
 			gSubAtlas.push_back(atlas);
 
-			Block& b = getBlock(x, y);
 			Square* square = &b.roof;
 			square->idxAtlas = atlas.idxSubLightMap;
 
 			for (int side = 0; side < 4; side++)
 			{
-				Orientation orientation = orientationSide(x, y, side);
+				Orientation orientation = orientationSide(b, side);
 
 				unsigned int start = gSubAtlas.size();
 
@@ -130,7 +134,7 @@ void initCommon()
 						SubAtlas atlas;
 						atlas.orientation = orientation;
 						atlas.orientation.origin += atlas.orientation.vy
-						    * (gSubAtlas.size() - start);
+						* (gSubAtlas.size() - start);
 						atlas.idxSubLightMap = gSubAtlas.size();
 						gSubAtlas.push_back(atlas);
 					}
@@ -139,6 +143,7 @@ void initCommon()
 				}
 			}
 		}
+		b.subatlas.end = gSubAtlas.size();
 	}
 
 	initAtlas(gSubAtlas.size());

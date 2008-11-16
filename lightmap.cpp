@@ -23,6 +23,7 @@
 #include "atlas.hpp"
 
 #include "kdtree/KdSphereIntersection.hpp"
+#include "kdtree/KdList.hpp"
 
 #include "functions.hpp"
 
@@ -63,10 +64,11 @@ float approximation(const Vector3& position, const Vector3& normal)
 	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
 	KdSphereIntersection iter(*sgLevel.kdLevelTree, position - sgLevel.origin, 5.5f);
+	KdList list(iter);
 
-	while (iter.next())
+	while (list.next())
 	{
-		const Block& b = getBlock((*iter).start);
+		const Block& b = getBlock(*list);
 		const Square& square = b.roof;
 
 		bool check = false;

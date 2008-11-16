@@ -21,7 +21,7 @@
 #define io_hpp
 
 bool loadHighscoreFromFile();
-bool loadLevelFromFile(const char* filename, bool justLoad);
+bool loadLevelFromFile(const char* filename);
 
 bool saveHighscoreToFile();
 bool saveLevelToFile();

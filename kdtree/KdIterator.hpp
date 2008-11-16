@@ -34,6 +34,8 @@ public:
   bool next();
   const KdCell::Range& operator*() const;
 
+  int index() const;
+
 protected:
 	int mIndex;
 
@@ -48,5 +50,10 @@ private:
 	virtual int miss(int index) = 0;
 
 };
+
+inline int KdIterator::index() const
+{
+	return mIndex;
+}
 
 #endif

@@ -24,6 +24,7 @@
 #include "screen/ScreenInfo.hpp"
 
 #include "kdtree/KdRangeTraverse.hpp"
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
 #include "kdtree/KdList.hpp"
 
 #include "utils/Callback.hpp"
@@ -242,6 +243,21 @@ static void flattenMarkerArea()
 	markerChanged();
 }
 
+static void deleteMarkerArea()
+{
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+
+	while (iter.next())
+	{
+		KdCell::Range& range = sgLevel.kdLevelTree->cell(iter.index()).range;
+		range.end = range.start;
+	}
+
+	markerChanged();
+}
+
 void modBetween(int& value, int mod, int min, int max)
 {
 	value += mod;
@@ -334,6 +350,11 @@ void animateEditor(float interval)
 	if (wasKeyPressed('0'))
 	{
 		flattenMarkerArea();
+	}
+
+	if (wasKeyPressed(KEY_DELETE))
+	{
+		deleteMarkerArea();
 	}
 
 	/* editor controls for current field */
@@ -439,7 +460,7 @@ void Editor::update(float interval)
 		}
 		else
 		{
-			markerPos.z = (float) 0.5f;
+			markerPos.z = (float) 0.0f;
 		}
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
@@ -453,8 +474,6 @@ void Editor::update(float interval)
 
 void drawEditorField(bool showCursor)
 {
-	FieldCoord cur;
-
 	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -463,58 +482,59 @@ void drawEditorField(bool showCursor)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
-	for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
+	KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, sgCamera);
+	KdList list(iter);
+
+	while (list.next())
 	{
-		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
+		const Block& b = getBlock(*list);
+		if (showCursor && b.x >= gCurStart.x && b.x <= gCurEnd.x &&
+				b.y <= gCurEnd.y && b.y >= gCurStart.y)
 		{
-			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
-					<= gCurEnd.y && cur.y >= gCurStart.y)
-			{
-				glColor3fv(Color4::red);
-			}
-			else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
-			{
-				glColor3fv(Color4::green);
-			}
-			else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
-			{
-				glColor3fv(Color4::blue);
-			}
-			else
-			{
-				glColor3fv(Color4::white);
-			}
+			glColor3fv(Color4::red);
+		}
+		else if (b.x == sgLevel.start.x && b.y == sgLevel.start.y)
+		{
+			glColor3fv(Color4::green);
+		}
+		else if (b.x == sgLevel.finish.x && b.y == sgLevel.finish.y)
+		{
+			glColor3fv(Color4::blue);
+		}
+		else
+		{
+			glColor3fv(Color4::white);
+		}
 
-			const Square& square = getRoofSquare(cur.x, cur.y);
+		const Square& square = b.roof;
 
-			glBegin(GL_QUADS);
-			glNormal3fv(square.normal);
-			for (int i = 0; i < 4; i++)
+		glBegin(GL_QUADS);
+		glNormal3fv(square.normal);
+		for (int i = 0; i < 4; i++)
+		{
+			glTexCoord2fv(square.texCoords(i));
+			glVertex3fv(square.vertices[i]);
+		}
+		glEnd();
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_QUADS);
+		for (int j = 0; j < 4; j++)
+		{
+			const SideFace& face = b.sideFaces[j];
+
+			FOREACH(face.squares, iter)
 			{
-				glTexCoord2fv(square.texCoords(i));
-				glVertex3fv(square.vertices[i]);
-			}
-			glEnd();
-
-			glColor3f(1.0f, 1.0f, 1.0f);
-
-			glBegin(GL_QUADS);
-			for (int j = 0; j < 4; j++)
-			{
-				const SideFace& face = getSideFace(cur.x, cur.y, j);
-
-				FOREACH(face.squares, iter)
+				glNormal3fv(iter->normal);
+				for (int i = 0; i < 4; i++)
 				{
-					glNormal3fv(iter->normal);
-					for (int i = 0; i < 4; i++)
-					{
-						glTexCoord2fv(iter->texCoords(i));
-						glVertex3fv(iter->vertices[i]);
-					}
+					glTexCoord2fv(iter->texCoords(i));
+					glVertex3fv(iter->vertices[i]);
 				}
 			}
-			glEnd();
 		}
+		glEnd();
 	}
 
 	glDisable(GL_TEXTURE_2D);

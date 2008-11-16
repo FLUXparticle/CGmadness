@@ -54,7 +54,7 @@ void LevelLoader::loadLevelByID(int id)
 			gLoadedLevel = -1;
 		}
 
-		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id], true))
+		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id]))
 		{
 			gLoadedLevel = id;
 
