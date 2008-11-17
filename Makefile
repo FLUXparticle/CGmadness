@@ -42,7 +42,7 @@ GLU_H := <GL/glew.h>
 GLUT_H := <GL/glut.h>
 
 # Check if compiling with Linux or Cygwin/MinGW
-ifneq ($(findstring mingw32,$(MACHINE)),)
+ifneq ($(findstring mingw32,$(MACHINE))$(findstring cygwin,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
 	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
@@ -140,11 +140,6 @@ zip: $(ZIP)
 $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
 	@zip "$@" $^ > /dev/null 2>&1
-
-# documentation
-.PHONY: doc
-doc:
-	doxygen Doxyfile
 
 # clean up
 .PHONY: clean

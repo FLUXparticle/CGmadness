@@ -77,7 +77,7 @@ void drawRingStrip(int corners, float progress, int texture)
 
 	float diff = p2 - p0;
 
-	int steps = (diff / step + 0.5f);
+	int steps = (int) (diff / step + 0.5f);
 
 	glColor3f(1.0f, 1.0f, 0.0f);
 

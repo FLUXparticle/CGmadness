@@ -21,6 +21,7 @@
 
 #include "screen/choose/ScreenChooseGame.hpp"
 #include "screen/choose/ScreenChooseInfo.hpp"
+#include "screen/game/ScreenGameHelp.hpp"
 
 #include "process/Choose.hpp"
 #include "process/Editor.hpp"
@@ -34,15 +35,18 @@
 
 ScreenMain::ScreenMain()
 {
-	gScreenChooseInfo = new ScreenChooseInfo(MY_CALLBACK(ScreenMain, clickButtonChooseEditor));
+	gScreenChooseInfo = new ScreenChooseInfo(METHOD_CALLBACK(ScreenMain, clickButtonChooseEditor));
 
-	bCGMadness = Button(6.0f, MY_CALLBACK(ScreenMain, clickButtonCGMadness), "CG Madness", KEY_ENTER);
-	addItem(&bCGMadness);
-	
-	bCGMEditor = Button(4.0f, MY_CALLBACK(ScreenMain, clickButtonCGMEditor), "CGM Editor", 'e');
+	bRaceTheClock = Button(6.0f, METHOD_CALLBACK(ScreenMain, clickButtonRaceTheClock), "Race the Clock", KEY_ENTER);
+	addItem(&bRaceTheClock);
+
+	bCGMEditor = Button(4.5f, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "Editor", 'e');
 	addItem(&bCGMEditor);
-	
-	bQuit = Button(2.0f, MY_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
+
+	bHelp = Button(3.0f, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "Help", 'h');
+	addItem(&bHelp);
+
+	bQuit = Button(1.5f, METHOD_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
 	addItem(&bQuit);
 }
 
@@ -51,7 +55,7 @@ ScreenMain::~ScreenMain()
   // empty
 }
 
-void ScreenMain::clickButtonCGMadness()
+void ScreenMain::clickButtonRaceTheClock()
 {
 	mChoose = new Choose(gScreenChooseGame);
 	Main::setState(mChoose, true);
@@ -61,6 +65,11 @@ void ScreenMain::clickButtonCGMEditor()
 {
 	mChoose = new Choose(gScreenChooseInfo);
 	Main::setState(mChoose, true);
+}
+
+void ScreenMain::clickButtonHelp()
+{
+	Main::setState(gScreenGameHelp, false);
 }
 
 void ScreenMain::clickButtonQuit()

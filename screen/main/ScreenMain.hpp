@@ -32,20 +32,23 @@ class ScreenMain : public Screen
 public:
   ScreenMain();
   virtual ~ScreenMain();
-  
+
 private:
-	Button bCGMadness;
+	Button bRaceTheClock;
+	Button bSandbox;
 	Button bCGMEditor;
+	Button bHelp;
 	Button bQuit;
-	
+
 	Singleton<class ScreenChooseGame> gScreenChooseGame;
 	SmartPointer<class ScreenChooseInfo> gScreenChooseInfo;
+	Singleton<class ScreenGameHelp> gScreenGameHelp;
 	SmartPointer<class Choose> mChoose;
-
 	Singleton<class Editor> mEditor;
-	
-	void clickButtonCGMadness();
+
+	void clickButtonRaceTheClock();
 	void clickButtonCGMEditor();
+	void clickButtonHelp();
 	void clickButtonQuit();
 
 	void clickButtonChooseEditor();

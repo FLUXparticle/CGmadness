@@ -243,7 +243,6 @@ void Screen::draw() const
 void Screen::addItem(MenuItem* item)
 {
 	mItems.push_back(item);
-
 	if (item->interactive())
 	{
 		MenuItems::iterator pos = mInteractiveItems.end();
