@@ -32,7 +32,7 @@ public:
   virtual ~Button();
 
   void update(float interval);
-  void updateSelected(float interval);
+  bool updateSelected(float interval);
 
   void draw() const;
 

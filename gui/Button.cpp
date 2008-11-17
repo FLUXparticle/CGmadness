@@ -54,12 +54,14 @@ void Button::update(float interval)
 	}
 }
 
-void Button::updateSelected(float interval)
+bool Button::updateSelected(float interval)
 {
 	if (wasKeyPressed(KEY_ENTER))
 	{
 		mClick();
 	}
+
+	return true;
 }
 
 void Button::draw() const

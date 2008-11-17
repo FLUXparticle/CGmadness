@@ -31,7 +31,7 @@ public:
 
   void set(bool value);
 
-  void updateSelected(float interval);
+  bool updateSelected(float interval);
 
   void draw() const;
 

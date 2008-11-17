@@ -40,9 +40,9 @@ void MenuItem::update(float interval)
   // empty
 }
 
-void MenuItem::updateSelected(float interval)
+bool MenuItem::updateSelected(float interval)
 {
-  // empty
+  return true;
 }
 
 void MenuItem::draw() const

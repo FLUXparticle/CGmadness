@@ -56,12 +56,14 @@ void Check::set(bool value)
 	this->change(this);
 }
 
-void Check::updateSelected(float interval)
+bool Check::updateSelected(float interval)
 {
 	if (wasKeyPressed(KEY_ENTER))
 	{
 		set(!this->value);
 	}
+
+	return true;
 }
 
 void Check::draw() const

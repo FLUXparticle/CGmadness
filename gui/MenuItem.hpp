@@ -34,7 +34,7 @@ public:
   virtual ~MenuItem();
 
   virtual void update(float interval);
-  virtual void updateSelected(float interval);
+  virtual bool updateSelected(float interval);
   virtual void draw() const;
 
 	Vector2 position;

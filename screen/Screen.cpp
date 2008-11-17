@@ -90,29 +90,49 @@ void Screen::update(float interval)
 
 	moveCamera(interval, camera, lookat);
 
-  if (wasCursorPressed(0)) // UP
-  {
-  	if (mSelectedItem != mInteractiveItems.begin())
-  	{
+	int direction = 0;
+	if (wasCursorPressed(0)) // UP
+	{
+		direction = -1;
+	}
+	else if (wasCursorPressed(1)) // DOWN
+	{
+		direction = 1;
+	}
+
+	do
+	{
+		if (direction < 0) // UP
+		{
 			(*mSelectedItem)->hover = false;
+			if (mSelectedItem == mInteractiveItems.begin())
+			{
+				mSelectedItem = mInteractiveItems.end();
+			}
 			mSelectedItem--;
 			(*mSelectedItem)->hover = true;
-  	}
-  }
-  else if (wasCursorPressed(1)) // DOWN
-  {
-  	(*mSelectedItem)->hover = false;
-  	mSelectedItem++;
-  	if (mSelectedItem == mInteractiveItems.end())
-  	{
-    	mSelectedItem--;
-  	}
-  	(*mSelectedItem)->hover = true;
-  }
-  else
-  {
-  	(*mSelectedItem)->updateSelected(interval);
-  }
+		}
+		else if (direction > 0) // DOWN
+		{
+			(*mSelectedItem)->hover = false;
+			mSelectedItem++;
+			if (mSelectedItem == mInteractiveItems.end())
+			{
+				mSelectedItem = mInteractiveItems.begin();
+			}
+			(*mSelectedItem)->hover = true;
+		}
+
+		if ((*mSelectedItem)->updateSelected(interval))
+		{
+			direction = 0;
+		}
+		else if (direction == 0)
+		{
+			direction = 1;
+		}
+	}
+	while (direction != 0);
 
   FOREACH(mItems, iter)
   {
