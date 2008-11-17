@@ -114,7 +114,7 @@ void RaceTheClock::stopWatch()
 	int tenthSecond = (int) (gGameTime * 10.0f);
 	int newIndex = sgLevel.cntScoreCols;
 
-	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
+	while (newIndex > 0 && tenthSecond <= sgLevel.scores[newIndex - 1].tenthSecond)
 	{
 		newIndex--;
 	}
