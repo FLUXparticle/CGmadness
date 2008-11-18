@@ -194,7 +194,7 @@ void Game::draw() const
 	}
 }
 
-void Game::start(Process* previous)
+void Game::start(Process* previous, bool push)
 {
 	mPrevious = previous;
 

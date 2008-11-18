@@ -31,9 +31,10 @@ public:
 
   void set(bool value);
 
-  void event(float x, float y, MouseEvent event);
+  bool updateSelected(float interval);
+
   void draw() const;
-  
+
   const char *text;
   bool value;
 

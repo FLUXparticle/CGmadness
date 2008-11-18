@@ -27,6 +27,8 @@ struct Color3
 
 	operator const float* () const;
 
+	Color3 interpolate(float s, const Color3& other);
+
 	float r;
 	float g;
 	float b;
@@ -41,9 +43,11 @@ public:
 	static Color4 green;
 	static Color4 blue;
 	static Color4 yellow;
+	static Color4 black;
 
 public:
 	Color4();
+	Color4(const Color3& color, float a = 1.0f);
 	Color4(float r, float g, float b, float a = 1.0f);
 
 	void operator *= (const Color4& other);

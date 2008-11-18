@@ -46,25 +46,22 @@ Button::~Button()
   // empty
 }
 
-void Button::event(float x, float y, MouseEvent event)
+void Button::update(float interval)
 {
-	switch (event)
+	if (wasKeyPressed(shortcut))
 	{
-	case MOUSE_CLICK:
 		mClick();
-		break;
-	default:
-		this->hover = 1;
-		break;
 	}
 }
 
-void Button::update(float interval)
+bool Button::updateSelected(float interval)
 {
-	if (wasKeyPressed(this->shortcut))
+	if (wasKeyPressed(KEY_ENTER))
 	{
 		mClick();
 	}
+
+	return true;
 }
 
 void Button::draw() const

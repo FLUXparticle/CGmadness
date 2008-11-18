@@ -42,13 +42,14 @@
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
 
-HighScore::HighScore()
+HighScore::HighScore() :
+	Canvas(false)
 {
   // empty
 }
 
 HighScore::HighScore(float z) :
-	Canvas(z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT)
+	Canvas(z, HIGHSCORE_WIDTH, HIGHSCORE_HEIGHT, false)
 {
   // empty
 }
@@ -58,13 +59,17 @@ HighScore::~HighScore()
   // empty
 }
 
-void HighScore::acceptHighScoreName()
+bool HighScore::acceptHighScoreName()
 {
 	if (sgLevel.lastPlayerIndex < MAX_SCORE_COLS)
 	{
 		saveHighscoreToFile();
 		sgLevel.lastPlayerIndex = MAX_SCORE_COLS;
+
+		return false;
 	}
+
+	return true;
 }
 
 void HighScore::update(float interval)

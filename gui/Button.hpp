@@ -31,15 +31,16 @@ public:
   Button(float z, const Caller& click, const char* text, int shortcut);
   virtual ~Button();
 
-  void event(float x, float y, MouseEvent event);
   void update(float interval);
+  bool updateSelected(float interval);
+
   void draw() const;
-  
+
   const char* text;
 	int shortcut;
 
 	Caller mClick;
-	
+
 private:
 
 };

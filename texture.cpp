@@ -21,7 +21,7 @@
 
 #include "image/Image.hpp"
 
-#include GLU_H
+#include GL_H
 
 #define LINEAR_FILTER 1
 

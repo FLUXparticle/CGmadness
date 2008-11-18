@@ -30,7 +30,7 @@
 #define CURSOR_RIGHT 3
 
 int getModifiers(void);
-unsigned char getLastChar(void);
+unsigned char getLastChar();
 
 bool wasKeyPressed(unsigned char key);
 bool isKeyPressed(unsigned char key);

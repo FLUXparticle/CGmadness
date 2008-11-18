@@ -73,12 +73,14 @@ void SpinEdit::init()
 	gTexRight = loadTexture("data/right.tga", false);
 }
 
-SpinEdit::SpinEdit()
+SpinEdit::SpinEdit() :
+	MenuItem(false)
 {
 	// empty
 }
 
-SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change)
+SpinEdit::SpinEdit(int value, int min, int max, float width, float z, funcDraw draw, funcChange change) :
+	MenuItem(false)
 {
 	this->width = width;
 	this->height = 1.0f;
@@ -105,41 +107,6 @@ void SpinEdit::change(int change)
 {
 	this->value = clamp(this->value + change, this->minValue, this->maxValue);
 	this->fChange(this);
-}
-
-void SpinEdit::event(float x, float y, MouseEvent event)
-{
-	int side;
-
-	float dist = this->width / 2.0f - 1.0f;
-
-	if (x < -dist)
-	{
-		side = -1;
-	}
-	else if (x > dist)
-	{
-		side = 1;
-	}
-	else
-	{
-		side = 0;
-	}
-
-	if (side != 0)
-	{
-		this->side = side;
-	}
-
-	switch (event)
-	{
-	case MOUSE_CLICK:
-		change(side);
-		break;
-	default:
-		this->hover = (side != 0);
-		break;
-	}
 }
 
 void SpinEdit::update(float interval)

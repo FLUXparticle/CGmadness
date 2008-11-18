@@ -31,7 +31,7 @@ Process::~Process()
   // empty
 }
 
-void Process::start(Process* previous)
+void Process::start(Process* previous, bool push)
 {
   // empty
 }
@@ -47,11 +47,6 @@ void Process::suspend()
 }
 
 void Process::resume()
-{
-  // empty
-}
-
-void Process::event(const Vector3& position, const Vector3& direction, MouseEvent event)
 {
   // empty
 }

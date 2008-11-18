@@ -66,7 +66,7 @@ Editor::~Editor()
 	// empty
 }
 
-void Editor::start(Process* previous)
+void Editor::start(Process* previous, bool push)
 {
 	mPrevious = previous;
 
@@ -406,6 +406,7 @@ void Editor::enableTestMode()
 
 	resetBallCamera();
 	enableBallCamera();
+	enableBall();
 
 	initGameField();
 
@@ -416,6 +417,7 @@ void Editor::disableTestMode()
 {
 	destroyGameField();
 	disableBallCamera();
+	disableBall();
 
 	mState = STATE_EDITING;
 }

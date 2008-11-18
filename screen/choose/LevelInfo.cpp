@@ -36,13 +36,14 @@
 #define LEVELINFO_HEIGHT 4.0f
 #define LEVELINFO_LINES 11
 
-LevelInfo::LevelInfo()
+LevelInfo::LevelInfo() :
+	Canvas(false)
 {
   // empty
 }
 
 LevelInfo::LevelInfo(float z) :
-	Canvas(z, LEVELINFO_WIDTH, LEVELINFO_HEIGHT)
+	Canvas(z, LEVELINFO_WIDTH, LEVELINFO_HEIGHT, false)
 {
   // empty
 }

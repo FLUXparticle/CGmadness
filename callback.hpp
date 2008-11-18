@@ -49,6 +49,4 @@ void startCallback(Process* process);
 
 void setUpdateFrequency(int callsPerSecond);
 
-void mouseEvent(int x, int y, MouseEvent event);
-
 #endif

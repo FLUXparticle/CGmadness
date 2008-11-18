@@ -211,6 +211,10 @@ void updateBall(Ball& ball, float interval)
 	if (gIsBallActive)
 	{
 		ball.push(force);
+		if (isKeyPressed(' '))
+		{
+			ball.jump();
+		}
 
 		ball.update(interval);
 	}
