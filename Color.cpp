@@ -22,6 +22,7 @@
 Color4 Color4::white(1.0f, 1.0f, 1.0f);
 Color4 Color4::gray(0.5f, 0.5f, 0.5f);
 Color4 Color4::red(1.0f, 0.0f, 0.0f);
+Color4 Color4::green(0.0f, 1.0f, 0.0f);
 Color4 Color4::blue(0.0f, 0.0f, 1.0f);
 Color4 Color4::yellow(1.0f, 1.0f, 0.0f);
 Color4 Color4::black(0.0f, 0.0f, 0.0f);
@@ -36,6 +37,11 @@ Color3::Color3(float r, float g, float b)
 	this->r = r;
 	this->g = g;
 	this->b = b;
+}
+
+Color3::operator const float*() const
+{
+	return &r;
 }
 
 Color3 Color3::interpolate(float s, const Color3& other)
@@ -55,11 +61,10 @@ Color4::Color4(float r, float g, float b, float a) :
 	this->a = a;
 }
 
-Color4::Color4(const Color3& other) :
-	Color3(other),
-	a(1.0f)
+Color4::Color4(const Color3& color, float a) :
+	Color3(color)
 {
-	// empty
+	this->a = a;
 }
 
 void Color4::operator *= (const Color4& other)

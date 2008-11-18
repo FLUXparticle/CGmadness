@@ -180,8 +180,6 @@ void Screen::draw() const
 {
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
 
-	bool isAnimation = mAnimationTime < 1.0;
-
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
@@ -200,23 +198,27 @@ void Screen::draw() const
 				ColorStack::colorStack.setColor(Color4::white);
 				drawLogo();
 
-				if (isAnimation)
-				{
-					glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
+				glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
 
-					Color4 filter(1.0f, 1.0f, 1.0f, mAnimationTime);
-					ColorStack::colorStack.pushColor(filter);
-				}
+				Color4 filter(Color4::white, mAnimationTime);
+				ColorStack::colorStack.pushColor(filter);
 
 				glPushMatrix();
 				{
-					double scale = 1.05;
-					glTranslatef((*mSelectedItem)->position.x * scale, (*mSelectedItem)->position.y, -0.1f);
-					glScaled(scale, scale, 1.0);
+					MenuItem* item = *mSelectedItem;
+					double scaleX = 1.01;
+					double scaleY = 1.1;
+					double moveX = item->position.x * scaleX;
+					double moveY = item->position.y - 0.1 * (scaleY - 1.0);
+					double moveZ = -0.1;
+					glTranslated(moveX, moveY, moveZ);
+					glScaled(scaleX, scaleY, 1.0);
 
-					ColorStack::colorStack.pushColor(Color4::black);
-					ColorStack::colorStack.setColor(Color4::white);
-					(*mSelectedItem)->draw();
+					ColorStack::colorStack.pushColor(Color4(Color4::black, item->emphasize));
+					{
+						ColorStack::colorStack.setColor(Color4::white);
+						(*mSelectedItem)->draw();
+					}
 					ColorStack::colorStack.popColor();
 				}
 				glPopMatrix();
@@ -226,10 +228,7 @@ void Screen::draw() const
 					drawMenuItem(*iter);
 				}
 
-				if (isAnimation)
-				{
-					ColorStack::colorStack.popColor();
-				}
+				ColorStack::colorStack.popColor();
 			}
 			glPopMatrix();
 		}
