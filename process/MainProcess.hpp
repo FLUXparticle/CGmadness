@@ -30,7 +30,7 @@ public:
   MainProcess();
   virtual ~MainProcess();
 
-  void start(Process* previous);
+  void start(Process* previous, bool push);
   
   void update(float interval);
   void draw() const;

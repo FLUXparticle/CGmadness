@@ -35,7 +35,7 @@ MainProcess::~MainProcess()
   // empty
 }
 
-void MainProcess::start(Process* previous)
+void MainProcess::start(Process* previous, bool push)
 {
 	Main::pushState(gScreenMain);
 }

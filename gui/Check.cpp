@@ -21,6 +21,8 @@
 
 #include "font3d/font3d.hpp"
 
+#include "hw/keyboard.hpp"
+
 #include "ColorStack.hpp"
 
 #include GL_H
@@ -54,17 +56,14 @@ void Check::set(bool value)
 	this->change(this);
 }
 
-void Check::event(float x, float y, MouseEvent event)
+bool Check::updateSelected(float interval)
 {
-	switch (event)
+	if (wasKeyPressed(KEY_ENTER))
 	{
-	case MOUSE_CLICK:
 		set(!this->value);
-		break;
-	default:
-		this->hover = 1;
-		break;
 	}
+
+	return true;
 }
 
 void Check::draw() const
@@ -80,8 +79,6 @@ void Check::draw() const
 		ColorStack::colorStack.setColor((this->value) ? Color4::white : Color4::gray);
 
 		drawFont3DText(this->text);
-
-		ColorStack::colorStack.setColor(Color4::white);
 	}
 	glPopMatrix();
 }

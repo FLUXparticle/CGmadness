@@ -33,11 +33,11 @@ public:
   virtual ~SpinEdit();
 
   void change(int change);
-  
-  void event(float x, float y, MouseEvent event);
+
   void update(float interval);
+
   void draw() const;
-  
+
 	int value;
 	int minValue;
 	int maxValue;

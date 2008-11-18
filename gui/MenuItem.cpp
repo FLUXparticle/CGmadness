@@ -23,8 +23,9 @@
 
 float MenuItem::scaleText = 0.1f * SCALE_FONT;
 
-MenuItem::MenuItem() :
-	hover(false)
+MenuItem::MenuItem(bool interactive) :
+	hover(false),
+	mInteractive(interactive)
 {
   // empty
 }
@@ -34,14 +35,14 @@ MenuItem::~MenuItem()
   // empty
 }
 
-void MenuItem::event(float x, float y, MouseEvent event)
+void MenuItem::update(float interval)
 {
   // empty
 }
 
-void MenuItem::update(float interval)
+bool MenuItem::updateSelected(float interval)
 {
-  // empty
+  return true;
 }
 
 void MenuItem::draw() const

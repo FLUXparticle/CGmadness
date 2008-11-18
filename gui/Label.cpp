@@ -23,12 +23,14 @@
 
 #include GL_H
 
-Label::Label()
+Label::Label() :
+	MenuItem(false)
 {
   // empty
 }
 
-Label::Label(float x, float z, float size, bool alignRight, const char* text)
+Label::Label(float x, float z, float size, bool alignRight, const char* text) :
+	MenuItem(false)
 {
 	this->text = text;
 	this->size = size;

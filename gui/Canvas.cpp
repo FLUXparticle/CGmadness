@@ -19,12 +19,14 @@
 
 #include "Canvas.hpp"
 
-Canvas::Canvas()
+Canvas::Canvas(bool interactive) :
+	MenuItem(interactive)
 {
   // empty
 }
 
-Canvas::Canvas(float z, float width, float height)
+Canvas::Canvas(float z, float width, float height, bool interactive) :
+	MenuItem(interactive)
 {
 	this->width = width;
 	this->height = height;

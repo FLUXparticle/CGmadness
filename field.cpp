@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "field.hpp"
+
 #include "hw/features.hpp"
 
 #include "level.hpp"
@@ -27,8 +29,6 @@
 #include "functions.hpp"
 
 #include "macros.hpp"
-
-#include "field.hpp"
 
 #include GL_H
 

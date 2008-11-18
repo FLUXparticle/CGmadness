@@ -25,7 +25,7 @@
 
 #include GL_H
 
-#include <math.h>
+#include <cmath>
 
 void drawSquare()
 {

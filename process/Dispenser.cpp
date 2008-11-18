@@ -45,12 +45,6 @@ Dispenser::~Dispenser()
 	// empty
 }
 
-void Dispenser::event(const Vector3& position, const Vector3& direction,
-		MouseEvent event)
-{
-	mProcessStack.back()->event(position, direction, event);
-}
-
 void Dispenser::update(float interval)
 {
 	FOREACH(mProcessStack, iter)
@@ -121,7 +115,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, true);
 		break;
 	}
 	case POP:
@@ -140,7 +134,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, false);
 		break;
 	}
 	case FLUSH:
@@ -154,7 +148,7 @@ void Dispenser::changeProcess(Process* process, StackAction action)
 
 		Process* next = process;
 		mProcessStack.push_back(next);
-		next->start(previous);
+		next->start(previous, false);
 		break;
 	}
 	case NONE:

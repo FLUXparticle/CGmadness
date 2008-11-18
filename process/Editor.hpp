@@ -40,7 +40,7 @@ public:
 	Editor();
 	virtual ~Editor();
 
-	void start(Process* previous);
+	void start(Process* previous, bool push);
 
 	void suspend();
 	void resume();

@@ -193,15 +193,6 @@ void startDisplay(void)
 
 int gMillis;
 
-struct LastMouseEvent
-{
-	Vector3 position;
-	Vector3 direction;
-	MouseEvent event;
-};
-
-LastMouseEvent gLastMouseEvent;
-
 void timer(int startTime)
 {
 	static int simulationTime = 0;
@@ -217,9 +208,6 @@ void timer(int startTime)
 
 	while (simulationTime < realTime)
 	{
-		gProcess->event(gLastMouseEvent.position, gLastMouseEvent.direction, gLastMouseEvent.event);
-		gLastMouseEvent.event = MOUSE_MOTION;
-
 		gProcess->update(TIME_STEP / 1000.0f);
 		simulationTime += TIME_STEP;
 	}
@@ -254,25 +242,6 @@ void startCallback(Process* process)
 }
 
 /*** Picking ***/
-
-void mouseEvent(int mx, int my, MouseEvent event)
-{
-	int width = gTargetWindow.width;
-	int height = gTargetWindow.height;
-	float aspect = (float) width / height;
-	float f = tan(FOV / 2.0f * M_PI / 180.0f);
-	float x = (float) mx / width * 2.0f - 1.0f;
-	float y = (float) my / height * 2.0f - 1.0f;
-
-	Vector3 dir = Vector3(aspect * f * x, f * -y, -1.0f);
-
-	Vector3 position = sgCamera;
-	Vector3 direction = rotateVector(dir);
-
-	gLastMouseEvent.position = position;
-	gLastMouseEvent.direction = direction;
-	gLastMouseEvent.event = event;
-}
 
 void centerMouse(int *x, int *y)
 {

@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -20,16 +20,10 @@
 #ifndef _mouse_hpp_
 #define _mouse_hpp_
 
-typedef enum
-{
-	MOUSE_MOTION,
-	MOUSE_CLICK
-} MouseEvent;
-
 typedef void (*funcDrag) (int dx, int dy);
 
 void setDragFunc(funcDrag drag);
 
-void startMouse(void);
+void startMouse();
 
 #endif

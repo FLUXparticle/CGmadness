@@ -25,6 +25,8 @@
 #include "camera.hpp"
 #include "objects.hpp"
 
+#include "hw/keyboard.hpp"
+
 #include "macros.hpp"
 
 #include GLUT_H
@@ -46,9 +48,13 @@ Screen::~Screen()
   // empty
 }
 
-void Screen::start(Process* previous)
+void Screen::start(Process* previous, bool push)
 {
 	mPrevious = previous;
+	if (push)
+	{
+		mSelectedItem = mInteractiveItems.begin();
+	}
 	show();
 
 	mAnimationTime = 0.0;
@@ -59,7 +65,10 @@ void Screen::show()
   FOREACH(mItems, iter)
 	{
 		(*iter)->emphasize = 0.0f;
+	  (*iter)->hover = false;
 	}
+
+  (*mSelectedItem)->hover = true;
 
 	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
@@ -67,30 +76,6 @@ void Screen::show()
 void Screen::popScreen()
 {
 	Main::setState(mPrevious, false);
-}
-
-void Screen::event(const Vector3& position, const Vector3& direction, MouseEvent event)
-{
-	if (position.y < 0.0f && direction.y > 0.0f)
-	{
-		float t = -position.y / direction.y;
-		float x = position.x + t * direction.x;
-		float y = position.z + t * direction.z;
-
-	  FOREACH(mItems, iter)
-	  {
-	  	MenuItem* item = *iter;
-
-	  	item->hover = 0;
-
-	  	if (x >= item->position.x && y >= item->position.y &&
-	  			x <= item->position.x + item->width &&
-	  			y <= item->position.y + item->height)
-	  	{
-	  		item->event(x, y, event);
-	  	}
-	  }
-	}
 }
 
 void Screen::update(float interval)
@@ -104,6 +89,50 @@ void Screen::update(float interval)
 	Vector3 lookat = Vector3(0.0f, 0.0f, 5.0f);
 
 	moveCamera(interval, camera, lookat);
+
+	int direction = 0;
+	if (wasCursorPressed(0)) // UP
+	{
+		direction = -1;
+	}
+	else if (wasCursorPressed(1)) // DOWN
+	{
+		direction = 1;
+	}
+
+	do
+	{
+		if (direction < 0) // UP
+		{
+			(*mSelectedItem)->hover = false;
+			if (mSelectedItem == mInteractiveItems.begin())
+			{
+				mSelectedItem = mInteractiveItems.end();
+			}
+			mSelectedItem--;
+			(*mSelectedItem)->hover = true;
+		}
+		else if (direction > 0) // DOWN
+		{
+			(*mSelectedItem)->hover = false;
+			mSelectedItem++;
+			if (mSelectedItem == mInteractiveItems.end())
+			{
+				mSelectedItem = mInteractiveItems.begin();
+			}
+			(*mSelectedItem)->hover = true;
+		}
+
+		if ((*mSelectedItem)->updateSelected(interval))
+		{
+			direction = 0;
+		}
+		else if (direction == 0)
+		{
+			direction = 1;
+		}
+	}
+	while (direction != 0);
 
   FOREACH(mItems, iter)
   {
@@ -131,11 +160,18 @@ void Screen::customUpdate(float interval)
 
 static void drawMenuItem(const MenuItem* item)
 {
+	static Color3 filter(0.3f, 0.3f, 0.3f);
 	glPushMatrix();
 	{
 		glTranslatef(item->position.x, item->position.y, 0.0f);
 
-		item->draw();
+		Color3 col = Color4::white.interpolate(item->emphasize, filter);
+		ColorStack::colorStack.pushColor(col);
+		{
+			ColorStack::colorStack.setColor(Color4::white);
+			item->draw();
+		}
+		ColorStack::colorStack.popColor();
 	}
 	glPopMatrix();
 }
@@ -143,8 +179,6 @@ static void drawMenuItem(const MenuItem* item)
 void Screen::draw() const
 {
 	float pos[4] = { 0.0f, -1.0f, 0.5f, 0.0f };
-
-	bool isAnimation = mAnimationTime < 1.0;
 
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -154,8 +188,6 @@ void Screen::draw() const
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	{
-		ColorStack::colorStack.setColor(Color4::white);
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		{
@@ -163,26 +195,40 @@ void Screen::draw() const
 			{
 				glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 
+				ColorStack::colorStack.setColor(Color4::white);
 				drawLogo();
 
-				if (isAnimation)
-				{
-					glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
+				glTranslatef(0.0f, 0.0f, 1.0f - mAnimationTime);
 
-					Color4 filter(1.0f, 1.0f, 1.0f, mAnimationTime);
-					ColorStack::colorStack.pushColor(filter);
+				Color4 filter(Color4::white, mAnimationTime);
+				ColorStack::colorStack.pushColor(filter);
+
+				glPushMatrix();
+				{
+					MenuItem* item = *mSelectedItem;
+					double scaleX = 1.01;
+					double scaleY = 1.1;
+					double moveX = item->position.x * scaleX;
+					double moveY = item->position.y - 0.1 * (scaleY - 1.0);
+					double moveZ = -0.1;
+					glTranslated(moveX, moveY, moveZ);
+					glScaled(scaleX, scaleY, 1.0);
+
+					ColorStack::colorStack.pushColor(Color4(Color4::black, item->emphasize));
+					{
+						ColorStack::colorStack.setColor(Color4::white);
+						(*mSelectedItem)->draw();
+					}
+					ColorStack::colorStack.popColor();
 				}
+				glPopMatrix();
 
 				FOREACH(mItems, iter)
 				{
-					ColorStack::colorStack.setColor(Color4::white);
 					drawMenuItem(*iter);
 				}
 
-				if (isAnimation)
-				{
-					ColorStack::colorStack.popColor();
-				}
+				ColorStack::colorStack.popColor();
 			}
 			glPopMatrix();
 		}
@@ -196,6 +242,21 @@ void Screen::draw() const
 void Screen::addItem(MenuItem* item)
 {
 	mItems.push_back(item);
+	if (item->interactive())
+	{
+		MenuItems::iterator pos = mInteractiveItems.end();
+		FOREACH(mInteractiveItems, iter)
+		{
+			if ((*iter)->position.y < item->position.y)
+			{
+				pos = iter;
+				break;
+			}
+		}
+
+		mInteractiveItems.insert(pos, item);
+		mSelectedItem = mInteractiveItems.begin();
+	}
 }
 
 void Screen::drawLogo()

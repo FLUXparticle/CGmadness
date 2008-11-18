@@ -34,13 +34,12 @@ public:
   Screen();
   virtual ~Screen();
 
-  void start(Process* previous);
+  void start(Process* previous, bool push);
 
   virtual void show();
 
   void popScreen();
 
-  void event(const Vector3& position, const Vector3& direction, MouseEvent event);
   void update(float interval);
   virtual void customUpdate(float interval);
 
@@ -57,9 +56,13 @@ private:
 	static void drawLogo();
 
 private:
-	float mAnimationTime;
+	typedef std::list<MenuItem*> MenuItems;
 
-	std::list<MenuItem*> mItems;
+	MenuItems mItems;
+	MenuItems mInteractiveItems;
+	MenuItems::iterator mSelectedItem;
+
+	float mAnimationTime;
 
 };
 

@@ -22,8 +22,10 @@
 Color4 Color4::white(1.0f, 1.0f, 1.0f);
 Color4 Color4::gray(0.5f, 0.5f, 0.5f);
 Color4 Color4::red(1.0f, 0.0f, 0.0f);
+Color4 Color4::green(0.0f, 1.0f, 0.0f);
 Color4 Color4::blue(0.0f, 0.0f, 1.0f);
 Color4 Color4::yellow(1.0f, 1.0f, 0.0f);
+Color4 Color4::black(0.0f, 0.0f, 0.0f);
 
 Color3::Color3()
 {
@@ -37,6 +39,17 @@ Color3::Color3(float r, float g, float b)
 	this->b = b;
 }
 
+Color3::operator const float*() const
+{
+	return &r;
+}
+
+Color3 Color3::interpolate(float s, const Color3& other)
+{
+	float t = 1.0f - s;
+	return Color3(s * other.r + t * r, s * other.g + t * g, s * other.b + t * b);
+}
+
 Color4::Color4()
 {
 	// empty
@@ -44,6 +57,12 @@ Color4::Color4()
 
 Color4::Color4(float r, float g, float b, float a) :
 	Color3(r, g, b)
+{
+	this->a = a;
+}
+
+Color4::Color4(const Color3& color, float a) :
+	Color3(color)
 {
 	this->a = a;
 }

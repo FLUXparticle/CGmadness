@@ -27,13 +27,13 @@ typedef void (*funcUpdate) (float interval);
 class Canvas : public MenuItem
 {
 public:
-  Canvas();
-  Canvas(float z, float width, float height);
+  Canvas(bool interactive = true);
+  Canvas(float z, float width, float height, bool interactive = true);
   virtual ~Canvas();
 
   void update(float interval);
   void draw() const;
-  
+
 private:
 
 };

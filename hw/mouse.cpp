@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -23,36 +23,10 @@
 
 #include GLUT_H
 
-
-#define SELECT_BUFFER_SIZE 512
-
-static GLuint gSelectBuffer[SELECT_BUFFER_SIZE];
-
 static int gLastX;
 static int gLastY;
-static int gButton;
 
 static funcDrag gDrag;
-
-typedef struct
-{
-	GLuint stackSize;
-	GLuint minDepth;
-	GLuint maxDepth;
-	GLuint stackBottom;
-} SelectBuffer;
-
-void mouseButton(int button, int state, int x, int y)
-{
-	gButton = button;
-	gLastX = x;
-	gLastY = y;
-
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-		mouseEvent(x, y, MOUSE_CLICK);
-	}
-}
 
 void mouseMotion(int x, int y)
 {
@@ -62,10 +36,6 @@ void mouseMotion(int x, int y)
 		{
 			gDrag(x - gLastX, y - gLastY);
 			glutWarpPointer(gLastX, gLastY);
-		}
-		else
-		{
-			mouseEvent(x, y, MOUSE_MOTION);
 		}
 	}
 }
@@ -77,15 +47,9 @@ void setDragFunc(funcDrag drag)
 	{
 		centerMouse(&gLastX, &gLastY);
 	}
-	else
-	{
-		mouseEvent(gLastX, gLastY, MOUSE_MOTION);
-	}
 }
 
-void startMouse(void)
+void startMouse()
 {
-	glSelectBuffer(SELECT_BUFFER_SIZE, gSelectBuffer);
-	glutMouseFunc(mouseButton);
 	glutPassiveMotionFunc(mouseMotion);
 }
