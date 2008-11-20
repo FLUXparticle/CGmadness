@@ -17,40 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ScreenGameEnd_hpp
-#define ScreenGameEnd_hpp
+#ifndef String_hpp
+#define String_hpp
 
-#include "screen/Screen.hpp"
+#include "SmartPointer.hpp"
 
-#include "screen/choose/HighScore.hpp"
-
-#include "process/Game.hpp"
-
-#include "gui/Button.hpp"
-
-class ScreenGameEnd : public Screen
+class String
 {
 public:
-  ScreenGameEnd(Game* parent);
-  virtual ~ScreenGameEnd();
+	static String toString(int value);
+	
+public:
+  String();
+  String(const char* str);
+  String(const String& str);
+  virtual ~String();
 
-  const String& lastEntry() const;
+  int length() const;
+
+  operator const char*() const;
+  bool operator==(const char* other) const;
+  
+  String operator+(const char* other) const;
+  String operator+(const String& other) const;
 
 private:
-	HighScore hsHighScore;
-	Button bAgain;
-	Button bQuit2;
-
-	Game* mParent;
-
-	void clickButtonAgain();
-	void clickButtonQuit2();
+	SmartPointer<char> mStr;
 
 };
 
-inline const String& ScreenGameEnd::lastEntry() const
+inline String::operator const char*() const
 {
-	return hsHighScore.lastEntry();
+	return mStr;
 }
 
 #endif

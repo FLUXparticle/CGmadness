@@ -854,10 +854,8 @@ void writeRLE(FILE * file, const int data[SIZEOF_LIGHT_MAP])
 
 bool saveHighscoreToFile(void)
 {
-	int i;
-
-	char *filename = addStrings(sgLevel.filename, EXT_HIGHSCORE);
-	FILE *file = fopen(filename, "wt");
+	const char* filename = addStrings(sgLevel.filename, EXT_HIGHSCORE);
+	FILE* file = fopen(filename, "wt");
 
 	if (!file)
 	{
@@ -875,7 +873,7 @@ bool saveHighscoreToFile(void)
 
 	fputc('\n', file);
 
-	for (i = 0; i < sgLevel.cntScoreCols; i++)
+	for (int i = 0; i < sgLevel.cntScoreCols; i++)
 	{
 		writeInt(file, sgLevel.scores[i].tenthSecond);
 		fputc(' ', file);

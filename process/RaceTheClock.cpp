@@ -30,7 +30,8 @@
 
 #include GL_H
 
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 
 RaceTheClock::RaceTheClock()
 {
@@ -114,7 +115,7 @@ void RaceTheClock::stopWatch()
 	int tenthSecond = (int) (gGameTime * 10.0f);
 	int newIndex = sgLevel.cntScoreCols;
 
-	while (newIndex > 0 && tenthSecond < sgLevel.scores[newIndex - 1].tenthSecond)
+	while (newIndex > 0 && tenthSecond <= sgLevel.scores[newIndex - 1].tenthSecond)
 	{
 		newIndex--;
 	}
@@ -128,7 +129,7 @@ void RaceTheClock::stopWatch()
 
 	if (newIndex < MAX_SCORE_COLS)
 	{
-		sgLevel.scores[newIndex].name[0] = '\0';
+		strcpy(sgLevel.scores[newIndex].name, gScreenEnd->lastEntry());
 		sgLevel.scores[newIndex].tenthSecond = tenthSecond;
 	}
 
