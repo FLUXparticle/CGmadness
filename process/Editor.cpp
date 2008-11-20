@@ -87,7 +87,6 @@ void Editor::suspend()
 
 void Editor::resume()
 {
-	glutSetCursor(GLUT_CURSOR_NONE);
 	mState = STATE_EDITING;
 }
 

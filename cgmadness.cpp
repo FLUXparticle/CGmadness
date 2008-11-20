@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	}
 
 	glutFullScreen();
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	/* ---- */
 
@@ -98,13 +99,13 @@ int main(int argc, char *argv[])
 	startMouse();
 
 	Main::init();
-	
+
 	Singleton<Main> main;
 	Singleton<MainProcess> process;
 	main->setFirstProcess(process);
 
 	startCallback(main);
-	
+
 	glutMainLoop();
 
 	return 0;

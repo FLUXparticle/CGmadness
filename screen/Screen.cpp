@@ -29,8 +29,6 @@
 
 #include "macros.hpp"
 
-#include GLUT_H
-
 #define EMPHASIZE_SPEED 10.0f
 
 unsigned int Screen::gTexLogo;
@@ -69,8 +67,6 @@ void Screen::show()
 	}
 
   (*mSelectedItem)->hover = true;
-
-	glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 }
 
 void Screen::popScreen()
