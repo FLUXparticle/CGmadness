@@ -22,50 +22,47 @@
 
 #include "tools.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "utils/String.hpp"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define RESIZE 0
 
 void usage()
 {
-	printf("usage: convert-cgm [parameters...] <cgm-files...>\n");
-#if (RESIZE)
+	printf("usage: convert-cgm [parameters...] <cgm-file>\n");
+	printf("\n");
+#if 0
+	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
 	printf("  --size x y  resize all levels after this parameter to given size\n");
 	printf("\n");
 #endif
-	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
-	printf("\n");
 }
 
 int main(int argc, char *argv[])
 {
 	message();
 
+	String author;
 	const char* file = NULL;
 
 	/* read parameters */
 	for (int i = 1; i < argc; i++)
 	{
-#if (RESIZE)
 		if (strcmp(argv[i], "--size") == 0 && i + 2 < argc)
 		{
-			i++;
-			sgLevel.size.x = atoi(argv[i++]);
-			sgLevel.size.y = atoi(argv[i++]);
+			sgLevel.size.x = atoi(argv[++i]);
+			sgLevel.size.y = atoi(argv[++i]);
 		}
-#endif
-
-		file = argv[i];
-
-		if (loadLevelFromFile(file) && saveLevelToFile())
+		else if (strcmp(argv[i], "--author") == 0 && i + 1 < argc)
 		{
-			printf("'%s' processed successfully.\n", file);
+			author = argv[++i];
 		}
 		else
 		{
-			printf("'%s' not processed!\n", file);
+			file = argv[i];
 		}
 	}
 
@@ -73,6 +70,24 @@ int main(int argc, char *argv[])
 	{
 		usage();
 		return 1;
+	}
+
+	if (loadLevelFromFile(file))
+	{
+		if (author.length() > 0)
+		{
+			strncpy(sgLevel.author, author, MAX_NAME_LENGTH);
+			sgLevel.author[MAX_NAME_LENGTH] = '\0';
+		}
+
+		if (saveLevelToFile())
+		{
+			printf("'%s' processed successfully.\n", file);
+		}
+	}
+	else
+	{
+		printf("'%s' not processed!\n", file);
 	}
 
 	return 0;
