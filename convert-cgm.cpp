@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 {
 	message();
 
+	bool setAuthor = false;
 	String author;
 	const char* file = NULL;
 
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
 		else if (strcmp(argv[i], "--author") == 0 && i + 1 < argc)
 		{
 			author = argv[++i];
+			setAuthor = true;
 		}
 		else
 		{
@@ -74,7 +76,7 @@ int main(int argc, char *argv[])
 
 	if (loadLevelFromFile(file))
 	{
-		if (author.length() > 0)
+		if (setAuthor)
 		{
 			strncpy(sgLevel.author, author, MAX_NAME_LENGTH);
 			sgLevel.author[MAX_NAME_LENGTH] = '\0';

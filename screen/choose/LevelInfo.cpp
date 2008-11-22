@@ -66,8 +66,8 @@ void LevelInfo::draw() const
 	sprintf(size, "size: %d x %d", sgLevel.size.x, sgLevel.size.y);
 
 	lines[0] = gLevelLoader->name();
-	lines[1] = "";
-	lines[2] = "";
+	lines[1] = (sgLevel.author[0] != '\0') ? "by" : "";
+	lines[2] = sgLevel.author;
 	lines[3] = "";
 	lines[4] = "";
 	lines[5] = size;
@@ -95,6 +95,9 @@ void LevelInfo::draw() const
 		{
 		case 0:
 			ColorStack::colorStack.setColor(Color4::blue);
+			break;
+		case 2:
+			ColorStack::colorStack.setColor(Color4::green);
 			break;
 		case 5:
 			ColorStack::colorStack.setColor(Color4::yellow);
