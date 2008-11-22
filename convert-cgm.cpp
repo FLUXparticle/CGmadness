@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 	message();
 
 	bool setAuthor = false;
+	bool doShrink = false;
 	String author;
 	const char* file = NULL;
 
@@ -61,6 +62,10 @@ int main(int argc, char *argv[])
 		{
 			author = argv[++i];
 			setAuthor = true;
+		}
+		else if (strcmp(argv[i], "--shrink") == 0)
+		{
+			doShrink = true;
 		}
 		else
 		{
@@ -82,7 +87,7 @@ int main(int argc, char *argv[])
 			sgLevel.author[MAX_NAME_LENGTH] = '\0';
 		}
 
-		if (saveLevelToFile())
+		if (saveLevelToFile(doShrink))
 		{
 			printf("'%s' processed successfully.\n", file);
 		}

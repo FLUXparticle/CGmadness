@@ -419,7 +419,7 @@ bool saveHighscoreToFile()
 	return true;
 }
 
-bool saveLevelToFile()
+bool saveLevelToFile(bool shrink)
 {
 	FILE *file = fopen(sgLevel.filename, "wt");
 
@@ -428,10 +428,60 @@ bool saveLevelToFile()
 		return false;
 	}
 
+	FieldCoord fcMin;
+	FieldCoord fcMax;
+
+	std::list<int> indices;
+	{
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		if (list.next())
+		{
+			const Block& b = sgLevel.blocks[*list];
+
+			fcMin.x = b.x;
+			fcMin.y = b.y;
+			fcMax.x = b.x;
+			fcMax.y = b.y;
+		}
+		else
+		{
+			fcMin.x = 0;
+			fcMin.y = 0;
+			fcMax.x = 0;
+			fcMax.y = 0;
+		}
+
+		do
+		{
+			int index = *list;
+			const Block& b = sgLevel.blocks[index];
+
+			fcMin.x = min(fcMin.x, b.x);
+			fcMin.y = min(fcMin.y, b.y);
+			fcMax.x = max(fcMax.x, b.x);
+			fcMax.y = max(fcMax.y, b.y);
+
+			indices.push_back(index);
+		} while (list.next());
+	}
+
 	/* version number */
 	fprintf(file, "v%u\n", THIS_CGM_VERSION);
 
 	resetCRC32();
+
+	if (shrink)
+	{
+		sgLevel.start.x -= fcMin.x;
+		sgLevel.start.y -= fcMin.y;
+		sgLevel.finish.x -= fcMin.x;
+		sgLevel.finish.y -= fcMin.y;
+		sgLevel.size.x = fcMax.x - fcMin.x + 1;
+		sgLevel.size.y = fcMax.y - fcMin.y + 1;
+	}
 
 	/* write atributes */
 	writeFieldCoord(file, sgLevel.start);
@@ -442,24 +492,20 @@ bool saveLevelToFile()
 	fputc('\n', file);
 
 	/* write data */
-	std::list<int> indices;
-	{
-		Vector3 origin(0.0f, 0.0f, 0.0f);
-		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
-		KdList list(iter);
-
-		while (list.next())
-		{
-			indices.push_back(*list);
-		}
-	}
-
 	writeInt(file, indices.size());
 	fputc('\n', file);
 
 	FOREACH(indices, iter)
 	{
-		writeFieldBlock(file, sgLevel.blocks[*iter]);
+		Block b = sgLevel.blocks[*iter];
+
+		if (shrink)
+		{
+			b.x -= fcMin.x;
+			b.y -= fcMin.y;
+		}
+
+		writeFieldBlock(file, b);
 	}
 
 	fprintf(file, "%08X\n", getCRC32());

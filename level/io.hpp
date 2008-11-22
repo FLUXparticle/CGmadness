@@ -24,6 +24,6 @@ bool loadHighscoreFromFile();
 bool loadLevelFromFile(const char* filename);
 
 bool saveHighscoreToFile();
-bool saveLevelToFile();
+bool saveLevelToFile(bool shrink = false);
 
 #endif
