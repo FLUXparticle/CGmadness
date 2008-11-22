@@ -17,8 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "types.hpp"
+#include "Block.hpp"
 
-#include "atlas.hpp"
+Vector3 Orientation::decomposition(const Vector3& v) const
+{
+	Vector3 a = v - origin;
 
-Level sgLevel;
+	float d = (vx ^ vy) * normal;
+	float dx = (a ^ vy) * normal;
+	float dy = (vx ^ a) * normal;
+	float dz = (vx ^ vy) * a;
+
+	return Vector3(dx / d, dy / d, dz / d);
+}
+
+Vector2 Square::texCoords(int vertex) const
+{
+	Vector3 decomp = texDecal.decomposition(vertices[vertex]);
+
+	return Vector2(decomp.x, decomp.y);
+}

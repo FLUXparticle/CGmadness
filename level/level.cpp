@@ -88,6 +88,13 @@ Block& getBlock(int index)
 {
 	Block& b = sgLevel.blocks[index];
 
+	checkBlock(b);
+
+	return b;
+}
+
+void checkBlock(Block& b)
+{
 	int x = b.x;
 	int y = b.y;
 
@@ -252,8 +259,6 @@ Block& getBlock(int index)
 
 		b.dirty = false;
 	}
-
-	return b;
 }
 
 void initLevel()

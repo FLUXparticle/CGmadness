@@ -202,7 +202,6 @@ static void newLevel()
 		{
 			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
 
-			range.start = sgLevel.blocks.size();
 			{
 				Block b;
 
@@ -213,9 +212,9 @@ static void newLevel()
 				b.dzy = 0;
 				b.dirty = true;
 
-				sgLevel.blocks.push_back(b);
+				range.start = sgLevel.blocks.insert(b);
 			}
-			range.end = sgLevel.blocks.size();
+			range.end = range.start + 1;
 		}
 	}
 
@@ -281,7 +280,6 @@ bool loadLevelFromFile(const char* filename)
 			int x;
 			int y;
 
-			range.start = sgLevel.blocks.size();
 			{
 				Block b;
 
@@ -291,9 +289,9 @@ bool loadLevelFromFile(const char* filename)
 				x = b.x;
 				y = b.y;
 
-				sgLevel.blocks.push_back(b);
+				range.start = sgLevel.blocks.insert(b);
 			}
-			range.end = sgLevel.blocks.size();
+			range.end = range.start + 1;
 
 			sgLevel.kdLevelTree->get(x, y) = range;
 		}
@@ -306,7 +304,6 @@ bool loadLevelFromFile(const char* filename)
 			{
 				KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
 
-				range.start = sgLevel.blocks.size();
 				{
 					Block b;
 
@@ -315,9 +312,9 @@ bool loadLevelFromFile(const char* filename)
 					readFieldBlockV3(file, b);
 					b.dirty = true;
 
-					sgLevel.blocks.push_back(b);
+					range.start = sgLevel.blocks.insert(b);
 				}
-				range.end = sgLevel.blocks.size();
+				range.end = range.start + 1;
 			}
 		}
 	}

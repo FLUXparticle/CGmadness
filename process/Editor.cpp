@@ -252,7 +252,14 @@ static void deleteMarkerArea()
 	while (iter.next())
 	{
 		KdCell::Range& range = sgLevel.kdLevelTree->cell(iter.index()).range;
-		range.end = range.start;
+
+		for (int index = range.start; index < range.end; ++index)
+		{
+			sgLevel.blocks.free(index);
+		}
+
+		range.start = -1;
+		range.end = -1;
 	}
 
 	markerChanged();

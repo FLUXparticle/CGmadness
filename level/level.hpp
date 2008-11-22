@@ -30,6 +30,7 @@ void destroyLevel();
 
 Block& getBlock(int x, int y);
 Block& getBlock(int index);
+void checkBlock(Block& b);
 const Square& getRoofSquare(int x, int y);
 const SideFace& getSideFace(int x, int y, int side);
 

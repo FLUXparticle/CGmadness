@@ -22,12 +22,11 @@
 
 #include "kdtree/KdTree.hpp"
 
-#include "math/Vector2.hpp"
+#include "FreeBlockList.hpp"
+
 #include "math/Vector3.hpp"
 
 #include GL_H
-
-#include <vector>
 
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
@@ -38,67 +37,10 @@
 #define MIN_ALLOWED_CHAR 32
 #define MAX_ALLOWED_CHAR 126
 
-struct Orientation
-{
-	Vector3 origin;
-	Vector3 vx;
-	Vector3 vy;
-	Vector3 normal;
-
-	Vector3 decomposition(const Vector3& v) const;
-};
-
 struct SubAtlas
 {
 	Orientation orientation;
 	int idxSubLightMap;
-};
-
-struct Square
-{
-	Vector3 vertices[4];
-	Vector3 normal;
-
-	Orientation texDecal;
-
-	unsigned int idxAtlas;
-
-	float area;
-	Vector3 mid;
-
-	void updateAttributes();
-
-	Vector2 texCoords(int vertex) const;
-};
-
-struct SideFace
-{
-	std::vector<Square> squares;
-
-	int bottom;
-	int top;
-};
-
-struct Range
-{
-	int start;
-	int end;
-};
-
-struct Block
-{
-	int x;
-	int y;
-	int z;
-	int dzx;
-	int dzy;
-
-	bool dirty;
-
-	Range subatlas;
-
-	Square roof;
-	SideFace sideFaces[4];
 };
 
 struct FieldCoord
@@ -115,7 +57,7 @@ struct ScoreCol
 
 struct Level
 {
-	std::vector<Block> blocks;
+	FreeBlockList blocks;
 	KdTree* kdLevelTree;
 	FieldCoord start;
 	FieldCoord finish;

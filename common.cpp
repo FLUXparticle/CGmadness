@@ -100,9 +100,10 @@ void initCommon()
 {
 	gSubAtlas.clear();
 
-	for (unsigned int index = 0; index < sgLevel.blocks.size(); ++index)
+	FOREACH(sgLevel.blocks, iter)
 	{
-		Block& b = getBlock(index);
+		Block& b = *iter;
+		checkBlock(b);
 
 		b.subatlas.start = gSubAtlas.size();
 		{
