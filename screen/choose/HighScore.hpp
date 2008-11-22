@@ -22,6 +22,8 @@
 
 #include "gui/Canvas.hpp"
 
+#include "utils/String.hpp"
+
 class HighScore : public Canvas
 {
 public:
@@ -34,9 +36,17 @@ public:
 	void update(float interval);
 	void draw() const;
 
+	const String& lastEntry() const;
+
 private:
 	int gShowCursor;
+	String mLastEntry;
 
 };
+
+inline const String& HighScore::lastEntry() const
+{
+	return mLastEntry;
+}
 
 #endif

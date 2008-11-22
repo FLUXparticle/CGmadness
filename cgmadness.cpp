@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	}
 
 	glutFullScreen();
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	/* ---- */
 

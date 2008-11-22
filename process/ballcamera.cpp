@@ -25,9 +25,7 @@
 
 #include "functions.hpp"
 
-#include GLUT_H
-
-#include <math.h>
+#include <cmath>
 
 static bool gIsMouseControl = false;
 
@@ -60,8 +58,6 @@ void resetBallCamera(void)
 
 void enableBall()
 {
-	glutSetCursor(GLUT_CURSOR_NONE);
-
 	gIsBallActive = true;
 	gIsBallControlActive = true;
 }
@@ -77,8 +73,6 @@ void enableBallCamera()
 	{
 		setDragFunc(gameDrag);
 	}
-
-	glutSetCursor(GLUT_CURSOR_NONE);
 
 	gIsBallCameraActive = true;
 }

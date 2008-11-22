@@ -63,6 +63,8 @@ bool HighScore::acceptHighScoreName()
 {
 	if (sgLevel.lastPlayerIndex < MAX_SCORE_COLS)
 	{
+		mLastEntry = sgLevel.scores[sgLevel.lastPlayerIndex].name;
+
 		saveHighscoreToFile();
 		sgLevel.lastPlayerIndex = MAX_SCORE_COLS;
 
@@ -84,7 +86,7 @@ void HighScore::update(float interval)
 
 	if (sgLevel.lastPlayerIndex < MAX_SCORE_COLS && wasKeyPressed(ch))
 	{
-		char *name = sgLevel.scores[sgLevel.lastPlayerIndex].name;
+		char* name = sgLevel.scores[sgLevel.lastPlayerIndex].name;
 		int len = strlen(name);
 
 		switch (ch)

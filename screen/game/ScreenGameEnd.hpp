@@ -34,16 +34,23 @@ public:
   ScreenGameEnd(Game* parent);
   virtual ~ScreenGameEnd();
 
+  const String& lastEntry() const;
+
 private:
 	HighScore hsHighScore;
 	Button bAgain;
 	Button bQuit2;
-	
+
 	Game* mParent;
 
 	void clickButtonAgain();
 	void clickButtonQuit2();
-	
+
 };
+
+inline const String& ScreenGameEnd::lastEntry() const
+{
+	return hsHighScore.lastEntry();
+}
 
 #endif
