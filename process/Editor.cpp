@@ -37,6 +37,7 @@
 #include "camera.hpp"
 #include "hw/keyboard.hpp"
 #include "common.hpp"
+#include "texture.hpp"
 
 #include "Color.hpp"
 
@@ -55,10 +56,12 @@ static const int gSin[] = { 0, 1, 0, -1 };
 static const int gCos[] = { 1, 0, -1, 0 };
 
 static bool gDirtyLightmaps;
+static unsigned int gEmpty;
 
 Editor::Editor()
 {
-	gScreenEditorMain = new ScreenEditorMain(this);
+	mScreenEditorMain = new ScreenEditorMain(this);
+	gEmpty = loadTexture("data/empty.tga", true);
 }
 
 Editor::~Editor()
@@ -83,7 +86,7 @@ void Editor::start(Process* previous, bool push)
 
 	mState = STATE_PAUSED;
 
-	Main::pushState(gScreenEditorMain);
+	Main::pushState(mScreenEditorMain);
 }
 
 void Editor::suspend()
@@ -109,11 +112,11 @@ void Editor::saveLevel()
 	{
 		destroyCommon();
 
-		gScreenWait = new ScreenWait( METHOD_CALLBACK(Editor, lightMapsReady) );
+		mScreenWait = new ScreenWait( METHOD_CALLBACK(Editor, lightMapsReady) );
 
 		initCommon();
 		setUpdateFrequency(10);
-		Main::setState(gScreenWait, false);
+		Main::setState(mScreenWait, false);
 		updateLightMap(true);
 	}
 	else
@@ -121,13 +124,13 @@ void Editor::saveLevel()
 		if (saveLevelToFile())
 		{
 			sgLevel.saved = true;
-			gScreenInfo = new ScreenInfo("level saved successfully");
-			Main::setState(gScreenInfo, false);
+			mScreenInfo = new ScreenInfo("level saved successfully");
+			Main::setState(mScreenInfo, false);
 		}
 		else
 		{
-			gScreenInfo = new ScreenInfo("operation failed");
-			Main::setState(gScreenInfo, false);
+			mScreenInfo = new ScreenInfo("operation failed");
+			Main::setState(mScreenInfo, false);
 		}
 	}
 }
@@ -479,7 +482,7 @@ void Editor::update(float interval)
 
 		if (wasKeyPressed(KEY_ESC))
 		{
-			Main::pushState(gScreenEditorMain);
+			Main::pushState(mScreenEditorMain);
 		}
 
 		if (wasKeyPressed(KEY_ENTER))
@@ -576,6 +579,41 @@ void drawEditorField(bool showCursor)
 			}
 		}
 		glEnd();
+	}
+
+	if (showCursor)
+	{
+		glBindTexture(GL_TEXTURE_2D, gEmpty);
+
+		Vector3 min(gCurStart.x, gCurStart.y, 0.0f);
+		Vector3 max(gCurEnd.x + 1.0f, gCurEnd.y + 1.0f, 0.0f);
+
+		Vector3 texMin = min;
+		Vector3 texMax = max;
+
+		min += sgLevel.origin;
+		max += sgLevel.origin;
+
+		glColor3fv(Color4::red);
+
+		glEnable(GL_BLEND);
+		glBegin(GL_QUADS);
+		{
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			glTexCoord2f(texMin.x, texMin.y);
+			glVertex3f(min.x, min.y, min.z);
+
+			glTexCoord2f(texMax.x, texMin.y);
+			glVertex3f(max.x, min.y, min.z);
+
+			glTexCoord2f(texMax.x, texMax.y);
+			glVertex3f(max.x, max.y, min.z);
+
+			glTexCoord2f(texMin.x, texMax.y);
+			glVertex3f(min.x, max.y, min.z);
+		}
+		glEnd();
+		glDisable(GL_BLEND);
 	}
 
 	glDisable(GL_TEXTURE_2D);

@@ -35,7 +35,7 @@ public:
 		STATE_EDITING,
 		STATE_TESTING
 	} EditorState;
-	
+
 public:
 	Editor();
 	virtual ~Editor();
@@ -50,15 +50,15 @@ public:
 
 private:
 	Ball mBall;
-	
+
 	EditorState mState;
 
 	void enableTestMode();
 	void disableTestMode();
 
-	SmartPointer<class ScreenEditorMain> gScreenEditorMain;
-	SmartPointer<class ScreenWait> gScreenWait;
-	SmartPointer<class ScreenInfo> gScreenInfo;
+	SmartPointer<class ScreenEditorMain> mScreenEditorMain;
+	SmartPointer<class ScreenWait> mScreenWait;
+	SmartPointer<class ScreenInfo> mScreenInfo;
 
 	Process* mPrevious;
 
