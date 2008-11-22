@@ -243,6 +243,33 @@ static void flattenMarkerArea()
 	markerChanged();
 }
 
+static void populateMarkerArea()
+{
+	for (int x = gCurStart.x; x <= gCurEnd.x; ++x)
+	{
+		for (int y = gCurStart.y; y <= gCurEnd.y; ++y)
+		{
+			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
+
+			if (range.end <= range.start)
+			{
+				Block b;
+
+				b.x = x;
+				b.y = y;
+				b.z = 0;
+				b.dzx = 0;
+				b.dzy = 0;
+
+				range.start = sgLevel.blocks.insert(b);
+				range.end = range.start + 1;
+			}
+		}
+	}
+
+	markerChanged();
+}
+
 static void deleteMarkerArea()
 {
 	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
@@ -359,7 +386,12 @@ void animateEditor(float interval)
 		flattenMarkerArea();
 	}
 
-	if (wasKeyPressed(KEY_DELETE))
+	if (wasKeyPressed('+'))
+	{
+		populateMarkerArea();
+	}
+
+	if (wasKeyPressed('-'))
 	{
 		deleteMarkerArea();
 	}

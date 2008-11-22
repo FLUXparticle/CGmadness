@@ -72,6 +72,7 @@ private:
 	int mIdxLastFree;
 
 	void insertBefore(int newIndex, int index);
+	void remove(int index);
 
 };
 

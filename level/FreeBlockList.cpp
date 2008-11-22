@@ -57,20 +57,28 @@ FreeBlockList::~FreeBlockList()
 
 int FreeBlockList::insert(const Block& block)
 {
-	FreeBlockNode node;
-	node.block = block;
+	int index = mNodes[mIdxFirstFree].next;
 
-	int index = mNodes.size();
-	mNodes.push_back(node);
+	if (index == mIdxLastFree)
+	{
+		index = mNodes.size();
+		mNodes.push_back(FreeBlockNode());
+	}
+	else
+	{
+		remove(index);
+	}
 
 	insertBefore(index, mIdxLastNode);
+	mNodes[index].block = block;
 
 	return index;
 }
 
 void FreeBlockList::free(int index)
 {
-	// TODO
+	remove(index);
+	insertBefore(index, mIdxLastFree);
 }
 
 void FreeBlockList::clear()
@@ -121,4 +129,12 @@ void FreeBlockList::insertBefore(int newIndex, int index)
 
 	mNodes[node.prev].next = newIndex;
 	mNodes[node.next].prev = newIndex;
+}
+
+void FreeBlockList::remove(int index)
+{
+	FreeBlockNode& node = mNodes[index];
+
+	mNodes[node.prev].next = node.next;
+	mNodes[node.next].prev = node.prev;
 }

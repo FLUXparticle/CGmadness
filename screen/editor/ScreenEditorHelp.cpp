@@ -28,6 +28,7 @@ static LeftRight gTextHelp[] =
 	{"W A S D", "pitch"},
 	{"R F", "hight"},
 	{"0", "flatten"},
+	{"+/-", "add/remove blocks"},
 	{"Enter", "test"},
 	{"Y X C V B N", "camera"},
 	{"1 2", "start finish"},
