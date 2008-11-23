@@ -64,9 +64,20 @@ Vector3 Vector3::operator*(float s) const
 {
 	Vector3 b;
 
-	b.x = s * x;
-	b.y = s * y;
-	b.z = s * z;
+	b.x = x * s;
+	b.y = y * s;
+	b.z = z * s;
+
+	return b;
+}
+
+Vector3 Vector3::operator/(float s) const
+{
+	Vector3 b;
+
+	b.x = x / s;
+	b.y = y / s;
+	b.z = z / s;
 
 	return b;
 }
@@ -118,4 +129,11 @@ Vector3 Vector3::operator^(const Vector3& b) const
 	c.z = x * b.y - y * b.x;
 
 	return c;
+}
+
+void Vector3::operator+=(const Vector3& b)
+{
+	x += b.x;
+	y += b.y;
+	z += b.z;
 }

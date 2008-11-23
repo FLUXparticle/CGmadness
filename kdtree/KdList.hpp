@@ -17,11 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _vector_hpp_
-#define _vector_hpp_
+#ifndef KdList_hpp
+#define KdList_hpp
 
-#include "types.hpp"
+#include "kdtree/KdIterator.hpp"
 
-void initProjectMat(Matrix m, float fov);
+#include "utils/SmartPointer.hpp"
+
+class KdList
+{
+public:
+	KdList(KdIterator& iterator);
+	virtual ~KdList();
+
+  bool next();
+  int operator*() const;
+
+private:
+	KdIterator& mIterator;
+
+	int mIndex;
+	int mEnd;
+
+};
 
 #endif

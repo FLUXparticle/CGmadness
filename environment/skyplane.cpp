@@ -52,7 +52,7 @@ static Vector2 gPlaneTexCoords[NUM_OF_VERTS];
 static Color4 gPlaneColors[NUM_OF_VERTS];
 static GLuint gIndices[NUM_OF_INDICES];
 
-void initSkyplane(void)
+void initSkyplane()
 {
 	float planeSize = 2.0f * PLANET_RADIUS / sqrt(2.0);
 	float delta = planeSize / DIVS;

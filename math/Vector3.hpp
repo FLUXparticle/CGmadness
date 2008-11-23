@@ -34,14 +34,23 @@ struct Vector3
 
   bool operator == (const Vector3& other) const;
 
+  operator const float* () const;
+
   Vector3 operator*(float s) const;
+  Vector3 operator/(float s) const;
   Vector3 operator+(const Vector3& b) const;
   Vector3 operator-(const Vector3& b) const;
   Vector3 operator-() const;
   float operator*(const Vector3& b) const;
   Vector3 operator^(const Vector3& b) const;
 
+  void operator+=(const Vector3& b);
 };
+
+inline Vector3::operator const float* () const
+{
+	return &x;
+}
 
 inline float len(const Vector3 v)
 {

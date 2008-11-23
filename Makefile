@@ -80,6 +80,9 @@ DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
+
+.SECONDEXPANSION:
+
 .PHONY: all
 all: $(EXEC)
 

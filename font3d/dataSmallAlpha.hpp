@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataSmallAlpha_hpp_
-#define _dataSmallAlpha_hpp_
+#ifndef dataSmallAlpha_hpp
+#define dataSmallAlpha_hpp
 
-#include "types.hpp"
+#include "hw/varray.hpp"
 
 extern float widthSmallAlpha[];
 

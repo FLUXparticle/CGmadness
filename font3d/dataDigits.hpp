@@ -1,7 +1,7 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _dataDigits_hpp_
-#define _dataDigits_hpp_
+#ifndef dataDigits_hpp
+#define dataDigits_hpp
 
-#include "types.hpp"
+#include "hw/varray.hpp"
 
 extern float widthDigits[];
 

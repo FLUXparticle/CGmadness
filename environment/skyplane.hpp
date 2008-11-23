@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _skyplane_hpp_
-#define _skyplane_hpp_
+#ifndef skyplane_hpp
+#define skyplane_hpp
 
-void initSkyplane(void);
-void drawSkyplane(void);
+void initSkyplane();
+void drawSkyplane();
 
 #endif

@@ -23,7 +23,7 @@
 
 #include "Main.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 #include "text/text.hpp"
 
 #include "functions.hpp"

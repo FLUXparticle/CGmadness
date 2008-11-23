@@ -23,19 +23,30 @@
 #include "screen/ScreenWait.hpp"
 #include "screen/ScreenInfo.hpp"
 
+#include "kdtree/KdRangeTraverse.hpp"
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
+#include "kdtree/KdList.hpp"
+
 #include "utils/Callback.hpp"
 
-#include "level.hpp"
+#include "level/io.hpp"
+#include "level/level.hpp"
+
 #include "ballcamera.hpp"
 #include "field.hpp"
 #include "camera.hpp"
 #include "hw/keyboard.hpp"
 #include "common.hpp"
+#include "texture.hpp"
+
+#include "Color.hpp"
+
+#include "macros.hpp"
 
 #include GLUT_H
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 static FieldCoord gCurStart;
 static FieldCoord gCurEnd;
@@ -44,12 +55,13 @@ static int gCamAngle = 0;
 static const int gSin[] = { 0, 1, 0, -1 };
 static const int gCos[] = { 1, 0, -1, 0 };
 
-static bool gDirtyTexCoords;
 static bool gDirtyLightmaps;
+static unsigned int gEmpty;
 
 Editor::Editor()
 {
-	gScreenEditorMain = new ScreenEditorMain(this);
+	mScreenEditorMain = new ScreenEditorMain(this);
+	gEmpty = loadTexture("data/empty.tga", true);
 }
 
 Editor::~Editor()
@@ -67,9 +79,6 @@ void Editor::start(Process* previous, bool push)
 		gDirtyLightmaps = false;
 	}
 
-	updateTexCoords();
-	gDirtyTexCoords = false;
-
 	gCurStart.x = 0;
 	gCurStart.y = 0;
 	gCurEnd.x = 0;
@@ -77,7 +86,7 @@ void Editor::start(Process* previous, bool push)
 
 	mState = STATE_PAUSED;
 
-	Main::pushState(gScreenEditorMain);
+	Main::pushState(mScreenEditorMain);
 }
 
 void Editor::suspend()
@@ -102,25 +111,25 @@ void Editor::saveLevel()
 	{
 		destroyCommon();
 
-		gScreenWait = new ScreenWait( METHOD_CALLBACK(Editor, lightMapsReady) );
+		mScreenWait = new ScreenWait( METHOD_CALLBACK(Editor, lightMapsReady) );
 
 		initCommon();
 		setUpdateFrequency(10);
-		Main::setState(gScreenWait, false);
-		updateLightMap(1);
+		Main::setState(mScreenWait, false);
+		updateLightMap(true);
 	}
 	else
 	{
 		if (saveLevelToFile())
 		{
 			sgLevel.saved = true;
-			gScreenInfo = new ScreenInfo("level saved successfully");
-			Main::setState(gScreenInfo, false);
+			mScreenInfo = new ScreenInfo("level saved successfully");
+			Main::setState(mScreenInfo, false);
 		}
 		else
 		{
-			gScreenInfo = new ScreenInfo("operation failed");
-			Main::setState(gScreenInfo, false);
+			mScreenInfo = new ScreenInfo("operation failed");
+			Main::setState(mScreenInfo, false);
 		}
 	}
 }
@@ -167,98 +176,135 @@ void updateEditorCamera(float interval, Vector3 marker)
 	moveCamera(interval, dest, marker);
 }
 
-void markerChanged(void)
+static void markerChanged()
 {
-	int x;
-	int y;
+	Vector3 min(gCurStart.x - 0.5f, gCurStart.y - 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 1.5f, gCurEnd.y + 1.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
 
-	for (x = gCurStart.x - 1; x <= gCurEnd.x + 1; x++)
+	while (list.next())
 	{
-		for (y = gCurStart.y - 1; y <= gCurEnd.y + 1; y++)
-		{
-			if (x >= 0 && y >= 0 && x < sgLevel.size.x && y < sgLevel.size.y)
-			{
-				sgLevel.field[x][y].dirty = 1;
-			}
-		}
+		Block& b = sgLevel.blocks[*list];
+		b.dirty = true;
 	}
 
 	sgLevel.saved = false;
 	gDirtyLightmaps = true;
-	gDirtyTexCoords = true;
 }
 
 void changeMarkerArea(int incz, int incdzx, int incdzy)
 {
-	int x;
-	int y;
-	int incx;
-	int incy;
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
 
-	incx = -(gCurEnd.x - gCurStart.x) * incdzx;
-
-	for (x = gCurStart.x; x <= gCurEnd.x; x++)
+	while (list.next())
 	{
-		incy = -(gCurEnd.y - gCurStart.y) * incdzy;
+		Block& b = sgLevel.blocks[*list];
+		int x = b.x;
+		int y = b.y;
+		int z = b.z;
+		int dzx = b.dzx;
+		int dzy = b.dzy;
 
-		for (y = gCurStart.y; y <= gCurEnd.y; y++)
+		int incx = -(gCurEnd.x + gCurStart.x - 2 * x) * incdzx;
+		int incy = -(gCurEnd.y + gCurStart.y - 2 * y) * incdzy;
+
+		z += incz + incx + incy;
+		dzx += incdzx;
+		dzy += incdzy;
+
+		if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
+				<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
 		{
-			Plate *p = &sgLevel.field[x][y];
-			int z = p->z;
-			int dzx = p->dzx;
-			int dzy = p->dzy;
+			b.z = z;
+			b.dzx = dzx;
+			b.dzy = dzy;
+		}
+	}
 
-			z += incz + incx + incy;
-			dzx += incdzx;
-			dzy += incdzy;
+	markerChanged();
+}
 
-			if (z - (abs(dzx) + abs(dzy)) >= 0 && (z + (abs(dzx) + abs(dzy)))
-					<= MAX_LEVEL_HEIGHT * HEIGHT_STEPS && abs(dzx) <= 5 && abs(dzy) <= 5)
+static void flattenMarkerArea()
+{
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+	KdList list(iter);
+
+	while (list.next())
+	{
+		Block& b = sgLevel.blocks[*list];
+		b.dzx = 0;
+		b.dzy = 0;
+	}
+
+	markerChanged();
+}
+
+static void populateMarkerArea()
+{
+	for (int x = gCurStart.x; x <= gCurEnd.x; ++x)
+	{
+		for (int y = gCurStart.y; y <= gCurEnd.y; ++y)
+		{
+			KdCell::Range& range = sgLevel.kdLevelTree->get(x, y);
+
+			if (range.end <= range.start)
 			{
-				p->z = z;
-				p->dzx = dzx;
-				p->dzy = dzy;
+				Block b;
+
+				b.x = x;
+				b.y = y;
+				b.z = 0;
+				b.dzx = 0;
+				b.dzy = 0;
+
+				range.start = sgLevel.blocks.insert(b);
+				range.end = range.start + 1;
 			}
-
-			incy += 2 * incdzy;
 		}
-
-		incx += 2 * incdzx;
 	}
 
 	markerChanged();
 }
 
-void flattenMarkerArea(void)
+static void deleteMarkerArea()
 {
-	int x;
-	int y;
+	Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+	Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+	KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
 
-	for (x = gCurStart.x; x <= gCurEnd.x; x++)
+	while (iter.next())
 	{
-		for (y = gCurStart.y; y <= gCurEnd.y; y++)
+		KdCell::Range& range = sgLevel.kdLevelTree->cell(iter.index()).range;
+
+		for (int index = range.start; index < range.end; ++index)
 		{
-			Plate *p = &sgLevel.field[x][y];
-
-			p->dzx = 0;
-			p->dzy = 0;
+			sgLevel.blocks.free(index);
 		}
+
+		range.start = -1;
+		range.end = -1;
 	}
 
 	markerChanged();
 }
 
-void modBetween(int *value, int mod, int min, int max)
+void modBetween(int& value, int mod, int min, int max)
 {
-	*value += mod;
+	value += mod;
 
-	if (*value < min)
+	if (value < min)
 	{
-		*value = min;
+		value = min;
 	}
-	else if (*value >= max)
+	else if (value >= max)
 	{
-		*value = max - 1;
+		value = max - 1;
 	}
 }
 
@@ -266,16 +312,16 @@ void moveMarker(int markermode, int dx, int dy)
 {
 	if (markermode)
 	{
-		modBetween(&gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
-		modBetween(&gCurEnd.y, dy, gCurStart.y, sgLevel.size.y);
+		modBetween(gCurEnd.x, dx, gCurStart.x, sgLevel.size.x);
+		modBetween(gCurEnd.y, dy, gCurStart.y, sgLevel.size.y);
 	}
 	else
 	{
 		int sx = gCurEnd.x - gCurStart.x;
 		int sy = gCurEnd.y - gCurStart.y;
 
-		modBetween(&gCurStart.x, dx, 0, sgLevel.size.x - sx);
-		modBetween(&gCurStart.y, dy, 0, sgLevel.size.y - sy);
+		modBetween(gCurStart.x, dx, 0, sgLevel.size.x - sx);
+		modBetween(gCurStart.y, dy, 0, sgLevel.size.y - sy);
 
 		gCurEnd.x = gCurStart.x + sx;
 		gCurEnd.y = gCurStart.y + sy;
@@ -340,6 +386,16 @@ void animateEditor(float interval)
 	if (wasKeyPressed('0'))
 	{
 		flattenMarkerArea();
+	}
+
+	if (wasKeyPressed('+'))
+	{
+		populateMarkerArea();
+	}
+
+	if (wasKeyPressed('-'))
+	{
+		deleteMarkerArea();
 	}
 
 	/* editor controls for current field */
@@ -425,7 +481,7 @@ void Editor::update(float interval)
 
 		if (wasKeyPressed(KEY_ESC))
 		{
-			Main::pushState(gScreenEditorMain);
+			Main::pushState(mScreenEditorMain);
 		}
 
 		if (wasKeyPressed(KEY_ENTER))
@@ -433,19 +489,25 @@ void Editor::update(float interval)
 			enableTestMode();
 		}
 
+		Vector3 min(gCurStart.x + 0.5f, gCurStart.y + 0.5f, 0.0f);
+		Vector3 max(gCurEnd.x + 0.5f, gCurEnd.y + 0.5f, 0.0f);
+		KdRangeTraverse iter(*sgLevel.kdLevelTree, min, max);
+		KdList list(iter);
+
 		markerPos.x = (gCurStart.x + gCurEnd.x) / 2.0f + 0.5f;
 		markerPos.y = (gCurStart.y + gCurEnd.y) / 2.0f + 0.5f;
-		markerPos.z = (float) sgLevel.field[gCurStart.x][gCurStart.y].z
-				/ HEIGHT_STEPS;
+
+		if (list.next())
+		{
+			markerPos.z = (float) sgLevel.blocks[*list].z / HEIGHT_STEPS;
+		}
+		else
+		{
+			markerPos.z = (float) 0.0f;
+		}
 
 		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
 		animateEditor(interval);
-
-		if (gDirtyTexCoords)
-		{
-			updateTexCoords();
-			gDirtyTexCoords = false;
-		}
 		break;
 	}
 	default:
@@ -455,82 +517,105 @@ void Editor::update(float interval)
 
 void drawEditorField(bool showCursor)
 {
-	int i;
-	int j;
-	FieldCoord cur;
-	Square square;
+	float pos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	float pos[4] =
-	{ 0.0f, 0.0f, 1.0f, 0.0f };
-
-	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
 
-	for (cur.x = 0; cur.x < sgLevel.size.x; cur.x++)
+	KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, sgCamera);
+	KdList list(iter);
+
+	while (list.next())
 	{
-		for (cur.y = 0; cur.y < sgLevel.size.y; cur.y++)
+		const Block& b = getBlock(*list);
+		if (showCursor && b.x >= gCurStart.x && b.x <= gCurEnd.x &&
+				b.y <= gCurEnd.y && b.y >= gCurStart.y)
 		{
+			glColor3fv(Color4::red);
+		}
+		else if (b.x == sgLevel.start.x && b.y == sgLevel.start.y)
+		{
+			glColor3fv(Color4::green);
+		}
+		else if (b.x == sgLevel.finish.x && b.y == sgLevel.finish.y)
+		{
+			glColor3fv(Color4::blue);
+		}
+		else
+		{
+			glColor3fv(Color4::white);
+		}
 
-			if (showCursor && cur.x >= gCurStart.x && cur.x <= gCurEnd.x && cur.y
-					<= gCurEnd.y && cur.y >= gCurStart.y)
+		const Square& square = b.roof;
+
+		glBegin(GL_QUADS);
+		glNormal3fv(square.normal);
+		for (int i = 0; i < 4; i++)
+		{
+			glTexCoord2fv(square.texCoords(i));
+			glVertex3fv(square.vertices[i]);
+		}
+		glEnd();
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_QUADS);
+		for (int j = 0; j < 4; j++)
+		{
+			const SideFace& face = b.sideFaces[j];
+
+			FOREACH(face.squares, iter)
 			{
-				glColor3f(1.0f, 0.0f, 0.0f);
-			}
-			else if (cur.x == sgLevel.start.x && cur.y == sgLevel.start.y)
-			{
-				glColor3f(0.0f, 1.0f, 0.0f);
-			}
-			else if (cur.x == sgLevel.finish.x && cur.y == sgLevel.finish.y)
-			{
-				glColor3f(0.0f, 0.0f, 1.0f);
-			}
-			else
-			{
-				glColor3f(1.0f, 1.0f, 1.0f);
-			}
-
-			getRoofSquare(cur.x, cur.y, &square);
-
-			glBegin(GL_QUADS);
-			glNormal3fv(&square.normal.x);
-			for (i = 0; i < 4; i++)
-			{
-				glTexCoord2fv(&square.texcoord[i].x);
-				glVertex3fv(&square.vertices[i].x);
-			}
-			glEnd();
-
-			glColor3f(1.0f, 1.0f, 1.0f);
-
-			glBegin(GL_QUADS);
-			for (j = 0; j < 4; j++)
-			{
-				SideFace face;
-				int k;
-
-				getSideFace(cur.x, cur.y, j, &face);
-
-				for (k = 0; k < face.cntSquares; k++)
+				glNormal3fv(iter->normal);
+				for (int i = 0; i < 4; i++)
 				{
-					glNormal3fv(&face.squares[k].normal.x);
-					for (i = 0; i < 4; i++)
-					{
-						glTexCoord2fv(&face.squares[k].texcoord[i].x);
-						glVertex3fv(&face.squares[k].vertices[i].x);
-					}
+					glTexCoord2fv(iter->texCoords(i));
+					glVertex3fv(iter->vertices[i]);
 				}
 			}
-			glEnd();
 		}
+		glEnd();
+	}
+
+	if (showCursor)
+	{
+		glBindTexture(GL_TEXTURE_2D, gEmpty);
+
+		Vector3 min(gCurStart.x, gCurStart.y, 0.0f);
+		Vector3 max(gCurEnd.x + 1.0f, gCurEnd.y + 1.0f, 0.0f);
+
+		Vector3 texMin = min;
+		Vector3 texMax = max;
+
+		min += sgLevel.origin;
+		max += sgLevel.origin;
+
+		glColor3fv(Color4::red);
+
+		glEnable(GL_BLEND);
+		glBegin(GL_QUADS);
+		{
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			glTexCoord2f(texMin.x, texMin.y);
+			glVertex3f(min.x, min.y, min.z);
+
+			glTexCoord2f(texMax.x, texMin.y);
+			glVertex3f(max.x, min.y, min.z);
+
+			glTexCoord2f(texMax.x, texMax.y);
+			glVertex3f(max.x, max.y, min.z);
+
+			glTexCoord2f(texMin.x, texMax.y);
+			glVertex3f(min.x, max.y, min.z);
+		}
+		glEnd();
+		glDisable(GL_BLEND);
 	}
 
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 }
 

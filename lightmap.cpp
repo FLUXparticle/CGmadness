@@ -19,13 +19,19 @@
 
 #include "lightmap.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
+#include "atlas.hpp"
+
+#include "kdtree/KdSphereIntersection.hpp"
+#include "kdtree/KdList.hpp"
 
 #include "functions.hpp"
 
+#include "macros.hpp"
+
 #include GL_H
 
-#include <math.h>
+#include <cmath>
 
 float approximationSquare(const Vector3 position, const Vector3 normal,
 													const Square square)
@@ -52,61 +58,43 @@ float approximationSquare(const Vector3 position, const Vector3 normal,
 	return 1.0f - ((d1 * d2) / (1.0f + M_PI * sqr(r) / square.area));
 }
 
-float approximation(const Vector3 position, const Vector3 normal)
+float approximation(const Vector3& position, const Vector3& normal)
 {
-	Vector3 z = Vector3(0.0f, 0.0f, 1.0f);
+	Vector3 z(0.0f, 0.0f, 1.0f);
 	float light = 1.0f - acos(dot(normal, z)) / M_PI;
 
-	int x;
-	int y;
+	KdSphereIntersection iter(*sgLevel.kdLevelTree, position - sgLevel.origin, 5.5f);
+	KdList list(iter);
 
-	for (x = 0; x < sgLevel.size.x; x++)
+	while (list.next())
 	{
-		for (y = 0; y < sgLevel.size.y; y++)
+		const Block& b = getBlock(*list);
+		const Square& square = b.roof;
+
+		bool check = false;
+		for (int j = 0; j < 4; j++)
 		{
-			int check = 0;
-
-			Square square;
-			int j;
-
-			if (len
-					(sub
-					 (position,
-						add(Vector3(x + 0.5f, y + 0.5f, position.z),
-								sgLevel.origin))) > 6.0f)
+			if (dot(square.vertices[j] - position, normal) > 0.0f)
 			{
-				continue;
+				check = true;
+				break;
 			}
+		}
 
+		if (!check)
+		{
+			continue;
+		}
 
-			getRoofSquare(x, y, &square);
+		light *= approximationSquare(position, normal, square);
 
-			for (j = 0; j < 4 && !check; j++)
+		for (int side = 0; side < 4; side++)
+		{
+			const SideFace& face = b.sideFaces[side];
+
+			FOREACH(face.squares, iter)
 			{
-				if (dot(sub(square.vertices[j], position), normal) > 0.0f)
-				{
-					check = 1;
-				}
-			}
-
-			if (!check)
-			{
-				continue;
-			}
-
-			light *= approximationSquare(position, normal, square);
-
-			for (j = 0; j < 4; j++)
-			{
-				SideFace face;
-				int k;
-
-				getSideFace(x, y, j, &face);
-
-				for (k = 0; k < face.cntSquares; k++)
-				{
-					light *= approximationSquare(position, normal, face.squares[k]);
-				}
+				light *= approximationSquare(position, normal, *iter);
 			}
 		}
 	}
@@ -114,28 +102,22 @@ float approximation(const Vector3 position, const Vector3 normal)
 	return light;
 }
 
-void genAmbientOcclusionTexture(SubAtlas * lightMap, Orientation orientation)
+void genAmbientOcclusionTexture(const SubAtlas& lightMap)
 {
-	int x;
-	int y;
-
-	for (x = 0; x < lightMap->sizeX * LIGHT_MAP_SIZE; x++)
+	const Orientation& orientation = lightMap.orientation;
+	for (int x = 0; x < LIGHT_MAP_SIZE; x++)
 	{
-		for (y = 0; y < lightMap->sizeY * LIGHT_MAP_SIZE; y++)
+		for (int y = 0; y < LIGHT_MAP_SIZE; y++)
 		{
-			float sx =
-				(x / LIGHT_MAP_SIZE) + (float) (x % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
-																															 1);
-			float sy =
-				(y / LIGHT_MAP_SIZE) + (float) (y % LIGHT_MAP_SIZE) / (LIGHT_MAP_SIZE -
-																															 1);
+			float sx = (float) x / (LIGHT_MAP_SIZE - 1);
+			float sy = (float) y / (LIGHT_MAP_SIZE - 1);
 
-			Vector3 off = add(scale(sx, orientation.vx), scale(sy, orientation.vy));
-			Vector3 rayPosition = add(orientation.origin, off);
+			Vector3 off = orientation.vx * sx + orientation.vy * sy;
+			Vector3 rayPosition = orientation.origin + off;
 
 			float light = approximation(rayPosition, orientation.normal);
 
-			setLightMap(lightMap, x, y, light);
+			setLightMap(lightMap.idxSubLightMap, x, y, light);
 		}
 	}
 }

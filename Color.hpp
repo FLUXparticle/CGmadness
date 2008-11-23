@@ -25,7 +25,7 @@ struct Color3
 	Color3();
 	Color3(float r, float g, float b);
 
-	operator const float*() const;
+	operator const float* () const;
 
 	Color3 interpolate(float s, const Color3& other);
 

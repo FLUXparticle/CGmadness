@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _atlas_hpp_
-#define _atlas_hpp_
+#ifndef atlas_hpp
+#define atlas_hpp
 
 #include "math/Vector2.hpp"
+#include "math/Vector3.hpp"
+
 #include "Color.hpp"
 
 #include GL_H
@@ -29,32 +31,21 @@
 
 #define SIZEOF_LIGHT_MAP (LIGHT_MAP_SIZE * LIGHT_MAP_SIZE)
 
-typedef struct
-{
-	int sizeX;
-	int sizeY;
-	int idxSubLightMap;
-} SubAtlas;
-
 void initAtlas(int cntSubTextures);
 
-int getCntAllocatedSubLightMaps(void);
+int getCntAllocatedSubLightMaps();
 
-void destroyAtlas(void);
+void destroyAtlas();
 
-void getAtlasInfo(unsigned int* sizeX, unsigned int* sizeY, const float** data);
+void lightMapToTexture(unsigned int texID);
 
 void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP]);
 void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP]);
 
 /*****/
 
-const float* getLightMapData();
+void setLightMap(int index, int x, int y, float value);
 
-void allocSubAtlas(SubAtlas * subAtlas, int sizeX, int sizeY);
-
-void setLightMap(SubAtlas * subAtlas, int x, int y, float value);
-
-Vector2 transformCoords(const SubAtlas * subAtlas, const Vector2 coords);
+void transformCoords(int index, Vector2& coords);
 
 #endif

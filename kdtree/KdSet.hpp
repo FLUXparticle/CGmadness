@@ -17,13 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _crc32_hpp_
-#define _crc32_hpp_
+#ifndef KdSet_hpp
+#define KdSet_hpp
 
-void resetCRC32(void);
-void nextByte(unsigned char byte);
+#include "KdIterator.hpp"
 
-unsigned int getCRC32(void);
-void setCRC32(unsigned int crc32);
+class KdSet: public KdIterator
+{
+public:
+	KdSet(KdTree& tree, const Vector3& q);
+	virtual ~KdSet();
+
+	KdCell::Range& operator*();
+
+private:
+	KdTree& mMutableTree;
+
+	int decide(int close, int far);
+	int hit(int index);
+	int miss(int index);
+
+};
 
 #endif

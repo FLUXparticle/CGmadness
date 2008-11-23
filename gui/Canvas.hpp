@@ -22,8 +22,6 @@
 
 #include "MenuItem.hpp"
 
-typedef void (*funcUpdate) (float interval);
-
 class Canvas : public MenuItem
 {
 public:

@@ -26,7 +26,7 @@
 
 #include "process/MainProcess.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "hw/keyboard.hpp"
 #include "hw/mouse.hpp"
@@ -88,10 +88,12 @@ int main(int argc, char *argv[])
 
 	{
 		float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glEnable(GL_LIGHT0);
 	}
 
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
 
 	/* ---- */
 

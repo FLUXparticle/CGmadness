@@ -23,21 +23,22 @@
 
 #include "ColorStack.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 #include "texture.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"
 #include "field.hpp"
 #include "lightmap.hpp"
+#include "math/closestpoint.hpp"
 
 #include "functions.hpp"
+
+#include "macros.hpp"
 
 #include GL_H
 
 #include <math.h>
 #include <string.h>
-
-#define SHOW_COLLISION_QUADS 0
 
 #define MOVE_FORCE 5.0f
 #define GRAVITY 9.81f
@@ -69,11 +70,22 @@ Ball::~Ball()
   // empty
 }
 
+static float getMaxZValue(const Square* square)
+{
+	float res = square->vertices[0].z;
+	for (int i = 1; i < 4; i++)
+	{
+		if (square->vertices[i].z > res)
+		{
+			res = square->vertices[i].z;
+		}
+	}
+	return res;
+}
+
 void Ball::reset()
 {
-	Square roofSquare;
-
-	getRoofSquare(sgLevel.start.x, sgLevel.start.y, &roofSquare);
+	const Square& roofSquare = getRoofSquare(sgLevel.start.x, sgLevel.start.y);
 
 	mPos.x = roofSquare.mid.x;
 	mPos.y = roofSquare.mid.y;
@@ -150,89 +162,9 @@ void Ball::explodeBall()
 	mIsBallInPieces = true;
 }
 
-
-bool collisionPoint(const Vector3 sphere, const Vector3* quad,
-									 const Vector3 normal, float radius, Vector3* collision)
-{
-	float dToPlane = dot(sphere, normal) - dot(quad[0], normal);
-	int inside = 1;
-
-	int i;
-
-	if (fabs(dToPlane) >= radius)
-	{
-		return false;
-	}
-
-	for (i = 0; i < 4; i++)
-	{
-		int j = (i + 1) % 4;
-		Vector3 edge = sub(quad[j], quad[i]);
-
-		if (len(edge) > 0.0f)
-		{
-			Vector3 n = norm(cross(edge, normal));
-
-			if (dot(sphere, n) - dot(quad[i], n) >= 0.0f)
-			{
-				Vector3 a = sub(sphere, quad[i]);
-				Vector3 nn = norm(cross(cross(edge, a), edge));
-				float dToEdge = dot(sphere, nn) - dot(quad[i], nn);
-				float f = dot(a, edge) / sqr(len(edge));
-
-				inside = 0;
-
-				if (dToEdge >= radius)
-				{
-					return false;
-				}
-
-				if (f <= 0.0f)
-				{
-					if (len(sub(sphere, quad[i])) < radius)
-					{
-						*collision = quad[i];
-
-						return true;
-					}
-				}
-				else if (f >= 1.0f)
-				{
-					if (len(sub(sphere, quad[j])) < radius)
-					{
-						*collision = quad[j];
-
-						return true;
-					}
-				}
-				else
-				{
-					*collision = sub(sphere, scale(dToEdge, nn));
-
-					return true;
-				}
-			}
-		}
-	}
-
-	if (inside)
-	{
-		*collision = sub(sphere, scale(dToPlane, normal));
-
-		return true;
-	}
-
-	return false;
-}
-
 void Ball::animateBall(float interval)
 {
-	int collision = 0;
-	int q;
-	int x;
-	int y;
-	int dx;
-	int dy;
+	bool collision = false;
 
 	Vector3 normal(0.0f, 0.0f, 0.0f);
 
@@ -246,59 +178,46 @@ void Ball::animateBall(float interval)
 
 	step = scale(interval, mVelocity);
 
-	ball = add(mPos, step);
-
-	x = (int) floor(ball.x - sgLevel.origin.x);
-	y = (int) floor(ball.y - sgLevel.origin.y);
+	ball = mPos + step;
 
 	/* check only fields near by the ball. check field under ball first!!! */
-	for (dx = 1; dx <= 3; dx++)
+	QuadList list = getFieldSphereIntersection(ball, BALL_RADIUS);
+
+	while (list.next())
 	{
-		for (dy = 1; dy <= 3; dy++)
+		Quad quad = *list;
+		const Vector3* q = quad.mVertices;
+		const Vector3& dir = quad.mNormals[0];
+
+		Vector3 a1 = closestPointTriangle(ball, q[0], q[1], q[2]);
+		Vector3 a2 = closestPointTriangle(ball, q[2], q[3], q[0]);
+
+		float d1 = (ball - a1).len();
+		float d2 = (ball - a2).len();
+
+		Vector3 a = (d1 <= d2) ? a1 : a2;
+
+		if ((a - ball).len() <= BALL_RADIUS)
 		{
-			int start;
-			int end;
+			/* dist = vector from ball center to quad */
+			Vector3 dist = a - ball;
+			float l = dist.len();
 
-			getVertIndex(x + (dx % 3) - 1, y + (dy % 3) - 1, &start, &end);
+			/* move = vector to move the ball out of quad */
+			Vector3 move = scale(-((mRadius - l) / l), dist);
 
-			for (q = start; q < end; q += 4)
-			{
-				Vector3 *quad = &sgVertices[q];
-				Vector3 dir = sgNormals[q];
+			/* some rotation for a better look */
+			Vector3 right = norm(cross(dir, step));
+			Vector3 forward = norm(cross(right, dir));
 
-				Vector3 a;
+			mAngularRate =
+				scale(dot(sub(ball, mPos), forward) /
+						(2.0f * M_PI * mRadius) * 360.0f / interval, right);
 
-				if (collisionPoint(ball, quad, dir, mRadius, &a))
-				{
-#if SHOW_COLLISION_QUADS
-					static Color4 red = { 1.0f, 0.0f, 0.0f, 1.0f };
-#endif
+			ball = add(ball, move);
 
-					/* dist = vector from ball center to quad */
-					Vector3 dist = sub(a, ball);
-					float l = len(dist);
-
-					/* move = vector to move the ball out of quad */
-					Vector3 move = scale(-((mRadius - l) / l), dist);
-
-					/* some rotation for a better look */
-					Vector3 right = norm(cross(dir, step));
-					Vector3 forward = norm(cross(right, dir));
-
-					mAngularRate =
-						scale(dot(sub(ball, mPos), forward) /
-									(2.0f * M_PI * mRadius) * 360.0f / interval, right);
-
-					ball = add(ball, move);
-
-					normal = add(normal, move);
-					collision = 1;
-
-#if SHOW_COLLISION_QUADS
-					setSquareColor(q, red);
-#endif
-				}
-			}
+			normal = add(normal, move);
+			collision = true;
 		}
 	}
 
@@ -328,6 +247,9 @@ void Ball::animateBall(float interval)
 				mVelocity = add(mVelocity, scale(JUMP_FORCE / mMass * interval, normal));
 			}
 		}
+
+		int x = (int) floor(ball.x - sgLevel.origin.x);
+		int y = (int) floor(ball.y - sgLevel.origin.y);
 
 		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
@@ -373,11 +295,9 @@ void Ball::drawExplosion() const
 void Ball::activateBallShader() const
 {
 	float lightPos[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 
 	Vector3 normal(0.0f, 0.0f, 1.0f);
 	float light = approximation(mPos, normal);
@@ -402,6 +322,5 @@ void Ball::deactivateBallShader() const
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_LIGHTING);
 }

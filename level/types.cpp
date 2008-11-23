@@ -17,24 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _types_hpp_
-#define _types_hpp_
+#include "types.hpp"
 
-/*
- * namen conventions for variables:
- * member                 m
- * static member          s
- * global                 g
- * super global           sg
- */
+#include "atlas.hpp"
 
-#define FOV 60.0f
-
-#define MATRIX_SIZE 4
-
-typedef float Matrix[MATRIX_SIZE][MATRIX_SIZE];
-
-typedef void (*funcUpdate) (float interval);
-typedef void (*funcDraw) (void);
-
-#endif
+Level sgLevel;

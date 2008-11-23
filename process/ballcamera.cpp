@@ -23,8 +23,6 @@
 #include "hw/keyboard.hpp"
 #include "camera.hpp"
 
-#include "math/vector.hpp"
-
 #include "functions.hpp"
 
 #include <cmath>

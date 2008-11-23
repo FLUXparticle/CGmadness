@@ -39,7 +39,7 @@ Color3::Color3(float r, float g, float b)
 	this->b = b;
 }
 
-Color3::operator const float*() const
+Color3::operator const float* () const
 {
 	return &r;
 }

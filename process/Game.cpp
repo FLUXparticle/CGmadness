@@ -26,7 +26,7 @@
 
 #include "Main.hpp"
 
-#include "level.hpp"
+#include "level/level.hpp"
 
 #include "ballcamera.hpp"
 #include "field.hpp"
@@ -194,26 +194,12 @@ void Game::draw() const
 	}
 }
 
-void lightMapToTexture(unsigned int texID)
-{
-	unsigned int sizeX;
-	unsigned int sizeY;
-	const float* data;
-
-	getAtlasInfo(&sizeX, &sizeY, &data);
-
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sizeX, sizeY, 0, GL_LUMINANCE, GL_FLOAT, data);
-}
-
 void Game::start(Process* previous, bool push)
 {
 	mPrevious = previous;
 
 	sgLevel.lightMap = genTexture();
 	lightMapToTexture(sgLevel.lightMap);
-
-	updateTexCoords();
 
 	initGameField();
 

@@ -17,10 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _level_hpp_
-#define _level_hpp_
+#ifndef types_hpp
+#define types_hpp
 
-#include "math/Vector2.hpp"
+#include "kdtree/KdTree.hpp"
+
+#include "FreeBlockList.hpp"
+
 #include "math/Vector3.hpp"
 
 #include GL_H
@@ -32,55 +35,30 @@
 #define MAX_NAME_LENGTH 20
 
 #define MIN_ALLOWED_CHAR 32
-#define MAX_ALLOWED_CHAR 127
+#define MAX_ALLOWED_CHAR 126
 
-typedef struct
+struct SubAtlas
 {
-	Vector3 normal;
-	Vector2 lightmap[4];
-	Vector2 texcoord[4];
-	Vector3 vertices[4];
+	Orientation orientation;
+	int idxSubLightMap;
+};
 
-	float area;
-	Vector3 mid;
-} Square;
-
-typedef struct
-{
-	int cntSquares;
-	Square squares[MAX_LEVEL_HEIGHT + 2];
-
-	float bottom;
-	float top;
-} SideFace;
-
-typedef struct
-{
-	int z;
-	int dzx;
-	int dzy;
-
-	int dirty;
-	Square roof;
-
-	SideFace sideFaces[4];
-} Plate;
-
-typedef struct
+struct FieldCoord
 {
 	int x;
 	int y;
-} FieldCoord;
+};
 
-typedef struct
+struct ScoreCol
 {
 	char name[MAX_NAME_LENGTH + 1];
 	int tenthSecond;
-} ScoreCol;
+};
 
-typedef struct
+struct Level
 {
-	Plate **field;
+	FreeBlockList blocks;
+	KdTree* kdLevelTree;
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
@@ -88,7 +66,8 @@ typedef struct
 	GLuint colorMap;
 	GLuint lightMap;
 
-	const char *filename;
+	const char* filename;
+	char author[MAX_NAME_LENGTH + 1];
 	unsigned int crc32;
 
 	int cntScoreCols;
@@ -99,28 +78,8 @@ typedef struct
 
 	bool saved;
 	bool waiting;
-} Level;
-
-extern const int sgEdgeX[4];
-extern const int sgEdgeY[4];
+};
 
 extern Level sgLevel;
-
-void initLevel(void);
-void destroyLevel(void);
-
-void newLevel(void);
-
-bool loadHighscoreFromFile(void);
-bool loadLevelFromFile(const char *filename, bool justLoad);
-
-bool saveHighscoreToFile(void);
-bool saveLevelToFile(void);
-
-void updatePlate(int x, int y);
-void getRoofSquare(int x, int y, Square * square);
-void getSideFace(int x, int y, int side, SideFace * face);
-
-float getMaxZValue(const Square * square);
 
 #endif

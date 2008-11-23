@@ -23,9 +23,11 @@
 
 #include "utils/Singleton.hpp"
 
-#include "level.hpp"
 #include "objects.hpp"
 #include "text/text.hpp"
+
+#include "level/level.hpp"
+#include "level/io.hpp"
 
 #include "hw/keyboard.hpp"
 
@@ -33,9 +35,9 @@
 
 #include GL_H
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
 
 #define HIGHSCORE_WIDTH 4.0f
 #define HIGHSCORE_HEIGHT 4.0f
@@ -90,7 +92,7 @@ void HighScore::update(float interval)
 		switch (ch)
 		{
 		case '\b':
-		case 127:
+		case KEY_DELETE:
 			if (len > 0)
 			{
 				name[len - 1] = '\0';
@@ -107,6 +109,10 @@ void HighScore::update(float interval)
 					name[len] = ch;
 					name[len + 1] = '\0';
 				}
+			}
+			else
+			{
+				printf("not allowed character: %d\n", ch);
 			}
 		}
 	}

@@ -19,8 +19,6 @@
 
 #include "dataDigits.hpp"
 
-#include "hw/varray.hpp"
-
 #include "Digits0.inc"
 #include "Digits1.inc"
 #include "Digits2.inc"

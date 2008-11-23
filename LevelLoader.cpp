@@ -19,7 +19,9 @@
 
 #include "LevelLoader.hpp"
 
-#include "level.hpp"
+#include "level/io.hpp"
+#include "level/level.hpp"
+
 #include "common.hpp"
 
 #include "texture.hpp"
@@ -52,9 +54,8 @@ void LevelLoader::loadLevelByID(int id)
 			gLoadedLevel = -1;
 		}
 
-		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id], true))
+		if (id >= 0 && loadLevelFromFile(sgLevels.strings[id]))
 		{
-			updateTexCoords();
 			gLoadedLevel = id;
 
 			if (sgLevel.borderTexture == 0)

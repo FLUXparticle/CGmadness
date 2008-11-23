@@ -17,34 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "vector.hpp"
+#ifndef KdRangeTraverse_hpp
+#define KdRangeTraverse_hpp
 
-#include <math.h>
+#include "KdTraverse.hpp"
 
-/*
- * projection matrix without farplane
- */
-void initProjectMat(Matrix m, float fov)
+class KdRangeTraverse: public KdTraverse
 {
-	int x;
-	int y;
-	float f = 1.0f / tan(fov / 2.0f * M_PI / 180.0f);
-	static float near = 0.01f;
+public:
+	KdRangeTraverse(const KdTree& tree, const Vector3& min, const Vector3& max);
+	virtual ~KdRangeTraverse();
 
-	for (x = 0; x < 4; x++)
-	{
-		for (y = 0; y < 4; y++)
-		{
-			m[x][y] = 0.0f;
-		}
-	}
+	int decide(int close, int far);
 
-	m[0][0] = f;
+private:
+	Vector3 mMin;
+	Vector3 mMax;
 
-	m[1][1] = f;
+};
 
-	m[2][2] = -1;
-	m[2][3] = -1;
-
-	m[3][2] = -2 * near;
-}
+#endif

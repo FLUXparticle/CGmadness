@@ -24,7 +24,7 @@
 #include "skyplane.hpp"
 #include "water.hpp"
 
-#include "field.hpp"
+#include "Color.hpp"
 
 #include GL_H
 
@@ -38,12 +38,11 @@ void initFog(void)
 {
 	GLint mode = GL_EXP;
 	float density = FOG_DENSITY;
-	float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	glEnable(GL_FOG);
 	glFogiv(GL_FOG_MODE, &mode);
 	glFogfv(GL_FOG_DENSITY, &density);
-	glFogfv(GL_FOG_COLOR, color);
+	glFogfv(GL_FOG_COLOR, Color4::white);
 }
 
 void initEnvironment(void)
@@ -83,7 +82,7 @@ void drawEnvironment(const WaterReflection* reflection)
 			}
 			glEnable(GL_DEPTH_TEST);
 #  endif
-			
+
 			if (reflection)
 			{
 				reflection->drawWaterReflection();

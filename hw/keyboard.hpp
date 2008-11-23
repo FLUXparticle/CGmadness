@@ -22,6 +22,7 @@
 
 #define KEY_ESC 27
 #define KEY_ENTER 13
+#define KEY_DELETE 127
 
 #define CURSOR_UP 0
 #define CURSOR_DOWN 1

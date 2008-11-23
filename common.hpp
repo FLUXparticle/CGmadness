@@ -17,13 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _common_hpp_
-#define _common_hpp_
+#ifndef common_hpp
+#define common_hpp
 
-void initCommon(void);
-void destroyCommon(void);
+#include "level/types.hpp"
 
-void updateLightMap(int useProgressBar);
-void updateTexCoords(void);
+#include "math/Vector2.hpp"
+
+void initCommon();
+void destroyCommon();
+
+void updateLightMap(bool useProgressBar);
+Vector2 squareLightmapCoords(const Square& square, int vertex);
 
 #endif

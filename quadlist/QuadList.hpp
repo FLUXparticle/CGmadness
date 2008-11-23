@@ -17,40 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "crc32.hpp"
+#ifndef QuadList_hpp
+#define QuadList_hpp
 
-#define CRC32_POLYNOMIAL 0xEDB88320
+#include "Quad.hpp"
+#include "kdtree/KdIterator.hpp"
 
-unsigned int gRegister;
+#include "math/Vector3.hpp"
 
-void resetCRC32(void)
+#include "utils/SmartPointer.hpp"
+
+class QuadList
 {
-	gRegister = 0xffffffff;
-}
+public:
+	QuadList(KdIterator* iterator, const Vector3* vertices, const Vector3* normals);
 
-void nextByte(unsigned char byte)
-{
-	int i;
-	for (i = 0; i < 8; i++)
-	{
-		int bit = (byte >> i) & 1;
-		int regBit = gRegister & 1;
+  bool next();
+  Quad operator*() const;
 
-		gRegister >>= 1;
+private:
+	SmartPointer<KdIterator> mIterator;
+	const Vector3* mVertices;
+	const Vector3* mNormals;
 
-		if (regBit != bit)
-		{
-			gRegister ^= CRC32_POLYNOMIAL;
-		}
-	}
-}
+	int mIndex;
+	int mEnd;
 
-unsigned int getCRC32(void)
-{
-	return gRegister;
-}
+};
 
-void setCRC32(unsigned int crc32)
-{
-	gRegister = crc32;
-}
+#endif

@@ -25,7 +25,7 @@
 #include "process/Process.hpp"
 
 #include "math/Vector3.hpp"
-#include "types.hpp"
+#include "math/Matrix.hpp"
 
 typedef struct
 {

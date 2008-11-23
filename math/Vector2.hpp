@@ -28,9 +28,16 @@ struct Vector2
   Vector2();
   Vector2(float x, float y);
 
+  operator const float* () const;
+
   Vector2 operator+(const Vector2& other) const;
   Vector2 operator-(const Vector2& other) const;
 
 };
+
+inline Vector2::operator const float* () const
+{
+	return &x;
+}
 
 #endif

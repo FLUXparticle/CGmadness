@@ -21,9 +21,22 @@
 
 #include "hw/features.hpp"
 
-#include "level.hpp"
+#include "field.hpp"
+
+#include "level/level.hpp"
 #include "camera.hpp"
 
+#include "kdtree/KdGet.hpp"
+#include "kdtree/KdPaintersAlgorithm.hpp"
+#include "kdtree/KdPaintersAlgorithmReverse.hpp"
+#include "kdtree/KdSphereIntersection.hpp"
+#include "kdtree/KdList.hpp"
+
+#include "kdtree/KdTree.hpp"
+
+#include "common.hpp"
+
+#include "Color.hpp"
 
 #include "math/Vector2.hpp"
 #include "functions.hpp"
@@ -37,21 +50,16 @@
 #include <string.h>
 #include <math.h>
 
-#define WITHOUT_DEPTH_TEST 0
-#define WITH_STENCIL_TEST 0
-#define TWO_PASS 0
-
-Vector3 *sgVertices;
-Vector3 *sgNormals;
-
 static Vector2 gDefaultTexCoord;
 static Vector2 gDefaultLightMapCoord;
 static Vector3 gDefaultNormal;
 static Color4 gDefaultColor;
 
-static Vector2 *gTexCoords;
-static Vector2 *gLightMapCoords;
-static Color4 *gColors;
+static Vector3* gVertices;
+static Vector3* gNormals;
+static Vector2* gTexCoords;
+static Vector2* gLightMapCoords;
+static Color4* gColors;
 static GLuint gVBuffers[6];
 
 static Vector3 *gBallShadowCoords;
@@ -60,17 +68,16 @@ static GLuint gWhiteTexture;
 static GLuint gBallShadow;
 
 static int gCntVertices;
-static int gMaxPlates;
 static int gMaxQuads;
 static int gMaxVertices;
 
 static int gCntCameraViewIndices = 0;
-static int *gCameraViewIndices;
+static int* gCameraViewIndices;
 
 static int gCntBallReflectionIndices = 0;
-static int *gBallReflectionIndices;
+static int* gBallReflectionIndices;
 
-static int *gIndexVertices;
+static KdTree* gKdFieldTree;
 
 static Vector3 gBallPosition;
 
@@ -98,68 +105,43 @@ static void addVertex(Vector3 v)
 {
 	gTexCoords[gCntVertices] = gDefaultTexCoord;
 	gLightMapCoords[gCntVertices] = gDefaultLightMapCoord;
-	sgNormals[gCntVertices] = gDefaultNormal;
+	gNormals[gCntVertices] = gDefaultNormal;
 	gColors[gCntVertices] = gDefaultColor;
 
-	sgVertices[gCntVertices] = v;
+	gVertices[gCntVertices] = v;
 
 	gCntVertices++;
 }
 
-void addSquare(const Square * square)
+static void addSquare(const Square* square)
 {
-	int i;
 	setNormal(square->normal);
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		setTexCoord(square->texcoord[i]);
-		setLightMapCoord(square->lightmap[i]);
+		setTexCoord(square->texCoords(i));
+		setLightMapCoord(squareLightmapCoords(*square, i));
 		addVertex(square->vertices[i]);
 	}
 }
 
-void getVertIndex(int x, int y, int *start, int *end)
+QuadList getFieldSphereIntersection(const Vector3& center, float radius)
 {
-	if (x >= 0 && x < sgLevel.size.x && y >= 0 && y < sgLevel.size.y)
-	{
-		int index = y * sgLevel.size.x + x;
-		*start = gIndexVertices[index];
-		index++;
-		if (index < gMaxPlates)
-		{
-			*end = gIndexVertices[index];
-		}
-		else
-		{
-			*end = gCntVertices;
-		}
-	}
-	else
-	{
-		*start = 0;
-		*end = 0;
-	}
+	Vector3 c = center - sgLevel.origin;
+	KdIterator* iter = new KdSphereIntersection(*gKdFieldTree, c, radius);
+
+	return QuadList(iter, gVertices, gNormals);
 }
 
-void setSquareColor(int q, Color4 col)
+static void setRoofColor(int x, int y, const Color4& col)
 {
-	int i;
+	const KdCell::Range& range = gKdFieldTree->get(x, y);
 
-	for (i = 0; i < 4; i++)
+	int q = range.start;
+	for (int i = 0; i < 4; i++)
 	{
 		gColors[q + i] = col;
 	}
-}
-
-void setRoofColor(int x, int y, Color4 col)
-{
-	int start;
-	int end;
-
-	getVertIndex(x, y, &start, &end);
-
-	setSquareColor(start, col);
 }
 
 #define bufferdata(x) glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(*(x)) * gCntVertices, (x), GL_STATIC_DRAW_ARB);
@@ -170,7 +152,7 @@ void setRoofColor(int x, int y, Color4 col)
 #define SAMPLES_XY 64
 #define SAMPLES_Z 64
 
-void initBallShadow(void)
+static void initBallShadow()
 {
 	GLfloat ballShadowData[SAMPLES_Z][SAMPLES_XY][SAMPLES_XY];
 
@@ -226,16 +208,11 @@ void initBallShadow(void)
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void initGameField(void)
+void initGameField()
 {
 	static Color4 green(0.0f, 1.0f, 0.0f, 1.0f);
 	static Color4 blue(0.0f, 0.0f, 1.0f, 1.0f);
 	static Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
-
-	int x;
-	int y;
-	int i;
-	int index = 0;
 
 	glGenTextures(1, &gWhiteTexture);
 
@@ -246,31 +223,33 @@ void initGameField(void)
 	initBallShadow();
 
 	/* init level stuff */
-	gMaxPlates = sgLevel.size.x * sgLevel.size.y;
+	gKdFieldTree = new KdTree(sgLevel.size.x, sgLevel.size.y);
+
 	gMaxQuads = 0;
 
-	for (y = 0; y < sgLevel.size.y; y++)
 	{
-		for (x = 0; x < sgLevel.size.x; x++)
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		while (list.next())
 		{
+			const Block& b = getBlock(*list);
 			gMaxQuads++;
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
-				SideFace face;
+				const SideFace& face = b.sideFaces[i];
 
-				getSideFace(x, y, i, &face);
-
-				gMaxQuads += face.cntSquares;
+				gMaxQuads += face.squares.size();
 			}
 		}
 	}
 
 	gMaxVertices = 4 * gMaxQuads;
 
-	sgVertices = new Vector3[gMaxVertices];
-	sgNormals = new Vector3[gMaxVertices];
-	gIndexVertices = new int[gMaxPlates];
+	gVertices = new Vector3[gMaxVertices];
+	gNormals = new Vector3[gMaxVertices];
 	gTexCoords = new Vector2[gMaxVertices];
 	gLightMapCoords = new Vector2[gMaxVertices];
 	gColors = new Color4[gMaxVertices];
@@ -281,30 +260,31 @@ void initGameField(void)
 
 	setColor(white);
 
-	for (y = 0; y < sgLevel.size.y; y++)
 	{
-		for (x = 0; x < sgLevel.size.x; x++)
+		Vector3 origin(0.0f, 0.0f, 0.0f);
+		KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, origin);
+		KdList list(iter);
+
+		while (list.next())
 		{
-			Square square;
+			const Block& b = getBlock(*list);
+			const Square& square = b.roof;
 
-			gIndexVertices[index++] = gCntVertices;
-
-			getRoofSquare(x, y, &square);
+			int start = gCntVertices;
 
 			addSquare(&square);
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
-				SideFace face;
-				int k;
+				const SideFace& face = b.sideFaces[i];
 
-				getSideFace(x, y, i, &face);
-
-				for (k = 0; k < face.cntSquares; k++)
+				FOREACH(face.squares, iter)
 				{
-					addSquare(&face.squares[k]);
+					addSquare(&(*iter));
 				}
 			}
+
+			gKdFieldTree->get(b.x, b.y) = KdCell::Range(start, gCntVertices);
 		}
 	}
 
@@ -316,10 +296,10 @@ void initGameField(void)
 		glGenBuffersARB(LENGTH(gVBuffers), gVBuffers);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[0]);
-		bufferdata(sgVertices);
+		bufferdata(gVertices);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[1]);
-		bufferdata(sgNormals);
+		bufferdata(gNormals);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, gVBuffers[2]);
 		bufferdata(gLightMapCoords);
@@ -345,12 +325,13 @@ void initGameField(void)
 	gBallReflectionIndices = new int[gCntVertices];
 }
 
-void destroyGameField(void)
+void destroyGameField()
 {
-	delete[] sgVertices;
-	delete[] sgNormals;
+	delete[] gVertices;
+	delete[] gNormals;
 
-	delete[] gIndexVertices;
+	delete gKdFieldTree;
+
 	delete[] gCameraViewIndices;
 	delete[] gBallReflectionIndices;
 	delete[] gTexCoords;
@@ -364,86 +345,28 @@ void destroyGameField(void)
 	gCntBallReflectionIndices = 0;
 }
 
-/*
- * render from close to far
- */
-void bsp(int startX, int startY, int sizeX, int sizeY, int viewX, int viewY,
-				 Vector3 camera, int farToClose, int *indices, int *index)
+static int painter(QuadList& list, const Vector3& viewer, int indices[])
 {
-	if (sizeX == 0 || sizeY == 0)
-	{
-		return;
-	}
-	else if (sizeX == 1 && sizeY == 1)
-	{
-		int start;
-		int end;
-		int q;
-		int i;
+	int counter = 0;
 
-		getVertIndex(startX, startY, &start, &end);
-
-		for (q = start; q < end; q += 4)
+	while (list.next())
+	{
+		Quad quad = *list;
+		/*
+		 * the top square must always be drawn, because this function
+		 * is not called if only the height of the camera changes.
+		 */
+		if (quad.mNormals[0].z > 0.0f || quad.mNormals[0] * (viewer - quad.mVertices[0]) >= 0)
 		{
-			/*
-			 * the top square must always be drawn, because this function
-			 * is not called if only the height of the camera changes.
-			 * Fortunately it is always the first square in the array range.
-			 * WARNING: be aware of this if you change the order of sqaures.
-			 */
-			if (q == start || dot(sgNormals[q], sub(camera, sgVertices[q])) >= 0)
+			int q = quad.mVertices - gVertices;
+			for (int i = 0; i < 4; i++)
 			{
-				for (i = 0; i < 4; i++)
-				{
-					indices[(*index)++] = q + i;
-				}
+				indices[counter++] = q++;
 			}
 		}
 	}
-	else
-	{
-		int startX1 = startX;
-		int startY1 = startY;
-		int sizeX1 = sizeX;
-		int sizeY1 = sizeY;
 
-		int startX2 = startX;
-		int startY2 = startY;
-		int sizeX2 = sizeX;
-		int sizeY2 = sizeY;
-
-		int closer;
-
-		if (sizeX > sizeY)
-		{
-			sizeX1 = sizeX / 2;
-			sizeX2 = sizeX - sizeX1;
-			startX2 = startX1 + sizeX1;
-			closer = viewX < startX2;
-		}
-		else
-		{
-			sizeY1 = sizeY / 2;
-			sizeY2 = sizeY - sizeY1;
-			startY2 = startY1 + sizeY1;
-			closer = viewY < startY2;
-		}
-
-		if (farToClose ^ closer)
-		{
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
-					indices, index);
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
-					indices, index);
-		}
-		else
-		{
-			bsp(startX2, startY2, sizeX2, sizeY2, viewX, viewY, camera, farToClose,
-					indices, index);
-			bsp(startX1, startY1, sizeX1, sizeY1, viewX, viewY, camera, farToClose,
-					indices, index);
-		}
-	}
+	return counter;
 }
 
 void updateGameField(const PlayersBall& ball)
@@ -461,8 +384,11 @@ void updateGameField(const PlayersBall& ball)
 		gCntCameraViewIndices = 0;
 		if (gMaxVertices > 0)
 		{
-			bsp(0, 0, sgLevel.size.x, sgLevel.size.y, mx, my, sgCamera, 0,
-					gCameraViewIndices, &gCntCameraViewIndices);
+			Vector3 q(mx + 0.5f, my + 0.5f, 0.0f);
+			KdIterator* iter = new KdPaintersAlgorithmReverse(*gKdFieldTree, q);
+			QuadList list(iter, gVertices, gNormals);
+
+			gCntCameraViewIndices = painter(list, sgCamera, gCameraViewIndices);
 
 			lastMX = mx;
 			lastMY = my;
@@ -471,19 +397,15 @@ void updateGameField(const PlayersBall& ball)
 
 	if (!hasBallShadowShader() && useBallShadow())
 	{
-		int q;
-
-		for (q = 0; q < gCntVertices; q += 4)
+		for (int q = 0; q < gCntVertices; q += 4)
 		{
-			Vector3 vz = sgNormals[q];
-			Vector3 vx = norm(sub(sgVertices[q + 1], sgVertices[q]));
+			Vector3 vz = gNormals[q];
+			Vector3 vx = norm(sub(gVertices[q + 1], gVertices[q]));
 			Vector3 vy = norm(cross(vx, vz));
 
-			int i;
-
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
-				Vector3 vertex = sgVertices[q + i];
+				Vector3 vertex = gVertices[q + i];
 				Vector3 d = sub(gBallPosition, vertex);
 
 				float x = dot(vx, d) / MAX_XY + 0.5f;
@@ -508,8 +430,11 @@ void updateGameField(const PlayersBall& ball)
 			gCntBallReflectionIndices = 0;
 			if (gMaxVertices > 0)
 			{
-				bsp(0, 0, sgLevel.size.x, sgLevel.size.y, bx, by, gBallPosition, 1,
-						gBallReflectionIndices, &gCntBallReflectionIndices);
+				Vector3 q(bx + 0.5f, by + 0.5f, 0.0f);
+				KdIterator* iter = new KdPaintersAlgorithm(*gKdFieldTree, q);
+				QuadList list(iter, gVertices, gNormals);
+
+				gCntBallReflectionIndices = painter(list, gBallPosition, gBallReflectionIndices);
 
 				lastBX = bx;
 				lastBY = by;
@@ -552,9 +477,9 @@ void drawGameField(bool ballReflection)
 	}
 	else
 	{
-		glVertexPointer(3, GL_FLOAT, 0, sgVertices);
+		glVertexPointer(3, GL_FLOAT, 0, gVertices);
 
-		glNormalPointer(GL_FLOAT, 0, sgNormals);
+		glNormalPointer(GL_FLOAT, 0, gNormals);
 
 		glClientActiveTextureARB(GL_TEXTURE0);
 		glTexCoordPointer(2, GL_FLOAT, 0, gLightMapCoords);
@@ -645,17 +570,6 @@ void drawGameField(bool ballReflection)
 
 	glActiveTexture(GL_TEXTURE0);
 	glDisable(GL_TEXTURE_2D);
-
-#if 0
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(5.0f);
-
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glDrawElements(GL_QUADS, gCntCameraViewIndices, GL_UNSIGNED_INT,
-								 ballReflection ? gBallReflectionIndices : gCameraViewIndices);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#endif
 
 	if (hasVertexbuffer())
 	{
