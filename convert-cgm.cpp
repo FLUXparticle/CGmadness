@@ -28,17 +28,15 @@
 #include <cstdlib>
 #include <cstring>
 
-#define RESIZE 0
-
 void usage()
 {
 	printf("usage: convert-cgm [parameters...] <cgm-file>\n");
 	printf("\n");
-#if 0
 	printf("  if <cgm-file> does not exits, it will be created but only if a size is given\n");
-	printf("  --size x y  resize all levels after this parameter to given size\n");
+	printf("  --size x y      size of the new created level\n");
+	printf("  --author name   change author of this level\n");
+	printf("  --shrink        shrink level to the minimum needed size\n");
 	printf("\n");
-#endif
 }
 
 int main(int argc, char *argv[])
@@ -49,6 +47,9 @@ int main(int argc, char *argv[])
 	bool doShrink = false;
 	String author;
 	const char* file = NULL;
+
+	sgLevel.size.x = -1;
+	sgLevel.size.y = -1;
 
 	/* read parameters */
 	for (int i = 1; i < argc; i++)
