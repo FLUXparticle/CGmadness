@@ -72,8 +72,8 @@ SRC     :=  $(CODE) $(INCLUDE)
 DATA    :=  $(wildcard data/*.tga levels/*.cgm) $(SHADER:%=%.vert) $(SHADER:%=%.frag)
 DLL     :=  glut32.dll glew32.dll
 DEV     :=  $(wildcard *.pl)
-DOC     :=  license.txt AUTHORS
-DOC_DEV :=  $(DOC) README
+DOC     :=  license.txt credits.txt
+DOC_DEV :=  $(DOC) compile.txt
 
 EXEC    :=  $(MAINS:%=%$(EXECSUFFIX))
 DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)

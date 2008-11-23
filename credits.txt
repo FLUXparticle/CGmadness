@@ -1,0 +1,17 @@
+main developer:
+	Sven Reinck
+
+first level editor:
+	Christoph Ruperti
+
+skydome & skyplane:
+	Sven Fescharek
+
+most levels:
+	Benedikt Westphal
+
+water animation & graphics:
+	Gordon Heger
+
+assistance with Mac OS version:
+	Masiar Farahani

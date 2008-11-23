@@ -1,0 +1,53 @@
+MinGW:
+
+	download MinGW, MSYS and msysDTK from http://www.mingw.org/
+	and install in this order
+
+	download "GLUT for MinGW" from http://mywebpage.netscape.com/PtrPck/glut.htm
+	extract include/ and lib/ into MinGW directory
+	extract glut32.dll into "CG Madness" source directory or windows/system32
+
+	download "GLEW"-source from http://glew.sourceforge.net/
+	start msys
+	install from glew source directory with "make install GLEW_DEST=/mingw"
+	you may need to copy glew32.dll from /mingw/bin 
+	  into "CG Madness" source directory or windows/system32 to play without MSYS
+
+	now you can go into "CG Madness" source directory and build with "make"
+
+Cygwin:
+
+	install cygwin with gcc, make, etc. from http://www.cygwin.com/
+
+	download "GLUT for MinGW" from http://mywebpage.netscape.com/PtrPck/glut.htm
+	extract content of include/ into cygwin/usr/include/w32api/ directory
+	extract content of lib/ into cygwin/lib/w32api/ directory
+	extract glut32.dll into "CG Madness" source directory or windows/system32
+
+	download "GLEW"-source from http://glew.sourceforge.net/
+	start cygwin
+	go into glew source directory
+	build glew with "make CFLAGS.EXTRA=-mno-cygwin LDFLAGS.EXTRA=-mno-cygwin SYSTEM=mingw"
+	copy content of glew/include into cygwin/usr/include/w32api/
+	copy content of glew/lib into cygwin/lib/w32api/
+	also copy glew/lib/glew32.dll into "CG Madness" source directory or windows/system32
+
+	now you can go into "CG Madness" source directory and build with "make"
+
+Linux:
+
+	required packages: freeglut3-dev libglew-dev (or equivalent)
+
+	to build just go into source directory and type "make"
+
+Mac OS X: (tested on PowerBook G4/Leopard)
+
+	In order to compile cgmadness you need glew. An easy way is to download
+	and install it through DarwinPorts: http://darwinports.com/download/
+
+	Open the Terminal.app and enter
+		sudo port install glew
+
+	In the cgmadness source dir type
+		make
+	to build cgmadness
