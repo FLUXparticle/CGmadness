@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objects.hpp"
+#include "graphics/objects.hpp"
 
 #include "ColorStack.hpp"
 
@@ -46,6 +46,25 @@ void drawSquare()
 		glVertex2f(-1.0f, 1.0f);
 	}
 	glEnd();
+}
+
+void drawCube()
+{
+	glPushMatrix();
+	{
+		for (int i = 0; i < 6; ++i)
+		{
+			glRotatef(90.0f, 1 - i % 2, i % 2, 0.0f);
+			glPushMatrix();
+			{
+				glTranslatef(0.0f, 0.0f, 1.0f);
+				drawSquare();
+			}
+			glPopMatrix();
+		}
+		glPolygonMode(GL_FRONT, GL_FILL);
+	}
+	glPopMatrix();
 }
 
 void drawPanel(float width, float height)

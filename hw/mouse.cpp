@@ -19,7 +19,7 @@
 
 #include "mouse.hpp"
 
-#include "callback.hpp"
+#include "graphics/callback.hpp"
 
 #include GLUT_H
 

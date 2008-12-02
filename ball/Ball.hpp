@@ -20,13 +20,12 @@
 #ifndef Ball_hpp
 #define Ball_hpp
 
-#include "callback.hpp"
-
 #include "BallObject.hpp"
 #include "Explosion.hpp"
 
 #include "math/quaternion.hpp"
 #include "math/Vector3.hpp"
+#include "math/Matrix.hpp"
 
 #define BALL_RADIUS 0.2f
 

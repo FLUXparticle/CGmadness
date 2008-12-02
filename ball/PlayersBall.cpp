@@ -19,7 +19,7 @@
 
 #include "PlayersBall.hpp"
 
-#include "objects.hpp"
+#include "graphics/objects.hpp"
 #include "hw/features.hpp"
 #include "hw/fbuffer.hpp"
 #include "process/Game.hpp"

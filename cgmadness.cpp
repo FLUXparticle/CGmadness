@@ -21,8 +21,7 @@
 #include "hw/features.hpp"
 #include "Main.hpp"
 
-
-#include "callback.hpp"
+#include "graphics/callback.hpp"
 
 #include "process/MainProcess.hpp"
 
@@ -31,35 +30,30 @@
 #include "hw/keyboard.hpp"
 #include "hw/mouse.hpp"
 
+#include "tools.hpp"
 
 #include "utils/Singleton.hpp"
 
-#include "tools.hpp"
-
 #include GLUT_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
 
-void usage(void)
+void usage()
 {
 	printf("usage: cgmadness [options...]\n");
 	usageFeatures();
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	message();
 	usage();
 
 	assurePath(argv[0]);
 
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
-
-	glutInitWindowSize(700, 500);
-	glutInitWindowPosition(0, 0);
-
 	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+
 
 	if (!glutCreateWindow("CG Madness"))
 	{
@@ -70,32 +64,9 @@ int main(int argc, char *argv[])
 	glutFullScreen();
 	glutSetCursor(GLUT_CURSOR_NONE);
 
-	/* ---- */
-
 	initFeatures(argc, argv);
 
-	/* ---- */
-
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClearStencil(0);
-
-	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_NORMALIZE);
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	{
-		float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-		glEnable(GL_LIGHT0);
-	}
-
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
-
-	/* ---- */
+	setDefaultValues();
 
 	startKeyboard();
 	startMouse();

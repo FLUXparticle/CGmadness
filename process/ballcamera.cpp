@@ -21,7 +21,8 @@
 
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
-#include "camera.hpp"
+#include "graphics/camera.hpp"
+#include "graphics/callback.hpp"
 
 #include "functions.hpp"
 

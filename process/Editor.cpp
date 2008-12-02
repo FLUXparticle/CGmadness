@@ -34,12 +34,13 @@
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "camera.hpp"
+#include "graphics/camera.hpp"
 #include "hw/keyboard.hpp"
 #include "common.hpp"
 #include "texture.hpp"
 
 #include "Color.hpp"
+#include "graphics/callback.hpp"
 
 #include "macros.hpp"
 

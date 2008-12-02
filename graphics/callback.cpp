@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "callback.hpp"
+#include "graphics/callback.hpp"
 
 #include "text/text.hpp"
-#include "camera.hpp"
+#include "graphics/camera.hpp"
 
 #include "hw/keyboard.hpp"
 
@@ -55,7 +55,7 @@ static Matrix gProjectionText;
 
 static bool gFreeze = false;
 
-void framerate(void)
+static void framerate()
 {
 	static int timebase = 0;
 	static int frameCount = 0;
@@ -82,7 +82,28 @@ static void drawBitmapText(const char *str)
 	}
 }
 
-void display(void)
+void setDefaultValues()
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_NORMALIZE);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	{
+		float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glEnable(GL_LIGHT0);
+	}
+
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+}
+
+static void display()
 {
 #if(DEBUG_PREDISPLAY)
 	static int sumPredisplayTime = 0;
@@ -108,7 +129,7 @@ void display(void)
 	}
 
 	glViewport(0, 0, gTargetWindow.width, gTargetWindow.height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -133,14 +154,15 @@ void display(void)
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
+	{
+		glScalef(aspect, 1.0f, 1.0f);
 
-	glScalef(aspect, 1.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-
-	gProcess->drawHUD(1.0f / aspect, 1.0f);
-
-	glMatrixMode(GL_PROJECTION);
+		glMatrixMode(GL_MODELVIEW);
+		{
+			gProcess->drawHUD(1.0f / aspect, 1.0f);
+		}
+		glMatrixMode(GL_PROJECTION);
+	}
 	glPopMatrix();
 
 	{
@@ -225,7 +247,7 @@ void timer(int startTime)
 	}
 }
 
-void startTimer(void)
+void startTimer()
 {
 	setUpdateFrequency(0);
 	timer(glutGet(GLUT_ELAPSED_TIME));

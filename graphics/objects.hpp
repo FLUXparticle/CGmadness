@@ -17,36 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef callback_hpp
-#define callback_hpp
+#ifndef objects_hpp
+#define objects_hpp
 
-#include "hw/mouse.hpp"
-
-#include "process/Process.hpp"
-
-#include "math/Vector3.hpp"
-#include "math/Matrix.hpp"
-
-typedef struct
-{
-	Matrix projection;
-} Viewport;
-
-typedef struct
-{
-	int width;
-	int height;
-
-	int framebuffer;
-	Viewport *viewport;
-} RenderTarget;
-
-extern Viewport sgWindowViewport;
-
-void centerMouse(int *x, int *y);
-
-void startCallback(Process* process);
-
-void setUpdateFrequency(int callsPerSecond);
+void drawSquare();
+void drawCube();
+void drawPanel(float width, float height);
+void drawRingStrip(int corners, float progress, int texture);
 
 #endif

@@ -22,7 +22,7 @@
 #include "idle.hpp"
 
 #include "hw/keyboard.hpp"
-#include "callback.hpp"
+#include "graphics/callback.hpp"
 
 ScreenWait::ScreenWait(const Caller& callback) :
 	gWaitCallback(callback)
@@ -41,7 +41,7 @@ void ScreenWait::customUpdate(float interval)
 	if (wasKeyPressed(KEY_ESC) || wasKeyPressed('q'))
 	{
 		stopIdle();
-		
+
 		setUpdateFrequency(0);
 		popScreen();
 	}

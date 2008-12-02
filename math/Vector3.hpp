@@ -92,4 +92,14 @@ inline Vector3 cross(const Vector3 a, const Vector3 b)
 	return a ^ b;
 }
 
+inline void Normalize(Vector3& v)
+{
+	v = v.norm();
+}
+
+inline void ZeroVector(Vector3& v)
+{
+	v.x = v.y = v.z = 0;
+}
+
 #endif

@@ -17,9 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "camera.hpp"
-
-#include "callback.hpp"
+#include "graphics/camera.hpp"
 
 #include GLU_H
 
@@ -49,14 +47,14 @@ void setCamera()
 Vector3 rotateVector(const Vector3& dir)
 {
 	Vector3 direction;
-	
+
 	Vector3 f = (sgCamera - sgLookat).norm();
 	Vector3 s = (gUp ^ f).norm();
 	Vector3 u = f ^ s;
-	
+
 	direction.x = dir.x * s.x + dir.y * u.x + dir.z * f.x;
 	direction.y = dir.x * s.y + dir.y * u.y + dir.z * f.y;
 	direction.z = dir.x * s.z + dir.y * u.z + dir.z * f.z;
-	
+
 	return direction;
 }

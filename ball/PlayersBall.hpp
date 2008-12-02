@@ -23,6 +23,7 @@
 #include "Ball.hpp"
 
 #include "reflection/BallReflection.hpp"
+#include "graphics/callback.hpp"
 
 #include <vector>
 

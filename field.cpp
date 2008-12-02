@@ -24,7 +24,7 @@
 #include "field.hpp"
 
 #include "level/level.hpp"
-#include "camera.hpp"
+#include "graphics/camera.hpp"
 
 #include "kdtree/KdGet.hpp"
 #include "kdtree/KdPaintersAlgorithm.hpp"

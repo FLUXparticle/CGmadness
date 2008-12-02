@@ -30,11 +30,11 @@
 
 #include "ballcamera.hpp"
 #include "field.hpp"
-#include "camera.hpp"
+#include "graphics/camera.hpp"
 #include "texture.hpp"
 #include "environment/environment.hpp"
 #include "Main.hpp"
-#include "objects.hpp"
+#include "graphics/objects.hpp"
 
 #include "functions.hpp"
 #include "hw/keyboard.hpp"

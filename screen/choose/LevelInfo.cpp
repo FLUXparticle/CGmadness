@@ -24,7 +24,7 @@
 #include "utils/Singleton.hpp"
 
 #include "level/level.hpp"
-#include "objects.hpp"
+#include "graphics/objects.hpp"
 #include "text/text.hpp"
 
 #include "ColorStack.hpp"

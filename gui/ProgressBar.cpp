@@ -19,7 +19,7 @@
 
 #include "ProgressBar.hpp"
 
-#include "objects.hpp"
+#include "graphics/objects.hpp"
 
 #include GL_H
 
