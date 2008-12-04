@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _stringlist_hpp_
-#define _stringlist_hpp_
+#ifndef stringlist_hpp
+#define stringlist_hpp
 
 typedef struct
 {

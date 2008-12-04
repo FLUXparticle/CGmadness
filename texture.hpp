@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _texture_hpp_
-#define _texture_hpp_
+#ifndef texture_hpp
+#define texture_hpp
 
 #include GL_H
 

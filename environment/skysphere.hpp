@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef skyspere_hpp
-#define skyspere_hpp
+#ifndef skysphere_hpp
+#define skysphere_hpp
 
 void initSkysphere();
 void drawSkysphere();

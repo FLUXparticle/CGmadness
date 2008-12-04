@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _shader_hpp_
-#define _shader_hpp_
+#ifndef shader_hpp
+#define shader_hpp
 
 unsigned int makeShader(const char *vertexShaderFilename, const char *fragmentShaderFilename);
 

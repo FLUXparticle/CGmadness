@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _varray_hpp_
-#define _varray_hpp_
+#ifndef varray_hpp
+#define varray_hpp
 
 typedef void (*funcDraw) (void);
 

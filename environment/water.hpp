@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _water_hpp_
-#define _water_hpp_
+#ifndef water_hpp
+#define water_hpp
 
 void initWater(void);
 void updateWater(float interval);

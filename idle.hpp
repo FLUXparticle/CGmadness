@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _idle_hpp_
-#define _idle_hpp_
+#ifndef idle_hpp
+#define idle_hpp
 
 typedef void (*funcIdle) (int step);
 

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _quaternion_hpp_
-#define _quaternion_hpp_
+#ifndef quaternion_hpp
+#define quaternion_hpp
 
 #include "Vector3.hpp"
 

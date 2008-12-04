@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _features_hpp_
-#define _features_hpp_
+#ifndef features_hpp
+#define features_hpp
 
 #include <GL/glew.h>
 

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _keyboard_hpp_
-#define _keyboard_hpp_
+#ifndef keyboard_hpp
+#define keyboard_hpp
 
 #define KEY_ESC 27
 #define KEY_ENTER 13

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _files_hpp_
-#define _files_hpp_
+#ifndef files_hpp
+#define files_hpp
 
 char *textFileRead(const char *fn);
 bool textFileWrite(const char *fn, const char *s);

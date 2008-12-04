@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _callback_hpp_
-#define _callback_hpp_
+#ifndef callback_hpp
+#define callback_hpp
 
 #include "hw/mouse.hpp"
 

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _progress_hpp_
-#define _progress_hpp_
+#ifndef progress_hpp
+#define progress_hpp
 
 void resetProgress(void);
 void setProgress(float progress);

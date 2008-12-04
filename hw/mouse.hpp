@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _mouse_hpp_
-#define _mouse_hpp_
+#ifndef mouse_hpp
+#define mouse_hpp
 
 typedef void (*funcDrag) (int dx, int dy);
 

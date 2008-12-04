@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _camera_hpp_
-#define _camera_hpp_
+#ifndef camera_hpp
+#define camera_hpp
 
 #include "math/Vector3.hpp"
 

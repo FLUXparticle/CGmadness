@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _tools_hpp_
-#define _tools_hpp_
+#ifndef tools_hpp
+#define tools_hpp
 
 void message();
 

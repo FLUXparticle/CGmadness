@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _objects_hpp_
-#define _objects_hpp_
+#ifndef objects_hpp
+#define objects_hpp
 
 #include "math/Vector3.hpp"
 

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _debug_hpp_
-#define _debug_hpp_
+#ifndef debug_hpp
+#define debug_hpp
 
 #define DEBUG_TIME 0
 

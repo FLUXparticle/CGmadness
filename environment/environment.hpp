@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _environment_hpp_
-#define _environment_hpp_
+#ifndef environment_hpp
+#define environment_hpp
 
 #include "reflection/WaterReflection.hpp"
 

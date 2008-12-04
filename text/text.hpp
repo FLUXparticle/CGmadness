@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _text_hpp_
-#define _text_hpp_
+#ifndef text_hpp
+#define text_hpp
 
 void initStrokeThickText();
 

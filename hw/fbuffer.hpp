@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _fbuffer_
-#define _fbuffer_
+#ifndef fbuffer_hpp
+#define fbuffer_hpp
 
 #include "callback.hpp"
 

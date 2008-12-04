@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _gui_hpp_
-#define _gui_hpp_
+#ifndef gui_hpp
+#define gui_hpp
 
 void initGUI(void);
 
