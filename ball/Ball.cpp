@@ -60,9 +60,10 @@ bool Ball::hasBallTexture(void)
 
 Ball::Ball() :
 	mMass(1.0f),
-	mRadius(BALL_RADIUS)
+	mRadius(BALL_RADIUS),
+	mOrientation(0.0f, Vector3(0.0f, 0.0f, 1.0f))
 {
-	mOrientation = mkQuaternion(0.0f, Vector3(0.0f, 0.0f, 1.0f));
+  // empty
 }
 
 Ball::~Ball()
@@ -128,7 +129,7 @@ void Ball::drawGameBall() const
 		{
 			glTranslatef(mPos.x, mPos.y, mPos.z);
 			glScalef(mRadius, mRadius, mRadius);
-			quaternionTransform(mOrientation);
+			mOrientation.transform();
 
 			/* explosion? */
 			if (mIsBallInPieces)
@@ -263,8 +264,8 @@ void Ball::animateBall(float interval)
 	/* damping */
 	mVelocity = scale(DAMPING, mVelocity);
 
-	Quaternion rotation = mkQuaternion(len(mAngularRate) * interval, mAngularRate);
-	mOrientation = mulQuaternion(rotation, mOrientation);
+	Quaternion rotation(len(mAngularRate) * interval, mAngularRate);
+	mOrientation = rotation ^ mOrientation;
 
 	/* falling to infinity */
 	if (mPos.z < -1.0f)

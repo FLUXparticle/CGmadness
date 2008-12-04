@@ -1,51 +1,54 @@
 /*
  * CG Madness - a Marble Madness clone
  * Copyright (C) 2007  Sven Reinck <sreinck@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef quaternion_hpp
-#define quaternion_hpp
+#ifndef Quaternion_hpp
+#define Quaternion_hpp
 
 #include "Vector3.hpp"
 
-typedef struct
+class Quaternion
 {
-	float s;
-	Vector3 v;
-} Quaternion;
+public:
+	Quaternion(float alpha, const Vector3& v);
 
-float lenQuaternion(Quaternion q);
+	float len() const;
+	Quaternion norm() const;
+	void transform() const;
 
-Quaternion normQuaternion(Quaternion q);
+	Quaternion interpolate(float t, Quaternion b) const;
 
-Quaternion scaleQuaternion(float s, Quaternion a);
+	Quaternion operator+ (Quaternion b) const;
+	Quaternion operator- (Quaternion b) const;
+	float operator* (Quaternion b) const;
+	Quaternion operator^ (Quaternion b) const;
+	Quaternion operator* (float s) const;
 
-Quaternion addQuaternion(Quaternion a, Quaternion b);
+private:
+	float mS;
+	Vector3 mV;
 
-Quaternion subQuaternion(Quaternion a, Quaternion b);
+	Quaternion();
+};
 
-float dotQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mulQuaternion(Quaternion a, Quaternion b);
-
-Quaternion mkQuaternion(float alpha, Vector3 v);
-
-Quaternion interpolate(float t, Quaternion a, Quaternion b);
-
-void quaternionTransform(Quaternion a);
+inline Quaternion operator* (float s, Quaternion a)
+{
+	return a * s;
+}
 
 #endif

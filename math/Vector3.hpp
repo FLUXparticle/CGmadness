@@ -47,6 +47,11 @@ struct Vector3
   void operator+=(const Vector3& b);
 };
 
+inline Vector3 operator* (float s, Vector3 a)
+{
+	return a * s;
+}
+
 inline Vector3::operator const float* () const
 {
 	return &x;

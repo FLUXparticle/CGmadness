@@ -23,7 +23,7 @@
 #include "BallObject.hpp"
 #include "Explosion.hpp"
 
-#include "math/quaternion.hpp"
+#include "math/Quaternion.hpp"
 #include "math/Vector3.hpp"
 #include "math/Matrix.hpp"
 
