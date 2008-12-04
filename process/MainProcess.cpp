@@ -21,7 +21,7 @@
 
 #include "screen/main/ScreenMain.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "environment/environment.hpp"
 

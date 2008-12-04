@@ -19,7 +19,7 @@
 
 #include "Dispenser.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "screen/Screen.hpp"
 

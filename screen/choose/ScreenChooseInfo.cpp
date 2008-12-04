@@ -24,7 +24,7 @@
 #include "utils/Singleton.hpp"
 
 #include "level/level.hpp"
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "text/text.hpp"
 #include "hw/keyboard.hpp"

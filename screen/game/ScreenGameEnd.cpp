@@ -21,12 +21,12 @@
 
 #include "process/MainProcess.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "utils/Callback.hpp"
 
 #include "hw/keyboard.hpp"
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 ScreenGameEnd::ScreenGameEnd(Game* parent) :
 	mParent(parent)

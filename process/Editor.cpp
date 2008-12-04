@@ -37,7 +37,7 @@
 #include "graphics/camera.hpp"
 #include "hw/keyboard.hpp"
 #include "common.hpp"
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 
 #include "Color.hpp"
 #include "graphics/callback.hpp"

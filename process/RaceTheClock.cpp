@@ -21,7 +21,7 @@
 
 #include "screen/game/ScreenGameEnd.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "level/level.hpp"
 #include "text/text.hpp"

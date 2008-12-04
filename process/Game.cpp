@@ -24,16 +24,16 @@
 #include "screen/game/ScreenGameMain1.hpp"
 #include "screen/game/ScreenGameMain2.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "level/level.hpp"
 
 #include "ballcamera.hpp"
 #include "field.hpp"
 #include "graphics/camera.hpp"
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 #include "environment/environment.hpp"
-#include "Main.hpp"
+#include "process/Main.hpp"
 #include "graphics/objects.hpp"
 
 #include "functions.hpp"

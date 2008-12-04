@@ -26,11 +26,11 @@
 
 #include "utils/Callback.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 static void changeBallEdit(const void *self)
 {

@@ -21,7 +21,7 @@
 
 #include "ColorStack.hpp"
 
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 #include "graphics/camera.hpp"
 #include "graphics/objects.hpp"
 

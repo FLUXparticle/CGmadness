@@ -19,7 +19,7 @@
 
 #include "ScreenChooseGame.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 #include "process/RaceTheClock.hpp"
 
 #include "utils/Callback.hpp"

@@ -17,14 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 #include "hw/features.hpp"
 #include "Ball.hpp"
 
 #include "ColorStack.hpp"
 
 #include "level/level.hpp"
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 #include "process/Game.hpp"
 #include "hw/keyboard.hpp"
 #include "field.hpp"

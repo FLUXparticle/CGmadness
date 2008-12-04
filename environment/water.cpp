@@ -19,7 +19,7 @@
 
 #include <GL/glew.h>
 
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 #include "environment.hpp"
 
 #include "water.hpp"

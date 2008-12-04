@@ -29,15 +29,13 @@
 #include "gui/gui.hpp"
 #include "ball/BallObject.hpp"
 
-#include "Main.hpp"
-
 void Main::init()
 {
 	BallObject::init();
 	initEnvironment();
 
 	initGUI();
-	
+
 	Ball::init();
 	PlayersBall::init();
 }
@@ -60,20 +58,20 @@ void Main::setFirstProcess(Process* first)
 void Main::setState(Process* process, bool flush)
 {
 	Singleton<Main> gDispenser;
-	
+
 	gDispenser->setProcess(process, flush);
 }
 
 void Main::pushState(Process* process)
 {
 	Singleton<Main> gDispenser;
-	
+
 	gDispenser->pushProcess(process);
 }
 
 void Main::popState()
 {
 	Singleton<Main> gDispenser;
-	
+
 	gDispenser->popProcess();
 }

@@ -27,7 +27,7 @@
 #include "functions.hpp"
 #include "Color.hpp"
 
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>

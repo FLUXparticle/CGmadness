@@ -24,7 +24,7 @@
 
 #include "gui/MenuItem.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include <list>
 

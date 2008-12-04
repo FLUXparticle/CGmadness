@@ -24,7 +24,7 @@
 
 #include "common.hpp"
 
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 
 #include <string.h>
 

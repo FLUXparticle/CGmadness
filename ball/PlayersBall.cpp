@@ -24,7 +24,7 @@
 #include "hw/fbuffer.hpp"
 #include "process/Game.hpp"
 #include "lightmap.hpp"
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "ColorStack.hpp"
 

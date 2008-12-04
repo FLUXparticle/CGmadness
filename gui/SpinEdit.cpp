@@ -20,7 +20,7 @@
 #include "SpinEdit.hpp"
 
 #include "graphics/objects.hpp"
-#include "texture.hpp"
+#include "graphics/texture.hpp"
 #include "hw/keyboard.hpp"
 
 #include "functions.hpp"

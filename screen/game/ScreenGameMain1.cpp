@@ -19,7 +19,7 @@
 
 #include "ScreenGameMain1.hpp"
 
-#include "Main.hpp"
+#include "process/Main.hpp"
 
 #include "utils/Callback.hpp"
 
