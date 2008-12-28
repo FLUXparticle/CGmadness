@@ -23,8 +23,6 @@
 
 #include "hw/features.hpp"
 
-#include "field.hpp"
-
 #include "level/level.hpp"
 #include "graphics/camera.hpp"
 
@@ -504,12 +502,11 @@ void drawGameField(bool ballReflection)
 	{
 		if (hasBallShadowShader())
 		{
-			glUseProgram(sgBallShadowShader);
+			sgBallShadowShader->useProgram();
 
-			glUniform3fv(glGetUniformLocation(sgBallShadowShader, "ball"), 1,
-									 &gBallPosition.x);
-			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex0"), 0);
-			glUniform1i(glGetUniformLocation(sgBallShadowShader, "tex1"), 1);
+			sgBallShadowShader->setVariable("ball", gBallPosition);
+			sgBallShadowShader->setVariable("tex0", 0);
+			sgBallShadowShader->setVariable("tex1", 1);
 		}
 		else
 		{

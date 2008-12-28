@@ -26,8 +26,6 @@
 
 #include "math/Vector3.hpp"
 
-#include GL_H
-
 #define MAX_LEVEL_HEIGHT 10
 #define HEIGHT_STEPS 10
 
@@ -63,8 +61,8 @@ struct Level
 	FieldCoord finish;
 	FieldCoord size;
 	unsigned int borderTexture;
-	GLuint colorMap;
-	GLuint lightMap;
+	unsigned int colorMap;
+	unsigned int lightMap;
 
 	const char* filename;
 	char author[MAX_NAME_LENGTH + 1];

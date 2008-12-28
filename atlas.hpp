@@ -21,11 +21,6 @@
 #define atlas_hpp
 
 #include "math/Vector2.hpp"
-#include "math/Vector3.hpp"
-
-#include "Color.hpp"
-
-#include GL_H
 
 #define LIGHT_MAP_SIZE 8
 

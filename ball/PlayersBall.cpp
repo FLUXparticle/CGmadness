@@ -34,6 +34,9 @@
 
 #include "debug.hpp"
 
+#include <GL/glew.h>
+#include GLU_H
+
 #include <cstring>
 
 #define CUBE_MAP_SIZE 128
@@ -315,11 +318,10 @@ void PlayersBall::activateBallShader() const
 			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
 		}
 
-		glUseProgram(sgGolfballShader);
+		sgGolfballShader->useProgram();
 
-		glUniform1i(glGetUniformLocation(sgGolfballShader, "Environment"), 0);
-		glUniform1f(glGetUniformLocation(sgGolfballShader, "reflection"),
-								reflection);
+		sgGolfballShader->setVariable("Environment", 0);
+		sgGolfballShader->setVariable("reflection", reflection);
 	}
 }
 
