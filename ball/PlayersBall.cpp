@@ -32,7 +32,6 @@
 
 #include "debug.hpp"
 
-#include <GL/glew.h>
 #include GLU_H
 
 #include <cstring>
@@ -296,8 +295,8 @@ void PlayersBall::activateBallShader() const
 
 		glMatrixMode(GL_MODELVIEW);
 
-		glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-		glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, mCubeMapBall);
+		glEnable(GL_TEXTURE_CUBE_MAP);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mCubeMapBall);
 	}
 
 	if (useBallShader())
@@ -312,8 +311,8 @@ void PlayersBall::activateBallShader() const
 		{
 			reflection = 0.0f;
 
-			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-			glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, 0);
+			glEnable(GL_TEXTURE_CUBE_MAP);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		}
 
 		sgGolfballShader->useProgram();
@@ -346,7 +345,7 @@ void PlayersBall::deactivateBallShader() const
 
 	if (useBallReflection())
 	{
-		glDisable(GL_TEXTURE_CUBE_MAP_EXT);
+		glDisable(GL_TEXTURE_CUBE_MAP);
 
 		glMatrixMode(GL_TEXTURE);
 		glPopMatrix();
@@ -360,7 +359,7 @@ void PlayersBall::deactivateBallShader() const
 
 		if (!useBallReflection())
 		{
-			glDisable(GL_TEXTURE_CUBE_MAP_EXT);
+			glDisable(GL_TEXTURE_CUBE_MAP);
 		}
 	}
 }
