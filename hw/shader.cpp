@@ -21,23 +21,23 @@
 
 #include "files.hpp"
 
-#include <GL/glew.h>
+#include GL_H
 
 #include <cstdio>
 #include <cstdlib>
 
-void printInfoLog(GLhandleARB obj, const char* text)
+static void printShaderInfoLog(GLuint obj, const char* text)
 {
-	GLint  infologLength = 0;
-	GLsizei charsWritten = 0;
+	int infologLength = 0;
+	int charsWritten = 0;
 
-	glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infologLength);
+	glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
 
 	if (infologLength > 1)
 	{
 		char* infoLog = new char[infologLength];
 
-		glGetInfoLogARB(obj, infologLength, &charsWritten, infoLog);
+		glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
 		printf("%s: %s\n", text, infoLog);
 		fflush(stdout);
 
@@ -45,7 +45,27 @@ void printInfoLog(GLhandleARB obj, const char* text)
 	}
 }
 
-static GLhandleARB makeShader(const char* vertexShaderFilename,
+static void printProgramInfoLog(GLuint obj, const char* text)
+{
+	int infologLength = 0;
+	int charsWritten = 0;
+
+	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
+
+	if (infologLength > 0)
+	{
+		char* infoLog = new char[infologLength];
+
+		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
+		printf("%s: %s\n", text, infoLog);
+		fflush(stdout);
+
+		delete[] infoLog;
+	}
+}
+
+
+static GLuint makeShader(const char* vertexShaderFilename,
 											 const char* fragmentShaderFilename)
 {
 	char* vs;
@@ -53,9 +73,9 @@ static GLhandleARB makeShader(const char* vertexShaderFilename,
 	GLint compiled;
 	GLint linked;
 
-	GLhandleARB v = glCreateShader(GL_VERTEX_SHADER);
-	GLhandleARB f = glCreateShader(GL_FRAGMENT_SHADER);
-	GLhandleARB p;
+	GLuint v = glCreateShader(GL_VERTEX_SHADER);
+	GLuint f = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint p;
 
 	if ((vs = textFileRead(vertexShaderFilename)) == NULL)
 	{
@@ -79,16 +99,16 @@ static GLhandleARB makeShader(const char* vertexShaderFilename,
 	delete[] fs;
 
 	glCompileShader(v);
-	printInfoLog(v, vertexShaderFilename);
-	glGetObjectParameterivARB(v, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+	printShaderInfoLog(v, vertexShaderFilename);
+	glGetShaderiv(v, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		return 0;
 	}
 
 	glCompileShader(f);
-	printInfoLog(f, fragmentShaderFilename);
-	glGetObjectParameterivARB(f, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+	printShaderInfoLog(f, fragmentShaderFilename);
+	glGetShaderiv(f, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		return 0;
@@ -100,8 +120,8 @@ static GLhandleARB makeShader(const char* vertexShaderFilename,
 	glAttachShader(p, f);
 
 	glLinkProgram(p);
-	printInfoLog(p, "Link");
-	glGetObjectParameterivARB(p, GL_OBJECT_LINK_STATUS_ARB, &linked);
+	printProgramInfoLog(p, "Link");
+	glGetProgramiv(p, GL_LINK_STATUS, &linked);
 	if (!linked)
 	{
 		return 0;

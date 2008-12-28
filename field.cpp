@@ -19,8 +19,6 @@
 
 #include "field.hpp"
 
-#include <GL/glew.h>
-
 #include "hw/features.hpp"
 
 #include "level/level.hpp"
