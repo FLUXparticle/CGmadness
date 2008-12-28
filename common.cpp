@@ -19,8 +19,7 @@
 
 #include "common.hpp"
 
-#include "atlas.hpp"
-#include "idle.hpp"
+#include "level/Atlas.hpp"
 #include "lightmap.hpp"
 #include "level/level.hpp"
 
@@ -91,7 +90,7 @@ Vector2 squareLightmapCoords(const Square& square, int vertex)
 	result.x = a * decomp.x + b;
 	result.y = a * decomp.y + b;
 
-	transformCoords(atlas->idxSubLightMap, result);
+	sgAtlas->transformCoords(atlas->idxSubLightMap, result);
 
 	return result;
 }
@@ -147,40 +146,33 @@ void initCommon()
 		b.subatlas.end = gSubAtlas.size();
 	}
 
-	initAtlas(gSubAtlas.size());
+	sgAtlas = new Atlas(gSubAtlas.size());
 }
 
 void destroyCommon()
 {
 	gSubAtlas.clear();
 
-	destroyAtlas();
+	delete sgAtlas;
 }
 
-static void updateLightMapIdle(int step)
+void updateLightMapIdle(int step)
 {
 	genAmbientOcclusionTexture(gSubAtlas[step]);
 }
 
-void updateLightMap(bool useProgressBar)
+void updateLightMap()
 {
-	int cntSteps = gSubAtlas.size();
+	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
 
-	if (useProgressBar)
+	printf("calculating lightmaps...\n");
+ 	resetProgress();
+
+	for (int step = 0; step < cntSteps;)
 	{
-		startIdle(cntSteps, updateLightMapIdle);
-	}
-	else
-	{
-		printf("calculating lightmaps...\n");
-		resetProgress();
+		updateLightMapIdle(step);
 
-		for (int step = 0; step < cntSteps;)
-		{
-			updateLightMapIdle(step);
-
-			step++;
-			setProgress((float) step / cntSteps);
-		}
-	}
+		step++;
+		setProgress((float) step / cntSteps);
+ 	}
 }

@@ -17,21 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "atlas.hpp"
+#include "Atlas.hpp"
 
 #include "macros.hpp"
-
-#include GL_H
 
 #include <cstdio>
 #include <cassert>
 
-static int gCols;
-static int gRows;
-static int gLightMapSizeX;
-static int gLightMapSizeY;
-static float* gLightMapData;
-static int gMaxSubLightMaps = 0;
+Atlas* sgAtlas;
 
 static int nextPowerOfTwo(int i)
 {
@@ -45,12 +38,12 @@ static int nextPowerOfTwo(int i)
 	return j;
 }
 
-int getCntAllocatedSubLightMaps()
+int Atlas::getCntAllocatedSubLightMaps()
 {
 	return gMaxSubLightMaps;
 }
 
-void initAtlas(int cntSubTextures)
+Atlas::Atlas(int cntSubTextures)
 {
 	gRows = 1;
 	do
@@ -73,7 +66,7 @@ void initAtlas(int cntSubTextures)
 	PRINT_INT(cntSubTextures);
 }
 
-void destroyAtlas()
+Atlas::~Atlas()
 {
 	delete[] gLightMapData;
 
@@ -81,26 +74,20 @@ void destroyAtlas()
 	gRows = 0;
 }
 
-float& getSubLightMapPixel(int index, int sx, int sy)
+float& Atlas::getSubLightMapPixel(int index, int sx, int sy)
 {
 	int x = (index % gCols) * LIGHT_MAP_SIZE + sx;
 	int y = (index / gCols) * LIGHT_MAP_SIZE + sy;
 	return gLightMapData[y * gLightMapSizeX + x];
 }
 
-Vector2 transformSubCoords(int index, const Vector2 coords)
+Vector2 Atlas::transformSubCoords(int index, const Vector2 coords)
 {
 	return Vector2(((index % gCols) + coords.x) / gCols,
 								 ((index / gCols) + coords.y) / gRows);
 }
 
-void lightMapToTexture(unsigned int texID)
-{
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, gLightMapSizeX, gLightMapSizeY, 0, GL_LUMINANCE, GL_FLOAT, gLightMapData);
-}
-
-void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
+void Atlas::getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
 {
 	int i = 0;
 
@@ -113,7 +100,7 @@ void getSubLightMap(int index, float data[SIZEOF_LIGHT_MAP])
 	}
 }
 
-void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
+void Atlas::setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 {
 	int i = 0;
 
@@ -128,7 +115,7 @@ void setSubLightMap(int index, const float data[SIZEOF_LIGHT_MAP])
 
 /*****/
 
-void setLightMap(int index, int x, int y, float value)
+void Atlas::setLightMap(int index, int x, int y, float value)
 {
 	assert(x >= 0 && x < LIGHT_MAP_SIZE);
 	assert(y >= 0 && y < LIGHT_MAP_SIZE);
@@ -136,7 +123,7 @@ void setLightMap(int index, int x, int y, float value)
 	getSubLightMapPixel(index, x, y) = value;
 }
 
-void transformCoords(int index, Vector2& coords)
+void Atlas::transformCoords(int index, Vector2& coords)
 {
 	if (gCols > 0 && gRows > 0)
 	{

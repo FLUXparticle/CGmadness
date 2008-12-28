@@ -27,7 +27,10 @@
 void initCommon();
 void destroyCommon();
 
-void updateLightMap(bool useProgressBar);
+void updateLightMapIdle(int step);
+
+void updateLightMapWithProgressBar();
+void updateLightMap();
 Vector2 squareLightmapCoords(const Square& square, int vertex);
 
 #endif

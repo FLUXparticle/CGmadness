@@ -20,7 +20,6 @@
 #include "level/level.hpp"
 
 #include "common.hpp"
-#include "atlas.hpp"
 
 #include "functions.hpp"
 

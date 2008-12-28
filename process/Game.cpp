@@ -39,7 +39,7 @@
 #include "functions.hpp"
 #include "hw/keyboard.hpp"
 
-#include "atlas.hpp"
+#include "level/Atlas.hpp"
 #include "common.hpp"
 
 #define COUNTDOWN_TIME 1.0f
@@ -199,7 +199,11 @@ void Game::start(Process* previous, bool push)
 	mPrevious = previous;
 
 	sgLevel.lightMap = genTexture();
-	lightMapToTexture(sgLevel.lightMap);
+
+	glBindTexture(GL_TEXTURE_2D, sgLevel.lightMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, sgAtlas->gLightMapSizeX,
+	    sgAtlas->gLightMapSizeY, 0, GL_LUMINANCE, GL_FLOAT,
+	    sgAtlas->gLightMapData);
 
 	initGameField();
 

@@ -21,7 +21,7 @@
 
 #include "crc32.hpp"
 
-#include "atlas.hpp"
+#include "Atlas.hpp"
 
 int readByte(FILE* file)
 {

@@ -19,6 +19,4 @@
 
 #include "types.hpp"
 
-#include "atlas.hpp"
-
 Level sgLevel;

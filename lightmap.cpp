@@ -20,7 +20,7 @@
 #include "lightmap.hpp"
 
 #include "level/level.hpp"
-#include "atlas.hpp"
+#include "level/Atlas.hpp"
 
 #include "kdtree/KdSphereIntersection.hpp"
 #include "kdtree/KdList.hpp"
@@ -117,7 +117,7 @@ void genAmbientOcclusionTexture(const SubAtlas& lightMap)
 
 			float light = approximation(rayPosition, orientation.normal);
 
-			setLightMap(lightMap.idxSubLightMap, x, y, light);
+			sgAtlas->setLightMap(lightMap.idxSubLightMap, x, y, light);
 		}
 	}
 }

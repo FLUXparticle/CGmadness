@@ -37,6 +37,7 @@
 #include "graphics/camera.hpp"
 #include "hw/keyboard.hpp"
 #include "common.hpp"
+#include "idle.hpp"
 #include "graphics/texture.hpp"
 
 #include "Color.hpp"
@@ -106,6 +107,13 @@ void Editor::lightMapsReady()
 	saveLevel();
 }
 
+void updateLightMapWithProgressBar()
+{
+	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
+
+	startIdle(cntSteps, updateLightMapIdle);
+}
+
 void Editor::saveLevel()
 {
 	if (gDirtyLightmaps)
@@ -117,7 +125,7 @@ void Editor::saveLevel()
 		initCommon();
 		setUpdateFrequency(10);
 		Main::setState(mScreenWait, false);
-		updateLightMap(true);
+		updateLightMapWithProgressBar();
 	}
 	else
 	{

@@ -26,7 +26,7 @@
 #include "kdtree/KdPaintersAlgorithmReverse.hpp"
 #include "kdtree/KdList.hpp"
 
-#include "atlas.hpp"
+#include "Atlas.hpp"
 #include "common.hpp"
 
 #include "utils/String.hpp"
@@ -66,7 +66,7 @@ static void toLightMap(int index, bool flip, int dataInt[SIZEOF_LIGHT_MAP])
 		}
 	}
 
-	setSubLightMap(index, dataFloat);
+	sgAtlas->setSubLightMap(index, dataFloat);
 }
 
 bool loadHighscoreFromFile()
@@ -222,7 +222,7 @@ static void newLevel()
 
 	initCommon();
 
-	updateLightMap(false);
+	updateLightMap();
 }
 
 bool loadLevelFromFile(const char* filename)
@@ -335,7 +335,7 @@ bool loadLevelFromFile(const char* filename)
 		}
 
 		{
-			int cntSubLightMaps = getCntAllocatedSubLightMaps();
+			int cntSubLightMaps = sgAtlas->getCntAllocatedSubLightMaps();
 
 			int index = 0;
 
@@ -367,7 +367,7 @@ bool loadLevelFromFile(const char* filename)
 	}
 	else
 	{
-		updateLightMap(false);
+		updateLightMap();
 	}
 
 	fclose(file);
@@ -521,7 +521,7 @@ bool saveLevelToFile(bool shrink)
 			GLfloat dataFloat[SIZEOF_LIGHT_MAP];
 			int dataInt[SIZEOF_LIGHT_MAP];
 
-			getSubLightMap(i, dataFloat);
+			sgAtlas->getSubLightMap(i, dataFloat);
 
 			for (int j = 0; j < SIZEOF_LIGHT_MAP; j++)
 			{

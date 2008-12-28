@@ -67,7 +67,7 @@ endif
 
 CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
 
-findOpenGL  = $(if $(findstring /idle.o,$(1)),$(LIBS_OPENGL))
+findOpenGL  = $(if $(findstring /callback.o,$(1)),$(LIBS_OPENGL))
 
 FIND_LIBS := findOpenGL
 
