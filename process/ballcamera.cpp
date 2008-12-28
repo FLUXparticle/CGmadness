@@ -26,6 +26,7 @@
 
 #include "functions.hpp"
 
+#include <cstdlib>
 #include <cmath>
 
 static bool gIsMouseControl = false;

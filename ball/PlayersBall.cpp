@@ -19,6 +19,8 @@
 
 #include "PlayersBall.hpp"
 
+#include <GL/glew.h>
+
 #include "graphics/objects.hpp"
 #include "hw/features.hpp"
 #include "hw/fbuffer.hpp"

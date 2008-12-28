@@ -21,8 +21,10 @@
 
 #include "shader.hpp"
 
-#include <stdio.h>
-#include <string.h>
+#include <GL/glew.h>
+
+#include <cstdio>
+#include <cstring>
 
 /*
  * this module checks which opengl features are available

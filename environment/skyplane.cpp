@@ -17,8 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <GL/glew.h>
-
 #include "skyplane.hpp"
 
 #include "math/Vector2.hpp"
@@ -29,10 +27,11 @@
 
 #include "graphics/texture.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include GLUT_H
 
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 #define PLANET_RADIUS 2000.0f
 #define ATMOSPHERE_RADIUS 180.0f

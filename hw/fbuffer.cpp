@@ -22,7 +22,7 @@
 #include <GL/glew.h>
 #include GL_H
 
-#include <stdio.h>
+#include <cstdio>
 
 bool createFBuffer(int width, int height, unsigned int target,
 									unsigned int color_tex, RenderTarget * context)

@@ -20,10 +20,8 @@
 #ifndef features_hpp
 #define features_hpp
 
-#include <GL/glew.h>
-
-extern GLhandleARB sgBallShadowShader;
-extern GLhandleARB sgGolfballShader;
+extern unsigned int sgBallShadowShader;
+extern unsigned int sgGolfballShader;
 
 void usageFeatures(void);
 
