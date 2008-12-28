@@ -18,14 +18,14 @@
 CPREFIX :=
 
 CC := $(CPREFIX)gcc
-CFLAGS := -Wall -O3
+CFLAGS := -Wall
 
 CXX := $(CPREFIX)g++
-CXXFLAGS := $(CFLAGS) -include cstdlib -I.
+CXXFLAGS = $(CFLAGS) -pedantic -include cstdlib -I.
 
 LD := $(CPREFIX)g++
 LDFLAGS :=
-LIBS := -lm
+LIBS_OPENGL :=
 
 PERL := perl
 
@@ -44,19 +44,21 @@ GLUT_H := <GL/glut.h>
 # Check if compiling with Linux or Cygwin/MinGW
 ifneq ($(findstring mingw32,$(MACHINE))$(findstring cygwin,$(MACHINE)),)
 	CFLAGS += -mno-cygwin
-	CXXFLAGS += -mno-cygwin -DGLUT_DISABLE_ATEXIT_HACK
+	CFLAGS += -DWIN32
+	CXXFLAGS += -DGLUT_DISABLE_ATEXIT_HACK
 	LDFLAGS += -mno-cygwin
-	LIBS += -lglut32 -lglu32 -lopengl32 -lglew32
+	LIBS_OPENGL += -lglut32 -lglu32 -lopengl32 -lglew32
 	EXECSUFFIX := .exe
 endif
 ifneq ($(findstring linux-gnu,$(MACHINE)),)
-	CXXFLAGS += -ansi -pedantic 
-	LIBS += -lglut -lGLU -lGL -lGLEW
+	CXXFLAGS += -ansi
+	LIBS_OPENGL += -lglut -lGLU -lGL -lGLEW
 	EXECSUFFIX :=
 endif
 ifneq ($(findstring apple-darwin,$(MACHINE)),)
+	CFLAGS += -DDARWIN
 	CXXFLAGS += -I/opt/local/include
-	LIBS += -framework OpenGL -framework GLUT -lGLEW
+	LIBS_OPENGL += -framework OpenGL -framework GLUT -lGLEW
 	EXECSUFFIX :=
 	GL_H := <GL/glew.h>
 	GLU_H := <GL/glew.h>
@@ -64,6 +66,10 @@ ifneq ($(findstring apple-darwin,$(MACHINE)),)
 endif
 
 CXXFLAGS += -DGL_H="$(GL_H)" -DGLU_H="$(GLU_H)" -DGLUT_H="$(GLUT_H)"
+
+findOpenGL  = $(if $(findstring /idle.o,$(1)),$(LIBS_OPENGL))
+
+FIND_LIBS := findOpenGL
 
 MAINS   :=  $(shell $(PERL) mains.pl)
 CODE    :=  $(subst ./,,$(shell find . -name '*.c' -or -name '*.cpp'))
@@ -80,9 +86,6 @@ DEP     :=  $(CODE:%=$(DEPS)/%.d) $(MAINS:%=$(DEPS)/%.o.d)
 CLEAN   :=  $(BUILD) $(EXEC)
 
 # main part
-
-.SECONDEXPANSION:
-
 .PHONY: all
 all: $(EXEC)
 
@@ -105,7 +108,7 @@ debug:
 
 %$(EXECSUFFIX): $(BUILD)/%.o
 	@echo "  LINK $@"
-	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
+	@$(LD) $(LDFLAGS) $^ $(foreach find, $(FIND_LIBS), $(call $(find),$^)) -o $@
 
 $(BUILD)/%.o: %.c | $$(@D)/.
 	@echo "  CC $@"
@@ -163,13 +166,13 @@ $(DEPS)/%.o.d: %.cpp modules.pl | $$(@D)/.
 	@echo "  MODULES $@"
 	@$(PERL) modules.pl $< > $@
 
-$(DEPS)/%.c.d: %.c | $$(@D)/.
+$(DEPS)/%.c.d: %.c dep.pl | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CC) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CFLAGS) $< -MF $@
+	@$(PERL) dep.pl $< > $@
 
-$(DEPS)/%.cpp.d: %.cpp | $$(@D)/.
+$(DEPS)/%.cpp.d: %.cpp dep.pl | $$(@D)/.
 	@echo "  DEP $@"
-	@$(CXX) -MM -MP -MT $@ -MT '$$(BUILD)/$*.o' $(CXXFLAGS) $< -MF $@
+	@$(PERL) dep.pl $< > $@
 
 # create necessary directories
 .PRECIOUS: %/.

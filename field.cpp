@@ -41,12 +41,15 @@
 
 #include "macros.hpp"
 
+#ifndef DARWIN
+# include <GL/glew.h>
+#endif
 #include GL_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 static Vector2 gDefaultTexCoord;
 static Vector2 gDefaultLightMapCoord;

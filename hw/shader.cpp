@@ -21,6 +21,9 @@
 
 #include "files.hpp"
 
+#ifndef DARWIN
+# include <GL/glew.h>
+#endif
 #include GL_H
 
 #include <cstdio>

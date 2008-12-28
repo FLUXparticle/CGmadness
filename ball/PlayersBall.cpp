@@ -32,6 +32,9 @@
 
 #include "debug.hpp"
 
+#ifndef DARWIN
+# include <GL/glew.h>
+#endif
 #include GLU_H
 
 #include <cstring>
