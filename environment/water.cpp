@@ -17,7 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <GL/glew.h>
+#ifdef WIN32
+# include <GL/glew.h>
+#endif
 
 #include "graphics/texture.hpp"
 #include "environment.hpp"

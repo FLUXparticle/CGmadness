@@ -19,10 +19,10 @@
 
 #include "features.hpp"
 
-#include "shader.hpp"
+#include <GL/glew.h>
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 /*
  * this module checks which opengl features are available
@@ -39,10 +39,10 @@ static bool gShaderAvailable;
 static bool gUseBallShadow = 0;
 static bool gUseReflection = 0;
 
-GLhandleARB sgBallShadowShader = 0;
-GLhandleARB sgGolfballShader = 0;
+Shader* sgBallShadowShader;
+Shader* sgGolfballShader;
 
-void usageFeatures(void)
+void usageFeatures()
 {
 	printf("  " NO_FRAMEBUFFER
 				 "  deactivate framebuffer objects - use if both reflecting balls slow down the game\n");
@@ -52,7 +52,7 @@ void usageFeatures(void)
 	printf("\n");
 }
 
-void initFeatures(int argc, char *argv[])
+void initFeatures(int argc, char* argv[])
 {
 	int i;
 
@@ -116,13 +116,13 @@ void initFeatures(int argc, char *argv[])
 
 	if (hasShader())
 	{
-		sgBallShadowShader = makeShader("ballshadow.vert", "ballshadow.frag");
+		sgBallShadowShader = new Shader("ballshadow.vert", "ballshadow.frag");
 		if (sgBallShadowShader)
 		{
 			printf("BallShadow-Shader ready :-)\n");
 		}
 
-		sgGolfballShader = makeShader("golfball.vert", "golfball.frag");
+		sgGolfballShader = new Shader("golfball.vert", "golfball.frag");
 		if (sgGolfballShader)
 		{
 			printf("Golfball-Shader ready :-)\n");
@@ -132,27 +132,27 @@ void initFeatures(int argc, char *argv[])
 
 /* has...? */
 
-bool hasShader(void)
+bool hasShader()
 {
 	return gShaderAvailable;
 }
 
-bool hasFramebuffer(void)
+bool hasFramebuffer()
 {
 	return gFramebufferAvailable;
 }
 
-bool hasVertexbuffer(void)
+bool hasVertexbuffer()
 {
 	return gVertexbufferAvailable;
 }
 
-bool hasBallShadowShader(void)
+bool hasBallShadowShader()
 {
 	return hasShader() && sgBallShadowShader;
 }
 
-bool hasGolfballShader(void)
+bool hasGolfballShader()
 {
 	return hasShader() && sgGolfballShader;
 }
@@ -171,12 +171,12 @@ void setReflection(bool use)
 
 /* use...? */
 
-bool useBallShadow(void)
+bool useBallShadow()
 {
 	return gUseBallShadow;
 }
 
-bool useReflection(void)
+bool useReflection()
 {
 	return gUseReflection;
 }

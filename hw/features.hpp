@@ -20,25 +20,25 @@
 #ifndef features_hpp
 #define features_hpp
 
-#include <GL/glew.h>
+#include "shader.hpp"
 
-extern GLhandleARB sgBallShadowShader;
-extern GLhandleARB sgGolfballShader;
+extern Shader* sgBallShadowShader;
+extern Shader* sgGolfballShader;
 
-void usageFeatures(void);
+void usageFeatures();
 
 void initFeatures(int argc, char *argv[]);
 
-bool hasShader(void);
-bool hasFramebuffer(void);
-bool hasVertexbuffer(void);
-bool hasBallShadowShader(void);
-bool hasGolfballShader(void);
+bool hasShader();
+bool hasFramebuffer();
+bool hasVertexbuffer();
+bool hasBallShadowShader();
+bool hasGolfballShader();
 
 void setBallShadow(bool use);
 void setReflection(bool use);
 
-bool useBallShadow(void);
-bool useReflection(void);
+bool useBallShadow();
+bool useReflection();
 
 #endif
