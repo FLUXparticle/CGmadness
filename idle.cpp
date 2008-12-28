@@ -21,6 +21,8 @@
 
 #include GLUT_H
 
+#include <cstdlib>
+
 float sgIdleProgress;
 bool sgIdleWorking = 0;
 

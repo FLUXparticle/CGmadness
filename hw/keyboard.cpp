@@ -22,6 +22,8 @@
 
 #include GLUT_H
 
+#include <cstdlib>
+
 #define MAX_KEYS 256
 
 #define MAX_CURSORS LENGTH(gCursors)
