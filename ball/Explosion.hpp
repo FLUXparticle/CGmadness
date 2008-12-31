@@ -33,7 +33,7 @@ public:
 	void init(const Vector3& startPos, const Vector3& startSpeed,
 			const Vector3& endPos, const Vector3& endSpeed);
 	
-	bool update(float interval, const Vector3& speed, Vector3& pos);
+	bool update(float interval, Vector3& pos);
 
 	void drawDefault() const;
 	void drawShader() const;
@@ -50,7 +50,7 @@ private:
 		Vector3 rotation;
 		Vector3 rotSpeed;
 	};
-	
+
 	Vector3 gStartPos;
 	Vector3 gStartSpeed;
 
@@ -63,7 +63,7 @@ private:
 	Fragment gFragments[CNT_BALL_TRIANGLES / PARTS_TOGETHER];
 
 	void draw(Vector3 ballTexCoords[CNT_BALL_VERTICES]) const;
-	
+
 };
 
 #endif

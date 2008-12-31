@@ -128,7 +128,7 @@ Quaternion Quaternion::operator^ (Quaternion b) const
 	Quaternion c;
 
 	c.mS = mS * b.mS - mV * b.mV;
-	c.mV = ((mV ^ b.mV) + ((mS * b.mV) + (mV * b.mS)));
+	c.mV = mV % b.mV + mS * b.mV + mV * b.mS;
 
 	return c;
 }

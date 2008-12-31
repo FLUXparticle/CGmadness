@@ -35,21 +35,25 @@ struct Vector3
   bool operator == (const Vector3& other) const;
 
   operator const float* () const;
+  operator float* ();
 
-  Vector3 operator*(float s) const;
-  Vector3 operator/(float s) const;
-  Vector3 operator+(const Vector3& b) const;
-  Vector3 operator-(const Vector3& b) const;
-  Vector3 operator-() const;
-  float operator*(const Vector3& b) const;
-  Vector3 operator^(const Vector3& b) const;
+  Vector3 operator* (float s) const;
+  Vector3 operator/ (float s) const;
+  Vector3 operator+ (const Vector3& b) const;
+  Vector3 operator- (const Vector3& b) const;
+  Vector3 operator- () const;
+  float operator* (const Vector3& b) const;
+  Vector3 operator% (const Vector3& b) const;
 
-  void operator+=(const Vector3& b);
+  void operator+= (const Vector3& b);
+  void operator-= (const Vector3& b);
+  void operator*= (float s);
+
 };
 
-inline Vector3 operator* (float s, Vector3 a)
+inline Vector3 operator* (float s, const Vector3 v)
 {
-	return a * s;
+	return v * s;
 }
 
 inline Vector3::operator const float* () const
@@ -57,54 +61,9 @@ inline Vector3::operator const float* () const
 	return &x;
 }
 
-inline float len(const Vector3 v)
+inline Vector3::operator float* ()
 {
-	return v.len();
-}
-
-inline Vector3 norm(const Vector3 v)
-{
-	return v.norm();
-}
-
-inline Vector3 neg(const Vector3 a)
-{
-	return -a;
-}
-
-inline Vector3 scale(float s, const Vector3 a)
-{
-	return a * s;
-}
-
-inline Vector3 add(const Vector3 a, const Vector3 b)
-{
-	return a + b;
-}
-
-inline Vector3 sub(const Vector3 a, const Vector3 b)
-{
-	return a - b;
-}
-
-inline float dot(const Vector3 a, const Vector3 b)
-{
-	return a * b;
-}
-
-inline Vector3 cross(const Vector3 a, const Vector3 b)
-{
-	return a ^ b;
-}
-
-inline void Normalize(Vector3& v)
-{
-	v = v.norm();
-}
-
-inline void ZeroVector(Vector3& v)
-{
-	v.x = v.y = v.z = 0;
+	return &x;
 }
 
 #endif

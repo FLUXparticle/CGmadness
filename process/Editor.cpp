@@ -515,7 +515,7 @@ void Editor::update(float interval)
 			markerPos.z = (float) 0.0f;
 		}
 
-		updateEditorCamera(interval, add(markerPos, sgLevel.origin));
+		updateEditorCamera(interval, markerPos + sgLevel.origin);
 		animateEditor(interval);
 		break;
 	}

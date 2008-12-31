@@ -23,10 +23,10 @@ Vector3 Orientation::decomposition(const Vector3& v) const
 {
 	Vector3 a = v - origin;
 
-	float d = (vx ^ vy) * normal;
-	float dx = (a ^ vy) * normal;
-	float dy = (vx ^ a) * normal;
-	float dz = (vx ^ vy) * a;
+	float d = (vx % vy) * normal;
+	float dx = (a % vy) * normal;
+	float dy = (vx % a) * normal;
+	float dz = (vx % vy) * a;
 
 	return Vector3(dx / d, dy / d, dz / d);
 }

@@ -44,7 +44,7 @@ Vector3 midpoint(const Vector3 quad[4])
 
 static float area3Points(const Vector3& a, const Vector3& b, const Vector3& c)
 {
-	return 0.5f * ((b - a) ^ (c - a)).len();
+	return 0.5f * ((b - a) % (c - a)).len();
 }
 
 void Square::updateAttributes()
@@ -112,7 +112,7 @@ void checkBlock(Block& b)
 		Vector3 ex = square->vertices[1] - square->vertices[0];
 		Vector3 ey = square->vertices[3] - square->vertices[0];
 
-		square->normal = norm(cross(ex, ey));
+		square->normal = (ex % ey).norm();
 
 		square->updateAttributes();
 

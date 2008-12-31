@@ -401,17 +401,17 @@ void updateGameField(const PlayersBall& ball)
 		for (int q = 0; q < gCntVertices; q += 4)
 		{
 			Vector3 vz = gNormals[q];
-			Vector3 vx = norm(sub(gVertices[q + 1], gVertices[q]));
-			Vector3 vy = norm(cross(vx, vz));
+			Vector3 vx = (gVertices[q + 1] - gVertices[q]).norm();
+			Vector3 vy = (vx % vz).norm();
 
 			for (int i = 0; i < 4; i++)
 			{
 				Vector3 vertex = gVertices[q + i];
-				Vector3 d = sub(gBallPosition, vertex);
+				Vector3 d = gBallPosition - vertex;
 
-				float x = dot(vx, d) / MAX_XY + 0.5f;
-				float y = dot(vy, d) / MAX_XY + 0.5f;
-				float z = dot(vz, d) / MAX_Z;
+				float x = (vx * d) / MAX_XY + 0.5f;
+				float y = (vy * d) / MAX_XY + 0.5f;
+				float z = (vz * d) / MAX_Z;
 
 				gBallShadowCoords[q + i] = Vector3(x, y, z);
 			}

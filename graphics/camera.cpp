@@ -30,11 +30,11 @@ void moveCamera(float interval, Vector3 camera, Vector3 lookat)
 	Vector3 diff;
 
 	/* new values */
-	diff = sub(camera, sgCamera);
-	sgCamera = add(sgCamera, scale(5.0f * interval, diff));
+	diff = camera - sgCamera;
+	sgCamera += (5.0f * interval) * diff;
 
-	diff = sub(lookat, sgLookat);
-	sgLookat = add(sgLookat, scale(5.0f * interval, diff));
+	diff = lookat - sgLookat;
+	sgLookat += (5.0f * interval) * diff;
 }
 
 void setCamera()
@@ -49,8 +49,8 @@ Vector3 rotateVector(const Vector3& dir)
 	Vector3 direction;
 
 	Vector3 f = (sgCamera - sgLookat).norm();
-	Vector3 s = (gUp ^ f).norm();
-	Vector3 u = f ^ s;
+	Vector3 s = (gUp % f).norm();
+	Vector3 u = f % s;
 
 	direction.x = dir.x * s.x + dir.y * u.x + dir.z * f.x;
 	direction.y = dir.x * s.y + dir.y * u.y + dir.z * f.y;

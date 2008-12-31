@@ -140,10 +140,10 @@ void updateBallCamera(float interval, Vector3 ball)
 		sgCamera = dest;
 	}
 
-	diff = sub(sgLookat, sgCamera);
+	diff = sgLookat - sgCamera;
 	diff.z = 0.0f;
-	gForward = norm(diff);
-	gRight = norm(cross(gForward, up));
+	gForward = diff.norm();
+	gRight = (gForward % up).norm();
 }
 
 void toggleMouseControl()
@@ -157,50 +157,45 @@ void updateBall(Ball& ball, float interval)
 
 	if (gIsBallControlActive)
 	{
+		bool goLeft = false;
+		bool goRight = false;
+		bool goForward = false;
+		bool goBackward = false;
+
 		/* ball controls */
 		if (gIsMouseControl)
 		{
-			if (isKeyPressed('a'))
-			{
-				force = sub(force, gRight);
-			}
-
-			if (isKeyPressed('d'))
-			{
-				force = add(force, gRight);
-			}
-
-			if (isKeyPressed('s'))
-			{
-				force = sub(force, gForward);
-			}
-
-			if (isKeyPressed('w'))
-			{
-				force = add(force, gForward);
-			}
+			goLeft = isKeyPressed('a');
+			goRight = isKeyPressed('d');
+			goBackward = isKeyPressed('s');
+			goForward = isKeyPressed('w');
 		}
 		else
 		{
-			if (isCursorPressed(CURSOR_LEFT))
-			{
-				force = sub(force, gRight);
-			}
+			goLeft = isCursorPressed(CURSOR_LEFT);
+			goRight = isCursorPressed(CURSOR_RIGHT);
+			goBackward = isCursorPressed(CURSOR_DOWN);
+			goForward = isCursorPressed(CURSOR_UP);
+		}
 
-			if (isCursorPressed(CURSOR_RIGHT))
-			{
-				force = add(force, gRight);
-			}
+		if (goLeft)
+		{
+			force = force - gRight;
+		}
 
-			if (isCursorPressed(CURSOR_DOWN))
-			{
-				force = sub(force, gForward);
-			}
+		if (goRight)
+		{
+			force = force + gRight;
+		}
 
-			if (isCursorPressed(CURSOR_UP))
-			{
-				force = add(force, gForward);
-			}
+		if (goBackward)
+		{
+			force = force - gForward;
+		}
+
+		if (goForward)
+		{
+			force = force + gForward;
 		}
 	}
 

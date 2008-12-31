@@ -101,7 +101,7 @@ void Ball::reset()
 
 void Ball::push(const Vector3& direction)
 {
-	mPushDirection = norm(direction);
+	mPushDirection = direction.norm();
 }
 
 void Ball::jump()
@@ -115,7 +115,7 @@ void Ball::update(float interval)
 	{
 		animateBall(interval);
 	}
-	else if (mExplosion.update(interval, mVelocity, mPos))
+	else if (mExplosion.update(interval, mPos))
 	{
 		reset();
 	}
@@ -167,19 +167,13 @@ void Ball::animateBall(float interval)
 {
 	bool collision = false;
 
-	Vector3 normal(0.0f, 0.0f, 0.0f);
-
-	Vector3 ball;
-	Vector3 step;
-
-	mVelocity = add(mVelocity, scale(MOVE_FORCE / mMass * interval, mPushDirection));
+	mVelocity += (MOVE_FORCE / mMass * interval) * mPushDirection;
 	mVelocity.z -= GRAVITY * interval;
 
 	/* collision detection */
-
-	step = scale(interval, mVelocity);
-
-	ball = mPos + step;
+	Vector3 normal(0.0f, 0.0f, 0.0f);
+	Vector3 step = interval * mVelocity;
+	Vector3 ball = mPos + step;
 
 	/* check only fields near by the ball. check field under ball first!!! */
 	QuadList list = getFieldSphereIntersection(ball, BALL_RADIUS);
@@ -205,47 +199,46 @@ void Ball::animateBall(float interval)
 			float l = dist.len();
 
 			/* move = vector to move the ball out of quad */
-			Vector3 move = scale(-((mRadius - l) / l), dist);
+			Vector3 move = -((mRadius - l) / l) * dist;
 
 			/* some rotation for a better look */
-			Vector3 right = norm(cross(dir, step));
-			Vector3 forward = norm(cross(right, dir));
+			Vector3 right = (dir % step).norm();
+			Vector3 forward = (right % dir).norm();
 
-			mAngularRate =
-				scale(dot(sub(ball, mPos), forward) /
-						(2.0f * M_PI * mRadius) * 360.0f / interval, right);
+			float radian = ((ball - mPos) * forward) / mRadius;
+			mAngularRate = ((radian / interval) * 180.0f / M_PI) * right;
 
-			ball = add(ball, move);
+			ball += move;
 
-			normal = add(normal, move);
+			normal += move;
 			collision = true;
 		}
 	}
 
 	mPos = ball;
 
-	normal = norm(normal);
+	normal = normal.norm();
 
 	mHasBallHitGoal = false;
 
 	/* contact to surface? */
 	if (collision)
 	{
-		float vn = dot(mVelocity, normal);
-		Vector3 rebound = scale(-(1 + ELASTICITY) * vn, normal);
+		float vn = mVelocity * normal;
+		Vector3 rebound = (-(1 + ELASTICITY) * vn) * normal;
 
-		if (len(rebound) > 3.0f * JUMP_FORCE * interval)
+		if (rebound.len() > 3.0f * JUMP_FORCE * interval)
 		{
 			/* collision was to havy */
 			explodeBall();
 		}
 		else
 		{
-			mVelocity = add(mVelocity, rebound);
+			mVelocity += rebound;
 
 			if (mJump)
 			{
-				mVelocity = add(mVelocity, scale(JUMP_FORCE / mMass * interval, normal));
+				mVelocity += (JUMP_FORCE / mMass * interval) * normal;
 			}
 		}
 
@@ -262,9 +255,9 @@ void Ball::animateBall(float interval)
 	/***/
 
 	/* damping */
-	mVelocity = scale(DAMPING, mVelocity);
+	mVelocity *= DAMPING;
 
-	Quaternion rotation(len(mAngularRate) * interval, mAngularRate);
+	Quaternion rotation(mAngularRate.len() * interval, mAngularRate);
 	mOrientation = rotation ^ mOrientation;
 
 	/* falling to infinity */

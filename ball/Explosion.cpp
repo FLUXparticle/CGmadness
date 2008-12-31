@@ -34,9 +34,9 @@
 #define T1 1.0f
 #define T2 5.0f
 
-float randFloat(void)
+float randFloat()
 {
-	return ((float) rand() / RAND_MAX) * 2.0f- 1.0f;
+	return ((float) rand() / RAND_MAX) * 2.0f - 1.0f;
 }
 
 /*
@@ -60,14 +60,14 @@ void Explosion::init(const Vector3& startPos, const Vector3& startSpeed,
 
 		for (unsigned int j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
-			mid = add(mid, gBallVertices[v + j]);
+			mid += gBallVertices[v + j];
 		}
 
-		mid = scale(1.0f / LENGTH(gFragments[i].vertices), mid);
+		mid *= 1.0f / LENGTH(gFragments[i].vertices);
 
 		for (unsigned int j = 0; j < LENGTH(gFragments[i].vertices); j++)
 		{
-			gFragments[i].vertices[j] = sub(gBallVertices[v + j], mid);
+			gFragments[i].vertices[j] = gBallVertices[v + j] - mid;
 		}
 
 		gFragments[i].pos.x = 0.0f;
@@ -75,7 +75,7 @@ void Explosion::init(const Vector3& startPos, const Vector3& startSpeed,
 		gFragments[i].pos.z = 0.0f;
 
 		gFragments[i].offset = mid;
-		gFragments[i].speed = scale(200.0f, mid);
+		gFragments[i].speed = 200.0f * mid;
 
 		gFragments[i].rotation.x = 0.0f;
 		gFragments[i].rotation.y = 0.0f;
@@ -106,7 +106,7 @@ float smallestError(float x)
 /*
  * interpolate explosion's position to destination
  */
-bool Explosion::update(float interval, const Vector3& speed, Vector3& pos)
+bool Explosion::update(float interval, Vector3& pos)
 {
 	float t = gExplosionTime / gMaxExplosionTime;
 
@@ -115,34 +115,26 @@ bool Explosion::update(float interval, const Vector3& speed, Vector3& pos)
 	float b2 = t * t * t - 2 * t * t + t;
 	float b3 = t * t * t - t * t;
 
-	pos = scale(b0, gStartPos) + scale(b1, gEndPos) + scale(b2, gStartSpeed)
-			+ scale(b3, gEndSpeed);
+	pos = gStartPos * b0 + gEndPos * b1 + gStartSpeed * b2 + gEndSpeed * b3;
 
 	for (unsigned int i = 0; i < LENGTH(gFragments); i++)
 	{
 		Vector3 rotError;
 
 		/* position */
-		gFragments[i].pos.x = 0.0f;
-		gFragments[i].pos.y = 0.0f;
-		gFragments[i].pos.z = 0.0f;
-
-		gFragments[i].pos =add(gFragments[i].pos, scale(b0 + b1,
-				gFragments[i].offset));
-		gFragments[i].pos = add(gFragments[i].pos, scale(b2, gFragments[i].speed));
+		gFragments[i].pos = gFragments[i].offset * (b0 + b1);
+		gFragments[i].pos += gFragments[i].speed * b2;
 
 		/* rotation */
-		gFragments[i].rotSpeed =sub(gFragments[i].rotSpeed,
-				scale(T1 * interval, gFragments[i].rotSpeed));
+		gFragments[i].rotSpeed -= gFragments[i].rotSpeed * (T1 * interval);
 
-		rotError = sub(gFragments[i].rotSpeed, gFragments[i].rotation);
+		rotError = gFragments[i].rotSpeed - gFragments[i].rotation;
 
 		rotError.x = smallestError(rotError.x);
 		rotError.y = smallestError(rotError.y);
 		rotError.z = smallestError(rotError.z);
 
-		gFragments[i].rotation =add(gFragments[i].rotation,
-				scale(T2 * interval, rotError));
+		gFragments[i].rotation += rotError * (T2 * interval);
 	}
 
 	gExplosionTime += interval;

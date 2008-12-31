@@ -55,12 +55,12 @@ Vector3 Vector3::norm() const
 	return b;
 }
 
-bool Vector3::operator==(const Vector3& other) const
+bool Vector3::operator== (const Vector3& other) const
 {
 	return x == other.x && y == other.y && z == other.z;
 }
 
-Vector3 Vector3::operator*(float s) const
+Vector3 Vector3::operator* (float s) const
 {
 	Vector3 b;
 
@@ -71,7 +71,7 @@ Vector3 Vector3::operator*(float s) const
 	return b;
 }
 
-Vector3 Vector3::operator/(float s) const
+Vector3 Vector3::operator/ (float s) const
 {
 	Vector3 b;
 
@@ -82,7 +82,7 @@ Vector3 Vector3::operator/(float s) const
 	return b;
 }
 
-Vector3 Vector3::operator+(const Vector3& b) const
+Vector3 Vector3::operator+ (const Vector3& b) const
 {
 	Vector3 c;
 
@@ -93,7 +93,7 @@ Vector3 Vector3::operator+(const Vector3& b) const
 	return c;
 }
 
-Vector3 Vector3::operator-(const Vector3& b) const
+Vector3 Vector3::operator- (const Vector3& b) const
 {
 	Vector3 c;
 
@@ -104,7 +104,7 @@ Vector3 Vector3::operator-(const Vector3& b) const
 	return c;
 }
 
-Vector3 Vector3::operator-() const
+Vector3 Vector3::operator- () const
 {
 	Vector3 b;
 
@@ -115,12 +115,12 @@ Vector3 Vector3::operator-() const
 	return b;
 }
 
-float Vector3::operator*(const Vector3& b) const
+float Vector3::operator* (const Vector3& b) const
 {
 	return x * b.x + y * b.y + z * b.z;
 }
 
-Vector3 Vector3::operator^(const Vector3& b) const
+Vector3 Vector3::operator% (const Vector3& b) const
 {
 	Vector3 c;
 
@@ -131,9 +131,23 @@ Vector3 Vector3::operator^(const Vector3& b) const
 	return c;
 }
 
-void Vector3::operator+=(const Vector3& b)
+void Vector3::operator+= (const Vector3& b)
 {
 	x += b.x;
 	y += b.y;
 	z += b.z;
+}
+
+void Vector3::operator-= (const Vector3& b)
+{
+	x -= b.x;
+	y -= b.y;
+	z -= b.z;
+}
+
+void Vector3::operator*= (float s)
+{
+	x *= s;
+	y *= s;
+	z *= s;
 }

@@ -81,7 +81,7 @@ void BallObject::subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 			Vector3 texCoordShader;
 			Vector3 color;
 
-			texCoordShader = norm(sub(tri[i], hole));
+			texCoordShader = (tri[i] - hole).norm();
 
 			texCoordDefault.x = 0.5f * atan2(tri[i].x, tri[i].y) / M_PI+ 0.5f;
 			texCoordDefault.y = asin(tri[i].z) / M_PI+ 0.5f;
@@ -112,7 +112,7 @@ void BallObject::subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 
 		for (i = 0; i < 3; i++)
 		{
-			mid[i] = norm(scale(0.5f, add(tri[i], tri[(i + 1) % 3])));
+			mid[i] = (0.5f * (tri[i] + tri[(i + 1) % 3])).norm();
 		}
 
 		for (i = 0; i < 3; i++)
@@ -159,12 +159,12 @@ void BallObject::init()
 		for (unsigned int j = 0; j < LENGTH(gIsokaederIndices[i]); j++)
 		{
 			tri[j] = gIsokaederVertices[gIsokaederIndices[i][j]];
-			mid = add(mid, tri[j]);
+			mid += tri[j];
 		}
 
-		mid = scale(1.0f / 3.0f, mid);
+		mid *= 1.0f / 3.0f;
 
-		subdiv(SUB_DIVS_DEPTH, tri, tri[0], 1.0f / len(sub(tri[0], mid)));
+		subdiv(SUB_DIVS_DEPTH, tri, tri[0], 1.0f / (tri[0] - mid).len());
 	}
 }
 

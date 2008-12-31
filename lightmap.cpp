@@ -41,14 +41,14 @@ float approximationSquare(const Vector3 position, const Vector3 normal,
 	float d1;
 	float d2;
 
-	d = sub(square.mid, position);
+	d = square.mid - position;
 
-	r = len(d);
+	r = d.len();
 
-	d = scale(1.0f / r, d);
+	d *= 1.0f / r;
 
-	d1 = dot(d, normal);
-	d2 = dot(d, square.normal);
+	d1 = d * normal;
+	d2 = d * square.normal;
 
 	if (d1 <= 0.0f || d2 <= 0.0f)
 	{
@@ -61,7 +61,7 @@ float approximationSquare(const Vector3 position, const Vector3 normal,
 float approximation(const Vector3& position, const Vector3& normal)
 {
 	Vector3 z(0.0f, 0.0f, 1.0f);
-	float light = 1.0f - acos(dot(normal, z)) / M_PI;
+	float light = 1.0f - acos(normal * z) / M_PI;
 
 	KdSphereIntersection iter(*sgLevel.kdLevelTree, position - sgLevel.origin, 5.5f);
 	KdList list(iter);
@@ -74,7 +74,7 @@ float approximation(const Vector3& position, const Vector3& normal)
 		bool check = false;
 		for (int j = 0; j < 4; j++)
 		{
-			if (dot(square.vertices[j] - position, normal) > 0.0f)
+			if ((square.vertices[j] - position) * normal > 0.0f)
 			{
 				check = true;
 				break;

@@ -64,14 +64,10 @@ static Orientation orientationSide(const Block& block, int side)
 
 	Orientation orientation;
 
-	orientation.origin =
-		add(Vector3(block.x + sgEdgeX[side], block.y + sgEdgeY[side], face.bottom),
-				sgLevel.origin);
-	orientation.vx =
-		Vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
+	orientation.origin = sgLevel.origin + Vector3(block.x + sgEdgeX[side], block.y + sgEdgeY[side], face.bottom);
+	orientation.vx = Vector3(sgEdgeX[next] - sgEdgeX[side], sgEdgeY[next] - sgEdgeY[side], 0.0f);
 	orientation.vy = Vector3(0.0f, 0.0f, 1.0f);
-	orientation.normal =
-		Vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);
+	orientation.normal = Vector3(sgEdgeX[side] - sgEdgeX[prev], sgEdgeY[side] - sgEdgeY[prev], 0.0f);
 
 	return orientation;
 }
