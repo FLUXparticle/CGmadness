@@ -20,7 +20,7 @@
 #ifndef features_hpp
 #define features_hpp
 
-#include "shader.hpp"
+#include "Shader.hpp"
 
 extern Shader* sgBallShadowShader;
 extern Shader* sgGolfballShader;

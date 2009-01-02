@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef shader_hpp
-#define shader_hpp
+#ifndef Shader_hpp
+#define Shader_hpp
 
 #include "math/Vector3.hpp"
 

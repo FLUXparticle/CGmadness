@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "shader.hpp"
+#include "Shader.hpp"
 
 #include "files.hpp"
 
@@ -55,7 +55,7 @@ static void printProgramInfoLog(GLuint obj, const char* text)
 
 	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
 
-	if (infologLength > 0)
+	if (infologLength > 1)
 	{
 		char* infoLog = new char[infologLength];
 
