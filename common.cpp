@@ -159,7 +159,7 @@ void updateLightMapIdle(int step)
 
 void updateLightMap()
 {
-	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
+	int cntSteps = gSubAtlas.size();
 
 	printf("calculating lightmaps...\n");
  	resetProgress();
