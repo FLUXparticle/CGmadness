@@ -157,14 +157,19 @@ void updateLightMapIdle(int step)
 	genAmbientOcclusionTexture(gSubAtlas[step]);
 }
 
+int lightMapSteps()
+{
+	return gSubAtlas.size();
+}
+
 void updateLightMap()
 {
-	int cntSteps = gSubAtlas.size();
+	int cntSteps = lightMapSteps();
 
 	printf("calculating lightmaps...\n");
  	resetProgress();
 
-	for (int step = 0; step < cntSteps;)
+	for (int step = 0; step < cntSteps; )
 	{
 		updateLightMapIdle(step);
 

@@ -109,9 +109,7 @@ void Editor::lightMapsReady()
 
 void updateLightMapWithProgressBar()
 {
-	int cntSteps = 5 * sgLevel.size.x * sgLevel.size.y;
-
-	startIdle(cntSteps, updateLightMapIdle);
+	startIdle(lightMapSteps(), updateLightMapIdle);
 }
 
 void Editor::saveLevel()
