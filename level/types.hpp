@@ -60,8 +60,7 @@ struct Level
 	FieldCoord start;
 	FieldCoord finish;
 	FieldCoord size;
-	unsigned int borderTexture;
-	unsigned int colorMap;
+	unsigned int plateTexture;
 	unsigned int lightMap;
 
 	const char* filename;

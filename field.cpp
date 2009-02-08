@@ -497,7 +497,7 @@ void drawGameField(bool ballReflection)
 
 	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
 
 	if (useBallShadow())
 	{

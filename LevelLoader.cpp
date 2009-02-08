@@ -58,9 +58,9 @@ void LevelLoader::loadLevelByID(int id)
 		{
 			gLoadedLevel = id;
 
-			if (sgLevel.borderTexture == 0)
+			if (sgLevel.plateTexture == 0)
 			{
-				sgLevel.borderTexture = loadTexture("data/plate.tga", true);
+				sgLevel.plateTexture = loadTexture("data/plate.tga", true);
 			}
 
 			sgCurLevelname =

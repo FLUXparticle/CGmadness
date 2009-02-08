@@ -530,7 +530,7 @@ void drawEditorField(bool showCursor)
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sgLevel.borderTexture);
+	glBindTexture(GL_TEXTURE_2D, sgLevel.plateTexture);
 
 	KdPaintersAlgorithmReverse iter(*sgLevel.kdLevelTree, sgCamera);
 	KdList list(iter);
