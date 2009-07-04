@@ -1,0 +1,9 @@
+<project name="CG Madness" default="app">
+  <target name="app">
+		  <zip destfile="${zip}">
+				<zipfileset dir="app" prefix="${app}"/>
+				<zipfileset file="${exec}" filemode="755" prefix="${app}/Contents/MacOS"/>
+				<zipfileset dir="." includes="${res}" prefix="${app}/Contents/Resources"/>
+			</zip>
+  </target>
+</project>

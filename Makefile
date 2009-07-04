@@ -35,6 +35,7 @@ DEPS  := .deps
 
 PWD := $(notdir $(shell pwd))
 PROJECT := cgmadness
+NAME := CG Madness
 SHADER := golfball ballshadow
 
 GL_H := <GL/glew.h>
@@ -123,6 +124,7 @@ BASENAME := $(PROJECT)
 SRC_TAR := $(BASENAME)-src.tar.bz2
 TAR := $(BASENAME).tar.bz2
 ZIP := $(BASENAME).zip
+APP := $(NAME).app
 CMD := $(wildcard *.cmd)
 CLEAN += $(TAR) $(SRC_TAR) $(ZIP)
 
@@ -143,9 +145,15 @@ $(TAR): $(EXEC) $(DATA) $(DOC)
 .PHONY: zip
 zip: $(ZIP)
 
+ifneq ($(findstring apple-darwin,$(MACHINE)),)
+$(ZIP): $(EXEC) $(DATA) $(DOC)
+	@echo "  APP $@"
+	@ant -Dzip="$(ZIP)" -Dapp="$(APP)" -Dexec="$(word 1,$(EXEC))" -Dres="$(DATA) $(DOC)" > /dev/null
+else
 $(ZIP): $(EXEC) $(CMD) $(DATA) $(DLL) $(DOC)
 	@echo "  ZIP $@"
 	@zip "$@" $^ > /dev/null 2>&1
+endif
 
 # clean up
 .PHONY: clean
