@@ -59,11 +59,10 @@ static void framerate()
 {
 	static int timebase = 0;
 	static int frameCount = 0;
-	static int time = 0;
 
 	frameCount++;
 
-	time = glutGet(GLUT_ELAPSED_TIME);
+	int time = glutGet(GLUT_ELAPSED_TIME);
 
 	if (time - timebase > 1000)
 	{
