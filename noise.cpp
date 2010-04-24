@@ -21,8 +21,15 @@
 
 #include "Color.hpp"
 
+#include "level/io.hpp"
+#include "level/crc32.hpp"
+#include "level/level.hpp"
+
+#include "common.hpp"
+
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cmath>
 
 #define MAP_SIZE_X 50
@@ -157,6 +164,17 @@ int main(int argc, char* argv[])
 
 	genNoiseTexture(map, origin, vx, vy);
 
+	sgLevel.filename = "levels/00_noise.cgm";
+
+	/* read attributes */
+	sgLevel.size.x = MAP_SIZE_X;
+	sgLevel.size.y = MAP_SIZE_X;
+
+	strcpy(sgLevel.author, "noise");
+
+	initLevel();
+
+	bool first = true;
 	for (int y = 0; y < MAP_SIZE_Y; y++)
 	{
 		for (int x = 0; x < MAP_SIZE_X; x++)
@@ -165,15 +183,48 @@ int main(int argc, char* argv[])
 			int height = map.data[x][y];
 			if (height > water)
 			{
-				printf("%3d", height - water);
-			}
-			else
-			{
-				printf("   ");
+				if (first)
+				{
+					sgLevel.start.x = x;
+					sgLevel.start.y = y;
+					first = false;
+				}
+
+				sgLevel.finish.x = x;
+				sgLevel.finish.y = y;
+
+				KdCell::Range range;
+
+				{
+					Block b;
+
+					b.x = x;
+					b.y = y;
+					b.z = height - water;
+					b.dzx = 0;
+					b.dzy = 0;
+					b.dirty = true;
+
+					range.start = sgLevel.blocks.insert(b);
+				}
+				range.end = range.start + 1;
+
+				sgLevel.kdLevelTree->get(x, y) = range;
 			}
 		}
-		printf("\n");
 	}
+
+	sgLevel.crc32 = getCRC32();
+
+	initCommon();
+
+	updateLightMap();
+
+	sgLevel.cntScoreCols = 0;
+
+	sgLevel.saved = false;
+
+	saveLevelToFile(true);
 
 	return 0;
 }
