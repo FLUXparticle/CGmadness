@@ -19,6 +19,8 @@
 
 #include "ballcamera.hpp"
 
+#include "level/types.hpp"
+
 #include "hw/features.hpp"
 #include "hw/keyboard.hpp"
 #include "graphics/camera.hpp"
@@ -165,10 +167,16 @@ void updateBall(Ball& ball, float interval)
 		/* ball controls */
 		if (gIsMouseControl)
 		{
-			goLeft = isKeyPressed('a');
-			goRight = isKeyPressed('d');
-			goBackward = isKeyPressed('s');
-			goForward = isKeyPressed('w');
+			FieldCoord field;
+			field = sgLevel.finish;
+
+			Vector3 dest = sgLevel.origin + Vector3(field.x + 0.5f, field.y + 0.5f, 0.0f);
+			force = 0.15 * (dest - ball.pos()) + 0.1 * (-ball.velocity());
+			force.z = 0.0f;
+			if (force.len() > 1)
+			{
+				force = force.norm();
+			}
 		}
 		else
 		{

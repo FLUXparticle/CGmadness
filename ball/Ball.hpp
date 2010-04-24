@@ -41,6 +41,7 @@ public:
   virtual ~Ball();
 
   const Vector3& pos() const;
+  const Vector3& velocity() const;
   bool hasHitGoal() const;
   bool isInPieces() const;
 
@@ -88,6 +89,11 @@ protected:
 inline const Vector3& Ball::pos() const
 {
 	return mPos;
+}
+
+inline const Vector3& Ball::velocity() const
+{
+	return mVelocity;
 }
 
 inline bool Ball::hasHitGoal() const
