@@ -8,7 +8,7 @@
 class WorldGraph: public NodeGraph
 {
 public:
-	WorldGraph(const World& world);
+	WorldGraph(const World& world, NodeID destination);
 	virtual ~WorldGraph();
 
 	unsigned int size() const;
@@ -18,7 +18,9 @@ public:
 
 private:
 	const World& mWorld;
+	NodeID mDestination;
 
+	std::list<EdgeID> edges(NodeID curNode, NodeID dest) const;
 	void addEdge(std::list<EdgeID>& list, EdgeID edge) const;
 
 };

@@ -31,13 +31,14 @@ int main(int argc, char* argv[])
 	NoiseWorld noiseworld;
 	World& world = noiseworld;
 
-	WorldGraph graph(world);
+	NodeID origin(0, 0);
+	NodeID destination(WORLD_SIZE_X - 1, WORLD_SIZE_X - 1);
+
+	WorldGraph graph(world, destination);
 	AStarHeuristik heuristic;
 
 	NodeAStar pathfinder(graph, heuristic);
 
-	NodeID origin(0, 0);
-	NodeID destination(WORLD_SIZE_X - 1, WORLD_SIZE_X - 1);
 	std::list<NodeID> route;
 	pathfinder.execute(origin, destination, route);
 

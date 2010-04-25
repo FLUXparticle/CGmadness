@@ -27,6 +27,12 @@ T sqr(T x)
 }
 
 template <class T>
+T sign(T x)
+{
+	return (x > 0) ? 1 : (x < 0) ? -1 : 0;
+}
+
+template <class T>
 T min(T a, T b)
 {
 	return (a < b) ? a : b;
