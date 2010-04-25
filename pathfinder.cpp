@@ -20,7 +20,7 @@
 #include "path/NoiseWorld.hpp"
 #include "path/NodeAStar.hpp"
 #include "path/WorldGraph.hpp"
-#include "path/DijkstraHeuristic.hpp"
+#include "path/AStarHeuristik.hpp"
 
 #include "macros.hpp"
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	World& world = noiseworld;
 
 	WorldGraph graph(world);
-	DijkstraHeuristic heuristic;
+	AStarHeuristik heuristic;
 
 	NodeAStar pathfinder(graph, heuristic);
 
@@ -49,6 +49,8 @@ int main(int argc, char* argv[])
 	}
 
 	map.put(origin, true);
+
+	printf("expanded: %d\n", pathfinder.expanded());
 
 	for (int y = 0; y < WORLD_SIZE_Y; y++)
 	{
