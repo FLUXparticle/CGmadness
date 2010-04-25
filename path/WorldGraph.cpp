@@ -1,8 +1,13 @@
 #include "WorldGraph.hpp"
 
+#include "NodeMap.hpp"
+
 #include "functions.hpp"
 #include "macros.hpp"
 
+#include <queue>
+
+#include <cstdio>
 #include <cstdlib>
 
 WorldGraph::WorldGraph(const World& world, NodeID destination):
@@ -103,12 +108,14 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 
 	bool free = true;
 	std::list<NodeID> list = gbham(curNode.coord.x, curNode.coord.y, dest.coord.x, dest.coord.y);
+	NodeID hit(dest);
 	FOREACH(list, iter)
 	{
 		NodeID nid = *iter;
 		if (mWorld.getHeight(nid.coord.x, nid.coord.y) != 0)
 		{
 			free = false;
+			hit = nid;
 			break;
 		}
 	}
@@ -120,6 +127,50 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 		return result;
 	}
 
+	NodeMap<bool> closedList;
+	std::list<NodeID> border;
+	std::list<NodeID> island;
+
+	island.push_back(hit);
+	closedList.put(hit, true);
+	while (!island.empty())
+	{
+		NodeID nid = island.front();
+		island.pop_front();
+
+		int x = nid.coord.x;
+		int y = nid.coord.y;
+		if (mWorld.getHeight(x, y) == 0)
+		{
+			border.push_back(nid);
+			continue;
+		}
+
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				int nx = x + dx;
+				int ny = y + dy;
+				NodeID nnid(nx, ny);
+
+				if (nx >= 0 && ny >= 0 && nx < WORLD_SIZE_X && ny < WORLD_SIZE_Y && !closedList.exists(nnid))
+				{
+					island.push_back(nnid);
+					closedList.put(nnid, true);
+				}
+			}
+		}
+	}
+
+	FOREACH(border, iter)
+	{
+		NodeID nid = *iter;
+		EdgeID eid(curNode, nid);
+		result.push_back(eid);
+	}
+
+#if 0
 	int x = curNode.coord.x;
 	int y = curNode.coord.y;
 
@@ -146,6 +197,7 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 		EdgeID eid(curNode, NodeID(x, y + 1));
 		addEdge(result, eid);
 	}
+#endif
 
 	return result;
 }
