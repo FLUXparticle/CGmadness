@@ -19,6 +19,8 @@ public:
 private:
 	const World& mWorld;
 
+	void addEdge(std::list<EdgeID>& list, EdgeID edge) const;
+
 };
 
 #endif
