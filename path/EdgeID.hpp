@@ -1,13 +1,14 @@
 #ifndef EdgeID_hpp
 #define EdgeID_hpp
 
-class EdgeID
+#include "NodeID.hpp"
+
+struct EdgeID
 {
-public:
-	EdgeID();
+	EdgeID(NodeID a, NodeID b);
 
-private:
-
+	NodeID a;
+	NodeID b;
 };
 
 #endif

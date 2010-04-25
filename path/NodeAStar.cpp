@@ -23,12 +23,12 @@ bool NodeAStar::execute(NodeID origin, NodeID destination, std::list<NodeID>& ro
 {
     BinaryHeap queue(mGraph.size());
     NodeMap<Cost> dist;
-    dist[origin] = 0;
+    dist.put(origin, 0);
     queue.insert(dist[origin], origin);
 
     while (queue.size() > 0)
     {
-        NodeID curNode = queue.removeFirst();
+        NodeID curNode = NodeID(queue.removeFirst());
 
         if (curNode == destination)
         {
@@ -43,7 +43,8 @@ bool NodeAStar::execute(NodeID origin, NodeID destination, std::list<NodeID>& ro
 
         mExpanded++;
 
-        FOREACH(mGraph.edges(curNode), iter)
+        std::list<EdgeID> edges = mGraph.edges(curNode);
+        FOREACH(edges, iter)
         {
             EdgeID eid = *iter;
             NodeID neighborNode = mGraph.followEdge(curNode, eid);
@@ -52,8 +53,8 @@ bool NodeAStar::execute(NodeID origin, NodeID destination, std::list<NodeID>& ro
 
             if (!dist.exists(neighborNode) || cost < dist[neighborNode])
             {
-                dist[neighborNode] = cost;
-                mPrevious[neighborNode] = eid;
+                dist.put(neighborNode, cost);
+                mPrevious.put(neighborNode, eid);
                 queue.update(neighborNode, key);
             }
         }

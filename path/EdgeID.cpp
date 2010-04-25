@@ -1,6 +1,8 @@
 #include "EdgeID.hpp"
 
-EdgeID::EdgeID()
+EdgeID::EdgeID(NodeID a, NodeID b):
+	a(a),
+	b(b)
 {
 	// empty
 }

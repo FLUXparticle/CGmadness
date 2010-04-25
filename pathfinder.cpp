@@ -18,8 +18,11 @@
  */
 
 #include "path/NoiseWorld.hpp"
-
 #include "path/NodeAStar.hpp"
+#include "path/WorldGraph.hpp"
+#include "path/DijkstraHeuristic.hpp"
+
+#include "macros.hpp"
 
 #include <cstdio>
 
@@ -28,14 +31,38 @@ int main(int argc, char* argv[])
 	NoiseWorld noiseworld;
 	World& world = noiseworld;
 
+	WorldGraph graph(world);
+	DijkstraHeuristic heuristic;
+
+	NodeAStar pathfinder(graph, heuristic);
+
+	NodeID origin(0, 0);
+	NodeID destination(WORLD_SIZE_X - 1, WORLD_SIZE_X - 1);
+	std::list<NodeID> route;
+	pathfinder.execute(origin, destination, route);
+
+	NodeMap<bool> map;
+	FOREACH(route, iter)
+	{
+		const NodeID& nid = *iter;
+		map.put(nid, true);
+	}
+
+	map.put(origin, true);
+
 	for (int y = 0; y < WORLD_SIZE_Y; y++)
 	{
 		for (int x = 0; x < WORLD_SIZE_X; x++)
 		{
+			NodeID nid(x, y);
 			int height = world.getHeight(x, y);
 			if (height > 0)
 			{
-				printf("%3d", height);
+				printf(" %d ", height);
+			}
+			else if (map.exists(nid))
+			{
+				printf(" # ");
 			}
 			else
 			{

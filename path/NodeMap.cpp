@@ -23,16 +23,17 @@ NodeMap<T>::~NodeMap()
 template<class T>
 bool NodeMap<T>::exists(const NodeID& nid) const
 {
-	return mData[nid];
+	return mData[nid] != NULL;
 }
 
 template<class T>
-T& NodeMap<T>::operator[](const NodeID& nid)
+void NodeMap<T>::put(const NodeID& nid, const T& value)
 {
-	if (!mData[nid])
-	{
-		mData[nid] = new T();
-	}
+	mData[nid] = new T(value);
+}
 
+template<class T>
+const T& NodeMap<T>::operator[](const NodeID& nid) const
+{
 	return *mData[nid];
 }

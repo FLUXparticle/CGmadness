@@ -13,7 +13,8 @@ public:
 	~NodeMap();
 
 	bool exists(const NodeID& nid) const;
-	T& operator[](const NodeID& nid);
+	void put(const NodeID& nid, const T&);
+	const T& operator[](const NodeID& nid) const;
 
 private:
 	T* mData[WORLD_SIZE];
