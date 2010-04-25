@@ -19,6 +19,8 @@
 
 #include "path/NoiseWorld.hpp"
 
+#include "path/NodeAStar.hpp"
+
 #include <cstdio>
 
 int main(int argc, char* argv[])

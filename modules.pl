@@ -109,8 +109,7 @@ for $templatefile (@templates) {
 
 	($file1) = grep /^(.*\/)?$classtemplate.hpp$/,@source;
 	if (!$file1) {
-		print STDERR "classtemplate: $classtemplate\n";
-		print STDERR "files: @source\n";
+		print STDERR "cannot find '$classtemplate.hpp'\n";
 		exit 1;
 	}
 	$file1 =~ s/\.hpp$/\.cpp/;
@@ -124,7 +123,21 @@ for $templatefile (@templates) {
 	local $include = "-include $file1";
 	local @elsefiles = &scan($file1);
 
-	if (defined $file2) {
+	($file2) = grep /^(.*\/)?$templateparam.hpp$/,@source;
+	if (!$file2) {
+		foreach $filename (@source) {
+			open(FILE, $filename);
+			@lines = <FILE>;
+			close(FILE);
+
+			if (grep /\b(typedef\b.*|struct\s+)\b$templateparam\b/,@lines) {
+				$file2 = $filename;
+				last;
+			}
+		}
+	}
+
+	if ($file2) {
 		$include .= " -include $file2";
 		@elsefiles = ($file2, &scan($file2, @elsefiles));
 	}
