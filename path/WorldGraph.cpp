@@ -133,6 +133,7 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 		{
 			EdgeID eid(curNode, NodeID(next.coord.x, next.coord.y));
 			result.push_back(eid);
+			printf("(%d, %d) -> (%d, %d)\n", curNode.coord.x, curNode.coord.y, next.coord.x, next.coord.y);
 			continue;
 		}
 
