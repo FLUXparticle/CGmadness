@@ -21,6 +21,7 @@ private:
 	NodeID mDestination;
 
 	std::list<EdgeID> edges(NodeID curNode, NodeID dest) const;
+	void findBorder(NodeID hit, std::list<NodeID>& border) const;
 	void addEdge(std::list<EdgeID>& list, EdgeID edge) const;
 
 };

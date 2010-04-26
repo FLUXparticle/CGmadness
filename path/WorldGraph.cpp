@@ -105,10 +105,12 @@ static std::list<NodeID> gbham(int xstart, int ystart, int xend, int yend)
 
 std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 {
+	NodeMap<bool> closedList;
 	std::list<EdgeID> result;
 
 	std::list<NodeID> candidates;
 	candidates.push_back(dest);
+	closedList.put(dest, true);
 
 	while (!candidates.empty())
 	{
@@ -117,7 +119,7 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 
 		bool free = true;
 		std::list<NodeID> list = gbham(curNode.coord.x, curNode.coord.y, next.coord.x, next.coord.y);
-		NodeID hit(next);
+		NodeID hit = next;
 		FOREACH(list, iter)
 		{
 			NodeID nid = *iter;
@@ -137,41 +139,8 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 			continue;
 		}
 
-		NodeMap<bool> closedList;
 		std::list<NodeID> border;
-		std::list<NodeID> island;
-
-		island.push_back(hit);
-		closedList.put(hit, true);
-		while (!island.empty())
-		{
-			NodeID nid = island.front();
-			island.pop_front();
-
-			int x = nid.coord.x;
-			int y = nid.coord.y;
-			if (mWorld.getHeight(x, y) == 0)
-			{
-				border.push_back(nid);
-				continue;
-			}
-
-			for (int dx = -1; dx <= 1; dx++)
-			{
-				for (int dy = -1; dy <= 1; dy++)
-				{
-					int nx = x + dx;
-					int ny = y + dy;
-					NodeID nnid(nx, ny);
-
-					if (nx >= 0 && ny >= 0 && nx < WORLD_SIZE_X && ny < WORLD_SIZE_Y && !closedList.exists(nnid))
-					{
-						island.push_back(nnid);
-						closedList.put(nnid, true);
-					}
-				}
-			}
-		}
+		findBorder(hit, border);
 
 		double minAngle = 0.0;
 		double maxAngle = 0.0;
@@ -204,11 +173,59 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 			}
 		}
 
-		candidates.push_back(*minNid);
-		candidates.push_back(*maxNid);
+		if (!closedList.exists(*minNid))
+		{
+			candidates.push_back(*minNid);
+			closedList.put(*minNid, true);
+		}
+		if (!closedList.exists(*maxNid))
+		{
+			candidates.push_back(*maxNid);
+			closedList.put(*maxNid, true);
+		}
 	}
 
+	printf("=====\n");
+
 	return result;
+}
+
+void WorldGraph::findBorder(NodeID hit, std::list<NodeID>& border) const
+{
+	NodeMap<bool> closedList;
+	std::list<NodeID> island;
+
+	island.push_back(hit);
+	closedList.put(hit, true);
+	while (!island.empty())
+	{
+		NodeID nid = island.front();
+		island.pop_front();
+
+		int x = nid.coord.x;
+		int y = nid.coord.y;
+		if (mWorld.getHeight(x, y) == 0)
+		{
+			border.push_back(nid);
+			continue;
+		}
+
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				int nx = x + dx;
+				int ny = y + dy;
+				NodeID nnid(nx, ny);
+
+				if (nx >= 0 && ny >= 0 && nx < WORLD_SIZE_X && ny < WORLD_SIZE_Y && !closedList.exists(nnid))
+				{
+					island.push_back(nnid);
+					closedList.put(nnid, true);
+				}
+			}
+		}
+	}
 }
 
 void WorldGraph::addEdge(std::list<EdgeID>& list, EdgeID edge) const
