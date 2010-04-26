@@ -9,6 +9,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 
 WorldGraph::WorldGraph(const World& world, NodeID destination):
 	mWorld(world),
@@ -106,98 +107,105 @@ std::list<EdgeID> WorldGraph::edges(NodeID curNode, NodeID dest) const
 {
 	std::list<EdgeID> result;
 
-	bool free = true;
-	std::list<NodeID> list = gbham(curNode.coord.x, curNode.coord.y, dest.coord.x, dest.coord.y);
-	NodeID hit(dest);
-	FOREACH(list, iter)
+	std::list<NodeID> candidates;
+	candidates.push_back(dest);
+
+	while (!candidates.empty())
 	{
-		NodeID nid = *iter;
-		if (mWorld.getHeight(nid.coord.x, nid.coord.y) != 0)
+		NodeID next = candidates.front();
+		candidates.pop_front();
+
+		bool free = true;
+		std::list<NodeID> list = gbham(curNode.coord.x, curNode.coord.y, next.coord.x, next.coord.y);
+		NodeID hit(next);
+		FOREACH(list, iter)
 		{
-			free = false;
-			hit = nid;
-			break;
+			NodeID nid = *iter;
+			if (mWorld.getHeight(nid.coord.x, nid.coord.y) != 0)
+			{
+				free = false;
+				hit = nid;
+				break;
+			}
 		}
-	}
 
-	if (free)
-	{
-		EdgeID eid(curNode, NodeID(dest.coord.x, dest.coord.y));
-		result.push_back(eid);
-		return result;
-	}
-
-	NodeMap<bool> closedList;
-	std::list<NodeID> border;
-	std::list<NodeID> island;
-
-	island.push_back(hit);
-	closedList.put(hit, true);
-	while (!island.empty())
-	{
-		NodeID nid = island.front();
-		island.pop_front();
-
-		int x = nid.coord.x;
-		int y = nid.coord.y;
-		if (mWorld.getHeight(x, y) == 0)
+		if (free)
 		{
-			border.push_back(nid);
+			EdgeID eid(curNode, NodeID(next.coord.x, next.coord.y));
+			result.push_back(eid);
 			continue;
 		}
 
-		for (int dx = -1; dx <= 1; dx++)
-		{
-			for (int dy = -1; dy <= 1; dy++)
-			{
-				int nx = x + dx;
-				int ny = y + dy;
-				NodeID nnid(nx, ny);
+		NodeMap<bool> closedList;
+		std::list<NodeID> border;
+		std::list<NodeID> island;
 
-				if (nx >= 0 && ny >= 0 && nx < WORLD_SIZE_X && ny < WORLD_SIZE_Y && !closedList.exists(nnid))
+		island.push_back(hit);
+		closedList.put(hit, true);
+		while (!island.empty())
+		{
+			NodeID nid = island.front();
+			island.pop_front();
+
+			int x = nid.coord.x;
+			int y = nid.coord.y;
+			if (mWorld.getHeight(x, y) == 0)
+			{
+				border.push_back(nid);
+				continue;
+			}
+
+			for (int dx = -1; dx <= 1; dx++)
+			{
+				for (int dy = -1; dy <= 1; dy++)
 				{
-					island.push_back(nnid);
-					closedList.put(nnid, true);
+					int nx = x + dx;
+					int ny = y + dy;
+					NodeID nnid(nx, ny);
+
+					if (nx >= 0 && ny >= 0 && nx < WORLD_SIZE_X && ny < WORLD_SIZE_Y && !closedList.exists(nnid))
+					{
+						island.push_back(nnid);
+						closedList.put(nnid, true);
+					}
 				}
 			}
 		}
-	}
 
-	FOREACH(border, iter)
-	{
-		NodeID nid = *iter;
-		EdgeID eid(curNode, nid);
-		result.push_back(eid);
-	}
+		double minAngle = 0.0;
+		double maxAngle = 0.0;
+		const NodeID* minNid = NULL;
+		const NodeID* maxNid = NULL;
+		int ax = next.coord.x - curNode.coord.x;
+		int ay = next.coord.y - curNode.coord.y;
 
-#if 0
-	int x = curNode.coord.x;
-	int y = curNode.coord.y;
+		FOREACH(border, iter)
+		{
+			const NodeID& nid = *iter;
 
-	if (x > 0)
-	{
-		EdgeID eid(curNode, NodeID(x - 1, y));
-		addEdge(result, eid);
-	}
+			int bx = nid.coord.x - curNode.coord.x;
+			int by = nid.coord.y - curNode.coord.y;
 
-	if (y > 0)
-	{
-		EdgeID eid(curNode, NodeID(x, y - 1));
-		addEdge(result, eid);
-	}
+			int cz = ax * by - ay * bx;
 
-	if (x < WORLD_SIZE_X - 1)
-	{
-		EdgeID eid(curNode, NodeID(x + 1, y));
-		addEdge(result, eid);
-	}
+			double angle = cz / sqrt(sqr(bx) + sqr(by));
 
-	if (y < WORLD_SIZE_Y - 1)
-	{
-		EdgeID eid(curNode, NodeID(x, y + 1));
-		addEdge(result, eid);
+			if (angle <= minAngle)
+			{
+				minAngle = angle;
+				minNid = &nid;
+			}
+
+			if (angle >= maxAngle)
+			{
+				maxAngle = angle;
+				maxNid = &nid;
+			}
+		}
+
+		candidates.push_back(*minNid);
+		candidates.push_back(*maxNid);
 	}
-#endif
 
 	return result;
 }
