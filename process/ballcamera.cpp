@@ -26,6 +26,11 @@
 #include "graphics/camera.hpp"
 #include "graphics/callback.hpp"
 
+#include "path/NoiseWorld.hpp"
+#include "path/NodeAStar.hpp"
+#include "path/WorldGraph.hpp"
+#include "path/AStarHeuristik.hpp"
+
 #include "functions.hpp"
 
 #include <cstdlib>
@@ -148,9 +153,29 @@ void updateBallCamera(float interval, Vector3 ball)
 	gRight = (gForward % up).norm();
 }
 
+static FieldCoord nextDest; 
+
 void toggleMouseControl()
 {
 	gIsMouseControl = !gIsMouseControl;
+	if (gIsMouseControl)
+	{
+		NoiseWorld noiseworld;
+		World& world = noiseworld;
+
+		NodeID origin(0, 0);
+		NodeID destination(WORLD_SIZE_X - 1, WORLD_SIZE_X - 1);
+
+		WorldGraph graph(world, destination);
+		AStarHeuristik heuristic;
+
+		NodeAStar pathfinder(graph, heuristic);
+
+		std::list<NodeID> route;
+		pathfinder.execute(origin, destination, route);
+
+		nextDest = route.front().coord;
+	}
 }
 
 void updateBall(Ball& ball, float interval)
@@ -167,8 +192,7 @@ void updateBall(Ball& ball, float interval)
 		/* ball controls */
 		if (gIsMouseControl)
 		{
-			FieldCoord field;
-			field = sgLevel.finish;
+			FieldCoord field = nextDest;
 
 			Vector3 dest = sgLevel.origin + Vector3(field.x + 0.5f, field.y + 0.5f, 0.0f);
 			force = 0.15 * (dest - ball.pos()) + 0.1 * (-ball.velocity());
