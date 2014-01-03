@@ -23,6 +23,8 @@
 #include "BallObject.hpp"
 #include "Explosion.hpp"
 
+#include "level/types.hpp"
+
 #include "math/Quaternion.hpp"
 #include "math/Vector3.hpp"
 #include "math/Matrix.hpp"
@@ -44,6 +46,7 @@ public:
   const Vector3& velocity() const;
   bool hasHitGoal() const;
   bool isInPieces() const;
+	const FieldCoord& lastContact() const;
 
   virtual void reset();
 
@@ -70,6 +73,7 @@ protected:
 
 	bool mIsBallInPieces;
 	bool mHasBallHitGoal;
+	FieldCoord mLastContact;
 
 	Vector3 mPushDirection;
 	bool mJump;
@@ -104,6 +108,11 @@ inline bool Ball::hasHitGoal() const
 inline bool Ball::isInPieces() const
 {
 	return mIsBallInPieces;
+}
+
+inline const FieldCoord& Ball::lastContact() const
+{
+	return mLastContact;
 }
 
 #endif

@@ -245,6 +245,9 @@ void Ball::animateBall(float interval)
 		int x = (int) floor(ball.x - sgLevel.origin.x);
 		int y = (int) floor(ball.y - sgLevel.origin.y);
 
+		mLastContact.x = x;
+		mLastContact.y = y;
+
 		if (x == sgLevel.finish.x && y == sgLevel.finish.y)
 		{
 			/* hit goal */

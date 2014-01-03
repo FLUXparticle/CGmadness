@@ -45,6 +45,10 @@ struct FieldCoord
 {
 	int x;
 	int y;
+	bool operator==(const FieldCoord& other) const
+	{
+		return this->x == other.x && this->y == other.y;
+	}
 };
 
 struct ScoreCol
