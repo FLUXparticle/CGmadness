@@ -48,7 +48,6 @@ int main(int argc, char* argv[])
 		for (int x = 0; x < WORLD_SIZE_X; x++)
 		{
 			int height = world.getHeight(x, y);
-			if (height > 0)
 			{
 				if (first)
 				{
@@ -67,7 +66,7 @@ int main(int argc, char* argv[])
 
 					b.x = x;
 					b.y = y;
-					b.z = height;
+					b.z = 5 * height;
 					b.dzx = 0;
 					b.dzy = 0;
 					b.dirty = true;
