@@ -69,7 +69,7 @@ void RaceTheClock::update(float interval)
 
 		if (sgoBall.hasHitGoal())
 		{
-			// finishedGame();
+			finishedGame();
 		}
 	}
 }

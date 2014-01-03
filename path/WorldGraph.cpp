@@ -89,6 +89,8 @@ static std::list<NodeID> gbham(int xstart, int ystart, int xend, int yend)
 			/* Fehlerterm wieder positiv (>=0) machen */
 			err += el;
 			/* Schritt in langsame Richtung, Diagonalschritt */
+			result.push_back(NodeID(x + ddx, y));
+			result.push_back(NodeID(x, y + ddy));
 			x += ddx;
 			y += ddy;
 		} else
