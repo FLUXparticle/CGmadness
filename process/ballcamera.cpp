@@ -155,6 +155,8 @@ void updateBallCamera(float interval, Vector3 ball)
 
 static std::list<NodeID> route;
 
+Vector2 flowField[WORLD_SIZE_X][WORLD_SIZE_Y];
+
 void toggleMouseControl()
 {
 	gIsMouseControl = !gIsMouseControl;
@@ -163,7 +165,6 @@ void toggleMouseControl()
 		LevelWorld levelworld(sgLevel);
 		World& world = levelworld;
 
-		NodeID origin(0, 0);
 		NodeID destination(WORLD_SIZE_X - 1, WORLD_SIZE_X - 1);
 
 		WorldGraph graph(world, destination);
@@ -171,8 +172,31 @@ void toggleMouseControl()
 
 		NodeAStar pathfinder(graph, heuristic);
 
-		route.clear();
-		pathfinder.execute(origin, destination, route);
+		for (int x = 0; x < WORLD_SIZE_X; x++) {
+			for (int y = 0; y < WORLD_SIZE_Y; y++) {
+				NodeID n1(x, y);
+				pathfinder.execute(n1, destination, route);
+
+				Vector2 flowVector;
+#if 0
+				if (route.size() > 1) {
+					auto it = route.begin();
+					NodeID n2 = *(it++);
+					NodeID n3 = *(it++);
+				} else
+#endif
+				{
+					auto it = route.begin();
+					NodeID n2 = *(it++);
+					int dx = n2.coord.x - n1.coord.x;
+					int dy = n2.coord.y - n1.coord.y;
+					float length = sqrt(dx * dx + dy * dy);
+					flowVector = Vector2(dx * 5 / length, dy * 5 / length);
+				}
+				flowField[x][y] = flowVector;
+			}
+		}
+
 	}
 }
 
@@ -190,19 +214,17 @@ void updateBall(Ball& ball, float interval)
 		/* ball controls */
 		if (gIsMouseControl)
 		{
-			FieldCoord field = route.front().coord;
+			Vector3 diff = ball.pos() - sgLevel.origin;
+			int x = diff.x;
+			int y = diff.y;
 
-			if (ball.lastContact() == field)
-			{
-				route.pop_front();
-				if (route.empty())
-				{
-					toggleMouseControl();
-				}
+			if (x >= 0 && y >= 0 && x < WORLD_SIZE_X && y < WORLD_SIZE_Y) {
+				Vector2& fv = flowField[x][y];
+				Vector3 flowVector(fv.x, fv.y, 0.0);
+
+				force = flowVector - ball.velocity();
 			}
 
-			Vector3 dest = sgLevel.origin + Vector3(field.x + 0.5f, field.y + 0.5f, 0.0f);
-			force = 0.15 * (dest - ball.pos()) + 0.1 * (-ball.velocity());
 			force.z = 0.0f;
 			if (force.len() > 1)
 			{

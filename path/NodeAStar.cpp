@@ -21,6 +21,8 @@ NodeAStar::~NodeAStar()
 
 bool NodeAStar::execute(NodeID origin, NodeID destination, std::list<NodeID>& route)
 {
+	route.clear();
+
     BinaryHeap queue(mGraph.size());
     NodeMap<Cost> dist;
     dist.put(origin, 0);
