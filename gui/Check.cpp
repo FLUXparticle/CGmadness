@@ -25,8 +25,6 @@
 
 #include "ColorStack.hpp"
 
-#include GL_H
-
 Check::Check()
 {
 	// empty

@@ -21,8 +21,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 ColorStack ColorStack::colorStack;
 
 ColorStack::ColorStack()

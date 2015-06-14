@@ -19,8 +19,6 @@
 
 #include "varray.hpp"
 
-#include GL_H
-
 void drawTrianglesVerticesNormalsIndices(int count, const float* vertices,
 		const float* normals, const unsigned int* indices)
 {

@@ -21,7 +21,7 @@ CC := $(CPREFIX)gcc
 CFLAGS := -Wall
 
 CXX := $(CPREFIX)g++
-CXXFLAGS = $(CFLAGS) -pedantic -include cstdlib -I.
+CXXFLAGS = $(CFLAGS) -pedantic -include cstdlib -include Prefix.pch -I.
 
 LD := $(CPREFIX)g++
 LDFLAGS :=
@@ -115,7 +115,7 @@ $(BUILD)/%.o: %.c | $$(@D)/.
 	@echo "  CC $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
-$(BUILD)/%.o: %.cpp | $$(@D)/.
+$(BUILD)/%.o: %.cpp Prefix.pch | $$(@D)/.
 	@echo "  CXX $@"
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 

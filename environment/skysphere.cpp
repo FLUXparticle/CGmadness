@@ -25,8 +25,6 @@
 
 #include <cmath>
 
-#include GL_H
-
 #define DAMPENING 0.8
 
 #define SIDES  12

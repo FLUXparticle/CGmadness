@@ -23,8 +23,6 @@
 
 #include "functions.hpp"
 
-#include GL_H
-
 #include <cmath>
 
 const int sgEdgeX[4] = { 0, 1, 1, 0 };

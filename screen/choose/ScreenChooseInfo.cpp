@@ -29,8 +29,6 @@
 #include "text/text.hpp"
 #include "hw/keyboard.hpp"
 
-#include GL_H
-
 #include <stdio.h>
 
 ScreenChooseInfo::ScreenChooseInfo(const Caller& choose)

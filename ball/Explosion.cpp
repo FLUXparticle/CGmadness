@@ -23,8 +23,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 #include <stdlib.h>
 #include <math.h>
 

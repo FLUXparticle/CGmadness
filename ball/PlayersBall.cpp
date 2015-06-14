@@ -32,11 +32,6 @@
 
 #include "debug.hpp"
 
-#ifndef DARWIN
-# include <GL/glew.h>
-#endif
-#include GLU_H
-
 #include <cstring>
 
 #define CUBE_MAP_SIZE 128

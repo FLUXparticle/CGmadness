@@ -19,8 +19,6 @@
 
 #include "Image.hpp"
 
-#include GLU_H
-
 struct TGAHeader
 {
 	GLubyte lenID;

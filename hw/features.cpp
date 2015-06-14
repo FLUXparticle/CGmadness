@@ -19,8 +19,6 @@
 
 #include "features.hpp"
 
-#include <GL/glew.h>
-
 #include <cstdio>
 #include <cstring>
 

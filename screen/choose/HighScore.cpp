@@ -33,8 +33,6 @@
 
 #include "ColorStack.hpp"
 
-#include GL_H
-
 #include <cstdio>
 #include <cstring>
 #include <cmath>

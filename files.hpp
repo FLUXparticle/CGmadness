@@ -21,6 +21,5 @@
 #define files_hpp
 
 char *textFileRead(const char *fn);
-bool textFileWrite(const char *fn, const char *s);
 
 #endif

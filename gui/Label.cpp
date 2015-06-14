@@ -21,8 +21,6 @@
 
 #include "text/text.hpp"
 
-#include GL_H
-
 Label::Label() :
 	MenuItem(false)
 {

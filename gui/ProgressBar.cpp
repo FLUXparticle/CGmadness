@@ -21,8 +21,6 @@
 
 #include "graphics/objects.hpp"
 
-#include GL_H
-
 ProgressBar::ProgressBar()
 {
   // empty

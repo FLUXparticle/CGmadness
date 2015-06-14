@@ -21,8 +21,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 #include <math.h>
 
 Vector3 BallObject::gBallVertices[CNT_BALL_VERTICES];

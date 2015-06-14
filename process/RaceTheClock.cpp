@@ -28,8 +28,6 @@
 
 #include "functions.hpp"
 
-#include GL_H
-
 #include <cstdio>
 #include <cstring>
 

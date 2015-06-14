@@ -21,8 +21,6 @@
 
 #include "image/Image.hpp"
 
-#include GL_H
-
 #define LINEAR_FILTER 1
 
 static bool gUseTextures = false;

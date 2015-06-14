@@ -29,8 +29,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 #include <cmath>
 
 float approximationSquare(const Vector3 position, const Vector3 normal,

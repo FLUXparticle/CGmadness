@@ -22,8 +22,6 @@
 #include "font3d/font3d.hpp"
 #include "hw/keyboard.hpp"
 
-#include GL_H
-
 Button::Button()
 {
   // empty

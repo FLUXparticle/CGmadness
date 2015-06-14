@@ -41,7 +41,7 @@ void main() {
 	float NdotL = max(dot(n, normalize(lightDir)), 0.0);
 	vec4 colDiffuse = diffuse * NdotL;
 
- 	vec3 viewVec = normalize(vViewVec);
+	vec3 viewVec = normalize(vViewVec);
 	vec3 reflVec = reflect(-viewVec, n);
 	vec4 colReflection = textureCube(Environment, vec3(gl_TextureMatrix[0] * vec4(reflVec, 1)));
 

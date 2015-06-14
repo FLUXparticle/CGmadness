@@ -26,8 +26,6 @@
 
 #include "Color.hpp"
 
-#include GL_H
-
 #define REFLECTION 1
 #define SKY 1
 #define WATER 1

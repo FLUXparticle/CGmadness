@@ -27,8 +27,6 @@
 
 #include "graphics/texture.hpp"
 
-#include GLUT_H
-
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>

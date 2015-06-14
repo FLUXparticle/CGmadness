@@ -19,9 +19,6 @@
 
 #include "fbuffer.hpp"
 
-#include <GL/glew.h>
-#include GL_H
-
 #include <cstdio>
 
 bool createFBuffer(int width, int height, unsigned int target, unsigned int color_tex, RenderTarget * context)

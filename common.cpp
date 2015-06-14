@@ -32,8 +32,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 #include <cstdio>
 #include <cmath>
 

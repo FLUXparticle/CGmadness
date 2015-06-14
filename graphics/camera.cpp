@@ -19,8 +19,6 @@
 
 #include "graphics/camera.hpp"
 
-#include GLU_H
-
 Vector3 sgCamera(0.0f, 0.0f, 0.0f);
 Vector3 sgLookat(0.0f, 1.0f, 0.0f);
 static Vector3 gUp(0.0f, 0.0f, 1.0f);

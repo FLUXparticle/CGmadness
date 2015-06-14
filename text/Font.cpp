@@ -21,8 +21,6 @@
 
 #include "image/Image.hpp"
 
-#include GL_H
-
 #define HEIGHT 128
 
 #define CHAR_AS_WIDE_AS_SPACE 'x'

@@ -30,7 +30,6 @@
 #include "ColorStack.hpp"
 
 #include <stdio.h>
-#include GL_H
 
 #define LEVELINFO_WIDTH 4.0f
 #define LEVELINFO_HEIGHT 4.0f

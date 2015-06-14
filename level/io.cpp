@@ -35,8 +35,6 @@
 
 #include "macros.hpp"
 
-#include GL_H
-
 #include <list>
 
 #define EXT_HIGHSCORE ".highscore"

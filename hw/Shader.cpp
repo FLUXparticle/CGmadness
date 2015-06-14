@@ -21,11 +21,6 @@
 
 #include "files.hpp"
 
-#ifndef DARWIN
-# include <GL/glew.h>
-#endif
-#include GL_H
-
 #include <cstdio>
 #include <cstdlib>
 
@@ -68,8 +63,7 @@ static void printProgramInfoLog(GLuint obj, const char* text)
 }
 
 
-static GLuint makeShader(const char* vertexShaderFilename,
-											 const char* fragmentShaderFilename)
+static GLuint makeShader(const char* vertexShaderFilename, const char* fragmentShaderFilename)
 {
 	char* vs;
 	char* fs;

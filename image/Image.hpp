@@ -20,8 +20,6 @@
 #ifndef Image_hpp
 #define Image_hpp
 
-#include GL_H
-
 #include <fstream>
 
 class Image

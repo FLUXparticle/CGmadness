@@ -20,8 +20,6 @@
 #ifndef texture_hpp
 #define texture_hpp
 
-#include GL_H
-
 unsigned int genTexture();
 unsigned int loadTexture(const char *filename, bool mipmapping);
 
