@@ -156,7 +156,7 @@ void Screen::customUpdate(float interval)
 
 static void drawMenuItem(const MenuItem* item)
 {
-	static Color3 filter(0.3f, 0.3f, 0.3f);
+	static Color3 filter(1.0f, 0.2f, 0.1f);
 	glPushMatrix();
 	{
 		glTranslatef(item->position.x, item->position.y, 0.0f);
