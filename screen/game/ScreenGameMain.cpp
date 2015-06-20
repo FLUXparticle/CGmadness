@@ -63,17 +63,18 @@ ScreenGameMain::ScreenGameMain(Game* parent) :
 	gseBall = SpinEdit(maxLayout, 0, maxLayout, 4.3, 5.2f, drawMenuBall, changeBallEdit);
 	addItem(&gseBall);
 
-	gcBallShadow = Check(4.0f, changeBallShadow, "ball shadow");
-	addItem(&gcBallShadow);
+	int y = 4;
+	gcBallShadow = Check(y, changeBallShadow, "ball shadow");
+	// addItem(&gcBallShadow); y--;
 	
-	gcReflection = Check(3.0f, changeReflection, "reflection");
-	addItem(&gcReflection);
+	gcReflection = Check(y, changeReflection, "reflection");
+	// addItem(&gcReflection); y--;
 
-	bHelp = Button(2.0f, METHOD_CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
-	addItem(&bHelp);
+	bHelp = Button(y, METHOD_CALLBACK(ScreenGameMain, clickButtonHelp), "help", 'h');
+	addItem(&bHelp); y--;
 	
-	bQuit = Button(1.0f, METHOD_CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
-	addItem(&bQuit);
+	bQuit = Button(y, METHOD_CALLBACK(ScreenGameMain, clickButtonQuit), "give up", KEY_ESC);
+	addItem(&bQuit); y--;
 }
 
 ScreenGameMain::~ScreenGameMain()
