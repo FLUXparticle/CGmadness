@@ -39,17 +39,18 @@ ScreenMain::ScreenMain()
 {
 	gScreenChooseInfo = new ScreenChooseInfo(METHOD_CALLBACK(ScreenMain, clickButtonChooseEditor));
 
-	bRaceTheClock = Button(6.0f, METHOD_CALLBACK(ScreenMain, clickButtonRaceTheClock), "Race the Clock", KEY_ENTER);
-	addItem(&bRaceTheClock);
+	float y = 6.0f;
+	bRaceTheClock = Button(y, METHOD_CALLBACK(ScreenMain, clickButtonRaceTheClock), "Race the Clock", KEY_ENTER);
+	addItem(&bRaceTheClock); y -= 1.5f;
 
-	bCGMEditor = Button(4.5f, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "Editor", 'e');
-	addItem(&bCGMEditor);
+	bCGMEditor = Button(y, METHOD_CALLBACK(ScreenMain, clickButtonCGMEditor), "Editor", 'e');
+	addItem(&bCGMEditor); y -= 1.5f;
 
-	bHelp = Button(3.0f, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "Help", 'h');
-	addItem(&bHelp);
+	bHelp = Button(y, METHOD_CALLBACK(ScreenMain, clickButtonHelp), "Help", 'h');
+	addItem(&bHelp); y -= 1.5f;
 
-	bQuit = Button(1.5f, METHOD_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
-	addItem(&bQuit);
+	bQuit = Button(y, METHOD_CALLBACK(ScreenMain, clickButtonQuit), "Quit", 'q');
+	addItem(&bQuit); y -= 1.5f;
 }
 
 ScreenMain::~ScreenMain()
