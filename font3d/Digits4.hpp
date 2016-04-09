@@ -17,41 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dataDigits.hpp"
+#ifndef Digits4_hpp
+#define Digits4_hpp
 
-#include "Digits0.hpp"
-#include "Digits1.hpp"
-#include "Digits2.hpp"
-#include "Digits3.hpp"
-#include "Digits4.hpp"
-#include "Digits5.hpp"
-#include "Digits6.hpp"
-#include "Digits7.hpp"
-#include "Digits8.hpp"
-#include "Digits9.hpp"
+void drawDigits4();
 
-float widthDigits[10] = {
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-	10.000000,
-};
-
-funcDraw drawDigits[10] = {
-	drawDigits0,
-	drawDigits1,
-	drawDigits2,
-	drawDigits3,
-	drawDigits4,
-	drawDigits5,
-	drawDigits6,
-	drawDigits7,
-	drawDigits8,
-	drawDigits9,
-};
+#endif
