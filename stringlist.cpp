@@ -73,8 +73,8 @@ void findBasename(const char *path, int *start, int *end)
 		e = s + strlen(s);
 	}
 
-	*start = s - path;
-	*end = e - path;
+	*start = (GLuint) (s - path);
+	*end = (GLuint) (e - path);
 }
 
 int lengthBasename(const char *path)
@@ -112,7 +112,7 @@ void createStringListFromDir(StringList * list, const char *dirname)
 	int count = 0;
 	int size = 0;
 	DIR *dirinfo = opendir(dirname);
-	size_t dirnamelen = strlen(dirname);
+	GLuint dirnamelen = (GLuint) strlen(dirname);
 
 	if (dirinfo)
 	{
@@ -160,7 +160,7 @@ void createStringListFromDir(StringList * list, const char *dirname)
 				stat(newdir, &filestat);
 				if (S_ISREG(filestat.st_mode))
 				{
-					size = strlen(newdir) + 1;
+					size = (GLuint) (strlen(newdir) + 1);
 					memcpy(p, newdir, size);
 
 					*pp = p;

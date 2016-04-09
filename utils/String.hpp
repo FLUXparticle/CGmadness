@@ -33,7 +33,7 @@ public:
   String(const String& str);
   virtual ~String();
 
-  int length() const;
+  GLuint length() const;
 
   operator const char*() const;
   bool operator==(const char* other) const;

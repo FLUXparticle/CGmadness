@@ -27,7 +27,7 @@
 class FreeBlockIterator
 {
 public:
-	FreeBlockIterator(class FreeBlockList* list, int index);
+	FreeBlockIterator(class FreeBlockList* list, GLuint index);
 
 	void operator++ ();
 	bool operator!= (const FreeBlockIterator& other) const;
@@ -35,15 +35,15 @@ public:
 
 private:
 	class FreeBlockList* mList;
-	int mIndex;
+	GLuint mIndex;
 
 };
 
 struct FreeBlockNode
 {
 	Block block;
-	int prev;
-	int next;
+	GLuint prev;
+	GLuint next;
 };
 
 class FreeBlockList
@@ -52,15 +52,15 @@ public:
 	FreeBlockList();
 	virtual ~FreeBlockList();
 
-	int insert(const Block& block);
+	GLuint insert(const Block& block);
 	void free(int index);
 	void clear();
 
 	FreeBlockIterator begin();
 	FreeBlockIterator end();
 
-	const Block& operator[] (int index) const;
-	Block& operator[] (int index);
+	const Block& operator[] (GLuint index) const;
+	Block& operator[] (GLuint index);
 
 private:
 	friend class FreeBlockIterator;
@@ -71,8 +71,8 @@ private:
 	int mIdxFirstFree;
 	int mIdxLastFree;
 
-	void insertBefore(int newIndex, int index);
-	void remove(int index);
+	void insertBefore(GLuint newIndex, GLuint index);
+	void remove(GLuint index);
 
 };
 

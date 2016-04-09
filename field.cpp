@@ -354,7 +354,7 @@ static int painter(QuadList& list, const Vector3& viewer, int indices[])
 		 */
 		if (quad.mNormals[0].z > 0.0f || quad.mNormals[0] * (viewer - quad.mVertices[0]) >= 0)
 		{
-			int q = quad.mVertices - gVertices;
+			GLuint q = (GLuint) (quad.mVertices - gVertices);
 			for (int i = 0; i < 4; i++)
 			{
 				indices[counter++] = q++;

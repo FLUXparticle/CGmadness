@@ -62,8 +62,8 @@ struct SideFace
 
 struct Range
 {
-	int start;
-	int end;
+	GLuint start;
+	GLuint end;
 };
 
 struct Block

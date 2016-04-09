@@ -19,7 +19,7 @@
 
 #include "FreeBlockList.hpp"
 
-FreeBlockIterator::FreeBlockIterator(class FreeBlockList* list, int index) :
+FreeBlockIterator::FreeBlockIterator(class FreeBlockList* list, GLuint index) :
 	mList(list),
 	mIndex(index)
 {
@@ -55,13 +55,13 @@ FreeBlockList::~FreeBlockList()
 	// empty
 }
 
-int FreeBlockList::insert(const Block& block)
+GLuint FreeBlockList::insert(const Block& block)
 {
-	int index = mNodes[mIdxFirstFree].next;
+	GLuint index = mNodes[mIdxFirstFree].next;
 
 	if (index == mIdxLastFree)
 	{
-		index = mNodes.size();
+		index = (GLuint) mNodes.size();
 		mNodes.push_back(FreeBlockNode());
 	}
 	else
@@ -110,17 +110,17 @@ FreeBlockIterator FreeBlockList::end()
 	return FreeBlockIterator(this, mIdxLastNode);
 }
 
-const Block& FreeBlockList::operator[] (int index) const
+const Block& FreeBlockList::operator[] (GLuint index) const
 {
 	return mNodes[index].block;
 }
 
-Block& FreeBlockList::operator[] (int index)
+Block& FreeBlockList::operator[] (GLuint index)
 {
 	return mNodes[index].block;
 }
 
-void FreeBlockList::insertBefore(int newIndex, int index)
+void FreeBlockList::insertBefore(GLuint newIndex, GLuint index)
 {
 	FreeBlockNode& node = mNodes[newIndex];
 
@@ -131,7 +131,7 @@ void FreeBlockList::insertBefore(int newIndex, int index)
 	mNodes[node.next].prev = newIndex;
 }
 
-void FreeBlockList::remove(int index)
+void FreeBlockList::remove(GLuint index)
 {
 	FreeBlockNode& node = mNodes[index];
 

@@ -62,9 +62,9 @@ const KdCell::Range& KdTree::get(int x, int y) const
 	return mEmpty;
 }
 
-int KdTree::newNode(const KdCell& cell)
+GLuint KdTree::newNode(const KdCell& cell)
 {
-	int index = mCells.size();
+	GLuint index = (GLuint) mCells.size();
 
 	mCells.push_back(cell);
 

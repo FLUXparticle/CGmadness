@@ -98,11 +98,11 @@ void initCommon()
 		Block& b = *iter;
 		checkBlock(b);
 
-		b.subatlas.start = gSubAtlas.size();
+		b.subatlas.start = (GLuint) gSubAtlas.size();
 		{
 			SubAtlas atlas;
 			atlas.orientation = orientationFloor(b);
-			atlas.idxSubLightMap = gSubAtlas.size();
+			atlas.idxSubLightMap = (GLuint) gSubAtlas.size();
 			gSubAtlas.push_back(atlas);
 
 			Square* square = &b.roof;
@@ -112,7 +112,7 @@ void initCommon()
 			{
 				Orientation orientation = orientationSide(b, side);
 
-				unsigned int start = gSubAtlas.size();
+				GLuint start = (GLuint) gSubAtlas.size();
 
 				SideFace* face = &b.sideFaces[side];
 
@@ -129,7 +129,7 @@ void initCommon()
 						atlas.orientation = orientation;
 						atlas.orientation.origin += atlas.orientation.vy
 						* (gSubAtlas.size() - start);
-						atlas.idxSubLightMap = gSubAtlas.size();
+						atlas.idxSubLightMap = (GLuint) gSubAtlas.size();
 						gSubAtlas.push_back(atlas);
 					}
 
@@ -137,10 +137,10 @@ void initCommon()
 				}
 			}
 		}
-		b.subatlas.end = gSubAtlas.size();
+		b.subatlas.end = (GLuint) gSubAtlas.size();
 	}
 
-	sgAtlas = new Atlas(gSubAtlas.size());
+	sgAtlas = new Atlas((GLuint) gSubAtlas.size());
 }
 
 void destroyCommon()
@@ -155,9 +155,9 @@ void updateLightMapIdle(int step)
 	genAmbientOcclusionTexture(gSubAtlas[step]);
 }
 
-int lightMapSteps()
+GLuint lightMapSteps()
 {
-	return gSubAtlas.size();
+	return (GLuint) gSubAtlas.size();
 }
 
 void updateLightMap()

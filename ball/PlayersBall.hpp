@@ -42,7 +42,7 @@ public:
 
 	static void init();
 
-	static int cntLayouts();
+	static GLuint cntLayouts();
 
 public:
 	void initCubeMap();
@@ -87,9 +87,9 @@ private:
 
 };
 
-inline int PlayersBall::cntLayouts()
+inline GLuint PlayersBall::cntLayouts()
 {
-	return gBallLayouts.size();
+	return (GLuint) gBallLayouts.size();
 }
 
 inline int& PlayersBall::layout()

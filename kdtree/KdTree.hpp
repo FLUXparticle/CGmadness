@@ -51,7 +51,7 @@ private:
 
 	std::vector<KdCell> mCells;
 
-	int newNode(const KdCell& cell);
+	GLuint newNode(const KdCell& cell);
 	void split(int index, const KdCell& left, const KdCell& right);
 
 	friend class KdSet;

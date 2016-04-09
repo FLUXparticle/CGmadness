@@ -24,7 +24,7 @@
 
 char* copy(const char* str)
 {
-	int size = strlen(str) + 1;
+	GLuint size = (GLuint) (strlen(str) + 1);
 	char* result = new char[size];
 	strcpy(result, str);
 	return result;
@@ -61,7 +61,7 @@ String::~String()
 	// empty
 }
 
-int String::length() const
+GLuint String::length() const
 {
 	return strlen(mStr);
 }

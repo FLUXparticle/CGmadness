@@ -68,7 +68,6 @@ static int gIsokaederIndices[20][3] =
 
 void BallObject::subdiv(int depth, Vector3 tri[3], Vector3 hole, float s)
 {
-	Vector3 z = Vector3(0.0f, 0.0f, 1.0f);
 	int i;
 	if (depth == 0)
 	{
