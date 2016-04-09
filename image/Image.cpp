@@ -261,15 +261,21 @@ GLuint Image::toTexture(bool mipmapping)
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
+	if (!mipmapping || glGenerateMipmap)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, mFormat, mWidth, mHeight, 0, mFormat, GL_UNSIGNED_BYTE, mData);
+	}
+
 	if (mipmapping)
 	{
-		gluBuild2DMipmaps(GL_TEXTURE_2D, mFormat, mWidth, mHeight, mFormat,
-				GL_UNSIGNED_BYTE, mData);
-	}
-	else
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, mFormat, mWidth, mHeight, 0, mFormat,
-				GL_UNSIGNED_BYTE, mData);
+		if (glGenerateMipmap)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			gluBuild2DMipmaps(GL_TEXTURE_2D, mFormat, mWidth, mHeight, mFormat, GL_UNSIGNED_BYTE, mData);
+		}
 	}
 
 	delete[] mData;
