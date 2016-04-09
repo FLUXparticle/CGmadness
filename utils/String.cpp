@@ -63,7 +63,7 @@ String::~String()
 
 GLuint String::length() const
 {
-	return strlen(mStr);
+	return (GLubyte) strlen(mStr);
 }
 
 bool String::operator==(const char* other) const

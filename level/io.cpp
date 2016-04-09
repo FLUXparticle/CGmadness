@@ -492,7 +492,7 @@ bool saveLevelToFile(bool shrink)
 	fputc('\n', file);
 
 	/* write data */
-	writeInt(file, indices.size());
+	writeInt(file, (GLuint) indices.size());
 	fputc('\n', file);
 
 	FOREACH(indices, iter)

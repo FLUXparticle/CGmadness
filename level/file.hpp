@@ -32,8 +32,8 @@ void readFieldCoord(FILE* file, FieldCoord& coord);
 void readFieldBlockV3(FILE* file, Block& block);
 void readFieldBlock(FILE* file, Block& block);
 
-void writeByte(FILE* file, int value);
-void writeInt(FILE* file, int value);
+void writeByte(FILE* file, GLubyte value);
+void writeInt(FILE* file, GLuint value);
 void writeString(FILE* file, char* value);
 void writeFieldCoord(FILE* file, const FieldCoord& coord);
 void writeFieldBlock(FILE* file, const Block& block);

@@ -133,13 +133,13 @@ void readFieldBlock(FILE* file, Block& block)
 	block.dzy = readByte(file);
 }
 
-void writeByte(FILE* file, int value)
+void writeByte(FILE* file, GLubyte value)
 {
 	fprintf(file, "%i", value);
 	nextByte(value);
 }
 
-void writeInt(FILE* file, int value)
+void writeInt(FILE* file, GLuint value)
 {
 	int i;
 
