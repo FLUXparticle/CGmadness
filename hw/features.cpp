@@ -79,7 +79,7 @@ void initFeatures(int argc, char* argv[])
 	}
 
 	gFramebufferAvailable = true;
-	if (!GLEW_EXT_framebuffer_object || !GLEW_EXT_packed_depth_stencil)
+	if (!GLEW_EXT_framebuffer_object)
 	{
 		printf("No framebuffer object available :(\n");
 		gFramebufferAvailable = false;
