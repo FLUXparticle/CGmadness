@@ -40,7 +40,7 @@ SHADER := golfball ballshadow
 
 GL_H := <GL/glew.h>
 GLU_H := <GL/glew.h>
-GLUT_H := <GL/glut.h>
+GLUT_H := <GL/freeglut.h>
 
 # Check if compiling with Linux or Cygwin/MinGW
 ifneq ($(findstring mingw32,$(MACHINE))$(findstring cygwin,$(MACHINE)),)

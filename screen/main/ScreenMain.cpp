@@ -31,6 +31,8 @@
 #include "hw/keyboard.hpp"
 #include "process/Main.hpp"
 
+#include GLUT_H
+
 #include <cstdlib>
 
 ScreenMain::ScreenMain()
@@ -74,7 +76,11 @@ void ScreenMain::clickButtonHelp()
 
 void ScreenMain::clickButtonQuit()
 {
+#if FREEGLUT
+	glutLeaveMainLoop();
+#else
 	exit(0);
+#endif
 }
 
 void ScreenMain::clickButtonChooseEditor()
