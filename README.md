@@ -1,7 +1,7 @@
-# CG Madness
+# CGmadness
 ###### a Marble Madness clone
 
-CG Madness is based on the classic game Marble Madness. It is running on OpenGL and uses current CG techniques like light maps, bump-mapping and reflection shader. It also has an editor where you can create your own levels.
+CGmadness is based on the classic game Marble Madness. It is running on OpenGL and uses current CG techniques like light maps, bump-mapping and reflection shader. It also has an editor where you can create your own levels.
 
 ## Hooks
 
